@@ -1,0 +1,96 @@
+#ifndef LIBUI_V3_H
+# define LIBUI_V3_H
+# define SDL_MAIN_HANDLED
+# include "SDL.h"
+# include "SDL_image.h"
+# include "SDL_ttf.h"
+# include "ui_path.h"
+# include "libft.h"
+# include "libpf.h"
+# include "stdio.h"
+# include "ui_enum.h"
+# include "ui_vec.h"
+# include "ui_layout.h"
+# include "ui_elements.h"
+# include "ui_load.h"
+# include "math.h"
+//# include "path.h"
+
+typedef struct s_rgba
+{
+	union {
+		struct {
+			int r;
+			int g;
+			int b;
+			int a;
+		};
+		int rgba[4];
+	};
+}					t_rgba;
+
+// Vec
+void					print_vec(float *vec, size_t size);
+void					print_veci(int *vec, size_t size);
+
+// Texture
+SDL_Texture				*ui_texture_create_from_text_recipe(SDL_Renderer *renderer, t_ui_label *recipe);
+SDL_Texture				*ui_create_texture(SDL_Renderer *renderer, t_vec2i pos);
+void					ui_texture_draw_border(SDL_Renderer *renderer, SDL_Texture *texture, size_t thicc, Uint32 color);
+void					ui_texture_fill(SDL_Renderer *renderer, SDL_Texture *texture, Uint32 color);
+void					ui_texture_fill_rect(SDL_Renderer *renderer, SDL_Texture *texture, Uint32 color, t_vec4i rect);
+
+// Surface
+SDL_Surface				*ui_surface_new(int w, int h);
+void					ui_surface_fill(SDL_Surface *surface, Uint32 color);
+void					ui_surface_fill_rect(SDL_Surface *surface, Uint32 color, t_vec4i rect);
+SDL_Surface				*ui_surface_create_from_text_recipe(t_ui_label *recipe);
+void					ui_surface_print(SDL_Surface *surface);
+SDL_Surface				*ui_surface_text_new(char *text, char *font_path, int size, Uint32 font_color);
+SDL_Surface				*ui_surface_image_new(char *image_path);
+void					ui_surface_pixel_set(SDL_Surface *surface, int x, int y, Uint32 color);
+Uint32					ui_surface_pixel_get(SDL_Surface *surface, int x, int y);
+void					ui_surface_line_draw_dot(SDL_Surface *surface, t_vec2i p1, t_vec2i p2, Uint32 color);
+void					ui_surface_line_draw(SDL_Surface *surface, t_vec2i p1, t_vec2i p2, Uint32 color); // reduced
+void					ui_surface_line_draw_v2(SDL_Surface *surface, t_vec2i p1, t_vec2i p2, Uint32 color); // reduced
+void					ui_surface_line_draw_orig(SDL_Surface *surface, t_vec2i p1, t_vec2i p2, Uint32 color); // orig
+void					ui_surface_line_draw_nik(SDL_Surface *surf, t_vec2i v1, t_vec2i v2, Uint32 color); // nik
+void					ui_surface_rect_draw(SDL_Surface *surface, t_vec2i p1, t_vec2i p2, Uint32 color);
+void					ui_surface_rect_draw_thicc(SDL_Surface *surface, t_vec2i p1, t_vec2i p2, int thicc, Uint32 color);
+void					ui_surface_rect_draw_filled(SDL_Surface *surface, t_vec2i p1, t_vec2i p2, Uint32 color);
+void					ui_surface_circle_draw(SDL_Surface *surface, t_vec2i orig, int r, Uint32 color);
+void					ui_surface_circle_draw_filled(SDL_Surface *surface, t_vec2i orig, int r, Uint32 color);
+void					ui_surface_line_draw_thicc(SDL_Surface *surface, t_vec2i v1, t_vec2i v2, int w, Uint32 color);
+
+// Help
+int						point_in_rect(t_vec2i point, t_vec4i rect);
+t_rgba					hex_to_rgba(Uint32 color_hex);
+Uint32					rgba_to_hex(t_rgba rgba);
+Uint32					ui_color_come_up_with_name(Uint32 orig_col, float procentage);
+char					*get_text_to_char_at_x(char *str, int x, TTF_Font *font);
+int						get_x_of_char_in_text(char *str, int nth_char, TTF_Font *font);
+int						get_nth_char_of_text_at_x(char *str, int x, TTF_Font *font);
+t_ui_element			*ui_list_get_element_by_id(t_list *list, char *id);
+t_ui_window				*ui_list_get_window_by_id(t_list *list, char *id);
+int						dist(t_vec2i p1, t_vec2i p2);
+float					fdist(t_vec2 p1, t_vec2 p2);
+char					**ft_strsplitwhitespace(char *str);
+char					*ft_supertrim(char *str);
+char					**ft_strsplitfirstoccurence(char *str, char c);
+char					**ft_strsplitfirstoccurenceor(char *str, char b, char c);
+void					ft_strtrimwholearr(char **arr);
+void					ft_putarr(char **arr);
+void					dummy_free_er(void *dont, size_t care);
+char					**ft_arrdup(char **src);
+int						ft_strinarr(char *str, char **arr);
+
+// Load
+void					ui_print_accepted(void);
+t_ui_recipe				*ui_list_get_recipe_by_id(t_list *list, char *id);
+int						text_align_getter(char *str);
+const char				*text_align_to_str(int text_align);
+
+// Other
+void					ui_sdl_init(void);
+
+#endif

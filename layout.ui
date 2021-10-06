@@ -1,0 +1,24 @@
+style : layout.style;
+
+Window win_main
+{
+	Menu menu_toolbox
+	{
+		Menu menu_select_buttons
+		{
+			Radio select_button_radio
+			{
+				Button draw_button {};
+				Button vertex_button {};
+				Button wall_button {};
+				Button sector_button {};
+				Button entity_button {};
+			};
+		};
+		Menu menu_asdf_buttons
+		{
+			Button trash_button {};
+			Button edit_button {};
+		};
+	};
+};

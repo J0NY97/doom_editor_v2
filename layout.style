@@ -1,0 +1,96 @@
+win_main
+{
+	xywh : 0, 25, 1920, 1030;
+	title : Edit Mapor;
+};
+
+menu_toolbox
+{
+	x : 0;
+	y : 0;
+	w : 1920;
+	h : 70;
+	bg_color : 0xffb0b0b0;
+};
+
+menu_select_buttons
+{
+	x : 10;
+	y : 10;
+	w : 220;
+	h : 50;
+	bg_color : 0xff808080;
+};
+
+select_button_prefab
+{
+	x : 10;
+	y : 10;
+	w : 25;
+	h : 25;
+	title : "";
+};
+
+draw_button : select_button_prefab
+{
+	bg_image_default : ui_images/draw_mode.png;
+	bg_image_hover : ui_images/draw_button_hover.png;
+	bg_image_click : ui_images/draw_mode_click.png;
+};
+
+vertex_button : select_button_prefab
+{
+	x : 45;
+	bg_image_default : ui_images/selection_mode_vertex.png;
+	bg_image_hover : ui_images/point_button_hover.png;
+	bg_image_click : ui_images/selection_mode_vertex_click.png;
+};
+
+wall_button : select_button_prefab
+{
+	x : 80;
+	bg_image_default : ui_images/selection_mode_wall.png;
+	bg_image_hover : ui_images/wall_button_hover.png;
+	bg_image_click : ui_images/selection_mode_wall_click.png;
+};
+
+sector_button : select_button_prefab
+{
+	x : 120;
+	bg_image_default : ui_images/selection_mode_sector.png;
+	bg_image_hover : ui_images/sector_button_hover.png;
+	bg_image_click : ui_images/selection_mode_sector_click.png;
+};
+
+entity_button : select_button_prefab
+{
+	x : 155;
+	bg_image_default : ui_images/selection_mode_entity.png;
+	bg_image_hover : ui_images/entity_button_hover.png;
+	bg_image_click : ui_images/selection_mode_entity_click.png;
+};
+
+menu_asdf_buttons
+{
+	x : 240;
+	y : 10;
+	h : 50;
+	w : 80;
+	bg_color : 0xff808080;
+};
+
+trash_button : select_button_prefab
+{
+	x : 10;
+	bg_image_default : ui_images/remove_button.png;
+	bg_image_hover : ui_images/trash_button_hover.png;
+	bg_image_click : ui_images/remove_button_click.png;
+};
+
+edit_button : select_button_prefab
+{
+	x : 45;
+	bg_image_default : ui_images/edit_button.png;
+	bg_image_hover : ui_images/edit_button_hover.png;
+	bg_image_click : ui_images/edit_button_click.png;
+};
