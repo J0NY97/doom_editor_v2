@@ -20,6 +20,8 @@ void	user_events(t_editor *editor, SDL_Event e)
 	calculate_hover(editor);
 	if (editor->win_main->mouse_pos.y < 70) // the 70 comes from the menu_toolbox.h
 		return ;
+	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
+		editor->offset = vec2i(0, 0);
 	if (editor->win_main->mouse_down == SDL_BUTTON_MIDDLE)
 	{
 		editor->offset.x -= (editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x);
