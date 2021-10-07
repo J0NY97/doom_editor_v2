@@ -2,6 +2,9 @@ NAME = map_editor
 SRCS = \
 	./main.c \
 	./point.c \
+	./wall.c \
+	./sector.c \
+	./help.c \
 
 OBJS = $(SRCS:.c=.o)
 

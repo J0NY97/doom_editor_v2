@@ -38,7 +38,7 @@ draw_button : select_button_prefab
 	bg_image_click : ui_images/draw_mode_click.png;
 };
 
-vertex_button : select_button_prefab
+point_button : select_button_prefab
 {
 	x : 45;
 	bg_image_default : ui_images/selection_mode_vertex.png;

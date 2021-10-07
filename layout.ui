@@ -9,7 +9,7 @@ Window win_main
 			Radio select_button_radio
 			{
 				Button draw_button {};
-				Button vertex_button {};
+				Button point_button {};
 				Button wall_button {};
 				Button sector_button {};
 				Button entity_button {};

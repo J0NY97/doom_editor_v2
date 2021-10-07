@@ -29,10 +29,6 @@ typedef struct s_rgba
 	};
 }					t_rgba;
 
-// Vec
-void					print_vec(float *vec, size_t size);
-void					print_veci(int *vec, size_t size);
-
 // Texture
 SDL_Texture				*ui_texture_create_from_text_recipe(SDL_Renderer *renderer, t_ui_label *recipe);
 SDL_Texture				*ui_create_texture(SDL_Renderer *renderer, t_vec2i pos);

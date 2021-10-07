@@ -13,10 +13,18 @@ void	draw_hover(t_editor *editor)
 	convert_back.x = editor->mouse_pos.x * (editor->gap_size * editor->zoom);
 	convert_back.y = editor->mouse_pos.y * (editor->gap_size * editor->zoom);
 	ui_surface_circle_draw_filled(editor->drawing_surface, convert_back, 3, 0xffffffff);
+
+	// Draw from first point to where you're hovering;
+	if (editor->first_point_set)
+		ui_surface_line_draw(editor->drawing_surface,
+			conversion(editor, editor->first_point),
+			convert_back, 0xffffff00);
 }
 
 void	user_events(t_editor *editor, SDL_Event e)
 {
+	t_vec2i	actual_pos;
+
 	calculate_hover(editor);
 	if (editor->win_main->mouse_pos.y < 70) // the 70 comes from the menu_toolbox.h
 		return ;
@@ -29,14 +37,64 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
+		actual_pos.x = editor->mouse_pos.x + editor->offset.x;
+		actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 		{
-			t_point	*point;
-			point = ft_memalloc(sizeof(t_point));
-			point->pos.x = editor->mouse_pos.x + editor->offset.x;
-			point->pos.y = editor->mouse_pos.y + editor->offset.y;
-			add_to_list(&editor->points, point, sizeof(t_point));
+			if (!editor->selected_sector)
+			{
+				editor->selected_sector = ft_memalloc(sizeof(t_sector));
+				editor->selected_sector->id = ++editor->sector_amount;
+				editor->selected_sector->color = random_blue_color();
+				add_to_list(&editor->sectors, editor->selected_sector, sizeof(t_sector));
+			}
+			if (editor->selected_sector)
+			{
+				if (!editor->first_point_set)
+				{
+					editor->first_point_set = 1;
+					editor->first_point = actual_pos;
+				}
+				else if (!editor->second_point_set)
+				{
+					editor->second_point_set = 1;
+					editor->second_point = actual_pos;
+				}
+				if (editor->first_point_set && editor->second_point_set)
+				{
+					t_wall	*wall;
+					wall = ft_memalloc(sizeof(t_wall));
+					wall->p1 = ft_memalloc(sizeof(t_point));
+					wall->p1->pos = editor->first_point;
+					wall->p2 = ft_memalloc(sizeof(t_point));
+					wall->p2->pos = editor->second_point;
+					editor->first_point_set = 0;
+					editor->second_point_set = 0;
+					++editor->selected_sector->wall_amount;
+					add_to_list(&editor->points, wall->p1, sizeof(t_point));
+					add_to_list(&editor->points, wall->p2, sizeof(t_point));
+					add_to_list(&editor->walls, wall, sizeof(t_wall));
+					add_to_list(&editor->selected_sector->walls, wall, sizeof(t_wall));
+					if (!editor->selected_sector->first_point_set)
+					{
+						editor->selected_sector->first_point = editor->first_point;
+						editor->selected_sector->first_point_set = 1;
+					}
+					if (compare_veci(editor->second_point.v, editor->selected_sector->first_point.v, 2))
+						editor->selected_sector = NULL;
+					else
+					{
+						editor->first_point = editor->second_point;
+						editor->first_point_set = 1;
+					}
+				}
+			}
 		}
+	}
+	else if (editor->point_button->state == UI_STATE_CLICK)
+	{
+		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+			editor->selected_point = get_point_from_list_around_radius(editor->points, actual_pos, 1.0f);
 	}
 }
 
@@ -59,7 +117,7 @@ void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
 	}
 }
 
-void	draw_points(SDL_Surface *surface, t_list *points, float gap_size, float zoom, t_vec2i offset)
+void	draw_points(t_editor *editor, t_list *points, Uint32 color)
 {
 	int	i;
 
@@ -67,16 +125,101 @@ void	draw_points(SDL_Surface *surface, t_list *points, float gap_size, float zoo
 	while (points)
 	{
 		ft_printf("Point #%d\n", ++i);
-		point_render(surface, points->content, gap_size, zoom, offset);
+		point_render(editor, points->content, color);
 		points = points->next;
 	}
+}
+
+void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
+{
+	t_wall	*wall;
+
+	while (walls)
+	{
+		wall = walls->content;
+		wall_render(editor, wall, color);
+		point_render(editor, wall->p1, color);
+		walls = walls->next;
+	}
+}
+
+/*
+ * Font should already be opened before this function call;
+*/
+void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos)
+{
+	SDL_Surface	*text_surface;
+
+	if (font)
+	{
+		text_surface = TTF_RenderText_Blended(font, text, (SDL_Color){255, 255, 255, 255});
+		SDL_BlitSurface(text_surface, NULL, surface, 
+			&(SDL_Rect){pos.x - (text_surface->w / 2), pos.y - (text_surface->h / 2),
+			text_surface->w, text_surface->h});
+		SDL_FreeSurface(text_surface);
+	}
+	else
+		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
+}
+
+void	draw_sector_number(t_editor *editor, t_sector *sector)
+{
+	int		i;
+	float	x;
+	float	y;
+	t_list	*wall;
+	t_wall	*w;
+
+	x = 0;
+	y = 0;
+	wall = sector->walls;
+	while (wall)
+	{
+		w = wall->content;
+		x += (w->p1->pos.x + w->p2->pos.x);
+		y += (w->p1->pos.y + w->p2->pos.y);
+		wall = wall->next;
+	}
+	i = ft_lstlen(sector->walls) * 2;
+	if (i < 2)
+		return ;
+	char	temp[20];
+	t_vec2i	actual;
+	actual = conversion(editor, vec2i(x / i, y / i));
+	ft_b_itoa(sector->id, temp);
+	draw_text(editor->drawing_surface, temp, editor->font, actual);
+}
+
+void	draw_sectors(t_editor *editor, t_list *sectors)
+{
+	t_sector	*sector;
+
+	while (sectors)
+	{
+		sector = sectors->content;
+		sector_render(editor, sector, sector->color);
+		draw_sector_number(editor, sector);
+		sectors = sectors->next;
+	}
+}
+
+void	draw_selected(t_editor *editor)
+{
+	if (editor->selected_point)
+		point_render(editor, editor->selected_point, 0xff00ff00);
+	else if (editor->selected_wall)
+		wall_render(editor, editor->selected_wall, 0xff00ff00);
+	else if (editor->selected_sector)
+		sector_render(editor, editor->selected_sector, 0xff00ff00);
 }
 
 void	user_render(t_editor *editor)
 {
 	draw_grid(editor->drawing_surface, editor->gap_size, editor->zoom);
-	draw_points(editor->drawing_surface, editor->points, editor->gap_size, editor->zoom, editor->offset); // remove this at some point;
+	draw_points(editor, editor->points, 0xff00ff00); // remove this at some point;
+	draw_sectors(editor, editor->sectors);
 	draw_hover(editor);
+	draw_selected(editor);
 
 	SDL_UpdateTexture(editor->drawing_texture, NULL, editor->drawing_surface->pixels, editor->drawing_surface->pitch);
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
@@ -87,9 +230,13 @@ void	user_render(t_editor *editor)
 
 void	editor_init(t_editor *editor)
 {
+	memset(editor, 0, sizeof(t_editor));
 	ui_layout_load(&editor->layout, "layout.ui");
 	editor->win_main = ui_list_get_window_by_id(editor->layout.windows, "win_main");
 	editor->draw_button = ui_list_get_element_by_id(editor->layout.elements, "draw_button");
+	editor->point_button = ui_list_get_element_by_id(editor->layout.elements, "point_button");
+	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
+	ft_printf("[%s] %s\n", __FUNCTION__, SDL_GetError());
 }
 
 void	draw_init(t_editor *editor)
