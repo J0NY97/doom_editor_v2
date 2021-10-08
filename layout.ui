@@ -2,15 +2,13 @@ style : layout.style;
 
 Window win_main
 {
-	Menu menu_toolbox
+	Menu menu_toolbox_top
 	{
 		Menu menu_select_buttons
 		{
 			Radio select_button_radio
 			{
 				Button draw_button {};
-				Button point_button {};
-				Button wall_button {};
 				Button sector_button {};
 				Button entity_button {};
 			};
@@ -19,6 +17,14 @@ Window win_main
 		{
 			Button trash_button {};
 			Button edit_button {};
+		};
+	};
+	Menu menu_toolbox_left
+	{
+		Radio left_button_radio
+		{
+			Button point_button {};
+			Button wall_button {};
 		};
 	};
 };

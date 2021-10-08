@@ -4,13 +4,17 @@ win_main
 	title : Edit Mapor;
 };
 
-menu_toolbox
+toolbox_menu_prefab
+{
+	bg_color : 0xffb0b0b0;
+};
+
+menu_toolbox_top : toolbox_menu_prefab
 {
 	x : 0;
 	y : 0;
 	w : 1920;
 	h : 70;
-	bg_color : 0xffb0b0b0;
 };
 
 menu_select_buttons
@@ -93,4 +97,9 @@ edit_button : select_button_prefab
 	bg_image_default : ui_images/edit_button.png;
 	bg_image_hover : ui_images/edit_button_hover.png;
 	bg_image_click : ui_images/edit_button_click.png;
+};
+
+menu_toolbox_left : toolbox_menu_prefab
+{
+	xywh : 0, 70, 250, 960;
 };

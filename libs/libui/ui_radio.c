@@ -55,8 +55,8 @@ void	ui_list_radio_event(t_list *list, t_ui_element **active, SDL_Event e)
 */
 int	ui_radio_render(t_ui_element *elem)
 {
-	if (elem->parent)
-		elem->screen_pos = *elem->parent_screen_pos;
+	if (!ui_element_render(elem))
+		return (0);
 	return (1);
 }
 

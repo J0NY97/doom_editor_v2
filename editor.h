@@ -27,6 +27,7 @@ typedef struct s_editor
 	t_ui_element	*point_button;
 	t_ui_element	*wall_button;
 	t_ui_element	*sector_button;
+	t_ui_element	*menu_toolbox_left;
 
 	TTF_Font		*font;
 
