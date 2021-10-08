@@ -70,5 +70,6 @@ void				print_vec(float *vec, size_t size);
 void				print_veci(int *vec, size_t size);
 int					compare_veci(int *vec1, int *vec2, size_t size);
 int					compare_vec(float *vec1, float *vec2, size_t size);
+int					vec2_in_vec4(t_vec2i v2, t_vec4i v4);
 
 #endif

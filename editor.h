@@ -25,6 +25,8 @@ typedef struct s_editor
 	t_ui_window		*win_main;
 	t_ui_element	*draw_button;
 	t_ui_element	*point_button;
+	t_ui_element	*wall_button;
+	t_ui_element	*sector_button;
 
 	TTF_Font		*font;
 
@@ -69,6 +71,7 @@ struct s_sector
 {
 	Uint32			id;
 	Uint32			color;
+	t_vec2i			center;
 	t_vec2i			first_point;
 	bool			first_point_set;
 	int				wall_amount;
@@ -87,9 +90,11 @@ t_point				*get_point_from_list_around_radius(t_list *points, t_vec2i pos, float
 // Wall
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
+t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
 
 // Sector
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
+t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
 
 // Help
 Uint32				random_blue_color(void);

@@ -26,6 +26,8 @@ void	user_events(t_editor *editor, SDL_Event e)
 	t_vec2i	actual_pos;
 
 	calculate_hover(editor);
+	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
+	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	if (editor->win_main->mouse_pos.y < 70) // the 70 comes from the menu_toolbox.h
 		return ;
 	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
@@ -37,8 +39,6 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
-		actual_pos.x = editor->mouse_pos.x + editor->offset.x;
-		actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 		{
 			if (!editor->selected_sector)
@@ -93,8 +93,27 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 	else if (editor->point_button->state == UI_STATE_CLICK)
 	{
+		editor->selected_wall = NULL;
+		editor->selected_sector = NULL;
+		editor->selected_entity = NULL;
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 			editor->selected_point = get_point_from_list_around_radius(editor->points, actual_pos, 1.0f);
+	}
+	else if (editor->wall_button->state == UI_STATE_CLICK)
+	{
+		editor->selected_point = NULL;
+		editor->selected_sector = NULL;
+		editor->selected_entity = NULL;
+		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+			editor->selected_wall = get_wall_from_list_around_radius(editor->walls, actual_pos, 1.0f);
+	}
+	else if (editor->sector_button->state == UI_STATE_CLICK)
+	{
+		editor->selected_point = NULL;
+		editor->selected_wall = NULL;
+		editor->selected_entity = NULL;
+		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+			editor->selected_sector = get_sector_from_list_around_radius(editor->sectors, actual_pos, 1.0f);
 	}
 }
 
@@ -124,7 +143,6 @@ void	draw_points(t_editor *editor, t_list *points, Uint32 color)
 	i = -1;
 	while (points)
 	{
-		ft_printf("Point #%d\n", ++i);
 		point_render(editor, points->content, color);
 		points = points->next;
 	}
@@ -164,6 +182,14 @@ void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos)
 
 void	draw_sector_number(t_editor *editor, t_sector *sector)
 {
+	char	temp[20];
+
+	ft_b_itoa(sector->id, temp);
+	draw_text(editor->drawing_surface, temp, editor->font, sector->center);
+}
+
+t_vec2i	get_sector_center(t_editor *editor, t_sector *sector)
+{
 	int		i;
 	float	x;
 	float	y;
@@ -182,12 +208,8 @@ void	draw_sector_number(t_editor *editor, t_sector *sector)
 	}
 	i = ft_lstlen(sector->walls) * 2;
 	if (i < 2)
-		return ;
-	char	temp[20];
-	t_vec2i	actual;
-	actual = conversion(editor, vec2i(x / i, y / i));
-	ft_b_itoa(sector->id, temp);
-	draw_text(editor->drawing_surface, temp, editor->font, actual);
+		return (vec2i(-1, -1));
+	return (conversion(editor, vec2i(x / i, y / i)));
 }
 
 void	draw_sectors(t_editor *editor, t_list *sectors)
@@ -198,6 +220,7 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 	{
 		sector = sectors->content;
 		sector_render(editor, sector, sector->color);
+		sector->center = get_sector_center(editor, sector);
 		draw_sector_number(editor, sector);
 		sectors = sectors->next;
 	}
@@ -206,7 +229,10 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 void	draw_selected(t_editor *editor)
 {
 	if (editor->selected_point)
+	{
 		point_render(editor, editor->selected_point, 0xff00ff00);
+		ft_printf("we have selected point\n");
+	}
 	else if (editor->selected_wall)
 		wall_render(editor, editor->selected_wall, 0xff00ff00);
 	else if (editor->selected_sector)
@@ -235,6 +261,8 @@ void	editor_init(t_editor *editor)
 	editor->win_main = ui_list_get_window_by_id(editor->layout.windows, "win_main");
 	editor->draw_button = ui_list_get_element_by_id(editor->layout.elements, "draw_button");
 	editor->point_button = ui_list_get_element_by_id(editor->layout.elements, "point_button");
+	editor->wall_button = ui_list_get_element_by_id(editor->layout.elements, "wall_button");
+	editor->sector_button = ui_list_get_element_by_id(editor->layout.elements, "sector_button");
 	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
 	ft_printf("[%s] %s\n", __FUNCTION__, SDL_GetError());
 }
