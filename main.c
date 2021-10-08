@@ -181,6 +181,8 @@ void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
 		wall = walls->content;
 		wall_render(editor, wall, color);
 		point_render(editor, wall->p1, color);
+		wall->middle = get_wall_middle(wall);
+		ui_surface_line_draw(editor->drawing_surface, wall->middle, );
 		walls = walls->next;
 	}
 }

@@ -70,4 +70,11 @@ t_wall	*get_wall_from_list_around_radius(
 	return (NULL);
 }
 
+t_vec2i	get_wall_middle(t_wall *wall)
+{
+	t_vec2i	middle;
 
+	middle.x = (wall->p1->pos.x + wall->p2->pos.x) / 2;
+	middle.y = (wall->p1->pos.y + wall->p2->pos.y) / 2;
+	return (middle);
+}

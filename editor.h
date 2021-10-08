@@ -59,12 +59,15 @@ struct s_point
 	t_vec2i			pos;
 };
 
-
+/*
+ * t_vec2i		middle;		a small line coming out from the middle of the wall that will be used to select a wall if there are 2 on top of eachother; the line should also be drawn inwards of the sector;
+*/
 struct s_wall
 {
 	Uint32			id;
 	t_point			*p1;
 	t_point			*p2;
+	t_vec2i			middle;
 };
 
 struct s_sector
@@ -91,6 +94,7 @@ t_point				*get_point_from_list_around_radius(t_list *points, t_vec2i pos, float
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
 t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
+t_vec2i				get_wall_middle(t_wall *wall);
 
 // Sector
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
