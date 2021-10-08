@@ -94,7 +94,7 @@ t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float all
 
 // Sector
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
-t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
+t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
 
 // Help
 Uint32				random_blue_color(void);

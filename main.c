@@ -24,10 +24,13 @@ void	draw_hover(t_editor *editor)
 void	user_events(t_editor *editor, SDL_Event e)
 {
 	t_vec2i	actual_pos;
+	t_vec2i	move_amount;
 
 	calculate_hover(editor);
 	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
 	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
+	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->win_main->mouse_pos.y < 70) // the 70 comes from the menu_toolbox.h
 		return ;
 	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
@@ -98,6 +101,8 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_entity = NULL;
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 			editor->selected_point = get_point_from_list_around_radius(editor->points, actual_pos, 1.0f);
+		else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+			editor->selected_point->pos = vec2i_add(editor->selected_point->pos, move_amount);
 	}
 	else if (editor->wall_button->state == UI_STATE_CLICK)
 	{
@@ -106,6 +111,11 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_entity = NULL;
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 			editor->selected_wall = get_wall_from_list_around_radius(editor->walls, actual_pos, 1.0f);
+		else if (editor->selected_wall && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+		{
+			editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, move_amount);
+			editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, move_amount);
+		}
 	}
 	else if (editor->sector_button->state == UI_STATE_CLICK)
 	{
@@ -113,7 +123,21 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_wall = NULL;
 		editor->selected_entity = NULL;
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
-			editor->selected_sector = get_sector_from_list_around_radius(editor->sectors, actual_pos, 1.0f);
+			editor->selected_sector = get_sector_from_list_around_radius(editor->sectors, actual_pos, 1);
+		else if (editor->selected_sector && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+		{
+			t_list	*wall_list;
+			t_wall	*wall;
+
+			wall_list = editor->selected_sector->walls;
+			while (wall_list)
+			{
+				wall = wall_list->content;
+				wall->p1->pos = vec2i_add(wall->p1->pos, move_amount);
+				wall->p2->pos = vec2i_add(wall->p2->pos, move_amount);
+				wall_list = wall_list->next;
+			}
+		}
 	}
 }
 
@@ -185,7 +209,7 @@ void	draw_sector_number(t_editor *editor, t_sector *sector)
 	char	temp[20];
 
 	ft_b_itoa(sector->id, temp);
-	draw_text(editor->drawing_surface, temp, editor->font, sector->center);
+	draw_text(editor->drawing_surface, temp, editor->font, conversion(editor, sector->center));
 }
 
 t_vec2i	get_sector_center(t_editor *editor, t_sector *sector)
@@ -209,7 +233,7 @@ t_vec2i	get_sector_center(t_editor *editor, t_sector *sector)
 	i = ft_lstlen(sector->walls) * 2;
 	if (i < 2)
 		return (vec2i(-1, -1));
-	return (conversion(editor, vec2i(x / i, y / i)));
+	return (vec2i(x / i, y / i));
 }
 
 void	draw_sectors(t_editor *editor, t_list *sectors)
@@ -229,10 +253,7 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 void	draw_selected(t_editor *editor)
 {
 	if (editor->selected_point)
-	{
 		point_render(editor, editor->selected_point, 0xff00ff00);
-		ft_printf("we have selected point\n");
-	}
 	else if (editor->selected_wall)
 		wall_render(editor, editor->selected_wall, 0xff00ff00);
 	else if (editor->selected_sector)
