@@ -1,5 +1,6 @@
 #ifndef EDITOR_H
 # define EDITOR_H
+# include "fcntl.h"
 # include "libui.h"
 # include "libft.h"
 # include "libpf.h"
@@ -65,14 +66,22 @@ typedef struct s_editor
 	t_entity		*selected_entity;
 
 	int				sector_amount;
+	int				point_amount;
+	int				walls_amount;
+	int				entity_amount;
 
 	t_list			*points;
 	t_list			*walls;
 	t_list			*sectors;
+
+	char			*map_name;
 }					t_editor;
 
+// BIG NOTE: the id for all points/walls are made in the saving of the file,
+// 			i dont think theres any point trying to reorder stuff before that;
 struct s_point
 {
+	Uint32			id;
 	t_vec2i			pos;
 };
 
@@ -117,6 +126,9 @@ t_vec2i				get_wall_middle(t_wall *wall);
 // Sector
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
+
+// Get && Set
+void				set_map(t_editor *editor);
 
 // Help
 Uint32				random_blue_color(void);

@@ -393,6 +393,8 @@ void	editor_init(t_editor *editor)
 	editor->split_wall_button = ui_list_get_element_by_id(editor->layout.elements, "split_wall_button");
 
 	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
+
+	editor->map_name = ft_strdup("map_name.doom");
 	ft_printf("[%s] %s\n", __FUNCTION__, SDL_GetError());
 }
 
@@ -457,6 +459,8 @@ int	main(int ac, char **av)
 				ui_element_print(editor.point_button);
 				ui_element_print(editor.wall_button);
 			}
+			if (e.key.keysym.scancode == SDL_SCANCODE_S)
+				set_map(&editor);
 		}
 		// User Render
 		user_render(&editor);
