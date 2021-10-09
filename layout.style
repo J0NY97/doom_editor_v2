@@ -1,3 +1,12 @@
+Label
+{
+	text_color : 0xff000000;
+};
+
+Input
+{
+};
+
 win_main
 {
 	xywh : 0, 25, 1920, 1030;
@@ -7,6 +16,14 @@ win_main
 toolbox_menu_prefab
 {
 	bg_color : 0xffb0b0b0;
+};
+
+close_button_prefab
+{
+	xywh : 229, 1, 20, 20;
+	title : NULL;
+	bg_image_default : ui_images/exit_button.png;
+	bg_image_hover : ui_images/exit_button_hover.png;
 };
 
 menu_toolbox_top : toolbox_menu_prefab
@@ -151,9 +168,137 @@ sector_edit_ok_button
 	bg_color_click : 0xff62a877;
 };
 
+floor_height_label
+{
+	xywh : 10, 70, 50, 20;
+	title : Floor Height:;
+};
+
+floor_height_input
+{
+	xywh : 0, 20, 100, 20;
+	text_align : left center;
+};
+
+ceiling_height_label
+{
+	xywh : 120, 70, 50, 20;
+	title : Ceiling Height:;
+};
+
+ceiling_height_input
+{
+	xywh : 0, 20, 100, 20;
+	text_align : left center;
+};
+
+gravity_label
+{
+	xywh : 10, 120, 50, 20;
+	title : Gravity:;
+};
+
+gravity_input
+{
+	xywh : 0, 20, 100, 20;
+	text_align : left center;
+};
+
+lighting_label
+{
+	xywh : 120, 120, 50, 20;
+	title : Lighting:;
+};
+
+lighting_input
+{
+	xywh : 0, 20, 100, 20;
+	text_align : left center;
+};
+
+floor_texture_scale_label
+{
+	xywh : 10, 170, 50, 20;
+	title : Floor Texture Scale:;
+};
+
+floor_texture_scale_input
+{
+	xywh : 0, 20, 100, 20;
+	text_align : left center;
+};
+
+ceiling_texture_scale_label
+{
+	xywh : 120, 170, 50, 20;
+	title : Ceiling Texture Scale:;
+};
+
+ceiling_texture_scale_input
+{
+	xywh : 0, 20, 100, 20;
+	text_align : left center;
+};
+
+floor_texture_label
+{
+	xywh : 10, 220, 50, 20;
+	title : Floor Texture:;
+};
+
+floor_texture_button
+{
+	xywh : 0, 20, 25, 25;
+	bg_image : ui_images/damage.png;
+	title : NONE;
+};
+
+ceiling_texture_label
+{
+	xywh : 120, 220, 50, 20;
+	title : Ceiling Texture:;
+};
+
+ceiling_texture_button
+{
+	xywh : 0, 20, 25, 25;
+	bg_image : ui_images/damage.png;
+	title : NONE;
+};
+
+texture_menu : toolbox_menu_prefab
+{
+	xywh : 251, 71, 250, 500;
+};
+
+texture_menu_label_menu : label_menu_prefab
+{
+	
+};
+
+texture_menu_label
+{
+	title : Textures;
+	text_color : 0xff000000;
+	text_align : center;
+};
+
+texture_menu_close_button : close_button_prefab
+{
+
+};
+
+texture_0
+{
+	xywh : 10, 30, 50, 50;
+	bg_color_hover : 0xffff0000;
+	bg_image_default : ui_images/damage.png;
+	title : NONE;
+};
+
 menu_wall_edit : toolbox_menu_prefab
 {
-	xywh : 0, 572, 250, 400;
+	xywh : 0, 501, 250, 400;
 };
 
 wall_label_menu : label_menu_prefab

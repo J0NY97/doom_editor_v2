@@ -33,18 +33,59 @@ Window win_main
 			Button wall_button {};
 		};
 		Button sector_edit_ok_button {};
-	};
-	Menu menu_wall_edit
-	{
-		Menu wall_label_menu
+		Label floor_height_label
 		{
-			Label wall_edit_label {};
+			Input floor_height_input {};
 		};
-		Button close_wall_edit_button {};
-		Button split_wall_button {};
-		Label portal_label {};
-		Checkbox portal_checkbox {};
-		Label solidity_label {};
-		Checkbox solidity_checkbox {};
+		Label ceiling_height_label
+		{
+			Input ceiling_height_input {};
+		};
+		Label gravity_label
+		{
+			Input gravity_input {};
+		};
+		Label lighting_label
+		{
+			Input lighting_input {};
+		};
+		Label floor_texture_scale_label
+		{
+			Input floor_texture_scale_input {};
+		};
+		Label ceiling_texture_scale_label
+		{
+			Input ceiling_texture_scale_input {};
+		};
+		Label floor_texture_label
+		{
+			Button floor_texture_button {};
+		};
+		Label ceiling_texture_label
+		{
+			Button ceiling_texture_button {};
+		};
+		Menu texture_menu
+		{
+			Menu texture_menu_label_menu
+			{
+				Label texture_menu_label {};
+				Button texture_menu_close_button {};
+			};
+			Button texture_0 {};
+		};
+		Menu menu_wall_edit
+		{
+			Menu wall_label_menu
+			{
+				Label wall_edit_label {};
+			};
+			Button close_wall_edit_button {};
+			Button split_wall_button {};
+			Label portal_label {};
+			Checkbox portal_checkbox {};
+			Label solidity_label {};
+			Checkbox solidity_checkbox {};
+		};
 	};
 };
