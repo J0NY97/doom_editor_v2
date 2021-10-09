@@ -140,6 +140,17 @@ close_sector_edit_button
 	bg_image_hover : ui_images/exit_button_hover.png;
 };
 
+sector_edit_ok_button
+{
+	xywh : 70, 30, 50, 25;
+	title : OK;
+	text_align : center;
+	text_color : 0xffffffff;
+	bg_color_default : 0xff188038;
+	bg_color_hover : 0xff2a8947;
+	bg_color_click : 0xff62a877;
+};
+
 menu_wall_edit : toolbox_menu_prefab
 {
 	xywh : 0, 572, 250, 400;
@@ -172,4 +183,42 @@ split_wall_button : select_button_prefab
 	bg_image_default : ui_images/split_wall.png;
 	bg_image_hover : ui_images/split_wall_hover.png;
 	bg_image_click : ui_images/split_wall_click.png;
+};
+
+portal_label
+{
+	x : 10;
+	y : 65;
+	w : 50;
+	h : 25;
+	title : Portal:;
+};
+
+portal_checkbox
+{
+	x :	50;
+	y : 65;
+	w : 25;
+	h : 25;
+	bg_image_default : ui_images/tick_box_off.png;
+	bg_image_hover : ui_images/tick_box_hover.png;
+	bg_image_click : ui_images/tick_box_on.png;
+};
+
+solidity_label
+{
+	x : 10;
+	y : 90;
+	title : Solid:;
+};
+
+solidity_checkbox
+{
+	x :	50;
+	y : 90;
+	w : 25;
+	h : 25;
+	bg_image_default : ui_images/tick_box_off.png;
+	bg_image_hover : ui_images/tick_box_hover.png;
+	bg_image_click : ui_images/tick_box_on.png;
 };

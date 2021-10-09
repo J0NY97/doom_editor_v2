@@ -36,10 +36,14 @@ typedef struct s_editor
 	t_ui_element	*point_button;
 	t_ui_element	*wall_button;
 	t_ui_element	*sector_button;
+
 	t_ui_element	*menu_sector_edit;
 	t_ui_element	*close_sector_edit_button;
+	t_ui_element	*sector_edit_ok_button;
+
 	t_ui_element	*menu_wall_edit;
 	t_ui_element	*close_wall_edit_button;
+	t_ui_element	*split_wall_button;
 
 	TTF_Font		*font;
 

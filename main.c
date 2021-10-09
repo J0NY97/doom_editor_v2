@@ -69,10 +69,18 @@ void	user_events(t_editor *editor, SDL_Event e)
 				{
 					t_wall	*wall;
 					wall = ft_memalloc(sizeof(t_wall));
-					wall->p1 = ft_memalloc(sizeof(t_point));
-					wall->p1->pos = editor->first_point;
-					wall->p2 = ft_memalloc(sizeof(t_point));
-					wall->p2->pos = editor->second_point;
+					wall->p1 = get_point_from_sector_around_radius(editor->selected_sector, editor->first_point, 0.0f);
+					if (!wall->p1)
+					{
+						wall->p1 = ft_memalloc(sizeof(t_point));
+						wall->p1->pos = editor->first_point;
+					}
+					wall->p2 = get_point_from_sector_around_radius(editor->selected_sector, editor->second_point, 0.0f);
+					if (!wall->p2)
+					{
+						wall->p2 = ft_memalloc(sizeof(t_point));
+						wall->p2->pos = editor->second_point;
+					}
 					editor->first_point_set = 0;
 					editor->second_point_set = 0;
 					++editor->selected_sector->wall_amount;
@@ -155,7 +163,10 @@ void	user_events(t_editor *editor, SDL_Event e)
 				editor->selected_point = NULL;
 			}
 		}
-		else if (editor->selected_sector && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+		else if (editor->selected_sector
+			&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
+			&& !editor->selected_point
+			&& !editor->selected_wall)
 		{
 			t_list	*wall_list;
 			t_wall	*wall;
@@ -172,6 +183,13 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 	else if (editor->draw_button->state != UI_STATE_CLICK)
 		editor->selected_sector = NULL;
+
+	// Sector Edit Ok Button
+	if (editor->sector_edit_ok_button->state == UI_STATE_CLICK)
+	{
+		editor->selected_wall = NULL;
+		editor->selected_point = NULL;
+	}
 
 	// Close Sector Menu Button
 	if (editor->close_sector_edit_button->state == UI_STATE_CLICK)
@@ -198,6 +216,28 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->menu_wall_edit->show = 1;
 	else
 		editor->menu_wall_edit->show = 0;
+
+	if (editor->split_wall_button->state == UI_STATE_CLICK && editor->selected_sector && editor->selected_wall)
+	{
+		t_point	*p1;
+		t_point	*p2;
+		t_point	*p3;
+		t_wall	*new_wall;
+
+		p1 = editor->selected_wall->p1;
+		p2 = editor->selected_wall->p2;
+		p3 = ft_memalloc(sizeof(t_point));
+		p3->pos = get_wall_middle(editor->selected_wall);
+		add_to_list(&editor->points, p3, sizeof(t_point));
+
+		editor->selected_wall->p1 = p3;
+
+		new_wall = ft_memalloc(sizeof(t_wall));
+		new_wall->p1 = p1;
+		new_wall->p2 = p3;
+		add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
+		add_to_list(&editor->walls, new_wall, sizeof(t_wall));
+	}
 }
 
 void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
@@ -346,9 +386,12 @@ void	editor_init(t_editor *editor)
 
 	editor->menu_sector_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_sector_edit");
 	editor->close_sector_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_sector_edit_button");
+	editor->sector_edit_ok_button = ui_list_get_element_by_id(editor->layout.elements, "sector_edit_ok_button");
 	
 	editor->menu_wall_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_wall_edit");
 	editor->close_wall_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_wall_edit_button");
+	editor->split_wall_button = ui_list_get_element_by_id(editor->layout.elements, "split_wall_button");
+
 	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
 	ft_printf("[%s] %s\n", __FUNCTION__, SDL_GetError());
 }
