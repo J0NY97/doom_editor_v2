@@ -97,30 +97,47 @@ void	user_events(t_editor *editor, SDL_Event e)
 		}
 	}
 
-	// Point
-	if (editor->point_button->state == UI_STATE_CLICK)
+	if (editor->selected_sector)
 	{
-		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
-			editor->selected_point = get_point_from_list_around_radius(editor->points, actual_pos, 1.0f);
-		else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
-			editor->selected_point->pos = vec2i_add(editor->selected_point->pos, move_amount);
-	}
-	else
-		editor->selected_point = NULL;
-
-	// Wall
-	if (editor->wall_button->state == UI_STATE_CLICK)
-	{
-		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
-			editor->selected_wall = get_wall_from_list_around_radius(editor->walls, actual_pos, 1.0f);
-		else if (editor->selected_wall && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+		// Point
+		if (editor->point_button->state == UI_STATE_CLICK)
 		{
-			editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, move_amount);
-			editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, move_amount);
+			t_point	*point;
+			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+			{
+				point = get_point_from_sector_around_radius(editor->selected_sector, actual_pos, 1.0f);
+				if (point)
+					editor->selected_point = point;
+			}
+			else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+				editor->selected_point->pos = vec2i_add(editor->selected_point->pos, move_amount);
 		}
+		else
+			editor->selected_point = NULL;
+		// Wall
+		if (editor->wall_button->state == UI_STATE_CLICK)
+		{
+			t_wall	*wall;
+			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+			{
+				wall = get_wall_from_list_around_radius(editor->selected_sector->walls, actual_pos, 1.0f);
+				if (wall)
+					editor->selected_wall = wall;
+			}
+			else if (editor->selected_wall && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+			{
+				editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, move_amount);
+				editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, move_amount);
+			}
+		}
+		else
+			editor->selected_wall = NULL;
 	}
 	else
+	{
 		editor->selected_wall = NULL;
+		editor->selected_point = NULL;
+	}
 
 	// Sector
 	if (editor->sector_button->state == UI_STATE_CLICK)
@@ -132,7 +149,11 @@ void	user_events(t_editor *editor, SDL_Event e)
 			// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
 			sector = get_sector_from_list_around_radius(editor->sectors, actual_pos, 1);
 			if (sector)
+			{
 				editor->selected_sector = sector;
+				editor->selected_wall = NULL;
+				editor->selected_point = NULL;
+			}
 		}
 		else if (editor->selected_sector && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
 		{
@@ -152,11 +173,31 @@ void	user_events(t_editor *editor, SDL_Event e)
 	else if (editor->draw_button->state != UI_STATE_CLICK)
 		editor->selected_sector = NULL;
 
-	// Left Menu
+	// Close Sector Menu Button
+	if (editor->close_sector_edit_button->state == UI_STATE_CLICK)
+	{
+		editor->menu_sector_edit->show = 0;
+		editor->selected_sector = NULL;
+	}
+
+	// Sector Edit Menu
 	if (editor->sector_button->state == UI_STATE_CLICK && editor->selected_sector)
-		editor->menu_toolbox_left->show = 1;
+		editor->menu_sector_edit->show = 1;
 	else
-		editor->menu_toolbox_left->show = 0;
+		editor->menu_sector_edit->show = 0;
+
+	// Close Wall Menu Button
+	if (editor->close_wall_edit_button->state == UI_STATE_CLICK)
+	{
+		editor->menu_wall_edit->show = 0;
+		editor->selected_wall = NULL;
+	}
+
+	// Wall Edit Menu
+	if (editor->wall_button->state == UI_STATE_CLICK && editor->selected_wall)
+		editor->menu_wall_edit->show = 1;
+	else
+		editor->menu_wall_edit->show = 0;
 }
 
 void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
@@ -302,7 +343,12 @@ void	editor_init(t_editor *editor)
 	editor->point_button = ui_list_get_element_by_id(editor->layout.elements, "point_button");
 	editor->wall_button = ui_list_get_element_by_id(editor->layout.elements, "wall_button");
 	editor->sector_button = ui_list_get_element_by_id(editor->layout.elements, "sector_button");
-	editor->menu_toolbox_left = ui_list_get_element_by_id(editor->layout.elements, "menu_toolbox_left");
+
+	editor->menu_sector_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_sector_edit");
+	editor->close_sector_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_sector_edit_button");
+	
+	editor->menu_wall_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_wall_edit");
+	editor->close_wall_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_wall_edit_button");
 	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
 	ft_printf("[%s] %s\n", __FUNCTION__, SDL_GetError());
 }
@@ -317,6 +363,26 @@ void	draw_init(t_editor *editor)
 	editor->offset = vec2i(0, 0);
 }
 
+void	update_title_fps(SDL_Window *win, t_fps *fps)
+{
+	char	str[20];
+
+	ft_b_itoa(fps->fps, str);
+	SDL_SetWindowTitle(win, str);
+}
+
+void	fps_func(t_fps *fps)
+{
+	fps->curr = SDL_GetTicks();
+	fps->count++;
+	if (fps->curr - fps->prev >= 1000)
+	{
+		fps->prev = fps->curr;
+		fps->fps = fps->count;
+		fps->count = 0;
+	}
+}
+
 int	main(int ac, char **av)
 {
 	t_editor	editor;
@@ -327,9 +393,13 @@ int	main(int ac, char **av)
 	editor_init(&editor);
 	draw_init(&editor);
 
+	t_fps	fps;
+	memset(&fps, 0, sizeof(t_fps));
 	run = 1;
 	while (run)
 	{
+		fps_func(&fps);
+		update_title_fps(editor.win_main->win, &fps);
 		if (editor.win_main->wants_to_close)
 			run = 0;
 		while (SDL_PollEvent(&e))
@@ -339,6 +409,11 @@ int	main(int ac, char **av)
 			// User Events
 			user_events(&editor, e);
 
+			if (e.key.keysym.scancode == SDL_SCANCODE_P)
+			{
+				ui_element_print(editor.point_button);
+				ui_element_print(editor.wall_button);
+			}
 		}
 		// User Render
 		user_render(&editor);

@@ -12,6 +12,15 @@ typedef struct	s_wall		t_wall;
 typedef struct	s_sector	t_sector;
 typedef struct	s_entity	t_entity;
 
+typedef struct s_fps
+{
+	float	curr;
+	float	prev;
+	int		fps;
+	int		count;
+}			t_fps;
+
+
 /*
  * SDL_Texture		*drawing_texture;		the texture surface will be texturified on and the rendered on screen;
  * SDL_Surface		*drawing_surface;		the surface on where the grid and all the sectors are drawn on;
@@ -27,7 +36,10 @@ typedef struct s_editor
 	t_ui_element	*point_button;
 	t_ui_element	*wall_button;
 	t_ui_element	*sector_button;
-	t_ui_element	*menu_toolbox_left;
+	t_ui_element	*menu_sector_edit;
+	t_ui_element	*close_sector_edit_button;
+	t_ui_element	*menu_wall_edit;
+	t_ui_element	*close_wall_edit_button;
 
 	TTF_Font		*font;
 
@@ -90,6 +102,7 @@ struct s_entity
 // Point
 void				point_render(t_editor *editor, t_point *point, Uint32 color);
 t_point				*get_point_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
+t_point				*get_point_from_sector_around_radius(t_sector *sector, t_vec2i pos, float allowed_radius);
 
 // Wall
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);

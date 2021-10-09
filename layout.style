@@ -44,7 +44,8 @@ draw_button : select_button_prefab
 
 point_button : select_button_prefab
 {
-	x : 45;
+	x : 10;
+	y : 30;
 	bg_image_default : ui_images/selection_mode_vertex.png;
 	bg_image_hover : ui_images/point_button_hover.png;
 	bg_image_click : ui_images/selection_mode_vertex_click.png;
@@ -52,7 +53,8 @@ point_button : select_button_prefab
 
 wall_button : select_button_prefab
 {
-	x : 80;
+	x : 40;
+	y : 30;
 	bg_image_default : ui_images/selection_mode_wall.png;
 	bg_image_hover : ui_images/wall_button_hover.png;
 	bg_image_click : ui_images/selection_mode_wall_click.png;
@@ -79,7 +81,7 @@ menu_asdf_buttons
 	x : 240;
 	y : 10;
 	h : 50;
-	w : 80;
+	w : 115;
 	bg_color : 0xff808080;
 };
 
@@ -99,7 +101,75 @@ edit_button : select_button_prefab
 	bg_image_click : ui_images/edit_button_click.png;
 };
 
-menu_toolbox_left : toolbox_menu_prefab
+save_button : select_button_prefab
 {
-	xywh : 0, 70, 250, 960;
+	x: 80;
+	bg_image_default : ui_images/save_button.png;
+	bg_image_hover : ui_images/save_button_hover.png;
+	bg_image_click : ui_images/save_button_click.png;
+};
+
+menu_sector_edit : toolbox_menu_prefab
+{
+	xywh : 0, 71, 250, 500;
+};
+
+label_menu_prefab
+{
+	xywh : 0, 0, 250, 22;
+	bg_color : 0xffffffff;
+};
+
+sector_label_menu : label_menu_prefab
+{
+
+};
+
+sector_edit_label
+{
+	title : Sector Edit;
+	text_align : center;
+	text_color : 0xff000000;
+};
+
+close_sector_edit_button
+{
+	xywh : 229, 1, 20, 20;
+	title : NULL;
+	bg_image_default : ui_images/exit_button.png;
+	bg_image_hover : ui_images/exit_button_hover.png;
+};
+
+menu_wall_edit : toolbox_menu_prefab
+{
+	xywh : 0, 572, 250, 400;
+};
+
+wall_label_menu : label_menu_prefab
+{
+
+};
+
+wall_edit_label
+{
+	title : Wall Edit;
+	text_align : center;
+	text_color : 0xff000000;
+};
+
+close_wall_edit_button
+{
+	xywh : 229, 1, 20, 20;
+	title : NULL;
+	bg_image_default : ui_images/exit_button.png;
+	bg_image_hover : ui_images/exit_button_hover.png;
+};
+
+split_wall_button : select_button_prefab
+{
+	x : 10;
+	y : 30;
+	bg_image_default : ui_images/split_wall.png;
+	bg_image_hover : ui_images/split_wall_hover.png;
+	bg_image_click : ui_images/split_wall_click.png;
 };

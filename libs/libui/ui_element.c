@@ -78,6 +78,9 @@ void	ui_element_textures_redo(t_ui_element *elem)
 */
 int	ui_element_render(t_ui_element *elem)
 {
+	elem->was_rendered_last_frame = 0;
+	if (!*elem->parent_was_rendered_last_frame)
+		return (0);
 	if (!*elem->parent_show || !elem->show)
 		return (0);
 	if (!elem->textures[elem->state])
@@ -94,6 +97,7 @@ int	ui_element_render(t_ui_element *elem)
 	SDL_RenderCopy(elem->win->renderer, elem->texture, NULL,
 		&(SDL_Rect){elem->screen_pos.x, elem->screen_pos.y, elem->screen_pos.w, elem->screen_pos.h});
 	elem->last_state = elem->state;
+	elem->was_rendered_last_frame = 1;
 	return (1);
 }
 
@@ -271,6 +275,7 @@ void	ui_element_parent_set(t_ui_element *elem, void *parent, int type)
 		elem->parent_type = type;
 		elem->parent_screen_pos = &parent_win->screen_pos;
 		elem->parent_show = &parent_win->show;
+		elem->parent_was_rendered_last_frame = &parent_win->show;
 		add_to_list(&parent_win->children, elem, UI_TYPE_ELEMENT);
 	}
 	else if (type == UI_TYPE_ELEMENT)
@@ -280,6 +285,7 @@ void	ui_element_parent_set(t_ui_element *elem, void *parent, int type)
 		elem->parent_type = type;
 		elem->parent_screen_pos = &parent_elem->screen_pos;
 		elem->parent_show = &parent_elem->show;
+		elem->parent_was_rendered_last_frame = &parent_elem->was_rendered_last_frame;
 		add_to_list(&parent_elem->children, elem, UI_TYPE_ELEMENT);
 	}
 	else
@@ -307,9 +313,12 @@ void	ui_element_print(t_ui_element *elem)
 	ft_printf("\tcolors : %#x %#x %#x\n", elem->colors[0], elem->colors[1], elem->colors[2]);
 	ft_printf("\tstate : %d\n", elem->state);
 	ft_printf("\tlast_state : %d\n", elem->last_state);
-	ft_printf("\tparent_type : %d\n", elem->parent_type);
-	ft_printf("\telement_type : %d\n", elem->element_type);
+	ft_printf("\tparent_type : %s\n", ui_element_type_to_string(elem->parent_type));
+	if (elem->parent_type == UI_TYPE_ELEMENT)
+		ft_printf("\tparent element_type : %s\n", ui_element_type_to_string(((t_ui_element *)elem->parent)->element_type));
+	ft_printf("\telement_type : %s\n", ui_element_type_to_string(elem->element_type));
 	ft_printf("\tshow : %d\n", elem->show);
+	ft_printf("\tparent show : %d\n", *elem->parent_show);
 	ft_printf("\tis_hover : %d\n", elem->is_hover);
 	ft_printf("\tis_click : %d\n", elem->is_click);
 	ft_printf("\ttexture_recreate : %d\n", elem->texture_recreate);

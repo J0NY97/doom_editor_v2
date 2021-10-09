@@ -5,6 +5,7 @@ void	ui_radio_new(t_ui_window *win, t_ui_element *elem)
 	t_ui_radio	*radio;
 
 	ui_element_new(win, elem);
+	ui_element_pos_set(elem, vec4(elem->pos.x, elem->pos.y, 0, 0));
 	radio = ft_memalloc(sizeof(t_ui_radio));
 	radio->elem = elem;
 	elem->element = radio;

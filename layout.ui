@@ -17,14 +17,29 @@ Window win_main
 		{
 			Button trash_button {};
 			Button edit_button {};
+			Button save_button {};
 		};
 	};
-	Menu menu_toolbox_left
+	Menu menu_sector_edit
 	{
+		Menu sector_label_menu
+		{
+			Label sector_edit_label {};
+		};
+		Button close_sector_edit_button {};
 		Radio left_button_radio
 		{
 			Button point_button {};
 			Button wall_button {};
 		};
+	};
+	Menu menu_wall_edit
+	{
+		Menu wall_label_menu
+		{
+			Label wall_edit_label {};
+		};
+		Button close_wall_edit_button {};
+		Button split_wall_button {};
 	};
 };

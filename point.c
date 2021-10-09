@@ -50,6 +50,46 @@ t_point	*get_point_from_list_around_radius(
 	return (temp);
 }
 
+t_point	*get_point_from_wall_at_pos(t_wall *wall, t_vec2i pos)
+{
+	if (compare_veci(wall->p1->pos.v, pos.v, 2))
+		return (wall->p1);
+	else if (compare_veci(wall->p2->pos.v, pos.v, 2))
+		return (wall->p2);
+	return (NULL);
+}
+
+t_point	*get_point_from_sector_around_radius(
+		t_sector *sector, t_vec2i pos, float allowed_radius)
+{
+	t_list		*curr;
+	t_point		*temp;
+	float		x;
+	float		y;
+
+	curr = sector->walls;
+	while (curr)
+	{
+		x = -allowed_radius;
+		while (x <= allowed_radius)
+		{
+			y = -allowed_radius;
+			while (y <= allowed_radius)
+			{
+				temp = get_point_from_wall_at_pos(curr->content,
+						vec2i(pos.x + (int)x, pos.y + (int)y));
+				if (temp)
+					return (temp);
+				y += 0.5f;
+			}
+			x += 0.5f;
+		}
+		curr = curr->next;
+	}
+	return (temp);
+}
+
+
 /*
 void	point_remove()
 {
