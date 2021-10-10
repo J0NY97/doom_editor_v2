@@ -60,10 +60,12 @@ Window win_main
 		Label floor_texture_label
 		{
 			Button floor_texture_button {};
+			Menu floor_texture_image {};
 		};
 		Label ceiling_texture_label
 		{
 			Button ceiling_texture_button {};
+			Menu ceiling_texture_image {};
 		};
 		Menu texture_menu
 		{
@@ -82,10 +84,52 @@ Window win_main
 			};
 			Button close_wall_edit_button {};
 			Button split_wall_button {};
-			Label portal_label {};
-			Checkbox portal_checkbox {};
-			Label solidity_label {};
-			Checkbox solidity_checkbox {};
+			Checkbox portal_checkbox
+			{
+				Label portal_label {};
+			};
+			Checkbox solidity_checkbox
+			{
+				Label solidity_label {};
+			};
+			Label wall_texture_label
+			{
+				Button wall_texture_button {};
+				Menu wall_texture_image {};
+			};
+			Label portal_texture_label
+			{
+				Button portal_texture_button {};
+				Menu portal_texture_image {};
+			};
+			Label floor_wall_angle_label
+			{
+				Input floor_wall_angle_input {};
+			};
+			Label ceiling_wall_angle_label
+			{
+				Input ceiling_wall_angle_input {};
+			};
+			Label wall_texture_scale_label
+			{
+				Input wall_texture_scale_input {};
+			};
 		};
+	};
+};
+
+Window win_save
+{
+	Label name_label
+	{
+		Input name_input {};
+	};
+	Label endless_label
+	{
+		Checkbox endless_checkbox {};
+	};
+	Label story_label
+	{
+		Checkbox story_checkbox {};
 	};
 };

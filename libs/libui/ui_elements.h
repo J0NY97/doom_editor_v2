@@ -152,6 +152,10 @@ typedef struct s_ui_dropdown
 	t_ui_element		*active;
 }						t_ui_dropdown;
 
+/*
+ * Uint32	input_type;		0 : default/everything, 1: numbers, 2: letters;
+ * bool		input_exit;		1 if you exit the inputting, aka enter or click somewhere else; (basically when you remove yourself from the inputting);
+*/
 typedef struct s_ui_input
 {
 	t_ui_element		*elem;
@@ -160,6 +164,8 @@ typedef struct s_ui_input
 	int					cursor_from_char_num;
 	int					cursor_on_char_x;
 	int					cursor_from_char_x;
+	Uint32				input_type;
+	bool				input_exit;
 }						t_ui_input;
 
 typedef struct s_ui_slider
@@ -332,6 +338,8 @@ void					ui_input_free(void *elem);
 t_ui_element			*ui_input_get_label_element(t_ui_element *elem);
 t_ui_label				*ui_input_get_label(t_ui_element *elem);
 char					*ui_input_text_get(t_ui_element *elem);
+char					*ui_input_set_text(t_ui_element *elem, char *str);
+int						ui_input_exit(t_ui_element *elem);
 
 // Slider
 void					ui_slider_new(t_ui_window *win, t_ui_element *elem);

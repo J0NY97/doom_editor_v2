@@ -515,6 +515,11 @@ void	fill_recipe_from_recipe(t_ui_recipe *target, t_ui_recipe *child)
 		ft_arraydel(target->flags);
 		target->flags = flags;
 	}
+	if (child->input_type_set)
+	{
+		target->input_type = child->input_type;
+		target->input_type_set = 1;
+	}
 }
 
 void	fill_recipe_from_args(t_ui_recipe *recipe, char **args)
@@ -654,6 +659,24 @@ void	fill_recipe_from_args(t_ui_recipe *recipe, char **args)
 			ft_arraydel(flags);
 			ft_arraydel(recipe->flags);
 			recipe->flags = final_flags;
+		}
+		else if (ft_strequ(key_value[0], "type"))
+		{
+			if (ft_strequ(key_value[1], "numbers"))
+			{
+				recipe->input_type = 1;
+				recipe->input_type_set = 1;
+			}
+			else if (ft_strequ(key_value[1], "letters"))
+			{
+				recipe->input_type = 2;
+				recipe->input_type_set = 1;
+			}
+			else if (ft_strequ(key_value[1], "everything"))
+			{
+				recipe->input_type = 0;
+				recipe->input_type_set = 1;
+			}
 		}
 		ft_arraydel(key_value);
 	}

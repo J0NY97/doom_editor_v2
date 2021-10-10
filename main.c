@@ -238,6 +238,53 @@ void	user_events(t_editor *editor, SDL_Event e)
 		add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
 		add_to_list(&editor->walls, new_wall, sizeof(t_wall));
 	}
+
+	if (ui_input_exit(editor->floor_wall_angle_input))
+	{
+		int		angle;
+		char	temp_str[10];
+		angle = ft_clamp(ft_atoi(ui_input_text_get(editor->floor_wall_angle_input)), -45, 45);
+		ft_b_itoa(angle, temp_str);
+		ui_input_set_text(editor->floor_wall_angle_input, temp_str);
+	}
+
+	if (ui_input_exit(editor->ceiling_wall_angle_input))
+	{
+		int		angle;
+		char	temp_str[10];
+		angle = ft_clamp(ft_atoi(ui_input_text_get(editor->ceiling_wall_angle_input)), -45, 45);
+		ft_b_itoa(angle, temp_str);
+		ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
+	}
+
+	if (ui_input_exit(editor->wall_texture_scale_input))
+	{
+		float	scale;
+		char	temp_str[10];
+		scale = ft_fclamp(ft_atof(ui_input_text_get(editor->wall_texture_scale_input)), -10.0f, 10.0f);
+		ft_b_ftoa(scale, 2, temp_str);
+		ui_input_set_text(editor->wall_texture_scale_input, temp_str);
+	}
+
+
+	// Texture Menu
+	if (editor->texture_menu_close_button->state == UI_STATE_CLICK)
+		editor->texture_menu->show = 0;
+
+	if (editor->floor_texture_button->state == UI_STATE_CLICK)
+		editor->texture_menu->show = 1;
+	else if (editor->ceiling_texture_button->state == UI_STATE_CLICK)
+		editor->texture_menu->show = 1;
+	else if (editor->wall_texture_button->state == UI_STATE_CLICK)
+		editor->texture_menu->show = 1;
+	else if (editor->portal_texture_button->state == UI_STATE_CLICK)
+		editor->texture_menu->show = 1;
+
+	//////////////////////
+	// Save Window Events
+	//////////////////////
+	if (editor->save_button->state == UI_STATE_CLICK)
+		ui_window_flag_set(editor->win_save, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
 }
 
 void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
@@ -362,7 +409,6 @@ void	draw_selected(t_editor *editor)
 void	user_render(t_editor *editor)
 {
 	draw_grid(editor->drawing_surface, editor->gap_size, editor->zoom);
-	draw_points(editor, editor->points, 0xff00ff00); // remove this at some point;
 	draw_sectors(editor, editor->sectors);
 	draw_hover(editor);
 	draw_selected(editor);
@@ -378,19 +424,36 @@ void	editor_init(t_editor *editor)
 {
 	memset(editor, 0, sizeof(t_editor));
 	ui_layout_load(&editor->layout, "layout.ui");
+
+	// Main Window
 	editor->win_main = ui_list_get_window_by_id(editor->layout.windows, "win_main");
 	editor->draw_button = ui_list_get_element_by_id(editor->layout.elements, "draw_button");
 	editor->point_button = ui_list_get_element_by_id(editor->layout.elements, "point_button");
 	editor->wall_button = ui_list_get_element_by_id(editor->layout.elements, "wall_button");
 	editor->sector_button = ui_list_get_element_by_id(editor->layout.elements, "sector_button");
+	editor->save_button = ui_list_get_element_by_id(editor->layout.elements, "save_button");
 
 	editor->menu_sector_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_sector_edit");
 	editor->close_sector_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_sector_edit_button");
 	editor->sector_edit_ok_button = ui_list_get_element_by_id(editor->layout.elements, "sector_edit_ok_button");
-	
+	editor->floor_texture_button = ui_list_get_element_by_id(editor->layout.elements, "floor_texture_button");
+	editor->ceiling_texture_button = ui_list_get_element_by_id(editor->layout.elements, "ceiling_texture_button");
+
 	editor->menu_wall_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_wall_edit");
 	editor->close_wall_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_wall_edit_button");
 	editor->split_wall_button = ui_list_get_element_by_id(editor->layout.elements, "split_wall_button");
+	editor->wall_texture_button = ui_list_get_element_by_id(editor->layout.elements, "wall_texture_button");
+	editor->portal_texture_button = ui_list_get_element_by_id(editor->layout.elements, "portal_texture_button");
+	editor->floor_wall_angle_input = ui_list_get_element_by_id(editor->layout.elements, "floor_wall_angle_input");
+	editor->ceiling_wall_angle_input = ui_list_get_element_by_id(editor->layout.elements, "ceiling_wall_angle_input");
+	editor->wall_texture_scale_input = ui_list_get_element_by_id(editor->layout.elements, "wall_texture_scale_input");
+
+	editor->texture_menu = ui_list_get_element_by_id(editor->layout.elements, "texture_menu");
+	editor->texture_menu->show = 0;
+	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
+
+	// Save Window
+	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");
 
 	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
 
@@ -459,7 +522,7 @@ int	main(int ac, char **av)
 				ui_element_print(editor.point_button);
 				ui_element_print(editor.wall_button);
 			}
-			if (e.key.keysym.scancode == SDL_SCANCODE_S)
+			if ((SDL_GetModState() & KMOD_LCTRL) && e.key.keysym.scancode == SDL_SCANCODE_S)
 				set_map(&editor);
 		}
 		// User Render

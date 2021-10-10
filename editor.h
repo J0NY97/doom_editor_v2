@@ -37,14 +37,27 @@ typedef struct s_editor
 	t_ui_element	*point_button;
 	t_ui_element	*wall_button;
 	t_ui_element	*sector_button;
+	t_ui_element	*save_button;
 
 	t_ui_element	*menu_sector_edit;
 	t_ui_element	*close_sector_edit_button;
 	t_ui_element	*sector_edit_ok_button;
+	t_ui_element	*floor_texture_button;
+	t_ui_element	*ceiling_texture_button;
 
 	t_ui_element	*menu_wall_edit;
 	t_ui_element	*close_wall_edit_button;
 	t_ui_element	*split_wall_button;
+	t_ui_element	*wall_texture_button;
+	t_ui_element	*portal_texture_button;
+	t_ui_element	*floor_wall_angle_input;
+	t_ui_element	*ceiling_wall_angle_input;
+	t_ui_element	*wall_texture_scale_input;
+
+	t_ui_element	*texture_menu;
+	t_ui_element	*texture_menu_close_button;
+
+	t_ui_window		*win_save;
 
 	TTF_Font		*font;
 

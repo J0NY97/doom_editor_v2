@@ -27,6 +27,7 @@ typedef struct s_ui_family
 
 /*
  * int		value[3];		0 : value, 1 : min, 2 : max;
+ * Uint32	input_type;		only numbers, only letters, only everything (default)
 */
 typedef struct s_ui_recipe
 {
@@ -55,6 +56,10 @@ typedef struct s_ui_recipe
 
 	// Window only
 	char			**flags;
+
+	// Input only
+	bool			input_type_set;
+	Uint32			input_type;
 }					t_ui_recipe;
 
 ///////////////
