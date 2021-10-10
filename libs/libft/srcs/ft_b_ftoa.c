@@ -27,13 +27,7 @@ char	*special_itoa(int nbr, int n)
 	}
 	while (i < n)
 		str[i++] = '0';
-	ft_putchar('[');
-	ft_putstr(str);
-	ft_putchar(']');
 	ft_b_reverse(str);
-	ft_putchar('[');
-	ft_putstr(str);
-	ft_putchar(']');
 	return (str);
 }
 
@@ -56,9 +50,6 @@ char	*ft_b_ftoa(double d, int precision, char *buffer)
 		buffer[i] = '.';
 		ft_strdel(&temp);
 		temp = special_itoa(fpart * ft_pow(10, precision), precision);
-		ft_putchar('<');
-		ft_putstr(temp);
-		ft_putchar('>');
 		ft_strncpy(buffer + i + 1, temp, precision);
 	}
 	ft_strdel(&temp);
