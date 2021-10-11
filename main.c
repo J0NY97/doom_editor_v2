@@ -285,6 +285,23 @@ void	user_events(t_editor *editor, SDL_Event e)
 	//////////////////////
 	if (editor->save_button->state == UI_STATE_CLICK)
 		ui_window_flag_set(editor->win_save, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
+
+	if (editor->confirm_save_button->state == UI_STATE_CLICK)
+	{
+		int	len;
+
+		len = ft_strlen(ui_input_text_get(editor->name_input));
+		if (len < 1)
+			ft_printf("[%s] Map name len is less than 1 (it\'s : %d), won\'t slide.\n", __FUNCTION__, len);
+		else
+		{
+			char	*actual_full_path;
+
+			actual_full_path = ft_strjoiner(MAP_PATH, ui_input_text_get(editor->name_input), ".dnd", NULL);
+			set_map(editor, actual_full_path);
+			ft_strdel(&actual_full_path);
+		}
+	}
 }
 
 void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
@@ -454,6 +471,10 @@ void	editor_init(t_editor *editor)
 
 	// Save Window
 	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");
+	editor->endless_button = ui_list_get_element_by_id(editor->layout.elements, "endless_button");
+	editor->story_button = ui_list_get_element_by_id(editor->layout.elements, "story_button");
+	editor->name_input = ui_list_get_element_by_id(editor->layout.elements, "name_input");
+	editor->confirm_save_button = ui_list_get_element_by_id(editor->layout.elements, "confirm_save_button");
 
 	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
 
@@ -500,6 +521,10 @@ int	main(int ac, char **av)
 	ui_sdl_init();
 	editor_init(&editor);
 	draw_init(&editor);
+	if (args_parser(&editor, ac, av))
+		try_reading_map(&editor);
+	else
+		ft_printf("[%s] No map given to open.\n", __FUNCTION__);
 
 	t_fps	fps;
 	memset(&fps, 0, sizeof(t_fps));
@@ -522,8 +547,6 @@ int	main(int ac, char **av)
 				ui_element_print(editor.point_button);
 				ui_element_print(editor.wall_button);
 			}
-			if ((SDL_GetModState() & KMOD_LCTRL) && e.key.keysym.scancode == SDL_SCANCODE_S)
-				set_map(&editor);
 		}
 		// User Render
 		user_render(&editor);

@@ -344,30 +344,14 @@ split_wall_button : select_button_prefab
 	bg_image_click : ui_images/split_wall_click.png;
 };
 
-portal_checkbox
-{
-	x :	50;
-	y : 65;
-	w : 25;
-	h : 25;
-	bg_image_default : ui_images/tick_box_off.png;
-	bg_image_hover : ui_images/tick_box_hover.png;
-	bg_image_click : ui_images/tick_box_on.png;
-};
-
 portal_label
 {
+	xywh : 10, 65, 50, 20;
 	title : Portal:;
-	x : -40;
-	y : 2;
 };
-
-solidity_checkbox
+portal_checkbox
 {
-	x :	150;
-	y : 65;
-	w : 25;
-	h : 25;
+	xywh : 0, 20, 25, 25;
 	bg_image_default : ui_images/tick_box_off.png;
 	bg_image_hover : ui_images/tick_box_hover.png;
 	bg_image_click : ui_images/tick_box_on.png;
@@ -375,9 +359,15 @@ solidity_checkbox
 
 solidity_label
 {
-	x : -40;
-	y : 2;
+	xywh : 120, 65, 50, 20;
 	title : Solid:;
+};
+solidity_checkbox
+{
+	xywh : 0, 20, 25, 25;
+	bg_image_default : ui_images/tick_box_off.png;
+	bg_image_hover : ui_images/tick_box_hover.png;
+	bg_image_click : ui_images/tick_box_on.png;
 };
 
 wall_texture_label
@@ -488,9 +478,10 @@ endless_label
 	xywh : 10, 50, 50, 20;
 	title : Endless:;
 };
-endless_checkbox
+endless_button
 {
-	xywh : 0, 20, 20, 20;
+	xywh : 10, 70, 20, 20;
+	title : Endless:;
 };
 
 story_label
@@ -498,7 +489,14 @@ story_label
 	xywh : 100, 50, 50, 20;
 	title : Story:;
 };
-story_checkbox
+story_button
 {
-	xywh : 0, 20, 20, 20;
+	xywh : 100, 70, 20, 20;
+	title : Story:;
+};
+
+confirm_save_button
+{
+	xywh : 140, 70, 50, 20;
+	title : Save;
 };

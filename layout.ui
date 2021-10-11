@@ -84,13 +84,13 @@ Window win_main
 			};
 			Button close_wall_edit_button {};
 			Button split_wall_button {};
-			Checkbox portal_checkbox
+			Label portal_label
 			{
-				Label portal_label {};
+				Checkbox portal_checkbox {};
 			};
-			Checkbox solidity_checkbox
+			Label solidity_label
 			{
-				Label solidity_label {};
+				Checkbox solidity_checkbox {};
 			};
 			Label wall_texture_label
 			{
@@ -120,16 +120,17 @@ Window win_main
 
 Window win_save
 {
+
 	Label name_label
 	{
 		Input name_input {};
 	};
-	Label endless_label
+	Label endless_label {};
+	Label story_label {};
+	Radio map_type_radio
 	{
-		Checkbox endless_checkbox {};
+		Button endless_button {};
+		Button story_button {};
 	};
-	Label story_label
-	{
-		Checkbox story_checkbox {};
-	};
+	Button confirm_save_button {};
 };

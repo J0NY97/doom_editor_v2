@@ -1,10 +1,11 @@
-NAME = map_editor
+NAME = doom_editor
 SRCS = \
 	./main.c \
 	./point.c \
 	./wall.c \
 	./sector.c \
 	./set_map.c \
+	./args_parser.c \
 	./help.c \
 
 OBJS = $(SRCS:.c=.o)

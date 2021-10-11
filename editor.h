@@ -8,6 +8,8 @@
 # include "SDL_ttf.h"
 # include "SDL_image.h"
 
+# define MAP_PATH "C:/Users/Jony/source/repos/map_editor_v2/maps/"
+
 typedef struct	s_point		t_point;
 typedef struct	s_wall		t_wall;
 typedef struct	s_sector	t_sector;
@@ -58,6 +60,10 @@ typedef struct s_editor
 	t_ui_element	*texture_menu_close_button;
 
 	t_ui_window		*win_save;
+	t_ui_element	*story_button;
+	t_ui_element	*endless_button;
+	t_ui_element	*confirm_save_button;
+	t_ui_element	*name_input;
 
 	TTF_Font		*font;
 
@@ -88,6 +94,7 @@ typedef struct s_editor
 	t_list			*sectors;
 
 	char			*map_name;
+	char			*map_full_path;
 }					t_editor;
 
 // BIG NOTE: the id for all points/walls are made in the saving of the file,
@@ -140,8 +147,12 @@ t_vec2i				get_wall_middle(t_wall *wall);
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
 
+// Get map from args
+int					args_parser(t_editor *editor, int ac, char **av);
+void				try_reading_map(t_editor *editor);
+
 // Get && Set
-void				set_map(t_editor *editor);
+void				set_map(t_editor *editor, char *name);
 
 // Help
 Uint32				random_blue_color(void);
