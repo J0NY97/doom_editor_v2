@@ -120,7 +120,6 @@ Window win_main
 
 Window win_save
 {
-
 	Label name_label
 	{
 		Input name_input {};
@@ -133,4 +132,12 @@ Window win_save
 		Button story_button {};
 	};
 	Button confirm_save_button {};
+};
+
+Window win_edit
+{
+	Label map_scale_label
+	{
+		Input map_scale_input {};
+	};
 };

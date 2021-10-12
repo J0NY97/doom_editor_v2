@@ -5,6 +5,10 @@ Label
 
 Input
 {
+	text_color : 0xff000000;
+	bg_image_default : ui_images/ui_input.png;
+	bg_image_hover : ui_images/ui_input_hover.png;
+	bg_image_click : ui_images/ui_input_click.png;
 };
 
 win_main
@@ -26,20 +30,29 @@ close_button_prefab
 	bg_image_hover : ui_images/exit_button_hover.png;
 };
 
+confirm_button_prefab
+{
+	text_align : center;
+	text_color : 0xffffffff;
+	bg_color_default : 0xff188038;
+	bg_color_hover : 0xff2a8947;
+	bg_color_click : 0xff62a877;
+};
+
 menu_toolbox_top : toolbox_menu_prefab
 {
 	x : 0;
 	y : 0;
-	w : 1920;
-	h : 70;
+	w : 260;
+	h : 65;
 };
 
 menu_select_buttons
 {
 	x : 10;
 	y : 10;
-	w : 220;
-	h : 50;
+	w : 115;
+	h : 45;
 	bg_color : 0xff808080;
 };
 
@@ -79,7 +92,7 @@ wall_button : select_button_prefab
 
 sector_button : select_button_prefab
 {
-	x : 120;
+	x : 45;
 	bg_image_default : ui_images/selection_mode_sector.png;
 	bg_image_hover : ui_images/sector_button_hover.png;
 	bg_image_click : ui_images/selection_mode_sector_click.png;
@@ -87,7 +100,7 @@ sector_button : select_button_prefab
 
 entity_button : select_button_prefab
 {
-	x : 155;
+	x : 80;
 	bg_image_default : ui_images/selection_mode_entity.png;
 	bg_image_hover : ui_images/entity_button_hover.png;
 	bg_image_click : ui_images/selection_mode_entity_click.png;
@@ -95,9 +108,9 @@ entity_button : select_button_prefab
 
 menu_asdf_buttons
 {
-	x : 240;
+	x : 135;
 	y : 10;
-	h : 50;
+	h : 45;
 	w : 115;
 	bg_color : 0xff808080;
 };
@@ -157,15 +170,10 @@ close_sector_edit_button
 	bg_image_hover : ui_images/exit_button_hover.png;
 };
 
-sector_edit_ok_button
+sector_edit_ok_button : confirm_button_prefab
 {
 	xywh : 70, 30, 50, 25;
 	title : OK;
-	text_align : center;
-	text_color : 0xffffffff;
-	bg_color_default : 0xff188038;
-	bg_color_hover : 0xff2a8947;
-	bg_color_click : 0xff62a877;
 };
 
 floor_height_label
@@ -481,22 +489,52 @@ endless_label
 endless_button
 {
 	xywh : 10, 70, 20, 20;
-	title : Endless:;
+	title : :;
+	bg_image_default : ui_images/tick_box_off.png;
+	bg_image_hover : ui_images/tick_box_hover.png;
+	bg_image_click : ui_images/tick_box_on.png;
 };
 
 story_label
 {
-	xywh : 100, 50, 50, 20;
+	xywh : 70, 50, 50, 20;
 	title : Story:;
 };
 story_button
 {
-	xywh : 100, 70, 20, 20;
-	title : Story:;
+	xywh : 70, 70, 20, 20;
+	title : :;
+	bg_image_default : ui_images/tick_box_off.png;
+	bg_image_hover : ui_images/tick_box_hover.png;
+	bg_image_click : ui_images/tick_box_on.png;
 };
 
-confirm_save_button
+confirm_save_button : confirm_button_prefab
 {
 	xywh : 140, 70, 50, 20;
 	title : Save;
+};
+
+
+///////////////////
+// Edit Map Window
+///////////////////
+win_edit
+{
+	xywh : 100, 100, 200, 100;
+	bg_color : 0xffb0b0b0;
+	flag : xhides hide;
+};
+
+map_scale_label
+{
+	xywh : 10, 10, 50, 20;
+	title : Map Scale:;
+};
+
+map_scale_input
+{
+	xywh : 0, 20, 100, 20;
+	title : 1.0;
+	text_align : center left;
 };

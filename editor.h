@@ -40,6 +40,7 @@ typedef struct s_editor
 	t_ui_element	*wall_button;
 	t_ui_element	*sector_button;
 	t_ui_element	*save_button;
+	t_ui_element	*edit_button;
 
 	t_ui_element	*menu_sector_edit;
 	t_ui_element	*close_sector_edit_button;
@@ -64,6 +65,8 @@ typedef struct s_editor
 	t_ui_element	*endless_button;
 	t_ui_element	*confirm_save_button;
 	t_ui_element	*name_input;
+
+	t_ui_window		*win_edit;
 
 	TTF_Font		*font;
 
@@ -95,6 +98,7 @@ typedef struct s_editor
 
 	char			*map_name;
 	char			*map_full_path;
+	float			map_scale;
 }					t_editor;
 
 // BIG NOTE: the id for all points/walls are made in the saving of the file,

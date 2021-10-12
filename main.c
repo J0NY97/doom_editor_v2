@@ -266,7 +266,6 @@ void	user_events(t_editor *editor, SDL_Event e)
 		ui_input_set_text(editor->wall_texture_scale_input, temp_str);
 	}
 
-
 	// Texture Menu
 	if (editor->texture_menu_close_button->state == UI_STATE_CLICK)
 		editor->texture_menu->show = 0;
@@ -302,6 +301,12 @@ void	user_events(t_editor *editor, SDL_Event e)
 			ft_strdel(&actual_full_path);
 		}
 	}
+
+	//////////////////////
+	// Edit Window Events
+	//////////////////////
+	if (editor->edit_button->state == UI_STATE_CLICK)
+		ui_window_flag_set(editor->win_edit, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
 }
 
 void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
@@ -449,6 +454,7 @@ void	editor_init(t_editor *editor)
 	editor->wall_button = ui_list_get_element_by_id(editor->layout.elements, "wall_button");
 	editor->sector_button = ui_list_get_element_by_id(editor->layout.elements, "sector_button");
 	editor->save_button = ui_list_get_element_by_id(editor->layout.elements, "save_button");
+	editor->edit_button = ui_list_get_element_by_id(editor->layout.elements, "edit_button");
 
 	editor->menu_sector_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_sector_edit");
 	editor->close_sector_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_sector_edit_button");
@@ -475,6 +481,9 @@ void	editor_init(t_editor *editor)
 	editor->story_button = ui_list_get_element_by_id(editor->layout.elements, "story_button");
 	editor->name_input = ui_list_get_element_by_id(editor->layout.elements, "name_input");
 	editor->confirm_save_button = ui_list_get_element_by_id(editor->layout.elements, "confirm_save_button");
+
+	// Edit Window
+	editor->win_edit = ui_list_get_window_by_id(editor->layout.windows, "win_edit");
 
 	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
 
