@@ -313,6 +313,48 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->texture_menu->show = 1;
 
 	//////////////////////
+	// Info Menu
+	//////////////////////
+	char	*final_str;
+
+	if (e.type == SDL_MOUSEMOTION)
+	{
+		final_str = ft_sprintf("%d, %d", actual_pos.x, actual_pos.y);
+		ui_label_text_set(editor->mouse_info_label, final_str);
+		ft_strdel(&final_str);
+	}
+
+	if (editor->selected_sector)
+	{
+		t_sector *sector = editor->selected_sector;
+		final_str = ft_sprintf("iD : %d\npos : %d, %d\nWall Amount : %d\n", sector->id, sector->center.x, sector->center.y, sector->wall_amount);
+		ui_label_text_set(editor->sector_info_label, final_str);
+		ft_strdel(&final_str);
+
+		if (editor->selected_point)
+		{
+			t_point *point = editor->selected_point;
+			final_str = ft_sprintf("iD : %d\npos : %d, %d\n", point->id, point->pos.x, point->pos.y);
+			ui_label_text_set(editor->sub_info_label, final_str);
+			ft_strdel(&final_str);
+		}
+		else if (editor->selected_wall)
+		{
+			t_wall *wall = editor->selected_wall;
+			final_str = ft_sprintf("iD : %d\np1 : %d, %d\np2 : %d, %d\n", wall->id, wall->p1->pos.x, wall->p1->pos.y, wall->p2->pos.x, wall->p2->pos.y);
+			ui_label_text_set(editor->sub_info_label, final_str);
+			ft_strdel(&final_str);
+		}
+		else
+			ui_label_text_set(editor->sub_info_label, "NONE");
+	}
+	else
+	{
+		ui_label_text_set(editor->sector_info_label, "NONE");
+		ui_label_text_set(editor->sub_info_label, "NONE");
+	}
+
+	//////////////////////
 	// Save Window Events
 	//////////////////////
 	if (editor->save_button->state == UI_STATE_CLICK)
@@ -508,6 +550,10 @@ void	editor_init(t_editor *editor)
 	editor->texture_menu = ui_list_get_element_by_id(editor->layout.elements, "texture_menu");
 	editor->texture_menu->show = 0;
 	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
+
+	editor->sector_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sector_info");
+	editor->mouse_info_label = ui_list_get_element_by_id(editor->layout.elements, "mouse_hover_info");
+	editor->sub_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sub_info");
 
 	// Save Window
 	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");

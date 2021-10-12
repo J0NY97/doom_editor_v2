@@ -469,7 +469,7 @@ info_menu : toolbox_menu_prefab
 mouse_hover_label
 {
 	xywh : 10, 10, 50, 20;
-	title : Selected Sector:;
+	title : Mouse:;
 };
 mouse_hover_info
 {
@@ -480,7 +480,7 @@ mouse_hover_info
 selected_sector_label
 {
 	xywh : 120, 10, 50, 20;
-	title : Selected Sector:;
+	title : Sector:;
 };
 selected_sector_info
 {
@@ -491,7 +491,7 @@ selected_sector_info
 selected_sub_label
 {
 	xywh : 120, 100, 50, 20;
-	title : Selected ...:;
+	title : Wall/Point:;
 };
 selected_sub_info
 {

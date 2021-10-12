@@ -61,6 +61,10 @@ typedef struct s_editor
 	t_ui_element	*texture_menu;
 	t_ui_element	*texture_menu_close_button;
 
+	t_ui_element	*mouse_info_label;
+	t_ui_element	*sector_info_label;
+	t_ui_element	*sub_info_label;
+
 	t_ui_window		*win_save;
 	t_ui_element	*story_button;
 	t_ui_element	*endless_button;
