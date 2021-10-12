@@ -115,7 +115,7 @@ menu_asdf_buttons
 	bg_color : 0xff808080;
 };
 
-trash_button : select_button_prefab
+remove_button : select_button_prefab
 {
 	x : 10;
 	bg_image_default : ui_images/remove_button.png;
@@ -458,6 +458,47 @@ wall_texture_scale_input
 	title : 1;
 };
 
+///////////////////
+// Win Main Info Menu
+///////////////////
+info_menu : toolbox_menu_prefab
+{
+	xywh : 1720, 0, 200, 200;
+};
+
+mouse_hover_label
+{
+	xywh : 10, 10, 50, 20;
+	title : Selected Sector:;
+};
+mouse_hover_info
+{
+	xywh : 0, 20, 20, 20;
+	title : [mouse hvoer info];
+};
+
+selected_sector_label
+{
+	xywh : 120, 10, 50, 20;
+	title : Selected Sector:;
+};
+selected_sector_info
+{
+	xywh : 0, 20, 20, 20;
+	title : [sector info];
+};
+
+selected_sub_label
+{
+	xywh : 120, 100, 50, 20;
+	title : Selected ...:;
+};
+selected_sub_info
+{
+	xywh : 0, 20, 20, 20;
+	title : [sub info];
+	max_w : 90;
+};
 
 ///////////////////
 // Save Map Window

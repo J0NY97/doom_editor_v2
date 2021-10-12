@@ -36,6 +36,7 @@ typedef struct s_editor
 	t_ui_layout		layout;
 	t_ui_window		*win_main;
 	t_ui_element	*draw_button;
+	t_ui_element	*remove_button;
 	t_ui_element	*point_button;
 	t_ui_element	*wall_button;
 	t_ui_element	*sector_button;
@@ -140,16 +141,19 @@ struct s_entity
 void				point_render(t_editor *editor, t_point *point, Uint32 color);
 t_point				*get_point_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
 t_point				*get_point_from_sector_around_radius(t_sector *sector, t_vec2i pos, float allowed_radius);
+int					remove_point(t_editor *editor, t_point *point);
 
 // Wall
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
 t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
 t_vec2i				get_wall_middle(t_wall *wall);
+int					remove_wall(t_editor *editor, t_wall *wall);
 
 // Sector
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
+int					remove_sector(t_editor *editor, t_sector *sector);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);
@@ -161,5 +165,6 @@ void				set_map(t_editor *editor, char *name);
 // Help
 Uint32				random_blue_color(void);
 t_vec2i				conversion(t_editor *editor, t_vec2i v);
+void				remove_from_list(t_list **list, void *pointer);
 
 #endif

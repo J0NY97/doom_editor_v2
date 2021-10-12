@@ -15,9 +15,24 @@ Window win_main
 		};
 		Menu menu_asdf_buttons
 		{
-			Button trash_button {};
+			Button remove_button {};
 			Button edit_button {};
 			Button save_button {};
+		};
+		Menu info_menu
+		{
+			Label mouse_hover_label
+			{
+				Label mouse_hover_info {};
+			};
+			Label selected_sector_label
+			{
+				Label selected_sector_info {};
+			};
+			Label selected_sub_label // either point or wall
+			{
+				Label selected_sub_info {};
+			};
 		};
 	};
 	Menu menu_sector_edit

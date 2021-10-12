@@ -78,3 +78,14 @@ t_vec2i	get_wall_middle(t_wall *wall)
 	middle.y = (wall->p1->pos.y + wall->p2->pos.y) / 2;
 	return (middle);
 }
+
+int	remove_wall(t_editor *editor, t_wall *wall)
+{
+	if (!wall)
+		return (0);
+	remove_from_list(&editor->walls, wall);
+	free(wall);
+	wall = NULL;
+	ft_printf("[%s] Done removing wall.\n", __FUNCTION__);
+	return (1);
+}

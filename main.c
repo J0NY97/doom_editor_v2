@@ -21,6 +21,16 @@ void	draw_hover(t_editor *editor)
 			convert_back, 0xffffff00);
 }
 
+/*
+ * 1. Remove all the points not a part of a sector;
+ * 2. Remove all walls with either points NULL;
+ * 3. Remove all sectors with no walls;
+*/
+void	sector_cleanup(t_editor *editor)
+{
+	(void)editor;
+}
+
 void	user_events(t_editor *editor, SDL_Event e)
 {
 	t_vec2i	actual_pos;
@@ -103,6 +113,29 @@ void	user_events(t_editor *editor, SDL_Event e)
 				}
 			}
 		}
+	}
+
+	// Remove
+	if (editor->remove_button->state == UI_STATE_CLICK)
+	{
+		int	was_removed = 0;
+		if (editor->selected_point)
+		{
+			remove_point(editor, editor->selected_point);
+			editor->selected_point = NULL;
+		}
+		else if (editor->selected_wall)
+		{
+			remove_wall(editor, editor->selected_wall);
+			editor->selected_point = NULL;
+		}
+		else if (editor->selected_sector)
+		{
+			remove_sector(editor, editor->selected_sector);
+			editor->selected_sector = NULL;
+		}
+		if (was_removed)
+			sector_cleanup(editor);
 	}
 
 	if (editor->selected_sector)
@@ -450,6 +483,7 @@ void	editor_init(t_editor *editor)
 	// Main Window
 	editor->win_main = ui_list_get_window_by_id(editor->layout.windows, "win_main");
 	editor->draw_button = ui_list_get_element_by_id(editor->layout.elements, "draw_button");
+	editor->remove_button = ui_list_get_element_by_id(editor->layout.elements, "remove_button");
 	editor->point_button = ui_list_get_element_by_id(editor->layout.elements, "point_button");
 	editor->wall_button = ui_list_get_element_by_id(editor->layout.elements, "wall_button");
 	editor->sector_button = ui_list_get_element_by_id(editor->layout.elements, "sector_button");

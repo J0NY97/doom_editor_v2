@@ -89,10 +89,29 @@ t_point	*get_point_from_sector_around_radius(
 	return (temp);
 }
 
-
 /*
-void	point_remove()
-{
-
-}
+ * Removes point from all sectors, walls, and from anything else that are using this point;
 */
+int	remove_point(t_editor *editor, t_point *point)
+{
+	if (!point)
+		return (0);
+	remove_from_list(&editor->points, point);
+	free(point);
+	point = NULL;
+	ft_printf("[%s] Done removing point.\n", __FUNCTION__);
+	return (1);
+}
+
+void	remove_from_list(t_list **list, void *pointer)
+{
+	t_list	*curr;
+
+	curr = *list;
+	while (curr)
+	{
+		if (curr->content == pointer)
+			ft_lstdelone_nonfree(list, curr);
+		curr = curr->next;
+	}
+}

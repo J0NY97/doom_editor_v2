@@ -22,3 +22,14 @@ t_sector	*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allo
 	}
 	return (final);
 }
+
+int	remove_sector(t_editor *editor, t_sector *sector)
+{
+	if (!sector)
+		return (0);
+	remove_from_list(&editor->sectors, sector);
+	free(sector);
+	sector = NULL;
+	ft_printf("[%s] Sector removed from editor->sectors\n", __FUNCTION__);
+	return (1);
+}
