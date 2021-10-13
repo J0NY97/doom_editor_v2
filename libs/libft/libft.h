@@ -109,6 +109,7 @@ char				*ft_strcat(char *dest, const char *src);
 char				*ft_strchr(const char *str, int c);
 int					ft_strchrlen(const char *str, int c);
 void				ft_strclr(char *s);
+void				ft_strnclr(char *str, size_t n);
 int					ft_strcmp(const char *s1, const char *s2);
 char				*ft_strcpy(char *dest, const char *src);
 char				*ft_strcut(char *str, int start, int end);

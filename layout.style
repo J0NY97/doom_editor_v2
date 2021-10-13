@@ -484,7 +484,7 @@ selected_sector_label
 };
 selected_sector_info
 {
-	xywh : 0, 20, 20, 20;
+	xywh : 0, 20, 70, 20;
 	title : [sector info];
 };
 
@@ -495,7 +495,7 @@ selected_sub_label
 };
 selected_sub_info
 {
-	xywh : 0, 20, 20, 20;
+	xywh : 0, 20, 70, 20;
 	title : [sub info];
 	max_w : 90;
 };

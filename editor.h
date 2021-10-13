@@ -48,10 +48,18 @@ typedef struct s_editor
 	t_ui_element	*sector_edit_ok_button;
 	t_ui_element	*floor_texture_button;
 	t_ui_element	*ceiling_texture_button;
+	t_ui_element	*floor_height_input;
+	t_ui_element	*ceiling_height_input;
+	t_ui_element	*gravity_input;
+	t_ui_element	*lighting_input;
+	t_ui_element	*floor_texture_scale_input;
+	t_ui_element	*ceiling_texture_scale_input;
 
 	t_ui_element	*menu_wall_edit;
 	t_ui_element	*close_wall_edit_button;
 	t_ui_element	*split_wall_button;
+	t_ui_element	*portal_checkbox;
+	t_ui_element	*solid_checkbox;
 	t_ui_element	*wall_texture_button;
 	t_ui_element	*portal_texture_button;
 	t_ui_element	*floor_wall_angle_input;
@@ -122,9 +130,20 @@ struct s_wall
 	Uint32			id;
 	t_point			*p1;
 	t_point			*p2;
-	t_vec2i			middle;
+
+	bool			solid;
+	t_sector		*neighbor;
+	int				floor_angle;
+	int				ceiling_angle;
+	float			texture_scale;
 };
 
+/*
+ * float	floor_scale;		texture scale for floor;
+ * float	ceiling_scale;		texture scale for ceiling;
+ * int		floor_texture;		texture id for floor;
+ * int		ceiling_texture;	texture id for ceiling;
+*/
 struct s_sector
 {
 	Uint32			id;
@@ -134,6 +153,15 @@ struct s_sector
 	bool			first_point_set;
 	int				wall_amount;
 	t_list			*walls;
+
+	int				floor_height;
+	int				ceiling_height;
+	int				floor_texture;
+	int				ceiling_texture;
+	int				gravity;
+	int 			lighting;
+	float			floor_scale;
+	float			ceiling_scale;
 };
 
 struct s_entity	
@@ -148,6 +176,7 @@ t_point				*get_point_from_sector_around_radius(t_sector *sector, t_vec2i pos, f
 int					remove_point(t_editor *editor, t_point *point);
 
 // Wall
+t_wall				*wall_new(void);
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
 t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
@@ -155,6 +184,7 @@ t_vec2i				get_wall_middle(t_wall *wall);
 int					remove_wall(t_editor *editor, t_wall *wall);
 
 // Sector
+t_sector			*sector_new(void);
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
 int					remove_sector(t_editor *editor, t_sector *sector);

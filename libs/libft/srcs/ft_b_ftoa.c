@@ -38,6 +38,7 @@ char	*ft_b_ftoa(double d, int precision, char *buffer)
 	char	*temp;
 	double	fpart;
 
+	ft_strclr(buffer);
 	ipart = (int)d;
 	fpart = d - (double)ipart;
 	if (fpart < 0)

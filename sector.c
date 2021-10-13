@@ -1,5 +1,22 @@
 #include "editor.h"
 
+t_sector	*sector_new(void)
+{
+	t_sector	*sector;
+
+	sector = ft_memalloc(sizeof(t_sector));
+	sector->color = random_blue_color();
+	sector->floor_height = 0;
+	sector->ceiling_height = 20;
+	sector->floor_texture = 0;
+	sector->ceiling_texture = 0;
+	sector->gravity = 20;
+	sector->lighting = 0;
+	sector->floor_scale = 10.0;
+	sector->ceiling_scale = 10.0;
+	return (sector);
+}
+
 void	sector_render(t_editor *editor, t_sector *sector, Uint32 color)
 {
 	draw_walls(editor, sector->walls, color);

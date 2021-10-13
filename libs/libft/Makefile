@@ -87,6 +87,7 @@ RAW =	add_to_list.c\
 		ft_strchr.c\
 		ft_strchrlen.c\
 		ft_strclr.c\
+		ft_strnclr.c\
 		ft_strcmp.c\
 		ft_strcpy.c\
 		ft_strcut.c\

@@ -1,8 +1,12 @@
 #include "editor.h"
 
-void	wall_new(void)
+t_wall	*wall_new(void)
 {
-	
+	t_wall	*wall;
+
+	wall = ft_memalloc(sizeof(t_wall));
+	wall->solid = 1;
+	return (wall);
 }
 
 void	wall_render(t_editor *editor, t_wall *wall, Uint32 color)

@@ -24,6 +24,7 @@ void	draw_hover(t_editor *editor)
 /*
  * 1. Remove all the points not a part of a sector;
  * 2. Remove all walls with either points NULL;
+ * 2.5. Remove all neighbors not connected; (if a wall has neighbor but it's corresponding neighbor/sector doesn't have same wall as neighbor, or at all);
  * 3. Remove all sectors with no walls;
 */
 void	sector_cleanup(t_editor *editor)
@@ -35,6 +36,9 @@ void	user_events(t_editor *editor, SDL_Event e)
 {
 	t_vec2i	actual_pos;
 	t_vec2i	move_amount;
+	char	temp_str[20];
+
+	ft_strnclr(temp_str, 20);
 
 	calculate_hover(editor);
 	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
@@ -52,15 +56,16 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 
 	// Draw
+	if (ui_button(editor->draw_button))
+		editor->selected_sector = NULL;
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
 		if (editor->win_main->mouse_pos.y > 70 && editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 		{
 			if (!editor->selected_sector)
 			{
-				editor->selected_sector = ft_memalloc(sizeof(t_sector));
+				editor->selected_sector = sector_new();
 				editor->selected_sector->id = ++editor->sector_amount;
-				editor->selected_sector->color = random_blue_color();
 				add_to_list(&editor->sectors, editor->selected_sector, sizeof(t_sector));
 			}
 			if (editor->selected_sector)
@@ -78,7 +83,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 				if (editor->first_point_set && editor->second_point_set)
 				{
 					t_wall	*wall;
-					wall = ft_memalloc(sizeof(t_wall));
+					wall = wall_new();
 					wall->p1 = get_point_from_sector_around_radius(editor->selected_sector, editor->first_point, 0.0f);
 					if (!wall->p1)
 					{
@@ -161,9 +166,22 @@ void	user_events(t_editor *editor, SDL_Event e)
 			t_wall	*wall;
 			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 			{
+				// we dont want to make selected_wall NULL if we dont select a wall;
 				wall = get_wall_from_list_around_radius(editor->selected_sector->walls, actual_pos, 1.0f);
-				if (wall)
+				if (wall) // this is where we go when new wall selected;
+				{
 					editor->selected_wall = wall;
+
+					// update wall ui;
+
+					// TODO: ui_checkbox really needs an update, i dont think this is the way to change the toggle state of the checkbox; (it is the way, but shouldnt);
+					editor->solid_checkbox->is_click = editor->selected_wall->solid;
+					editor->portal_checkbox->is_click = editor->selected_wall->neighbor != NULL;
+
+					ui_input_set_text(editor->floor_wall_angle_input, ft_b_itoa(editor->selected_wall->floor_angle, temp_str));
+					ui_input_set_text(editor->ceiling_wall_angle_input, ft_b_itoa(editor->selected_wall->ceiling_angle, temp_str));
+					ui_input_set_text(editor->wall_texture_scale_input, ft_b_ftoa(editor->selected_wall->texture_scale, 2, temp_str));
+				}
 			}
 			else if (editor->selected_wall && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
 			{
@@ -189,11 +207,20 @@ void	user_events(t_editor *editor, SDL_Event e)
 		{
 			// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
 			sector = get_sector_from_list_around_radius(editor->sectors, actual_pos, 1);
-			if (sector)
+			if (sector) // this is the place where everything happens when you select new sector;
 			{
 				editor->selected_sector = sector;
 				editor->selected_wall = NULL;
 				editor->selected_point = NULL;
+
+				// update sector ui;
+				ui_input_set_text(editor->floor_height_input, ft_b_itoa(editor->selected_sector->floor_height, temp_str));
+				ui_input_set_text(editor->ceiling_height_input, ft_b_itoa(editor->selected_sector->ceiling_height, temp_str));
+				ui_input_set_text(editor->gravity_input, ft_b_itoa(editor->selected_sector->gravity, temp_str));
+				ui_input_set_text(editor->lighting_input, ft_b_itoa(editor->selected_sector->lighting, temp_str));
+				ui_input_set_text(editor->floor_texture_scale_input, ft_b_ftoa(editor->selected_sector->floor_scale, 2, temp_str));
+				ui_input_set_text(editor->ceiling_texture_scale_input, ft_b_ftoa(editor->selected_sector->ceiling_scale, 2, temp_str));
+				ft_printf("sector inputs updated\n");
 			}
 		}
 		else if (editor->selected_sector
@@ -216,6 +243,64 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 	else if (editor->draw_button->state != UI_STATE_CLICK)
 		editor->selected_sector = NULL;
+
+	if (editor->selected_sector && editor->menu_sector_edit->show)
+	{
+		int	f_height = ft_atoi(ui_input_text_get(editor->floor_height_input));
+		int	c_height = ft_atoi(ui_input_text_get(editor->ceiling_height_input));
+		int gravity = ft_atoi(ui_input_text_get(editor->gravity_input));
+		int lighting = ft_atoi(ui_input_text_get(editor->lighting_input));
+
+		if (ui_input_exit(editor->floor_height_input))
+		{
+			f_height = ft_min(f_height, c_height);
+			ft_b_itoa(f_height, temp_str);
+			ui_input_set_text(editor->floor_height_input, temp_str);
+		}
+		if (ui_input_exit(editor->ceiling_height_input))
+		{
+			c_height = ft_max(f_height, c_height);
+			ft_b_itoa(c_height, temp_str);
+			ui_input_set_text(editor->ceiling_height_input, temp_str);
+		}
+		editor->selected_sector->floor_height = f_height;
+		editor->selected_sector->ceiling_height = c_height;
+
+		if (ui_input_exit(editor->gravity_input))
+		{
+			gravity = ft_clamp(gravity, 0, 100);
+			ft_b_itoa(gravity, temp_str);
+			ui_input_set_text(editor->gravity_input, temp_str);
+		}
+		editor->selected_sector->gravity = gravity;
+
+		if (ui_input_exit(editor->lighting_input))
+		{
+			lighting = ft_clamp(lighting, 0, 100);
+			ft_b_itoa(lighting, temp_str);
+			ui_input_set_text(editor->lighting_input, temp_str);
+		}
+		editor->selected_sector->lighting = lighting;
+
+		float f_scale = ft_atof(ui_input_text_get(editor->floor_texture_scale_input));
+		float c_scale = ft_atof(ui_input_text_get(editor->ceiling_texture_scale_input));
+
+		if (ui_input_exit(editor->floor_texture_scale_input))
+		{
+			f_scale = ft_fclamp(f_scale, 0.1f, 100.0f);
+			ft_b_ftoa(f_scale, 2, temp_str);
+			ui_input_set_text(editor->floor_texture_scale_input, temp_str);
+		}
+		if (ui_input_exit(editor->ceiling_texture_scale_input))
+		{
+			c_scale = ft_fclamp(c_scale, 0.1f, 100.0f);
+			ft_b_ftoa(c_scale, 2, temp_str);
+			ui_input_set_text(editor->ceiling_texture_scale_input, temp_str);
+		}
+		editor->selected_sector->floor_scale = f_scale;
+		editor->selected_sector->ceiling_scale = c_scale;
+
+	}
 
 	// Sector Edit Ok Button
 	if (editor->sector_edit_ok_button->state == UI_STATE_CLICK)
@@ -250,53 +335,59 @@ void	user_events(t_editor *editor, SDL_Event e)
 	else
 		editor->menu_wall_edit->show = 0;
 
-	if (editor->split_wall_button->state == UI_STATE_CLICK && editor->selected_sector && editor->selected_wall)
+	if (editor->selected_sector && editor->selected_wall)
 	{
-		t_point	*p1;
-		t_point	*p2;
-		t_point	*p3;
-		t_wall	*new_wall;
+		if (editor->split_wall_button->state == UI_STATE_CLICK)
+		{
+			t_point	*p1;
+			t_point	*p2;
+			t_point	*p3;
+			t_wall	*new_wall;
 
-		p1 = editor->selected_wall->p1;
-		p2 = editor->selected_wall->p2;
-		p3 = ft_memalloc(sizeof(t_point));
-		p3->pos = get_wall_middle(editor->selected_wall);
-		add_to_list(&editor->points, p3, sizeof(t_point));
+			p1 = editor->selected_wall->p1;
+			p2 = editor->selected_wall->p2;
+			p3 = ft_memalloc(sizeof(t_point));
+			p3->pos = get_wall_middle(editor->selected_wall);
+			add_to_list(&editor->points, p3, sizeof(t_point));
 
-		editor->selected_wall->p1 = p3;
+			editor->selected_wall->p1 = p3;
 
-		new_wall = ft_memalloc(sizeof(t_wall));
-		new_wall->p1 = p1;
-		new_wall->p2 = p3;
-		add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
-		add_to_list(&editor->walls, new_wall, sizeof(t_wall));
-	}
+			new_wall = wall_new();
+			new_wall->p1 = p1;
+			new_wall->p2 = p3;
+			add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
+			add_to_list(&editor->walls, new_wall, sizeof(t_wall));
+		}
+		// TODO: ui_checkbox really needs an updated, we dont want to update these everytime, we want someway to only do stuff if the toggle state has changed;
+		editor->portal_checkbox->state = editor->portal_checkbox->state == UI_STATE_CLICK;
+		editor->selected_wall->solid = editor->solid_checkbox->state == UI_STATE_CLICK;
 
-	if (ui_input_exit(editor->floor_wall_angle_input))
-	{
-		int		angle;
-		char	temp_str[10];
-		angle = ft_clamp(ft_atoi(ui_input_text_get(editor->floor_wall_angle_input)), -45, 45);
-		ft_b_itoa(angle, temp_str);
-		ui_input_set_text(editor->floor_wall_angle_input, temp_str);
-	}
+		if (ui_input_exit(editor->floor_wall_angle_input))
+		{
+			int		angle;
+			angle = ft_clamp(ft_atoi(ui_input_text_get(editor->floor_wall_angle_input)), -45, 45);
+			ft_b_itoa(angle, temp_str);
+			ui_input_set_text(editor->floor_wall_angle_input, temp_str);
+			editor->selected_wall->floor_angle = angle;
+		}
 
-	if (ui_input_exit(editor->ceiling_wall_angle_input))
-	{
-		int		angle;
-		char	temp_str[10];
-		angle = ft_clamp(ft_atoi(ui_input_text_get(editor->ceiling_wall_angle_input)), -45, 45);
-		ft_b_itoa(angle, temp_str);
-		ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
-	}
+		if (ui_input_exit(editor->ceiling_wall_angle_input))
+		{
+			int		angle;
+			angle = ft_clamp(ft_atoi(ui_input_text_get(editor->ceiling_wall_angle_input)), -45, 45);
+			ft_b_itoa(angle, temp_str);
+			ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
+			editor->selected_wall->ceiling_angle = angle;
+		}
 
-	if (ui_input_exit(editor->wall_texture_scale_input))
-	{
-		float	scale;
-		char	temp_str[10];
-		scale = ft_fclamp(ft_atof(ui_input_text_get(editor->wall_texture_scale_input)), -10.0f, 10.0f);
-		ft_b_ftoa(scale, 2, temp_str);
-		ui_input_set_text(editor->wall_texture_scale_input, temp_str);
+		if (ui_input_exit(editor->wall_texture_scale_input))
+		{
+			float	scale;
+			scale = ft_fclamp(ft_atof(ui_input_text_get(editor->wall_texture_scale_input)), -10.0f, 10.0f);
+			ft_b_ftoa(scale, 2, temp_str);
+			ui_input_set_text(editor->wall_texture_scale_input, temp_str);
+			editor->selected_wall->texture_scale = scale;
+		}
 	}
 
 	// Texture Menu
@@ -327,7 +418,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 	if (editor->selected_sector)
 	{
 		t_sector *sector = editor->selected_sector;
-		final_str = ft_sprintf("iD : %d\npos : %d, %d\nWall Amount : %d\n", sector->id, sector->center.x, sector->center.y, sector->wall_amount);
+		final_str = ft_sprintf("iD : %d\npos : %d, %d\nWalls : %d\n", sector->id, sector->center.x, sector->center.y, sector->wall_amount);
 		ui_label_text_set(editor->sector_info_label, final_str);
 		ft_strdel(&final_str);
 
@@ -537,9 +628,18 @@ void	editor_init(t_editor *editor)
 	editor->sector_edit_ok_button = ui_list_get_element_by_id(editor->layout.elements, "sector_edit_ok_button");
 	editor->floor_texture_button = ui_list_get_element_by_id(editor->layout.elements, "floor_texture_button");
 	editor->ceiling_texture_button = ui_list_get_element_by_id(editor->layout.elements, "ceiling_texture_button");
+	// Inputs;
+	editor->floor_height_input = ui_list_get_element_by_id(editor->layout.elements, "floor_height_input");
+	editor->ceiling_height_input = ui_list_get_element_by_id(editor->layout.elements, "ceiling_height_input");
+	editor->gravity_input = ui_list_get_element_by_id(editor->layout.elements, "gravity_input");
+	editor->lighting_input = ui_list_get_element_by_id(editor->layout.elements, "lighting_input");
+	editor->floor_texture_scale_input = ui_list_get_element_by_id(editor->layout.elements, "floor_texture_scale_input");
+	editor->ceiling_texture_scale_input = ui_list_get_element_by_id(editor->layout.elements, "ceiling_texture_scale_input");
 
 	editor->menu_wall_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_wall_edit");
 	editor->close_wall_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_wall_edit_button");
+	editor->solid_checkbox = ui_list_get_element_by_id(editor->layout.elements, "solidity_checkbox");
+	editor->portal_checkbox = ui_list_get_element_by_id(editor->layout.elements, "portal_checkbox");
 	editor->split_wall_button = ui_list_get_element_by_id(editor->layout.elements, "split_wall_button");
 	editor->wall_texture_button = ui_list_get_element_by_id(editor->layout.elements, "wall_texture_button");
 	editor->portal_texture_button = ui_list_get_element_by_id(editor->layout.elements, "portal_texture_button");
@@ -552,8 +652,10 @@ void	editor_init(t_editor *editor)
 	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
 
 	editor->sector_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sector_info");
+	ui_label_get_label(editor->sector_info_label)->max_w = editor->sector_info_label->pos.w;
 	editor->mouse_info_label = ui_list_get_element_by_id(editor->layout.elements, "mouse_hover_info");
 	editor->sub_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sub_info");
+	ui_label_get_label(editor->sub_info_label)->max_w = editor->sub_info_label->pos.w;
 
 	// Save Window
 	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");
