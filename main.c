@@ -104,7 +104,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_sector = NULL;
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
-		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_selection->screen_pos)
+		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_toolbox_top->screen_pos)
 			&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 		{
 			if (!editor->selected_sector)
@@ -464,6 +464,12 @@ void	user_events(t_editor *editor, SDL_Event e)
 		ft_strdel(&final_str);
 	}
 
+	// TODO: figure out when to update this;
+	final_str = ft_sprintf("points : %d\nwalls : %d\nsectors : %d\nentities : %d\n",
+			editor->point_amount, editor->wall_amount, editor->sector_amount, editor->entity_amount);
+	ui_label_text_set(editor->misc_info_label, final_str);
+	ft_strdel(&final_str);
+
 	if (editor->selected_sector)
 	{
 		t_sector *sector = editor->selected_sector;
@@ -539,7 +545,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->entity_button->state == UI_STATE_CLICK)
 	{
-		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_selection->screen_pos)
+		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_toolbox_top->screen_pos)
 			&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT) // draw
 		{
 			t_entity	*entity = entity_new();
@@ -772,6 +778,7 @@ void	editor_init(t_editor *editor)
 	editor->win_main = ui_list_get_window_by_id(editor->layout.windows, "win_main");
 
 	// Selection Menu
+	editor->menu_toolbox_top = ui_list_get_element_by_id(editor->layout.elements, "menu_toolbox_top");
 	editor->menu_selection = ui_list_get_element_by_id(editor->layout.elements, "menu_select_buttons");
 	editor->draw_button = ui_list_get_element_by_id(editor->layout.elements, "draw_button");
 	editor->remove_button = ui_list_get_element_by_id(editor->layout.elements, "remove_button");
@@ -825,6 +832,8 @@ void	editor_init(t_editor *editor)
 	editor->mouse_info_label = ui_list_get_element_by_id(editor->layout.elements, "mouse_hover_info");
 	editor->sub_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sub_info");
 	ui_label_get_label(editor->sub_info_label)->max_w = editor->sub_info_label->pos.w;
+	editor->misc_info_label = ui_list_get_element_by_id(editor->layout.elements, "misc_info");
+	ui_label_get_label(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
 
 	// Save Window
 	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");

@@ -485,6 +485,17 @@ mouse_hover_info
 	title : [mouse hvoer info];
 };
 
+misc_info_label
+{
+	xywh : 10, 100, 50, 20;
+	title : Misc:;
+};
+misc_info
+{
+	xywh : 0, 20, 70, 20;
+	title : [misc info];
+};
+
 selected_sector_label
 {
 	xywh : 120, 10, 50, 20;

@@ -20,22 +20,36 @@ char	*set_map_info(t_editor *editor)
 	return (final);
 }
 
+char	*set_spawn(t_editor *editor)
+{
+	char	*final;
+
+	final = ft_sprintf("type:spawn\tx\ty\tz\tyaw\n%d\t%d\t%d\t%d\t%d\n",
+			0,
+			editor->spawn.pos.x,
+			editor->spawn.pos.y,
+			editor->spawn.z,
+			editor->spawn.yaw);
+	return (final);
+}
+
 char	*set_points(t_editor *editor)
 {
 	char	*final;
 	char	*temp;
 	t_list	*curr;
 	t_point	*point;
-	Uint32	id;
+	int		id;
 
-	id = 0;
+	id = -1;
 	final = ft_sprintf("type:point\n");
 	curr = editor->points;
 	while (curr)
 	{
 		point = curr->content;
-		point->id = id++;
+		point->id = ++id;
 		temp = ft_sprintf("%d\t%d\t%d\n", point->id, point->pos.x, point->pos.y);
+		ft_putstr(temp);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
@@ -49,16 +63,20 @@ char	*set_walls(t_editor *editor)
 	char	*temp;
 	t_list	*curr;
 	t_wall	*wall;
-	Uint32	id;
+	int		id;
 
-	id = 0;
-	final = ft_sprintf("type:wall\n");
+	id = -1;
+	final = ft_sprintf("type:wall\tp1\tp2\twtx\tptx\tscale\tsolid\n");
 	curr = editor->walls;
 	while (curr)
 	{
 		wall = curr->content;
-		wall->id = id++;
-		temp = ft_sprintf("%d\t%d\t%d\n", wall->id, wall->p1->id, wall->p2->id);
+		wall->id = ++id;
+		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+				wall->id, wall->p1->id, wall->p2->id,
+				wall->wall_texture, wall->portal_texture,
+				wall->texture_scale, wall->solid);
+		ft_putstr(temp);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
@@ -94,7 +112,7 @@ char	*set_sectors(t_editor *editor)
 	t_sector	*sector;
 	t_list		*curr_wall;
 	t_wall		*wall;
-	Uint32		id;
+	int			id;
 
 	id = 0;
 	final = ft_sprintf("type:sector\n");
@@ -122,7 +140,7 @@ void	set_map(t_editor *editor, char *name)
 {
 	int	fd;
 
-	fd = creat(name, O_RDWR);
+	fd = creat(name, S_IRUSR | S_IWUSR | O_CREAT);
 	if (!fd)
 	{
 		ft_printf("[%s] Couldn\'t open map file : %s\n", __FUNCTION__, name);
@@ -130,12 +148,22 @@ void	set_map(t_editor *editor, char *name)
 	}
 	editor_cleanup(editor);
 	char *delim = ft_sprintf("--------------------------------------");
-	ft_dprintf(fd, "%s-%s\n%s-%s\n%s-%s\n%s-%s\n",
-		set_map_info(editor), delim,
-		set_points(editor), delim,
-		set_walls(editor), delim,
-		set_sectors(editor), delim);
+	char *info = set_map_info(editor);
+	char *spawn = set_spawn(editor);
+	char *points = set_points(editor);
+	char *walls = set_walls(editor);
+	char *sectors = set_sectors(editor);
+	ft_dprintf(fd, "%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n",
+		info, delim,
+		spawn, delim,
+		points, delim,
+		walls, delim,
+		sectors, delim);
 	ft_printf("[%s] Map saved succesfully : [%s]\n", __FUNCTION__, name);
 	ft_strdel(&delim);
+	ft_strdel(&info);
+	ft_strdel(&points);
+	ft_strdel(&walls);
+	ft_strdel(&sectors);
 	close(fd);
 }

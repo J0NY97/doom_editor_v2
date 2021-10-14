@@ -26,6 +26,10 @@ Window win_main
 			{
 				Label mouse_hover_info {};
 			};
+			Label misc_info_label
+			{
+				Label misc_info {};
+			};
 			Label selected_sector_label
 			{
 				Label selected_sector_info {};

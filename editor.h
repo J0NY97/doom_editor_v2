@@ -1,6 +1,7 @@
 #ifndef EDITOR_H
 # define EDITOR_H
 # include "fcntl.h"
+# include "sys/stat.h"
 # include "libui.h"
 # include "libft.h"
 # include "libpf.h"
@@ -12,6 +13,7 @@
 
 # define MAP_PATH "C:/Users/Jony/source/repos/map_editor_v2/maps/"
 
+typedef struct	s_spawn		t_spawn;
 typedef struct	s_point		t_point;
 typedef struct	s_wall		t_wall;
 typedef struct	s_sector	t_sector;
@@ -26,6 +28,12 @@ typedef struct s_fps
 	int		count;
 }			t_fps;
 
+struct s_spawn
+{
+	t_vec2i			pos;
+	int				z;
+	int				yaw;
+};
 
 /*
  * SDL_Texture		*drawing_texture;		the texture surface will be texturified on and the rendered on screen;
@@ -39,6 +47,7 @@ typedef struct s_editor
 	t_ui_layout		layout;
 	t_ui_window		*win_main;
 
+	t_ui_element	*menu_toolbox_top;
 	t_ui_element	*menu_selection;
 	t_ui_element	*draw_button;
 	t_ui_element	*remove_button;
@@ -84,6 +93,7 @@ typedef struct s_editor
 	t_ui_element	*mouse_info_label;
 	t_ui_element	*sector_info_label;
 	t_ui_element	*sub_info_label;
+	t_ui_element	*misc_info_label;
 
 	t_ui_window		*win_save;
 	t_ui_element	*story_button;
@@ -117,7 +127,7 @@ typedef struct s_editor
 
 	int				sector_amount;
 	int				point_amount;
-	int				walls_amount;
+	int				wall_amount;
 	int				entity_amount;
 	int				event_amount;
 
@@ -126,6 +136,8 @@ typedef struct s_editor
 	t_list			*sectors;
 	t_list			*entities;
 	t_list			*events;
+
+	t_spawn			spawn;
 
 	char			*map_name;
 	char			*map_full_path;
@@ -136,7 +148,7 @@ typedef struct s_editor
 // 			i dont think theres any point trying to reorder stuff before that;
 struct s_point
 {
-	Uint32			id;
+	int				id;
 	t_vec2i			pos;
 };
 
@@ -145,11 +157,14 @@ struct s_point
 */
 struct s_wall
 {
-	Uint32			id;
+	int				id;
 	t_point			*p1;
 	t_point			*p2;
 
-	bool			solid;
+	int				wall_texture;
+	int				portal_texture;
+
+	int				solid;
 	t_sector		*neighbor;
 	int				floor_angle;
 	int				ceiling_angle;
@@ -164,7 +179,7 @@ struct s_wall
 */
 struct s_sector
 {
-	Uint32			id;
+	int				id;
 	Uint32			color;
 	t_vec2i			center;
 	t_vec2i			first_point;
