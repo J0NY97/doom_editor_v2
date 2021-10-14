@@ -43,7 +43,7 @@ menu_toolbox_top : toolbox_menu_prefab
 {
 	x : 0;
 	y : 0;
-	w : 260;
+	w : 295;
 	h : 65;
 };
 
@@ -51,7 +51,7 @@ menu_select_buttons
 {
 	x : 10;
 	y : 10;
-	w : 115;
+	w : 150;
 	h : 45;
 	bg_color : 0xff808080;
 };
@@ -106,9 +106,17 @@ entity_button : select_button_prefab
 	bg_image_click : ui_images/selection_mode_entity_click.png;
 };
 
+event_button : select_button_prefab
+{
+	x : 115;
+	bg_image_default : ui_images/avent.png;
+	bg_image_hover : ui_images/avent_hover.png;
+	bg_image_click : ui_images/avent_click.png;
+};
+
 menu_asdf_buttons
 {
-	x : 135;
+	x : 170;
 	y : 10;
 	h : 45;
 	w : 115;

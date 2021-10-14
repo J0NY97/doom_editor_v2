@@ -11,6 +11,7 @@ Window win_main
 				Button draw_button {};
 				Button sector_button {};
 				Button entity_button {};
+				Button event_button {};
 			};
 		};
 		Menu menu_asdf_buttons

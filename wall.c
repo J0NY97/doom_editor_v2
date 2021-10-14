@@ -6,6 +6,7 @@ t_wall	*wall_new(void)
 
 	wall = ft_memalloc(sizeof(t_wall));
 	wall->solid = 1;
+	wall->texture_scale = 1.0f;
 	return (wall);
 }
 

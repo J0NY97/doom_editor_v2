@@ -14,6 +14,7 @@ typedef struct	s_point		t_point;
 typedef struct	s_wall		t_wall;
 typedef struct	s_sector	t_sector;
 typedef struct	s_entity	t_entity;
+typedef struct	s_event		t_event;
 
 typedef struct s_fps
 {
@@ -40,6 +41,8 @@ typedef struct s_editor
 	t_ui_element	*point_button;
 	t_ui_element	*wall_button;
 	t_ui_element	*sector_button;
+	t_ui_element	*entity_button;
+	t_ui_element	*event_button;
 	t_ui_element	*save_button;
 	t_ui_element	*edit_button;
 
@@ -99,15 +102,19 @@ typedef struct s_editor
 	t_wall			*selected_wall;
 	t_sector		*selected_sector;
 	t_entity		*selected_entity;
+	t_event			*selected_event;
 
 	int				sector_amount;
 	int				point_amount;
 	int				walls_amount;
 	int				entity_amount;
+	int				event_amount;
 
 	t_list			*points;
 	t_list			*walls;
 	t_list			*sectors;
+	t_list			*entities;
+	t_list			*events;
 
 	char			*map_name;
 	char			*map_full_path;
@@ -169,6 +176,10 @@ struct s_entity
 	t_vec2i			pos;
 };
 
+struct s_event	
+{
+};
+
 // Point
 void				point_render(t_editor *editor, t_point *point, Uint32 color);
 t_point				*get_point_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
@@ -188,6 +199,10 @@ t_sector			*sector_new(void);
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
 int					remove_sector(t_editor *editor, t_sector *sector);
+
+// Entity
+t_entity			*entity_new(void);
+void				entity_render(SDL_Surface *surface, t_entity *entity);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);

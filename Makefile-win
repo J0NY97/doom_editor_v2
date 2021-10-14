@@ -4,6 +4,7 @@ SRCS = \
 	./point.c \
 	./wall.c \
 	./sector.c \
+	./entity.c \
 	./set_map.c \
 	./args_parser.c \
 	./help.c \

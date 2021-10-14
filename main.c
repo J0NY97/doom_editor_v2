@@ -21,6 +21,50 @@ void	draw_hover(t_editor *editor)
 			convert_back, 0xffffff00);
 }
 
+t_wall	*check_if_sector_has_same_kind_of_wall(t_sector *sector, t_wall *wall)
+{
+	t_list	*curr;
+	t_wall	*curr_wall;
+
+	curr = sector->walls;
+	while (curr)
+	{
+		curr_wall = curr->content;
+		if ((compare_veci(curr_wall->p1->pos.v, wall->p1->pos.v, 2)
+			&& compare_veci(curr_wall->p2->pos.v, wall->p2->pos.v, 2))
+			|| (compare_veci(curr_wall->p1->pos.v, wall->p2->pos.v, 2)
+			&& compare_veci(curr_wall->p2->pos.v, wall->p1->pos.v, 2)))
+			return (curr_wall);
+		curr = curr->next;
+	}
+	return (NULL);
+}
+
+int	check_if_you_can_make_wall_portal(t_editor *editor)
+{
+	t_list		*curr;
+	t_sector	*sector;
+	t_wall		*wall;
+
+	curr = editor->sectors;
+	while (curr)
+	{
+		sector = curr->content;
+		if (sector != editor->selected_sector)
+		{
+			wall = check_if_sector_has_same_kind_of_wall(sector, editor->selected_wall);
+			if (wall)
+			{
+				editor->selected_wall->neighbor = sector;
+				wall->neighbor = editor->selected_sector;
+				return (1);
+			}
+		}
+		curr = curr->next;
+	}
+	return (0);
+}
+
 /*
  * 1. Remove all the points not a part of a sector;
  * 2. Remove all walls with either points NULL;
@@ -359,8 +403,12 @@ void	user_events(t_editor *editor, SDL_Event e)
 			add_to_list(&editor->walls, new_wall, sizeof(t_wall));
 		}
 		// TODO: ui_checkbox really needs an updated, we dont want to update these everytime, we want someway to only do stuff if the toggle state has changed;
-		editor->portal_checkbox->state = editor->portal_checkbox->state == UI_STATE_CLICK;
 		editor->selected_wall->solid = editor->solid_checkbox->state == UI_STATE_CLICK;
+		
+		// TODO : this needs rework;
+		if (editor->portal_checkbox->state == UI_STATE_CLICK)
+			if (!check_if_you_can_make_wall_portal(editor))
+				editor->portal_checkbox->state = UI_STATE_DEFAULT;
 
 		if (ui_input_exit(editor->floor_wall_angle_input))
 		{
@@ -475,6 +523,32 @@ void	user_events(t_editor *editor, SDL_Event e)
 		ui_window_flag_set(editor->win_edit, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
 }
 
+void	entity_events(t_editor *editor, SDL_Event e)
+{
+	t_vec2i	actual_pos;
+	t_vec2i	move_amount;
+	char	temp_str[20];
+
+	ft_strnclr(temp_str, 20);
+
+//	calculate_hover(editor); // already calculated in user_events();
+	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
+	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
+	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+	if (editor->entity_button->state == UI_STATE_CLICK)
+	{
+		if (editor->win_main->mouse_down == SDL_BUTTON_LEFT) // draw
+		{
+			t_entity	*entity = entity_new();
+			entity->pos = actual_pos;
+			++editor->entity_amount;
+			add_to_list(&editor->entities, entity, sizeof(t_entity));
+			ft_printf("new entity added\n");
+		}
+	}
+}
+
 void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
 {
 	int		w_amount;
@@ -513,7 +587,15 @@ void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
 	while (walls)
 	{
 		wall = walls->content;
-		wall_render(editor, wall, color);
+		if (wall->neighbor)
+		{
+			if (check_if_sector_has_same_kind_of_wall(wall->neighbor, wall))
+				wall_render(editor, wall, 0xffff0000);
+			else
+				wall->neighbor = NULL;
+		}
+		else
+			wall_render(editor, wall, color);
 		point_render(editor, wall->p1, color);
 		walls = walls->next;
 	}
@@ -584,6 +666,15 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 	}
 }
 
+void	draw_entities(t_editor *editor, t_list *entities)
+{
+	while (entities)
+	{
+		entity_render(editor->drawing_surface, entities->content);
+		entities = entities->next;
+	}
+}
+
 void	draw_selected(t_editor *editor)
 {
 	if (editor->selected_sector)
@@ -598,6 +689,7 @@ void	user_render(t_editor *editor)
 {
 	draw_grid(editor->drawing_surface, editor->gap_size, editor->zoom);
 	draw_sectors(editor, editor->sectors);
+	draw_entities(editor, editor->entities);
 	draw_hover(editor);
 	draw_selected(editor);
 
@@ -620,6 +712,8 @@ void	editor_init(t_editor *editor)
 	editor->point_button = ui_list_get_element_by_id(editor->layout.elements, "point_button");
 	editor->wall_button = ui_list_get_element_by_id(editor->layout.elements, "wall_button");
 	editor->sector_button = ui_list_get_element_by_id(editor->layout.elements, "sector_button");
+	editor->entity_button = ui_list_get_element_by_id(editor->layout.elements, "entity_button");
+	editor->event_button = ui_list_get_element_by_id(editor->layout.elements, "event_button");
 	editor->save_button = ui_list_get_element_by_id(editor->layout.elements, "save_button");
 	editor->edit_button = ui_list_get_element_by_id(editor->layout.elements, "edit_button");
 
@@ -732,6 +826,7 @@ int	main(int ac, char **av)
 
 			// User Events
 			user_events(&editor, e);
+			entity_events(&editor, e);
 
 			if (e.key.keysym.scancode == SDL_SCANCODE_P)
 			{
