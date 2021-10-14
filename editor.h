@@ -76,7 +76,10 @@ typedef struct s_editor
 	t_ui_element	*texture_menu;
 	t_ui_element	*texture_menu_close_button;
 
+	t_ui_element	*entity_edit_menu;
+	t_ui_element	*close_entity_edit_button;
 	t_ui_element	*entity_yaw_input;
+	t_ui_element	*entity_yaw_slider;
 
 	t_ui_element	*mouse_info_label;
 	t_ui_element	*sector_info_label;

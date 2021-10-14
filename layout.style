@@ -529,10 +529,20 @@ close_entity_edit_button : close_button_prefab
 
 };
 
-entity_yaw_input
+entity_yaw_label
 {
 	xywh : 10, 30, 100, 20;
+	title : Yaw:;
+};
+entity_yaw_input
+{
+	xywh : 0, 20, 100, 20;
 	title : 0;
+};
+entity_yaw_slider
+{
+	xywh : 0, 45, 100, 20;
+	value : 0, 0, 360;
 };
 
 ///////////////////

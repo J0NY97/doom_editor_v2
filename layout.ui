@@ -144,7 +144,11 @@ Window win_main
 			Button entity_alfred_button;
 		};
 		Input entity_z_input {};
-		Input entity_yaw_input {};
+		Label entity_yaw_label
+		{
+			Input entity_yaw_input {};
+			Slider entity_yaw_slider {};
+		};
 	};
 };
 

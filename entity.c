@@ -29,14 +29,23 @@ void	entity_render(t_editor *editor, t_entity *entity)
 void	entity_yaw_render(t_editor *editor, t_entity *entity)
 {
 	float	angle;
-	t_vec2i	www;
+	float	angle2;
+	float	angle3;
+	t_vec2i	p1;
+	t_vec2i	p2;
+	t_vec2i	p3;
+	t_vec2i	p4;
 
-	www = conversion(editor, entity->pos);
+	p1 = conversion(editor, entity->pos);
 	angle = entity->yaw * (M_PI / 180);
-	ui_surface_line_draw(editor->drawing_surface, www,
-		vec2i(cos(angle) * 20.0f + www.x, sin(angle) * 20.0f + www.y),
-		0xffaaab5d);
-	ui_surface_line_draw(editor->drawing_surface, www, vec2i(www.x + 50, www.y + 50), 0xffff00ff);
+	angle2 = (entity->yaw - 45) * (M_PI / 180);
+	angle3 = (entity->yaw + 45) * (M_PI / 180);
+	p2 = vec2i(cos(angle) * 20.0f + p1.x, sin(angle) * 20.0f + p1.y);
+	p3 = vec2i(cos(angle2) * -10.0f + p2.x, sin(angle2) * -10.0f + p2.y);
+	p4 = vec2i(cos(angle3) * -10.0f + p2.x, sin(angle3) * -10.0f + p2.y);
+	ui_surface_line_draw(editor->drawing_surface, p1, p2, 0xffaaab5d);
+	ui_surface_line_draw(editor->drawing_surface, p2, p3, 0xffaaab5d);
+	ui_surface_line_draw(editor->drawing_surface, p2, p4, 0xffaaab5d);
 }
 
 t_entity	*get_entity_from_list_at_pos(t_list *list, t_vec2i v)

@@ -547,7 +547,6 @@ void	entity_events(t_editor *editor, SDL_Event e)
 			entity->pos = actual_pos;
 			++editor->entity_amount;
 			add_to_list(&editor->entities, entity, sizeof(t_entity));
-			ft_printf("new entity #%d added\n", editor->entity_amount);
 		}
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_RIGHT)
 		{
@@ -556,18 +555,39 @@ void	entity_events(t_editor *editor, SDL_Event e)
 			if (entity)
 			{
 				editor->selected_entity = entity;
+
+				// when selecting new entity this happens;
+				ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(editor->selected_entity->yaw, temp_str));
+				ui_slider_value_set(editor->entity_yaw_slider, editor->selected_entity->yaw);
 			}
 		}
 	}
+	else
+		editor->selected_entity = NULL;
 
 	if (editor->selected_entity)
 	{
 		if (ui_input_exit(editor->entity_yaw_input))
 		{
 			int	angle = ft_atoi(ui_input_text_get(editor->entity_yaw_input));
+			angle = ft_clamp(angle, 0, 360);
 			editor->selected_entity->yaw = angle;
+			ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(angle, temp_str));
+			ui_slider_value_set(editor->entity_yaw_slider, angle);
+		}
+		if (ui_slider_updated(editor->entity_yaw_slider))
+		{
+			int	angle = ui_slider_get_slider(editor->entity_yaw_slider)->value;
+			editor->selected_entity->yaw = angle;
+			ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(angle, temp_str));
 		}
 	}
+
+	if (!editor->selected_entity
+		|| editor->close_entity_edit_button->state == UI_STATE_CLICK)
+		editor->entity_edit_menu->show = 0;
+	else
+		editor->entity_edit_menu->show = 1;
 }
 
 void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
@@ -714,6 +734,13 @@ void	draw_selected(t_editor *editor)
 		point_render(editor, editor->selected_point, 0xffffff00);
 	else if (editor->selected_wall)
 		wall_render(editor, editor->selected_wall, 0xffffff00);
+	if (editor->selected_entity)
+	{
+		t_vec2i	conv = conversion(editor, editor->selected_entity->pos);
+		t_vec2i	p1 = vec2i(conv.x - 10, conv.y - 10);
+		t_vec2i	p2 = vec2i(conv.x + 10, conv.y + 10);
+		ui_surface_rect_draw(editor->drawing_surface, p1, p2, 0xffffff00);
+	}
 }
 
 void	user_render(t_editor *editor)
@@ -785,10 +812,13 @@ void	editor_init(t_editor *editor)
 	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
 
 	// Entity Edit
+	editor->entity_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "entity_edit_menu");
+	editor->close_entity_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_entity_edit_button");
 	editor->entity_textures[0] = ui_texture_create_from_path(editor->win_main->renderer, "ui_images/damage.png");
 	for (int i = 1; i < ENTITY_AMOUNT; i++)
 		editor->entity_textures[1] = ui_texture_create_from_path(editor->win_main->renderer, g_entity_data[i - 1].path);
 	editor->entity_yaw_input = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_input");
+	editor->entity_yaw_slider = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_slider");
 
 	editor->sector_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sector_info");
 	ui_label_get_label(editor->sector_info_label)->max_w = editor->sector_info_label->pos.w;
