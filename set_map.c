@@ -72,7 +72,7 @@ char	*set_walls(t_editor *editor)
 	{
 		wall = curr->content;
 		wall->id = ++id;
-		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.2f\t%d\n",
 				wall->id, wall->p1->id, wall->p2->id,
 				wall->wall_texture, wall->portal_texture,
 				wall->texture_scale, wall->solid);
