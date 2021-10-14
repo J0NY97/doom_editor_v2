@@ -104,7 +104,8 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_sector = NULL;
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
-		if (editor->win_main->mouse_pos.y > 70 && editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_selection->screen_pos)
+			&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 		{
 			if (!editor->selected_sector)
 			{
@@ -538,13 +539,33 @@ void	entity_events(t_editor *editor, SDL_Event e)
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->entity_button->state == UI_STATE_CLICK)
 	{
-		if (editor->win_main->mouse_down == SDL_BUTTON_LEFT) // draw
+		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_selection->screen_pos)
+			&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT) // draw
 		{
 			t_entity	*entity = entity_new();
+			entity->texture = editor->entity_textures[0];
 			entity->pos = actual_pos;
 			++editor->entity_amount;
 			add_to_list(&editor->entities, entity, sizeof(t_entity));
-			ft_printf("new entity added\n");
+			ft_printf("new entity #%d added\n", editor->entity_amount);
+		}
+		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_RIGHT)
+		{
+			t_entity *entity = get_entity_from_list_around_radius(editor->entities, actual_pos, 1.0f);
+			// we dont want to overwrite the currently selected entity if we dont actually find a new one;
+			if (entity)
+			{
+				editor->selected_entity = entity;
+			}
+		}
+	}
+
+	if (editor->selected_entity)
+	{
+		if (ui_input_exit(editor->entity_yaw_input))
+		{
+			int	angle = ft_atoi(ui_input_text_get(editor->entity_yaw_input));
+			editor->selected_entity->yaw = angle;
 		}
 	}
 }
@@ -670,10 +691,20 @@ void	draw_entities(t_editor *editor, t_list *entities)
 {
 	while (entities)
 	{
-		entity_render(editor->drawing_surface, entities->content);
+		entity_render(editor, entities->content);
 		entities = entities->next;
 	}
 }
+
+void	draw_entities_yaw(t_editor *editor, t_list *entities)
+{
+	while (entities)
+	{
+		entity_yaw_render(editor, entities->content);
+		entities = entities->next;
+	}
+}
+
 
 void	draw_selected(t_editor *editor)
 {
@@ -689,15 +720,20 @@ void	user_render(t_editor *editor)
 {
 	draw_grid(editor->drawing_surface, editor->gap_size, editor->zoom);
 	draw_sectors(editor, editor->sectors);
-	draw_entities(editor, editor->entities);
 	draw_hover(editor);
 	draw_selected(editor);
+
+	draw_entities_yaw(editor, editor->entities);
 
 	SDL_UpdateTexture(editor->drawing_texture, NULL, editor->drawing_surface->pixels, editor->drawing_surface->pitch);
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
 	SDL_RenderCopy(editor->win_main->renderer, editor->drawing_texture, NULL, NULL);
+
+	draw_entities(editor, editor->entities);
+
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
 	SDL_FillRect(editor->drawing_surface, NULL, 0);
+
 }
 
 void	editor_init(t_editor *editor)
@@ -707,6 +743,9 @@ void	editor_init(t_editor *editor)
 
 	// Main Window
 	editor->win_main = ui_list_get_window_by_id(editor->layout.windows, "win_main");
+
+	// Selection Menu
+	editor->menu_selection = ui_list_get_element_by_id(editor->layout.elements, "menu_select_buttons");
 	editor->draw_button = ui_list_get_element_by_id(editor->layout.elements, "draw_button");
 	editor->remove_button = ui_list_get_element_by_id(editor->layout.elements, "remove_button");
 	editor->point_button = ui_list_get_element_by_id(editor->layout.elements, "point_button");
@@ -745,6 +784,12 @@ void	editor_init(t_editor *editor)
 	editor->texture_menu->show = 0;
 	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
 
+	// Entity Edit
+	editor->entity_textures[0] = ui_texture_create_from_path(editor->win_main->renderer, "ui_images/damage.png");
+	for (int i = 1; i < ENTITY_AMOUNT; i++)
+		editor->entity_textures[1] = ui_texture_create_from_path(editor->win_main->renderer, g_entity_data[i - 1].path);
+	editor->entity_yaw_input = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_input");
+
 	editor->sector_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sector_info");
 	ui_label_get_label(editor->sector_info_label)->max_w = editor->sector_info_label->pos.w;
 	editor->mouse_info_label = ui_list_get_element_by_id(editor->layout.elements, "mouse_hover_info");
@@ -773,7 +818,6 @@ void	draw_init(t_editor *editor)
 	editor->drawing_texture = SDL_CreateTextureFromSurface(editor->win_main->renderer, editor->drawing_surface);
 	editor->gap_size = 10.0f;
 	editor->zoom = 1.0f;
-	editor->points = NULL;
 	editor->offset = vec2i(0, 0);
 }
 

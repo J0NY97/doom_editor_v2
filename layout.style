@@ -6,6 +6,7 @@ Label
 Input
 {
 	text_color : 0xff000000;
+	text_align : left center;
 	bg_image_default : ui_images/ui_input.png;
 	bg_image_hover : ui_images/ui_input_hover.png;
 	bg_image_click : ui_images/ui_input_click.png;
@@ -25,7 +26,7 @@ toolbox_menu_prefab
 close_button_prefab
 {
 	xywh : 229, 1, 20, 20;
-	title : NULL;
+	title : :;
 	bg_image_default : ui_images/exit_button.png;
 	bg_image_hover : ui_images/exit_button_hover.png;
 };
@@ -158,24 +159,27 @@ label_menu_prefab
 	bg_color : 0xffffffff;
 };
 
+label_menu_label_prefab
+{
+	xywh : 0, 0, 250, 22;
+	bg_color : 0xffffffff;
+	text_align : center;
+	text_color : 0xff000000;
+};
+
 sector_label_menu : label_menu_prefab
 {
 
 };
 
-sector_edit_label
+sector_edit_label : label_menu_label_prefab
 {
 	title : Sector Edit;
-	text_align : center;
-	text_color : 0xff000000;
 };
 
-close_sector_edit_button
+close_sector_edit_button : close_button_prefab
 {
-	xywh : 229, 1, 20, 20;
-	title : :;
-	bg_image_default : ui_images/exit_button.png;
-	bg_image_hover : ui_images/exit_button_hover.png;
+
 };
 
 sector_edit_ok_button : confirm_button_prefab
@@ -306,11 +310,9 @@ texture_menu_label_menu : label_menu_prefab
 	
 };
 
-texture_menu_label
+texture_menu_label : label_menu_label_prefab
 {
 	title : Textures;
-	text_color : 0xff000000;
-	text_align : center;
 };
 
 texture_menu_close_button : close_button_prefab
@@ -336,11 +338,9 @@ wall_label_menu : label_menu_prefab
 
 };
 
-wall_edit_label
+wall_edit_label : label_menu_label_prefab
 {
 	title : Wall Edit;
-	text_align : center;
-	text_color : 0xff000000;
 };
 
 close_wall_edit_button
@@ -506,6 +506,33 @@ selected_sub_info
 	xywh : 0, 20, 70, 20;
 	title : [sub info];
 	max_w : 90;
+};
+
+///////////////////
+// Edit Entity Menu
+///////////////////
+
+entity_edit_menu : toolbox_menu_prefab
+{
+	xywh : 0, 71, 250, 500;
+};
+entity_label_menu : label_menu_prefab
+{
+
+};
+entity_edit_label : label_menu_label_prefab
+{
+	title : Entity Edit;
+};
+close_entity_edit_button : close_button_prefab
+{
+
+};
+
+entity_yaw_input
+{
+	xywh : 10, 30, 100, 20;
+	title : 0;
 };
 
 ///////////////////

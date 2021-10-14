@@ -8,6 +8,8 @@
 # include "SDL_ttf.h"
 # include "SDL_image.h"
 
+# include "temp.h" // not needed when we are using the real enum.h;
+
 # define MAP_PATH "C:/Users/Jony/source/repos/map_editor_v2/maps/"
 
 typedef struct	s_point		t_point;
@@ -36,6 +38,8 @@ typedef struct s_editor
 {
 	t_ui_layout		layout;
 	t_ui_window		*win_main;
+
+	t_ui_element	*menu_selection;
 	t_ui_element	*draw_button;
 	t_ui_element	*remove_button;
 	t_ui_element	*point_button;
@@ -72,6 +76,8 @@ typedef struct s_editor
 	t_ui_element	*texture_menu;
 	t_ui_element	*texture_menu_close_button;
 
+	t_ui_element	*entity_yaw_input;
+
 	t_ui_element	*mouse_info_label;
 	t_ui_element	*sector_info_label;
 	t_ui_element	*sub_info_label;
@@ -92,6 +98,8 @@ typedef struct s_editor
 	float			zoom;
 	t_vec2i			mouse_pos;
 	t_vec2i			offset;
+
+	SDL_Texture		*entity_textures[ENTITY_AMOUNT + 1];
 
 	t_vec2i			first_point;
 	t_vec2i			second_point;
@@ -171,9 +179,19 @@ struct s_sector
 	float			ceiling_scale;
 };
 
+/*
+ * int				type;			one from enum e_entity;
+ * int				z;				z value of position (dont worry about it);
+ * SDL_Texture		*texture;		pointer to one of the editor->entity_textures; (DONT FREE!);
+ * int				yaw;			which direction the entity is looking (degrees);
+*/
 struct s_entity	
 {
+	int				type;
 	t_vec2i			pos;
+	int				z;
+	SDL_Texture		*texture;
+	int				yaw;
 };
 
 struct s_event	
@@ -202,7 +220,9 @@ int					remove_sector(t_editor *editor, t_sector *sector);
 
 // Entity
 t_entity			*entity_new(void);
-void				entity_render(SDL_Surface *surface, t_entity *entity);
+void				entity_render(t_editor *editor, t_entity *entity);
+void				entity_yaw_render(t_editor *editor, t_entity *entity);
+t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);

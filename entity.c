@@ -8,7 +8,77 @@ t_entity	*entity_new(void)
 	return (entity);
 }
 
-void	entity_render(SDL_Surface *surface, t_entity *entity)
+void	entity_render(t_editor *editor, t_entity *entity)
 {
-	ui_surface_circle_draw(surface, entity->pos, 5, 0xff0000ff);
+	t_vec2i	www;
+	t_vec2i	eee;
+
+	www = conversion(editor, entity->pos);
+	eee = vec2i(20, 20);
+//	ui_surface_circle_draw(editor->drawing_surface, conversion(editor, entity->pos), 5, 0xff0000ff);
+/*
+	SDL_SetRenderTarget(editor->win_main->renderer, editor->drawing_texture);
+	SDL_RenderCopy(editor->win_main->renderer, editor->entity_textures[0], NULL, &(SDL_Rect){www.x, www.y, 10, 10});
+*/
+	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
+	SDL_RenderCopy(editor->win_main->renderer, entity->texture, NULL, &(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2), eee.x, eee.y});
+
+	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
+}
+
+void	entity_yaw_render(t_editor *editor, t_entity *entity)
+{
+	float	angle;
+	t_vec2i	www;
+
+	www = conversion(editor, entity->pos);
+	angle = entity->yaw * (M_PI / 180);
+	ui_surface_line_draw(editor->drawing_surface, www,
+		vec2i(cos(angle) * 20.0f + www.x, sin(angle) * 20.0f + www.y),
+		0xffaaab5d);
+	ui_surface_line_draw(editor->drawing_surface, www, vec2i(www.x + 50, www.y + 50), 0xffff00ff);
+}
+
+t_entity	*get_entity_from_list_at_pos(t_list *list, t_vec2i v)
+{
+	t_list		*curr;
+	t_entity	*p;
+
+	curr = list;
+	while (curr)
+	{
+		p = curr->content;
+		if (compare_veci(p->pos.v, v.v, 2))
+			return (curr->content);
+		curr = curr->next;
+	}
+	return (NULL);
+}
+
+t_entity	*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius)
+{
+	t_entity	*temp;
+	float		x;
+	float		y;
+
+	temp = get_entity_from_list_at_pos(points, pos);
+	if (temp)
+		return (temp);
+	x = -allowed_radius;
+	while (x <= allowed_radius)
+	{
+		y = -allowed_radius;
+		while (y <= allowed_radius)
+		{
+			temp = get_entity_from_list_at_pos(points,
+					vec2i(pos.x + x, pos.y + y));
+			if (temp != NULL)
+				break ;
+			y += 0.5f;
+		}
+		if (temp != NULL)
+			break ;
+		x += 0.5f;
+	}
+	return (temp);
 }
