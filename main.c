@@ -507,6 +507,40 @@ void	entity_events(t_editor *editor, SDL_Event e)
 	}
 }
 
+void	event_events(t_editor *editor, SDL_Event e)
+{
+	(void)editor;
+	(void)e;
+}
+
+void	spawn_events(t_editor *editor, SDL_Event e)
+{
+	t_vec2i	actual_pos;
+	t_vec2i	move_amount;
+	char	temp_str[20];
+
+	ft_strnclr(temp_str, 20);
+
+//	calculate_hover(editor); // already calculated in user_events();
+	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
+	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
+	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+	if (editor->draw_button->state == UI_STATE_CLICK)
+	{
+		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_toolbox_top->screen_pos))
+			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+				editor->spawn.pos = actual_pos;
+	}
+	else if (editor->select_button->state == UI_STATE_CLICK)
+	{
+		// TODO: show spawn edit menu when select_button clicked;
+
+		if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+			editor->spawn.pos = vec2i_add(editor->spawn.pos, move_amount);
+	}
+}
+
 void	info_menu_events(t_editor *editor, SDL_Event e)
 {
 	char	*final_str;
@@ -599,23 +633,26 @@ void	user_events(t_editor *editor, SDL_Event e)
 	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
 	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+
+	// Reset Grid Pos
 	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
 		editor->offset = vec2i(0, 0);
 
-	// Moving
+	// Moving Grid
 	if (editor->win_main->mouse_down == SDL_BUTTON_MIDDLE)
 	{
 		editor->offset.x -= (editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x);
 		editor->offset.y -= (editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y);
 	}
+
 	if (ui_button(editor->draw_button))
 	{
 		editor->selected_sector = NULL;
 		editor->selected_entity = NULL;
 		editor->selected_event = NULL;
 	}
+
 	if (editor->sector_button->state == UI_STATE_CLICK)
 		sector_events(editor, e);
 	else
@@ -633,7 +670,20 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 
 	if (editor->event_button->state == UI_STATE_CLICK)
-		return ;
+		event_events(editor, e);
+	else
+	{
+		editor->selected_event = NULL;
+		//editor->event_edit_menu->show = 0;
+	}
+
+	if (editor->spawn_button->state == UI_STATE_CLICK)
+		spawn_events(editor, e);
+	else
+	{
+		//editor->selected_spawn = NULL;
+		//editor->spawn_edit_menu->show = 0;
+	}
 
 	info_menu_events(editor, e);
 	save_window_events(editor, e);
@@ -793,6 +843,12 @@ void	draw_selected(t_editor *editor)
 	}
 }
 
+void	draw_spawn(t_editor *editor)
+{
+	ui_surface_circle_draw_filled(editor->drawing_surface,
+		conversion(editor, editor->spawn.pos), 10, 0xff00ff00);
+}
+
 void	user_render(t_editor *editor)
 {
 	draw_grid(editor->drawing_surface, editor->gap_size, editor->zoom);
@@ -801,6 +857,7 @@ void	user_render(t_editor *editor)
 	draw_selected(editor);
 
 	draw_entities_yaw(editor, editor->entities);
+	draw_spawn(editor);
 
 	SDL_UpdateTexture(editor->drawing_texture, NULL, editor->drawing_surface->pixels, editor->drawing_surface->pitch);
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
@@ -831,6 +888,7 @@ void	editor_init(t_editor *editor)
 	editor->wall_button = ui_list_get_element_by_id(editor->layout.elements, "wall_button");
 	editor->sector_button = ui_list_get_element_by_id(editor->layout.elements, "sector_button");
 	editor->entity_button = ui_list_get_element_by_id(editor->layout.elements, "entity_button");
+	editor->spawn_button = ui_list_get_element_by_id(editor->layout.elements, "spawn_button");
 	editor->event_button = ui_list_get_element_by_id(editor->layout.elements, "event_button");
 	editor->save_button = ui_list_get_element_by_id(editor->layout.elements, "save_button");
 	editor->edit_button = ui_list_get_element_by_id(editor->layout.elements, "edit_button");

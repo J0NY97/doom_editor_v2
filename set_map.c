@@ -220,7 +220,8 @@ char	*set_fandc(t_editor *editor)
 	t_list		*curr;
 	t_sector	*sector;
 
-	final = ft_sprintf("type:fandc\tfh\tch\tftx\tctx\tfs\tcs\tsl\n");
+	// sl = floor_wall_id floor_angle ceiling_wall_id ceiling_angle;
+	final = ft_sprintf("type:f&c\tfh\tch\tftx\tctx\tfs\tcs\tsl\n");
 	curr = editor->sectors;
 	while (curr)
 	{

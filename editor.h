@@ -52,14 +52,15 @@ typedef struct s_editor
 	t_ui_element	*menu_selection;
 	t_ui_element	*draw_button;
 	t_ui_element	*select_button;
-	t_ui_element	*remove_button;
 	t_ui_element	*point_button;
 	t_ui_element	*wall_button;
 	t_ui_element	*sector_button;
 	t_ui_element	*entity_button;
 	t_ui_element	*event_button;
-	t_ui_element	*save_button;
+	t_ui_element	*spawn_button;
+	t_ui_element	*remove_button;
 	t_ui_element	*edit_button;
+	t_ui_element	*save_button;
 
 	t_ui_element	*sector_edit_menu;
 	t_ui_element	*close_sector_edit_button;

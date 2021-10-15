@@ -18,6 +18,7 @@ Window win_main
 					Button sector_button {};
 					Button entity_button {};
 					Button event_button {};
+					Button spawn_button {};
 				};
 			};
 		};

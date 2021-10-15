@@ -122,6 +122,11 @@ event_button : drop_button_prefab
 	title : Event;
 };
 
+spawn_button : drop_button_prefab
+{
+	title : Spawn;
+};
+
 menu_asdf_buttons
 {
 	x : 170;
