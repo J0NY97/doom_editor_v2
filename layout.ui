@@ -9,9 +9,16 @@ Window win_main
 			Radio select_button_radio
 			{
 				Button draw_button {};
-				Button sector_button {};
-				Button entity_button {};
-				Button event_button {};
+				Button select_button {};
+			};
+			Dropdown type_dropdown
+			{
+				Menu type_drop_menu
+				{
+					Button sector_button {};
+					Button entity_button {};
+					Button event_button {};
+				};
 			};
 		};
 		Menu menu_asdf_buttons
@@ -40,7 +47,7 @@ Window win_main
 			};
 		};
 	};
-	Menu menu_sector_edit
+	Menu sector_edit_menu
 	{
 		Menu sector_label_menu
 		{

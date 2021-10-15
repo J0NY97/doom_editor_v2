@@ -49,7 +49,6 @@ char	*set_points(t_editor *editor)
 		point = curr->content;
 		point->id = ++id;
 		temp = ft_sprintf("%d\t%d\t%d\n", point->id, point->pos.x, point->pos.y);
-		ft_putstr(temp);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
@@ -76,7 +75,6 @@ char	*set_walls(t_editor *editor)
 				wall->id, wall->p1->id, wall->p2->id,
 				wall->wall_texture, wall->portal_texture,
 				wall->texture_scale, wall->solid);
-		ft_putstr(temp);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
