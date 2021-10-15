@@ -84,10 +84,57 @@ char	*set_walls(t_editor *editor)
 	return (final);
 }
 
+char	*get_wall_sprites(t_wall *wall, int *id)
+{
+	char		*final;
+	char		*temp;
+	t_list		*curr;
+	t_sprite	*sprite;
+
+	final = NULL;
+	curr = wall->sprites;
+	while (curr)
+	{
+		sprite = curr->content;
+		*id += 1;
+		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\n",
+				*id, wall->id, sprite->pos.x, sprite->pos.y,
+				sprite->texture, sprite->scale, sprite->state);
+		ft_stradd(&final, temp);
+		ft_strdel(&temp);
+		curr = curr->next;
+	}
+	return (final);
+}
+
+char	*set_sprites(t_editor *editor)
+{
+	char	*final;
+	char	*temp;
+	t_list	*curr;
+	int		total_sprites;
+
+	total_sprites = -1;
+	final = ft_sprintf("type:wsprite\twall\tx\ty\ttexture\tscale\tstate\n");
+	curr = editor->walls;
+	while (curr)
+	{
+		temp = get_wall_sprites(curr->content, &total_sprites);
+		if (temp)
+		{
+			ft_stradd(&final, temp);
+			ft_strdel(&temp);
+		}
+		curr = curr->next;
+	}
+	return (final);
+}
+
 char	*get_sector_wall_ids(t_sector *sector)
 {
 	char	*final;
 	char	*temp;
+	char	*neighbors;
 	t_list	*curr;
 	t_wall	*wall;
 
@@ -99,8 +146,17 @@ char	*get_sector_wall_ids(t_sector *sector)
 		temp = ft_sprintf("%d ", wall->id);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
+		if (wall->neighbor)
+			temp = ft_sprintf("%d ", wall->neighbor->id);
+		else
+			temp = ft_sprintf("%d ", -1);
+		ft_stradd(&neighbors, temp);
+		ft_strdel(&temp);
 		curr = curr->next;
 	}
+	ft_stradd(&final, "\t");
+	ft_stradd(&final, neighbors);
+	ft_strdel(&neighbors);
 	return (final);
 }
 
@@ -108,20 +164,75 @@ char	*set_sectors(t_editor *editor)
 {
 	char		*final;
 	char		*temp;
+	char		*walls;
 	t_list		*curr;
 	t_sector	*sector;
 	t_list		*curr_wall;
 	t_wall		*wall;
 	int			id;
 
-	id = 0;
-	final = ft_sprintf("type:sector\n");
+	id = -1;
+	final = ft_sprintf("type:sector\twalls\tneighbors\tg\tl\n");
+	curr = editor->sectors;
+	while (curr) // we have to remake the ids here so that the neighbor ids will match up;
+	{
+		((t_sector *)curr->content)->id = ++id;
+		curr = curr->next;
+	}
 	curr = editor->sectors;
 	while (curr)
 	{
 		sector = curr->content;
-		sector->id = id++;
-		temp = ft_sprintf("%d\t%s\n", sector->id, get_sector_wall_ids(sector));
+		walls = get_sector_wall_ids(sector);
+		temp = ft_sprintf("%d\t%s\t%d\t%d\n", sector->id, walls, sector->gravity, sector->lighting);
+		ft_stradd(&final, temp);
+		ft_strdel(&temp);
+		ft_strdel(&walls);
+		curr = curr->next;
+	}
+	return (final);
+}
+
+char	*get_sector_wall_slopes(t_sector *sector)
+{
+	char	*final;
+	char	*temp;
+	t_list	*curr;
+	t_wall	*wall;
+
+	curr = sector->walls;
+	while (curr)
+	{
+		wall = curr->content;
+		temp = ft_sprintf("%d ", wall->floor_angle);
+		ft_stradd(&final, temp);
+		ft_strdel(&temp);
+		curr = curr->next;
+	}
+	return (final);
+}
+
+char	*set_fandc(t_editor *editor)
+{
+	char		*final;
+	char		*temp;
+	char		*slopes;
+	t_list		*curr;
+	t_sector	*sector;
+
+	final = ft_sprintf("type:fandc\tfh\tch\tftx\tctx\tfs\tcs\tsl\n");
+	curr = editor->sectors;
+	while (curr)
+	{
+		sector = curr->content;
+		slopes = get_sector_wall_slopes(sector);
+		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.2f\t%.2f\t%s\n",
+				sector->id,
+				sector->floor_height, sector->ceiling_height,
+				sector->floor_texture, sector->ceiling_texture,
+				sector->floor_scale, sector->ceiling_scale,
+				slopes);
+		ft_strdel(&slopes);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
@@ -152,18 +263,24 @@ void	set_map(t_editor *editor, char *name)
 	char *spawn = set_spawn(editor);
 	char *points = set_points(editor);
 	char *walls = set_walls(editor);
+	char *sprites = set_sprites(editor);
 	char *sectors = set_sectors(editor);
-	ft_dprintf(fd, "%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n",
+	char *fandc = set_fandc(editor);
+	ft_dprintf(fd, "%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n",
 		info, delim,
 		spawn, delim,
 		points, delim,
 		walls, delim,
-		sectors, delim);
-	ft_printf("[%s] Map saved succesfully : [%s]\n", __FUNCTION__, name);
+		sprites, delim,
+		sectors, delim,
+		fandc, delim);
 	ft_strdel(&delim);
 	ft_strdel(&info);
 	ft_strdel(&points);
 	ft_strdel(&walls);
+	ft_strdel(&sprites);
 	ft_strdel(&sectors);
+	ft_strdel(&fandc);
 	close(fd);
+	ft_printf("[%s] Map saved succesfully : [%s]\n", __FUNCTION__, name);
 }

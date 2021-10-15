@@ -16,6 +16,7 @@
 typedef struct	s_spawn		t_spawn;
 typedef struct	s_point		t_point;
 typedef struct	s_wall		t_wall;
+typedef struct	s_sprite	t_sprite;
 typedef struct	s_sector	t_sector;
 typedef struct	s_entity	t_entity;
 typedef struct	s_event		t_event;
@@ -153,6 +154,17 @@ struct s_point
 };
 
 /*
+ * int		texture;		the id of the texture used;
+ * int		state;			loop, static, or action; (not sure yet what these are);
+*/
+struct s_sprite
+{
+	t_vec2i			pos;
+	int				texture;
+	float			scale;
+	int				state;
+};
+/*
  * t_vec2i		middle;		a small line coming out from the middle of the wall that will be used to select a wall if there are 2 on top of eachother; the line should also be drawn inwards of the sector;
 */
 struct s_wall
@@ -169,6 +181,8 @@ struct s_wall
 	int				floor_angle;
 	int				ceiling_angle;
 	float			texture_scale;
+
+	t_list			*sprites;
 };
 
 /*
