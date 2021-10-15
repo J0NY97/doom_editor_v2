@@ -552,9 +552,66 @@ close_entity_edit_button : close_button_prefab
 
 };
 
-entity_yaw_label
+entity_dropdown
 {
 	xywh : 10, 30, 100, 20;
+	text_align : left center;
+};
+drop_button_prefab
+{
+	w : 100;
+};
+entity_drop_menu
+{
+};
+entity_alfred_button : drop_button_prefab
+{
+	title : Alfred;
+};
+entity_spooky_button : drop_button_prefab
+{
+	title : Spooky;
+};
+entity_ghost_button : drop_button_prefab
+{
+	title : Ghost;
+};
+entity_rift_button : drop_button_prefab
+{
+	title : Rift;
+};
+entity_barrel_button : drop_button_prefab
+{
+	title : Barrel;
+};
+entity_lamp_button : drop_button_prefab
+{
+	title : Lamp;
+};
+entity_torch_button : drop_button_prefab
+{
+	title : Torch;
+};
+entity_meathook_button : drop_button_prefab
+{
+	title : MeatHook;
+};
+entity_ceilinglamp_button : drop_button_prefab
+{
+	title : CeilingLamp;
+};
+entity_gargoyle_button : drop_button_prefab
+{
+	title : Gargoyle;
+};
+entity_medkit_button : drop_button_prefab
+{
+	title : MedKit;
+};
+
+entity_yaw_label
+{
+	xywh : 10, 60, 100, 20;
 	title : Yaw:;
 };
 entity_yaw_input

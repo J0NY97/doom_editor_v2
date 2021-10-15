@@ -454,7 +454,6 @@ void	entity_events(t_editor *editor, SDL_Event e)
 			&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT) // draw
 		{
 			t_entity	*entity = entity_new();
-			entity->texture = editor->entity_textures[0];
 			entity->pos = actual_pos;
 			++editor->entity_amount;
 			add_to_list(&editor->entities, entity, sizeof(t_entity));
@@ -496,6 +495,21 @@ void	entity_events(t_editor *editor, SDL_Event e)
 				int	angle = ui_slider_get_slider(editor->entity_yaw_slider)->value;
 				editor->selected_entity->yaw = angle;
 				ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(angle, temp_str));
+			}
+			
+			// TODO: ui_dropdown_exit();
+			// 	only update the texture when this happens;
+			if (ui_dropdown_get_dropdown(editor->entity_dropdown)->active)
+			{
+				int	i = 0;
+				while (++i < ENTITY_AMOUNT) // i know that we are starting at 1, unset is 0;
+				{
+					if (ft_strequ(g_entity_data[i - 1].name, ui_button_get_label(ui_dropdown_get_dropdown(editor->entity_dropdown)->active)->text))
+					{
+						editor->selected_entity->type = i;
+						ft_printf("entity type : %d selected.\n", editor->selected_entity->type);
+					}
+				}
 			}
 		}
 
@@ -661,13 +675,15 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->sector_edit_menu->show = 0;
 	}
 
-	if (editor->entity_button->state == UI_STATE_CLICK)
+	//if (editor->entity_button->state == UI_STATE_CLICK)
 		entity_events(editor, e);
+		/*
 	else
 	{
 		editor->selected_entity = NULL;
 		editor->entity_edit_menu->show = 0;
 	}
+	*/
 
 	if (editor->event_button->state == UI_STATE_CLICK)
 		event_events(editor, e);
@@ -926,7 +942,21 @@ void	editor_init(t_editor *editor)
 	editor->close_entity_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_entity_edit_button");
 	editor->entity_textures[0] = ui_texture_create_from_path(editor->win_main->renderer, "ui_images/damage.png");
 	for (int i = 1; i < ENTITY_AMOUNT; i++)
-		editor->entity_textures[1] = ui_texture_create_from_path(editor->win_main->renderer, g_entity_data[i - 1].path);
+	{
+		t_vec4i	pos;
+		SDL_Surface	*surface = ui_surface_image_new(g_entity_data[i - 1].path);
+		SDL_Surface *blat = ui_surface_new(10, 10);
+		pos.x = g_entity_data[i - 1].tc[0];
+		pos.y = g_entity_data[i - 1].tc[1];
+		pos.w = g_entity_data[i - 1].tc[2];
+		pos.h = g_entity_data[i - 1].tc[3];
+		SDL_BlitScaled(surface, &(SDL_Rect){pos.x, pos.y, pos.w, pos.h}, blat, NULL);
+		editor->entity_textures[i] = SDL_CreateTextureFromSurface(editor->win_main->renderer, blat);
+		SDL_FreeSurface(surface);
+		SDL_FreeSurface(blat);
+	//	editor->entity_textures[i] = ui_texture_create_from_path(editor->win_main->renderer, g_entity_data[i - 1].path);
+	}
+	editor->entity_dropdown = ui_list_get_element_by_id(editor->layout.elements, "entity_dropdown");
 	editor->entity_yaw_input = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_input");
 	editor->entity_yaw_slider = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_slider");
 

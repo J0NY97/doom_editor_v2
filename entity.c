@@ -21,7 +21,10 @@ void	entity_render(t_editor *editor, t_entity *entity)
 	SDL_RenderCopy(editor->win_main->renderer, editor->entity_textures[0], NULL, &(SDL_Rect){www.x, www.y, 10, 10});
 */
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
-	SDL_RenderCopy(editor->win_main->renderer, entity->texture, NULL, &(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2), eee.x, eee.y});
+	if (editor->entity_textures[entity->type])
+		SDL_RenderCopy(editor->win_main->renderer, editor->entity_textures[entity->type], NULL, &(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2), eee.x, eee.y});
+	else
+		ft_printf("Entity texture doesnt exist\n");
 
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
 }

@@ -151,15 +151,28 @@ Window win_main
 			Label entity_edit_label {};
 		};
 		Button close_entity_edit_button {};
-		Dropdown entity_dropdown
-		{
-			Button entity_alfred_button;
-		};
 		Input entity_z_input {};
 		Label entity_yaw_label
 		{
 			Input entity_yaw_input {};
 			Slider entity_yaw_slider {};
+		};
+		Dropdown entity_dropdown
+		{
+			Menu entity_drop_menu
+			{
+				Button entity_alfred_button {};
+				Button entity_spooky_button {};
+				Button entity_ghost_button {};
+				Button entity_rift_button {};
+				Button entity_barrel_button {};
+				Button entity_lamp_button {};
+				Button entity_torch_button {};
+				Button entity_meathook_button {};
+				Button entity_ceilinglamp_button {};
+				Button entity_gargoyle_button {};
+				Button entity_medkit_button {};
+			};
 		};
 	};
 };
