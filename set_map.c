@@ -139,6 +139,7 @@ char	*get_sector_wall_ids(t_sector *sector)
 	t_wall	*wall;
 
 	final = NULL;
+	neighbors = NULL;
 	curr = sector->walls;
 	while (curr)
 	{
@@ -201,6 +202,7 @@ char	*get_sector_wall_slopes(t_sector *sector)
 	t_wall	*wall;
 
 	curr = sector->walls;
+	final = NULL;
 	while (curr)
 	{
 		wall = curr->content;
@@ -240,6 +242,52 @@ char	*set_fandc(t_editor *editor)
 	return (final);
 }
 
+char	*set_entity(t_editor *editor)
+{
+	char		*final;
+	char		*temp;
+	t_list		*curr;
+	t_entity	*entity;
+	int			id;
+
+	id = -1;
+	final = ft_sprintf("type:entity\tname\tx\ty\tz\td\n");
+	curr = editor->entities;
+	while (curr)
+	{
+		entity = curr->content;
+		temp = ft_sprintf("%d\t%s\t%d\t%d\t%d\t%d\n",
+				++id, g_entity_data[entity->type].name,
+				entity->pos.x, entity->pos.y, entity->z,
+				entity->yaw);
+		ft_stradd(&final, temp);
+		ft_strdel(&temp);
+		curr = curr->next;
+	}
+	return (final);
+}
+
+char	*set_event(t_editor *editor)
+{
+	char	*final;
+	char	*temp;
+	t_list	*curr;
+	int		id;
+
+	id = -1;
+	final = ft_sprintf("type:event\tt\ta\ti\n");
+	curr = editor->events;
+	while (curr)
+	{
+		temp = ft_sprintf("%d\t%d\t%d\t%d\n",
+				++id, 0, 0, 0);
+		ft_stradd(&final, temp);
+		ft_strdel(&temp);
+		curr = curr->next;
+	}
+	return (final);
+}
+
 // Should go through all the points, walls, and sectors and reorder their t.ex ids;
 // Remove all lonely points, walls, and sectors, so that we dont have useless stuff that could break the game;
 void	editor_cleanup(t_editor *editor)
@@ -266,14 +314,18 @@ void	set_map(t_editor *editor, char *name)
 	char *sprites = set_sprites(editor);
 	char *sectors = set_sectors(editor);
 	char *fandc = set_fandc(editor);
-	ft_dprintf(fd, "%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n",
+	char *entity = set_entity(editor);
+	char *event = set_event(editor);
+	ft_dprintf(fd, "%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n%s-%s\n",
 		info, delim,
 		spawn, delim,
 		points, delim,
 		walls, delim,
 		sprites, delim,
 		sectors, delim,
-		fandc, delim);
+		fandc, delim,
+		entity, delim,
+		event, delim);
 	ft_strdel(&delim);
 	ft_strdel(&info);
 	ft_strdel(&points);
@@ -281,6 +333,8 @@ void	set_map(t_editor *editor, char *name)
 	ft_strdel(&sprites);
 	ft_strdel(&sectors);
 	ft_strdel(&fandc);
+	ft_strdel(&entity);
+	ft_strdel(&event);
 	close(fd);
 	ft_printf("[%s] Map saved succesfully : [%s]\n", __FUNCTION__, name);
 }
