@@ -90,6 +90,7 @@ typedef struct s_editor
 
 	t_ui_element	*entity_edit_menu;
 	t_ui_element	*close_entity_edit_button;
+	t_ui_element	*entity_image;
 	t_ui_element	*entity_dropdown;
 	t_ui_element	*entity_yaw_input;
 	t_ui_element	*entity_yaw_slider;

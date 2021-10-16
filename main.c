@@ -497,18 +497,37 @@ void	entity_events(t_editor *editor, SDL_Event e)
 				ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(angle, temp_str));
 			}
 			
-			// TODO: ui_dropdown_exit();
-			// 	only update the texture when this happens;
-			if (ui_dropdown_get_dropdown(editor->entity_dropdown)->active)
+			if (ui_dropdown_exit(editor->entity_dropdown)
+				&& ui_dropdown_get_dropdown(editor->entity_dropdown)->active)
 			{
+				ft_printf("We are checking for name\n");
 				int	i = 0;
-				while (++i < ENTITY_AMOUNT) // i know that we are starting at 1, unset is 0;
+				while (++i < ENTITY_AMOUNT + 1) // i know that we are starting at 1, unset is 0;
 				{
+					ft_printf("%s, ", g_entity_data[i - 1].name);
+					ft_printf("%s\n", ui_button_get_label(ui_dropdown_get_dropdown(editor->entity_dropdown)->active)->text);
 					if (ft_strequ(g_entity_data[i - 1].name, ui_button_get_label(ui_dropdown_get_dropdown(editor->entity_dropdown)->active)->text))
 					{
 						editor->selected_entity->type = i;
 						ft_printf("entity type : %d selected.\n", editor->selected_entity->type);
+						break ;
 					}
+				}
+				// update entity image;
+				t_vec4i	pos;
+				int type = editor->selected_entity->type - 1;
+				if (type > 0)
+				{
+					SDL_Surface	*surface = ui_surface_image_new(g_entity_data[type].path);
+					SDL_Surface *blat = ui_surface_new(10, 10);
+					pos.x = g_entity_data[type].tc[0];
+					pos.y = g_entity_data[type].tc[1];
+					pos.w = g_entity_data[type].tc[2];
+					pos.h = g_entity_data[type].tc[3];
+					SDL_BlitScaled(surface, &(SDL_Rect){pos.x, pos.y, pos.w, pos.h}, blat, NULL);
+					ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, blat);
+					SDL_FreeSurface(surface);
+					SDL_FreeSurface(blat);
 				}
 			}
 		}
@@ -941,9 +960,10 @@ void	editor_init(t_editor *editor)
 	editor->entity_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "entity_edit_menu");
 	editor->close_entity_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_entity_edit_button");
 	editor->entity_textures[0] = ui_texture_create_from_path(editor->win_main->renderer, "ui_images/damage.png");
-	for (int i = 1; i < ENTITY_AMOUNT; i++)
+	for (int i = 1; i < ENTITY_AMOUNT + 1; i++)
 	{
 		t_vec4i	pos;
+		ft_printf("Load Image : %s\n", g_entity_data[i - 1].path);
 		SDL_Surface	*surface = ui_surface_image_new(g_entity_data[i - 1].path);
 		SDL_Surface *blat = ui_surface_new(10, 10);
 		pos.x = g_entity_data[i - 1].tc[0];
@@ -957,6 +977,7 @@ void	editor_init(t_editor *editor)
 	//	editor->entity_textures[i] = ui_texture_create_from_path(editor->win_main->renderer, g_entity_data[i - 1].path);
 	}
 	editor->entity_dropdown = ui_list_get_element_by_id(editor->layout.elements, "entity_dropdown");
+	editor->entity_image = ui_list_get_element_by_id(editor->layout.elements, "entity_image");
 	editor->entity_yaw_input = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_input");
 	editor->entity_yaw_slider = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_slider");
 

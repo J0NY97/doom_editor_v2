@@ -157,6 +157,7 @@ Window win_main
 			Input entity_yaw_input {};
 			Slider entity_yaw_slider {};
 		};
+		Menu entity_image {};
 		Dropdown entity_dropdown
 		{
 			Menu entity_drop_menu

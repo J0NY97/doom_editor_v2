@@ -552,6 +552,11 @@ close_entity_edit_button : close_button_prefab
 
 };
 
+entity_image
+{
+	xywh : 120, 30, 50, 50;
+};
+
 entity_dropdown
 {
 	xywh : 10, 30, 100, 20;
