@@ -94,6 +94,7 @@ typedef struct s_editor
 	t_ui_element	*entity_dropdown;
 	t_ui_element	*entity_yaw_input;
 	t_ui_element	*entity_yaw_slider;
+	t_ui_element	*entity_z_input;
 
 	t_ui_element	*mouse_info_label;
 	t_ui_element	*sector_info_label;

@@ -12,6 +12,14 @@ Input
 	bg_image_click : ui_images/ui_input_click.png;
 };
 
+Dropdown
+{
+	text_color : 0xff000000;
+	bg_image_default : ui_images/dropdown.png;
+	bg_image_click : ui_images/dropdown.png;
+	bg_image_hover : ui_images/dropdown_hover.png;
+};
+
 win_main
 {
 	xywh : 0, 25, 1920, 1030;
@@ -84,9 +92,6 @@ type_dropdown
 	title : Type;
 	xywh : 80, 10, 60, 20;
 	text_align : left center;
-	bg_image_default : libs/libui/images/drop.png;
-	bg_image_hover : libs/libui/images/drop_hover.png;
-	bg_image_click : libs/libui/images/drop_click.png;
 };
 
 point_button : select_button_prefab
@@ -628,6 +633,12 @@ entity_yaw_slider
 {
 	xywh : 0, 45, 100, 20;
 	value : 0, 0, 360;
+	bg_color : 0xffffffff;
+};
+entity_yaw_slider_button
+{
+	bg_color : 0xff000000;
+	text_color : 0xffffffff;
 };
 
 ///////////////////

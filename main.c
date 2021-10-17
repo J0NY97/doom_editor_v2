@@ -482,6 +482,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 
 		if (editor->selected_entity)
 		{
+			/*
 			if (ui_input_exit(editor->entity_yaw_input))
 			{
 				int	angle = ft_atoi(ui_input_text_get(editor->entity_yaw_input));
@@ -530,6 +531,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 					SDL_FreeSurface(blat);
 				}
 			}
+			*/
 		}
 
 		if (!editor->selected_entity
@@ -694,7 +696,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->sector_edit_menu->show = 0;
 	}
 
-	//if (editor->entity_button->state == UI_STATE_CLICK)
+//	if (editor->entity_button->state == UI_STATE_CLICK)
 		entity_events(editor, e);
 		/*
 	else
@@ -891,14 +893,14 @@ void	user_render(t_editor *editor)
 	draw_hover(editor);
 	draw_selected(editor);
 
-	draw_entities_yaw(editor, editor->entities);
+	//draw_entities_yaw(editor, editor->entities);
 	draw_spawn(editor);
 
 	SDL_UpdateTexture(editor->drawing_texture, NULL, editor->drawing_surface->pixels, editor->drawing_surface->pitch);
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
 	SDL_RenderCopy(editor->win_main->renderer, editor->drawing_texture, NULL, NULL);
 
-	draw_entities(editor, editor->entities);
+	//draw_entities(editor, editor->entities);
 
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
 	SDL_FillRect(editor->drawing_surface, NULL, 0);

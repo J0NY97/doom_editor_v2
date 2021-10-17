@@ -155,7 +155,10 @@ Window win_main
 		Label entity_yaw_label
 		{
 			Input entity_yaw_input {};
-			Slider entity_yaw_slider {};
+			Slider entity_yaw_slider
+			{
+				Button entity_yaw_slider_button {};
+			};
 		};
 		Menu entity_image {};
 		Dropdown entity_dropdown
