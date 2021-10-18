@@ -641,6 +641,89 @@ entity_yaw_slider_button
 	text_color : 0xffffffff;
 };
 
+entity_z_label
+{
+	xywh : 10, 135, 100, 20;
+	title : Z;
+};
+entity_z_input
+{
+	xywh : 0, 20, 100, 20;
+	title : 0;
+	type : numbers;
+};
+
+///////////////////
+// Event Menu 
+///////////////////
+event_edit_menu
+{
+	xywh : 0, 71, 250, 500;
+	bg_color : 0xffb0b0b0;
+};
+add_event
+{
+	xywh : 10, 10, 50, 20;
+	title : Add;
+};
+remove_event
+{
+	xywh : 70, 10, 50, 20;
+	title : Remove;
+};
+event_menu
+{
+	xywh : 10, 40, 220, 440;
+	bg_color : 0xffa0a0a0;
+};
+event_scrollbar
+{
+	xywh : 230, 40, 10, 440;
+	bg_color : 0xff000000;
+};
+
+event_0
+{
+	xywh : 10, 10, 200, 60;
+	bg_color : 0xff909090;
+};
+event_type
+{
+	xywh : 0, 0, 66, 20;
+	title : Audio;
+};
+event_action
+{
+	xywh : 66, 0, 66, 20;
+	title : Shoot;
+};
+event_id
+{
+	xywh : 133, 0, 66, 20;
+	title : id;
+};
+event_sector
+{
+	xywh : 0, 20, 200, 20;
+	title : sector;
+	text_align : center;
+};
+event_min
+{
+	xywh : 0, 40, 66, 20;
+	title : min;
+};
+event_max
+{
+	xywh : 66, 40, 66, 20;
+	title : max;
+};
+event_speed
+{
+	xywh : 133, 40, 66, 20;
+	title : speed;
+};
+
 ///////////////////
 // Save Map Window
 ///////////////////

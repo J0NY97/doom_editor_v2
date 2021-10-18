@@ -151,7 +151,10 @@ Window win_main
 			Label entity_edit_label {};
 		};
 		Button close_entity_edit_button {};
-		Input entity_z_input {};
+		Label entity_z_label
+		{
+			Input entity_z_input {};
+		};
 		Label entity_yaw_label
 		{
 			Input entity_yaw_input {};
@@ -176,6 +179,25 @@ Window win_main
 				Button entity_ceilinglamp_button {};
 				Button entity_gargoyle_button {};
 				Button entity_medkit_button {};
+			};
+		};
+	};
+	Menu event_edit_menu
+	{
+		Button add_event {};
+		Button remove_event {};
+		Menu event_scrollbar {};
+		Menu event_menu
+		{
+			Menu event_0	
+			{
+				Button event_type {};
+				Button event_action {};
+				Button event_id {};
+				Button event_sector {};
+				Button event_min {};
+				Button event_max {};
+				Button event_speed {};
 			};
 		};
 	};

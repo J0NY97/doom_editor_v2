@@ -289,6 +289,7 @@ char	*set_event(t_editor *editor)
 
 // Should go through all the points, walls, and sectors and reorder their t.ex ids;
 // Remove all lonely points, walls, and sectors, so that we dont have useless stuff that could break the game;
+// Remove all events that have sector/sprites that dont exist anymore; or other things in the future;
 void	editor_cleanup(t_editor *editor)
 {
 	(void)editor;

@@ -3,6 +3,32 @@
 
 #define BMP_PATH "C:/Users/Jony/source/repos/map_editor_v2/temp_resources/"
 
+enum e_player_action
+{
+	NONE,
+	SHOOTING,
+	CLICKING,
+	SECTOR
+};
+
+enum e_event_type
+{
+	CEILING,
+	FLOOR,
+	STORE,
+	HAZARD,
+	AUDIO,
+	SPAWN,
+	LIGHT
+};
+
+enum e_wsprite_action
+{
+	STATIC,
+	LOOP,
+	ACTION
+};
+
 typedef struct s_entity_data
 {
 	char	*name;

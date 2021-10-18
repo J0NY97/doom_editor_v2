@@ -230,8 +230,18 @@ struct s_entity
 	int				yaw;
 };
 
+/*
+ * int		type;		one of the e_eventtypes (or whatever niklas has named it);
+*/
 struct s_event	
 {
+	int				type;
+	int				action;
+	int				id;
+	int				sector; // how is this both num and str;
+	int				min;
+	int				max;
+	int				speed;
 };
 
 // Point

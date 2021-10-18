@@ -482,7 +482,6 @@ void	entity_events(t_editor *editor, SDL_Event e)
 
 		if (editor->selected_entity)
 		{
-			/*
 			if (ui_input_exit(editor->entity_yaw_input))
 			{
 				int	angle = ft_atoi(ui_input_text_get(editor->entity_yaw_input));
@@ -531,7 +530,6 @@ void	entity_events(t_editor *editor, SDL_Event e)
 					SDL_FreeSurface(blat);
 				}
 			}
-			*/
 		}
 
 		if (!editor->selected_entity
@@ -696,15 +694,13 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->sector_edit_menu->show = 0;
 	}
 
-//	if (editor->entity_button->state == UI_STATE_CLICK)
+	if (editor->entity_button->state == UI_STATE_CLICK)
 		entity_events(editor, e);
-		/*
 	else
 	{
 		editor->selected_entity = NULL;
 		editor->entity_edit_menu->show = 0;
 	}
-	*/
 
 	if (editor->event_button->state == UI_STATE_CLICK)
 		event_events(editor, e);
