@@ -658,7 +658,7 @@ entity_z_input
 ///////////////////
 event_edit_menu
 {
-	xywh : 0, 71, 250, 500;
+	xywh : 0, 71, 260, 500;
 	bg_color : 0xffb0b0b0;
 };
 add_event
@@ -678,13 +678,19 @@ event_menu
 };
 event_scrollbar
 {
-	xywh : 230, 40, 10, 440;
+	xywh : 230, 40, 20, 440;
 	bg_color : 0xff000000;
+	values : 0, 0, 0;
+	target : event_menu;
 };
-
+event_1
+{
+	xywh : 10, 600, 200, 60;
+	bg_color : 0xff909090;
+};
 event_0
 {
-	xywh : 10, 10, 200, 60;
+	xywh : 10, 0, 200, 60;
 	bg_color : 0xff909090;
 };
 event_type

@@ -186,7 +186,7 @@ Window win_main
 	{
 		Button add_event {};
 		Button remove_event {};
-		Menu event_scrollbar {};
+		Scrollbar event_scrollbar {};
 		Menu event_menu
 		{
 			Menu event_0	
@@ -198,6 +198,9 @@ Window win_main
 				Button event_min {};
 				Button event_max {};
 				Button event_speed {};
+			};
+			Menu event_1	
+			{
 			};
 		};
 	};
