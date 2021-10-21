@@ -683,15 +683,25 @@ event_scrollbar
 	values : 0, 0, 0;
 	target : event_menu;
 };
+
+event_2
+{
+	xywh : 10, 70, 200, 60;
+	bg_color : 0xffff0000;
+	flag : render_on_parent;
+};
 event_1
 {
 	xywh : 10, 600, 200, 60;
-	bg_color : 0xff909090;
+	bg_color : 0xffff0000;
+	flag : render_on_parent;
 };
 event_0
 {
 	xywh : 10, 0, 200, 60;
-	bg_color : 0xff909090;
+	bg_color : 0xffff0000;
+	bg_image : temp_resources/rift.bmp;
+	flag : render_on_parent;
 };
 event_type
 {

@@ -189,17 +189,20 @@ Window win_main
 		Scrollbar event_scrollbar {};
 		Menu event_menu
 		{
-			Menu event_0	
+			Menu event_0
 			{
-				Button event_type {};
-				Button event_action {};
-				Button event_id {};
-				Button event_sector {};
-				Button event_min {};
-				Button event_max {};
-				Button event_speed {};
+Button event_type {};
+Button event_action {};
+Button event_id {};
+Button event_sector {};
+Button event_min {};
+Button event_max {};
+Button event_speed {};
 			};
-			Menu event_1	
+			Menu event_1
+			{
+			};
+			Menu event_2
 			{
 			};
 		};

@@ -1070,7 +1070,7 @@ int	main(int ac, char **av)
 		}
 		// User Render
 		user_render(&editor);
-
+		
 		ui_layout_render(&editor.layout);
 	}
 }
