@@ -677,12 +677,12 @@ event_inputs
 };
 event_menu
 {
-	xywh : 10, 110, 220, 440;
+	xywh : 10, 110, 220, 380;
 	bg_color : 0xffa0a0a0;
 };
 event_scrollbar
 {
-	xywh : 230, 110, 20, 440;
+	xywh : 230, 110, 20, 380;
 	bg_color : 0xff000000;
 	values : 0, 0, 0;
 	target : event_menu;
@@ -698,7 +698,11 @@ event_2
 {
 	xywh : 10, 70, 200, 60;
 	bg_color : 0xffff0000;
+	bg_image : temp_resources/rift.bmp;
 	flag : render_on_parent;
+	title : this is text inside the thing that will show info of the event i hope this doesnt look like shiet;
+	text_pos : 2, 15, 200, 40;
+	text_color : 0xffffffff;
 };
 event_label_2 : event_label_prefab
 {
@@ -708,7 +712,11 @@ event_1
 {
 	xywh : 10, 600, 200, 60;
 	bg_color : 0xffff0000;
+	bg_image : temp_resources/rift.bmp;
 	flag : render_on_parent;
+	title : this is text inside the thing that will show info of the event i hope this doesnt look like shiet;
+	text_pos : 2, 15, 200, 40;
+	text_color : 0xffffffff;
 };
 event_label_1 : event_label_prefab
 {
@@ -732,14 +740,21 @@ event_label_0 : event_label_prefab
 
 event_dropdown_prefab
 {
+	w : 75;
+	h : 20;
+	bg_image_default : ui_images/dropdown_75x20.png;
+	bg_image_hover : ui_images/dropdown_75x20_hover.png;
+	bg_image_click : ui_images/dropdown_75x20.png;
 	text_align : left center;
+	text_pos : 10, 2, 75, 20;
 };
 
 ////// Event Type DropDown Menu ////////
 event_type : event_dropdown_prefab
 {
-	xywh : 0, 0, 66, 20;
-	title : Type:;
+	x : 0;
+	y : 0;
+	title : Type;
 };
 event_type_audio
 {
@@ -765,8 +780,9 @@ event_type_hazard
 ////// Event Action DropDown Menu ////////
 event_action : event_dropdown_prefab
 {
-	xywh : 67, 0, 66, 20;
-	title : Action:;
+	x : 80;
+	y : 0;
+	title : Action;
 };
 event_action_shoot
 {
@@ -783,8 +799,9 @@ event_action_sector
 
 event_id : event_dropdown_prefab
 {
-	xywh : 135, 0, 66, 20;
-	title : ID:;
+	x : 160;
+	y : 0;
+	title : ID;
 };
 event_sector
 {

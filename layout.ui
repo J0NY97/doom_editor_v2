@@ -225,17 +225,20 @@ Window win_main
 		};
 		Menu event_menu
 		{
-			Button event_0
+			Radio event_radio
 			{
-				Label event_label_0 {};
-			};
-			Button event_1
-			{
-				Label event_label_1 {};
-			};
-			Button event_2
-			{
-				Label event_label_2 {};
+				Button event_0
+				{
+					Label event_label_0 {};
+				};
+				Button event_1
+				{
+					Label event_label_1 {};
+				};
+				Button event_2
+				{
+					Label event_label_2 {};
+				};
 			};
 		};
 	};
