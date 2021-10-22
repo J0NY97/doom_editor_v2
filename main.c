@@ -534,7 +534,10 @@ void	entity_events(t_editor *editor, SDL_Event e)
 
 		if (!editor->selected_entity
 			|| editor->close_entity_edit_button->state == UI_STATE_CLICK)
+		{
 			editor->entity_edit_menu->show = 0;
+			editor->selected_entity = NULL;
+		}
 		else
 			editor->entity_edit_menu->show = 1;
 	}
@@ -889,14 +892,14 @@ void	user_render(t_editor *editor)
 	draw_hover(editor);
 	draw_selected(editor);
 
-	//draw_entities_yaw(editor, editor->entities);
+	draw_entities_yaw(editor, editor->entities);
 	draw_spawn(editor);
 
 	SDL_UpdateTexture(editor->drawing_texture, NULL, editor->drawing_surface->pixels, editor->drawing_surface->pitch);
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
 	SDL_RenderCopy(editor->win_main->renderer, editor->drawing_texture, NULL, NULL);
 
-	//draw_entities(editor, editor->entities);
+	draw_entities(editor, editor->entities);
 
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
 	SDL_FillRect(editor->drawing_surface, NULL, 0);

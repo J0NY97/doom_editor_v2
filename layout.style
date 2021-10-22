@@ -671,24 +671,38 @@ remove_event
 	xywh : 70, 10, 50, 20;
 	title : Remove;
 };
+event_inputs
+{
+	xywh : 10, 40, 0, 0;
+};
 event_menu
 {
-	xywh : 10, 40, 220, 440;
+	xywh : 10, 110, 220, 440;
 	bg_color : 0xffa0a0a0;
 };
 event_scrollbar
 {
-	xywh : 230, 40, 20, 440;
+	xywh : 230, 110, 20, 440;
 	bg_color : 0xff000000;
 	values : 0, 0, 0;
 	target : event_menu;
 };
 
+event_label_prefab
+{
+	xywh : 10, 10, 20, 20;
+	title : event;
+	text_color : 0xffffffff;
+};
 event_2
 {
 	xywh : 10, 70, 200, 60;
 	bg_color : 0xffff0000;
 	flag : render_on_parent;
+};
+event_label_2 : event_label_prefab
+{
+	title : event_2;
 };
 event_1
 {
@@ -696,47 +710,101 @@ event_1
 	bg_color : 0xffff0000;
 	flag : render_on_parent;
 };
+event_label_1 : event_label_prefab
+{
+	title : event_1;
+};
 event_0
 {
 	xywh : 10, 0, 200, 60;
 	bg_color : 0xffff0000;
 	bg_image : temp_resources/rift.bmp;
 	flag : render_on_parent;
+	title : this is text inside the thing that will show info of the event i hope this doesnt look like shiet;
+	text_pos : 2, 15, 200, 40;
+	text_color : 0xffffffff;
 };
-event_type
+event_label_0 : event_label_prefab
+{
+	xywh : 2, 2, 20, 20;
+	title :  event_0;
+};
+
+event_dropdown_prefab
+{
+	text_align : left center;
+};
+
+////// Event Type DropDown Menu ////////
+event_type : event_dropdown_prefab
 {
 	xywh : 0, 0, 66, 20;
+	title : Type:;
+};
+event_type_audio
+{
 	title : Audio;
 };
-event_action
+event_type_floor
 {
-	xywh : 66, 0, 66, 20;
+	title : Floor;
+};
+event_type_light
+{
+	title : Light;
+};
+event_type_store
+{
+	title : Store;
+};
+event_type_hazard
+{
+	title : Hazard;
+};
+
+////// Event Action DropDown Menu ////////
+event_action : event_dropdown_prefab
+{
+	xywh : 67, 0, 66, 20;
+	title : Action:;
+};
+event_action_shoot
+{
 	title : Shoot;
 };
-event_id
+event_action_click
 {
-	xywh : 133, 0, 66, 20;
-	title : id;
+	title : Click;
+};
+event_action_sector
+{
+	title : Sector;
+};
+
+event_id : event_dropdown_prefab
+{
+	xywh : 135, 0, 66, 20;
+	title : ID:;
 };
 event_sector
 {
-	xywh : 0, 20, 200, 20;
+	xywh : 0, 21, 200, 20;
 	title : sector;
 	text_align : center;
 };
 event_min
 {
-	xywh : 0, 40, 66, 20;
+	xywh : 0, 42, 66, 20;
 	title : min;
 };
 event_max
 {
-	xywh : 66, 40, 66, 20;
+	xywh : 67, 42, 66, 20;
 	title : max;
 };
 event_speed
 {
-	xywh : 133, 40, 66, 20;
+	xywh : 135, 42, 66, 20;
 	title : speed;
 };
 

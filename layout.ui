@@ -187,23 +187,55 @@ Window win_main
 		Button add_event {};
 		Button remove_event {};
 		Scrollbar event_scrollbar {};
+		Menu event_inputs
+		{
+			Dropdown event_type
+			{
+				Menu event_type_menu
+				{
+					Button event_type_audio {};
+					Button event_type_floor {};
+					Button event_type_light {};
+					Button event_type_store {};
+					Button event_type_hazard {};
+				};
+			};
+			Dropdown event_action
+			{
+				Menu event_action_menu
+				{
+					Button event_action_shoot {};
+					Button event_action_click {};
+					Button event_action_sector {};
+				};
+			};
+			Dropdown event_id
+			{
+				Menu event_id_menu
+				{
+					Button event_id_0 {};
+					Button event_id_1 {};
+					Button event_id_2 {};
+				};
+			};
+			Input event_sector {};
+			Input event_min {};
+			Input event_max {};
+			Input event_speed {};
+		};
 		Menu event_menu
 		{
-			Menu event_0
+			Button event_0
 			{
-Button event_type {};
-Button event_action {};
-Button event_id {};
-Button event_sector {};
-Button event_min {};
-Button event_max {};
-Button event_speed {};
+				Label event_label_0 {};
 			};
-			Menu event_1
+			Button event_1
 			{
+				Label event_label_1 {};
 			};
-			Menu event_2
+			Button event_2
 			{
+				Label event_label_2 {};
 			};
 		};
 	};
