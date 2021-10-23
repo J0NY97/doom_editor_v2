@@ -28,6 +28,7 @@ t_event_elem	*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_elem
 
 	info = ft_memalloc(sizeof(t_ui_element));
 	ui_label_new(win, info);
+	info->z = 1;
 	ui_element_parent_set(info, button, UI_TYPE_ELEMENT);
 	ui_element_edit(info, info_recipe);
 
