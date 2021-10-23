@@ -661,12 +661,12 @@ event_edit_menu
 	xywh : 0, 71, 260, 500;
 	bg_color : 0xffb0b0b0;
 };
-add_event
+add_event_button
 {
 	xywh : 10, 10, 50, 20;
 	title : Add;
 };
-remove_event
+remove_event_button
 {
 	xywh : 70, 10, 50, 20;
 	title : Remove;
@@ -688,54 +688,48 @@ event_scrollbar
 	target : event_menu;
 };
 
-event_label_prefab
-{
-	xywh : 10, 10, 20, 20;
-	title : event;
-	text_color : 0xffffffff;
-};
-event_2
+event_button_prefab
 {
 	xywh : 10, 70, 200, 60;
 	bg_color : 0xffff0000;
 	bg_image : temp_resources/rift.bmp;
 	flag : render_on_parent;
-	title : this is text inside the thing that will show info of the event i hope this doesnt look like shiet;
+	text_color : 0xffffffff;
+	text_pos : 2, 2, 200, 60;
+};
+event_info_prefab
+{
+	xywh : 0, 0, 200, 60;
 	text_pos : 2, 15, 200, 40;
 	text_color : 0xffffffff;
-};
-event_label_2 : event_label_prefab
-{
-	title : event_2;
-};
-event_1
-{
-	xywh : 10, 600, 200, 60;
-	bg_color : 0xffff0000;
-	bg_image : temp_resources/rift.bmp;
-	flag : render_on_parent;
 	title : this is text inside the thing that will show info of the event i hope this doesnt look like shiet;
-	text_pos : 2, 15, 200, 40;
-	text_color : 0xffffffff;
 };
-event_label_1 : event_label_prefab
-{
-	title : event_1;
-};
-event_0
+
+event_0 : event_button_prefab
 {
 	xywh : 10, 0, 200, 60;
-	bg_color : 0xffff0000;
-	bg_image : temp_resources/rift.bmp;
-	flag : render_on_parent;
-	title : this is text inside the thing that will show info of the event i hope this doesnt look like shiet;
-	text_pos : 2, 15, 200, 40;
-	text_color : 0xffffffff;
+	title : event_0;
 };
-event_label_0 : event_label_prefab
+event_label_0 : event_info_prefab
 {
-	xywh : 2, 2, 20, 20;
-	title :  event_0;
+};
+
+event_1 : event_button_prefab
+{
+	xywh : 10, 70, 200, 60;
+	title : event_1;
+};
+event_label_1 : event_info_prefab
+{
+};
+
+event_2 : event_button_prefab
+{
+	xywh : 10, 600, 200, 60;
+	title : event_2;
+};
+event_label_2 : event_info_prefab
+{
 };
 
 event_dropdown_prefab

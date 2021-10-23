@@ -184,8 +184,8 @@ Window win_main
 	};
 	Menu event_edit_menu
 	{
-		Button add_event {};
-		Button remove_event {};
+		Button add_event_button {};
+		Button remove_event_button {};
 		Scrollbar event_scrollbar {};
 		Menu event_inputs
 		{
@@ -225,8 +225,8 @@ Window win_main
 		};
 		Menu event_menu
 		{
-			Radio event_radio
-			{
+//Radio event_radio
+//{
 				Button event_0
 				{
 					Label event_label_0 {};
@@ -239,7 +239,7 @@ Window win_main
 				{
 					Label event_label_2 {};
 				};
-			};
+//};
 		};
 	};
 };

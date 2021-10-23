@@ -37,6 +37,16 @@ struct s_spawn
 };
 
 /*
+ * t_event			*event;					pointer to the event in editor->events; easier to figure out if stuff has been removed and when saving and getting the events;
+*/
+typedef struct s_event_elem
+{
+	t_ui_element	*button;
+	t_ui_element	*info;
+	t_event			*event;
+}					t_event_elem;
+
+/*
  * SDL_Texture		*drawing_texture;		the texture surface will be texturified on and the rendered on screen;
  * SDL_Surface		*drawing_surface;		the surface on where the grid and all the sectors are drawn on;
  * t_vec2i			mouse_pos;				taking into consideration the grid gap_size, every point is default 10 pix x*y;
@@ -88,6 +98,7 @@ typedef struct s_editor
 	t_ui_element	*texture_menu;
 	t_ui_element	*texture_menu_close_button;
 
+	// Entity
 	t_ui_element	*entity_edit_menu;
 	t_ui_element	*close_entity_edit_button;
 	t_ui_element	*entity_image;
@@ -95,6 +106,19 @@ typedef struct s_editor
 	t_ui_element	*entity_yaw_input;
 	t_ui_element	*entity_yaw_slider;
 	t_ui_element	*entity_z_input;
+
+	// Event
+	t_ui_element	*event_edit_menu;
+	t_ui_element	*add_event_button;
+	t_ui_element	*remove_event_button;
+	t_ui_element	*event_type_dropdown;
+	t_ui_element	*event_action_dropdown;
+	t_ui_element	*event_id_dropdown;
+	t_ui_element	*event_sector_input;
+	t_ui_element	*event_min_input;
+	t_ui_element	*event_max_input;
+	t_ui_element	*event_speed_input;
+	t_ui_element	*event_menu; // the menu where we are showing all the events;
 
 	t_ui_element	*mouse_info_label;
 	t_ui_element	*sector_info_label;
@@ -142,6 +166,8 @@ typedef struct s_editor
 	t_list			*sectors;
 	t_list			*entities;
 	t_list			*events;
+
+	t_list			*event_elements;
 
 	t_spawn			spawn;
 
@@ -231,14 +257,18 @@ struct s_entity
 };
 
 /*
- * int		type;		one of the e_eventtypes (or whatever niklas has named it);
+ * int		type;					e_event_type;
+ * int		action;					e_event_action;
+ * int		id;						id of the sector/wall sprite/whatever else it could be;
+ * char		*sector;				no idea;
+ * int		min, max, speed;		other info for some of the event types;
 */
 struct s_event	
 {
 	int				type;
 	int				action;
 	int				id;
-	int				sector; // how is this both num and str;
+	char			*sector;
 	int				min;
 	int				max;
 	int				speed;
@@ -269,6 +299,11 @@ t_entity			*entity_new(void);
 void				entity_render(t_editor *editor, t_entity *entity);
 void				entity_yaw_render(t_editor *editor, t_entity *entity);
 t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
+
+// Event
+t_event_elem		*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent);
+void				event_elem_fill(t_editor *editor, t_event_elem *event_elem);
+t_event				*event_new(void);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);

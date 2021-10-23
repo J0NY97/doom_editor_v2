@@ -545,8 +545,17 @@ void	entity_events(t_editor *editor, SDL_Event e)
 
 void	event_events(t_editor *editor, SDL_Event e)
 {
-	(void)editor;
-	(void)e;
+	if (editor->add_event_button->state == UI_STATE_CLICK)
+	{
+		t_event_elem	*event_elem;
+
+		event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
+		event_elem_fill(editor, event_elem);
+		add_to_list(&editor->event_elements, event_elem, sizeof(t_ui_element));
+		ft_printf("New event added (%d)\n", editor->event_amount);
+		ui_element_print(event_elem->button);
+		ui_element_print(event_elem->info);
+	}
 }
 
 void	spawn_events(t_editor *editor, SDL_Event e)
@@ -706,11 +715,14 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 
 	if (editor->event_button->state == UI_STATE_CLICK)
+	{
+		editor->event_edit_menu->show = 1;
 		event_events(editor, e);
+	}
 	else
 	{
 		editor->selected_event = NULL;
-		//editor->event_edit_menu->show = 0;
+		editor->event_edit_menu->show = 0;
 	}
 
 	if (editor->spawn_button->state == UI_STATE_CLICK)
@@ -990,6 +1002,20 @@ void	editor_init(t_editor *editor)
 	editor->misc_info_label = ui_list_get_element_by_id(editor->layout.elements, "misc_info");
 	ui_label_get_label(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
 
+	// Event edit
+	editor->event_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "event_edit_menu");
+	editor->add_event_button = ui_list_get_element_by_id(editor->layout.elements, "add_event_button");
+	editor->remove_event_button = ui_list_get_element_by_id(editor->layout.elements, "remove_event_button");
+	editor->event_type_dropdown = ui_list_get_element_by_id(editor->layout.elements, "event_type_dropdown");
+	editor->event_action_dropdown = ui_list_get_element_by_id(editor->layout.elements, "event_action_dropdown");
+	editor->event_id_dropdown = ui_list_get_element_by_id(editor->layout.elements, "event_id_dropdown");
+	editor->event_sector_input = ui_list_get_element_by_id(editor->layout.elements, "event_sector_input");
+	editor->event_min_input = ui_list_get_element_by_id(editor->layout.elements, "event_min_input");
+	editor->event_max_input = ui_list_get_element_by_id(editor->layout.elements, "event_max_input");
+	editor->event_speed_input = ui_list_get_element_by_id(editor->layout.elements, "event_speed_input");
+	editor->event_menu = ui_list_get_element_by_id(editor->layout.elements, "event_menu");
+	ui_menu_get_menu(editor->event_menu)->event_and_render_children = 1;
+
 	// Save Window
 	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");
 	editor->endless_button = ui_list_get_element_by_id(editor->layout.elements, "endless_button");
@@ -1067,8 +1093,9 @@ int	main(int ac, char **av)
 
 			if (e.key.keysym.scancode == SDL_SCANCODE_P)
 			{
-				ui_element_print(editor.point_button);
-				ui_element_print(editor.wall_button);
+				t_ui_element *b = ui_list_get_element_by_id(editor.layout.elements, "event_0");
+				ui_element_print(b);
+				ui_element_print(ui_button_get_label_element(b));
 			}
 		}
 		// User Render
