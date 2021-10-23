@@ -549,12 +549,14 @@ void	event_events(t_editor *editor, SDL_Event e)
 	{
 		t_event_elem	*event_elem;
 
+		ft_printf("Trying to make new event\n");
 		event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
 		event_elem_fill(editor, event_elem);
 		add_to_list(&editor->event_elements, event_elem, sizeof(t_ui_element));
-		ft_printf("New event added (%d)\n", editor->event_amount);
+
 		ui_element_print(event_elem->button);
 		ui_element_print(event_elem->info);
+		ft_printf("New event added (%d)\n", editor->event_amount);
 	}
 }
 
