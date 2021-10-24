@@ -553,11 +553,65 @@ void	event_events(t_editor *editor, SDL_Event e)
 		event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
 		event_elem_fill(editor, event_elem);
 		add_to_list(&editor->event_elements, event_elem, sizeof(t_ui_element));
-
-		ui_element_print(event_elem->button);
-		ui_element_print(event_elem->info);
 		ft_printf("New event added (%d)\n", editor->event_amount);
 	}
+
+	editor->event_sector_input->show = 0;
+	editor->event_min_input->show = 0;
+	editor->event_max_input->show = 0;
+	editor->event_speed_input->show = 0;
+	editor->event_action_dropdown->show = 0;
+	editor->event_id_dropdown->show = 0;
+	if (ui_dropdown_active(editor->event_type_dropdown))
+	{
+		editor->event_action_dropdown->show = 1;
+		editor->event_id_dropdown->show = 1;
+	}
+
+	if (editor->event_type_floor->state == UI_STATE_CLICK)
+	{
+		editor->event_sector_input->show = 1;
+		editor->event_min_input->show = 1;
+		editor->event_max_input->show = 1;
+		editor->event_speed_input->show = 1;
+		fill_event_id_dropdown(editor, FLOOR);
+	}
+	else if (editor->event_type_ceiling->state == UI_STATE_CLICK)
+	{
+		editor->event_sector_input->show = 1;
+		editor->event_min_input->show = 1;
+		editor->event_max_input->show = 1;
+		editor->event_speed_input->show = 1;
+	}
+	else if (editor->event_type_light->state == UI_STATE_CLICK)
+	{
+		editor->event_sector_input->show = 1;
+		editor->event_min_input->show = 1;
+		editor->event_max_input->show = 1;
+	}
+	else if (editor->event_type_store->state == UI_STATE_CLICK)
+	{
+	}
+	else if (editor->event_type_hazard->state == UI_STATE_CLICK)
+	{
+		editor->event_speed_input->show = 1;
+	}
+	else if (editor->event_type_audio->state == UI_STATE_CLICK)
+	{
+		editor->event_sector_input->show = 1;
+	}
+	else if (editor->event_type_spawn->state == UI_STATE_CLICK)
+	{
+		editor->event_sector_input->show = 1;
+		editor->event_min_input->show = 1;
+		editor->event_max_input->show = 1;
+		editor->event_speed_input->show = 1;
+	}
+
+	//
+	if (editor->event_id_dropdown->show)
+		if (ui_dropdown_open(editor->event_id_dropdown))
+			ft_printf("event id dropdown clicked, we want to update now.\n");
 }
 
 void	spawn_events(t_editor *editor, SDL_Event e)
@@ -1005,6 +1059,7 @@ void	editor_init(t_editor *editor)
 	ui_label_get_label(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
 
 	// Event edit
+	editor->event_scrollbar = ui_list_get_element_by_id(editor->layout.elements, "event_scrollbar");
 	editor->event_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "event_edit_menu");
 	editor->add_event_button = ui_list_get_element_by_id(editor->layout.elements, "add_event_button");
 	editor->remove_event_button = ui_list_get_element_by_id(editor->layout.elements, "remove_event_button");
@@ -1016,7 +1071,14 @@ void	editor_init(t_editor *editor)
 	editor->event_max_input = ui_list_get_element_by_id(editor->layout.elements, "event_max_input");
 	editor->event_speed_input = ui_list_get_element_by_id(editor->layout.elements, "event_speed_input");
 	editor->event_menu = ui_list_get_element_by_id(editor->layout.elements, "event_menu");
-	ui_menu_get_menu(editor->event_menu)->event_and_render_children = 1;
+	// types
+	editor->event_type_floor = ui_list_get_element_by_id(editor->layout.elements, "event_type_floor");
+	editor->event_type_ceiling = ui_list_get_element_by_id(editor->layout.elements, "event_type_ceiling");
+	editor->event_type_light = ui_list_get_element_by_id(editor->layout.elements, "event_type_light");
+	editor->event_type_store = ui_list_get_element_by_id(editor->layout.elements, "event_type_store");
+	editor->event_type_hazard = ui_list_get_element_by_id(editor->layout.elements, "event_type_hazard");
+	editor->event_type_audio = ui_list_get_element_by_id(editor->layout.elements, "event_type_audio");
+	editor->event_type_spawn = ui_list_get_element_by_id(editor->layout.elements, "event_type_spawn");
 
 	// Save Window
 	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");

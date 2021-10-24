@@ -47,8 +47,22 @@ void	event_elem_fill(t_editor *editor, t_event_elem *event_elem)
 	ft_strdel(&temp2);
 
 	t_vec2	new_pos;
-	new_pos = vec2(event_elem->button->pos.x, event_elem->button->pos.h * editor->event_amount + editor->event_amount * 10);
+	/*
+	new_pos = vec2(event_elem->button->pos.x,
+		event_elem->button->pos.h * (editor->event_amount - 1) + (editor->event_amount - 1) * 10);
+		*/
+	new_pos = vec2(event_elem->button->pos.x, ((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y + 10);
 	ui_element_pos_set2(event_elem->button, new_pos);
 
 	ui_label_text_set(event_elem->info, "just showing random text to test if this is working");
+}
+
+/*
+ * int	event_type;			one of the types in temp.h from event_types enum;
+*/
+void	fill_event_id_dropdown(t_editor *editor, int event_type)
+{
+	t_ui_recipe	*drop_button_recipe;
+
+	drop_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "event_drop_button_prefab");
 }

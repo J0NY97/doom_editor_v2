@@ -189,18 +189,20 @@ Window win_main
 		Scrollbar event_scrollbar {};
 		Menu event_inputs
 		{
-			Dropdown event_type
+			Dropdown event_type_dropdown
 			{
 				Menu event_type_menu
 				{
-					Button event_type_audio {};
 					Button event_type_floor {};
+					Button event_type_ceiling {};
 					Button event_type_light {};
 					Button event_type_store {};
 					Button event_type_hazard {};
+					Button event_type_audio {};
+					Button event_type_spawn {};
 				};
 			};
-			Dropdown event_action
+			Dropdown event_action_dropdown
 			{
 				Menu event_action_menu
 				{
@@ -209,7 +211,7 @@ Window win_main
 					Button event_action_sector {};
 				};
 			};
-			Dropdown event_id
+			Dropdown event_id_dropdown
 			{
 				Menu event_id_menu
 				{
@@ -218,29 +220,12 @@ Window win_main
 					Button event_id_2 {};
 				};
 			};
-			Input event_sector {};
-			Input event_min {};
-			Input event_max {};
-			Input event_speed {};
+			Input event_sector_input {};
+			Input event_min_input {};
+			Input event_max_input {};
+			Input event_speed_input {};
 		};
-		Menu event_menu
-		{
-//Radio event_radio
-//{
-				Button event_0
-				{
-					Label event_label_0 {};
-				};
-				Button event_1
-				{
-					Label event_label_1 {};
-				};
-				Button event_2
-				{
-					Label event_label_2 {};
-				};
-//};
-		};
+		Menu event_menu {};
 	};
 };
 

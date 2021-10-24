@@ -108,6 +108,7 @@ typedef struct s_editor
 	t_ui_element	*entity_z_input;
 
 	// Event
+	t_ui_element	*event_scrollbar;
 	t_ui_element	*event_edit_menu;
 	t_ui_element	*add_event_button;
 	t_ui_element	*remove_event_button;
@@ -119,6 +120,15 @@ typedef struct s_editor
 	t_ui_element	*event_max_input;
 	t_ui_element	*event_speed_input;
 	t_ui_element	*event_menu; // the menu where we are showing all the events;
+	// types
+	t_ui_element	*event_type_floor;
+	t_ui_element	*event_type_ceiling;
+	t_ui_element	*event_type_light;
+	t_ui_element	*event_type_store;
+	t_ui_element	*event_type_hazard;
+	t_ui_element	*event_type_audio;
+	t_ui_element	*event_type_spawn;
+
 
 	t_ui_element	*mouse_info_label;
 	t_ui_element	*sector_info_label;
@@ -303,6 +313,7 @@ t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, floa
 // Event
 t_event_elem		*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent);
 void				event_elem_fill(t_editor *editor, t_event_elem *event_elem);
+void				fill_event_id_dropdown(t_editor *editor, int event_type);
 t_event				*event_new(void);
 
 // Get map from args
