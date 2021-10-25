@@ -178,6 +178,9 @@ typedef struct s_editor
 	t_list			*events;
 
 	t_list			*event_elements;
+	t_list			*event_id_buttons;
+	int				event_id_buttons_made;
+	int				event_id_buttons_in_use;
 
 	t_spawn			spawn;
 

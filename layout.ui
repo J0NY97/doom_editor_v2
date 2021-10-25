@@ -209,6 +209,7 @@ Window win_main
 					Button event_action_shoot {};
 					Button event_action_click {};
 					Button event_action_sector {};
+					Button event_action_null {};
 				};
 			};
 			Dropdown event_id_dropdown

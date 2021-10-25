@@ -48,6 +48,15 @@ confirm_button_prefab
 	bg_color_click : 0xff62a877;
 };
 
+cancel_button_prefab
+{
+	text_align : center;
+	text_color : 0xffffffff;
+	bg_color_default : 0xffde122e;
+	bg_color_hover : 0xffe13b52;
+	bg_color_click : 0xffe15669;
+};
+
 drop_button_prefab
 {
 	w : 75;
@@ -124,7 +133,7 @@ wall_button : select_button_prefab
 
 select_drop_button_prefab : drop_button_prefab
 {
-	w : 60;
+	w : 50;
 };
 
 sector_button : select_drop_button_prefab
@@ -676,12 +685,12 @@ event_edit_menu
 	xywh : 0, 71, 260, 500;
 	bg_color : 0xffb0b0b0;
 };
-add_event_button
+add_event_button : confirm_button_prefab
 {
 	xywh : 10, 10, 50, 20;
 	title : Add;
 };
-remove_event_button
+remove_event_button : cancel_button_prefab
 {
 	xywh : 70, 10, 50, 20;
 	title : Remove;
@@ -734,7 +743,7 @@ event_dropdown_prefab
 
 event_drop_button_prefab : drop_button_prefab
 {
-	w : 75;
+	w : 65;
 };
 
 ////// Event Type DropDown Menu ////////
@@ -743,6 +752,10 @@ event_type_dropdown : event_dropdown_prefab
 	x : 0;
 	y : 0;
 	title : Type;
+};
+event_type_menu
+{
+	w : 65: 
 };
 event_type_audio : event_drop_button_prefab
 {
@@ -791,6 +804,10 @@ event_action_click : event_drop_button_prefab
 event_action_sector : event_drop_button_prefab
 {
 	title : Sector;
+};
+event_action_null : event_drop_button_prefab
+{
+	title : NULL;
 };
 
 event_id_dropdown : event_dropdown_prefab
