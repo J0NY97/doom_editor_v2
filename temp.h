@@ -13,6 +13,7 @@ enum e_player_action
 
 enum e_event_type
 {
+	NONE_TYPE,
 	CEILING,
 	FLOOR,
 	STORE,
@@ -20,6 +21,18 @@ enum e_event_type
 	AUDIO,
 	SPAWN,
 	LIGHT
+};
+
+static const char	*g_event_type[LIGHT] =
+{
+	"None",
+	"Ceiling",
+	"Floor",
+	"Store",
+	"Hazard",
+	"Audio",
+	"Spawn",
+	"Light"
 };
 
 enum e_wsprite_action

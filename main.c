@@ -273,10 +273,10 @@ void	sector_events(t_editor *editor, SDL_Event e)
 
 		if (editor->selected_sector && editor->sector_edit_menu->show)
 		{
-			int	f_height = ft_atoi(ui_input_text_get(editor->floor_height_input));
-			int	c_height = ft_atoi(ui_input_text_get(editor->ceiling_height_input));
-			int gravity = ft_atoi(ui_input_text_get(editor->gravity_input));
-			int lighting = ft_atoi(ui_input_text_get(editor->lighting_input));
+			int	f_height = ft_atoi(ui_input_get_text(editor->floor_height_input));
+			int	c_height = ft_atoi(ui_input_get_text(editor->ceiling_height_input));
+			int gravity = ft_atoi(ui_input_get_text(editor->gravity_input));
+			int lighting = ft_atoi(ui_input_get_text(editor->lighting_input));
 
 			if (ui_input_exit(editor->floor_height_input))
 			{
@@ -309,8 +309,8 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			}
 			editor->selected_sector->lighting = lighting;
 
-			float f_scale = ft_atof(ui_input_text_get(editor->floor_texture_scale_input));
-			float c_scale = ft_atof(ui_input_text_get(editor->ceiling_texture_scale_input));
+			float f_scale = ft_atof(ui_input_get_text(editor->floor_texture_scale_input));
+			float c_scale = ft_atof(ui_input_get_text(editor->ceiling_texture_scale_input));
 
 			if (ui_input_exit(editor->floor_texture_scale_input))
 			{
@@ -395,7 +395,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			if (ui_input_exit(editor->floor_wall_angle_input))
 			{
 				int		angle;
-				angle = ft_clamp(ft_atoi(ui_input_text_get(editor->floor_wall_angle_input)), -45, 45);
+				angle = ft_clamp(ft_atoi(ui_input_get_text(editor->floor_wall_angle_input)), -45, 45);
 				ft_b_itoa(angle, temp_str);
 				ui_input_set_text(editor->floor_wall_angle_input, temp_str);
 				editor->selected_wall->floor_angle = angle;
@@ -404,7 +404,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			if (ui_input_exit(editor->ceiling_wall_angle_input))
 			{
 				int		angle;
-				angle = ft_clamp(ft_atoi(ui_input_text_get(editor->ceiling_wall_angle_input)), -45, 45);
+				angle = ft_clamp(ft_atoi(ui_input_get_text(editor->ceiling_wall_angle_input)), -45, 45);
 				ft_b_itoa(angle, temp_str);
 				ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
 				editor->selected_wall->ceiling_angle = angle;
@@ -413,7 +413,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			if (ui_input_exit(editor->wall_texture_scale_input))
 			{
 				float	scale;
-				scale = ft_fclamp(ft_atof(ui_input_text_get(editor->wall_texture_scale_input)), -10.0f, 10.0f);
+				scale = ft_fclamp(ft_atof(ui_input_get_text(editor->wall_texture_scale_input)), -10.0f, 10.0f);
 				ft_b_ftoa(scale, 2, temp_str);
 				ui_input_set_text(editor->wall_texture_scale_input, temp_str);
 				editor->selected_wall->texture_scale = scale;
@@ -484,7 +484,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 		{
 			if (ui_input_exit(editor->entity_yaw_input))
 			{
-				int	angle = ft_atoi(ui_input_text_get(editor->entity_yaw_input));
+				int	angle = ft_atoi(ui_input_get_text(editor->entity_yaw_input));
 				angle = ft_clamp(angle, 0, 360);
 				editor->selected_entity->yaw = angle;
 				ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(angle, temp_str));
@@ -548,13 +548,31 @@ void	event_events(t_editor *editor, SDL_Event e)
 	if (editor->add_event_button->state == UI_STATE_CLICK)
 	{
 		t_event_elem	*event_elem;
+		char			*temp2;
+		char			temp[20];
 
 		ft_printf("Trying to make new event\n");
 		event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
-		event_elem_fill(editor, event_elem);
-		add_to_list(&editor->event_elements, event_elem, sizeof(t_ui_element));
+		event_elem->event = event_new();
+		event_elem->nth = editor->event_amount++;
+
+		temp2 = ft_strjoin("event_", ft_b_itoa(event_elem->nth, temp));
+		ui_label_text_set(ui_button_get_label_element(event_elem->button), temp2);
+		ft_strdel(&temp2);
+
+		t_vec2	new_pos;
+		new_pos = vec2(event_elem->menu->pos.x, ((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y + 10);
+		ui_element_pos_set2(event_elem->menu, new_pos);
+		
+		add_to_list(&editor->event_elements, event_elem, sizeof(t_event_elem));
+		add_to_list(&editor->event_element_buttons, event_elem->button, sizeof(t_ui_element));
+		add_to_list(&editor->events, event_elem->event, sizeof(t_event));
 		ft_printf("New event added (%d)\n", editor->event_amount);
+		editor->active_event_elem = event_elem->button;
+		editor->selected_event = event_elem->event;
 	}
+	ui_list_radio_event(editor->event_element_buttons, &editor->active_event_elem, e);
+	event_elem_update(editor, editor->active_event_elem);
 
 	editor->event_sector_input->show = 0;
 	editor->event_min_input->show = 0;
@@ -574,7 +592,8 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_min_input->show = 1;
 		editor->event_max_input->show = 1;
 		editor->event_speed_input->show = 1;
-		fill_event_id_dropdown(editor, FLOOR);
+
+		editor->selected_event->type = FLOOR;
 	}
 	else if (editor->event_type_ceiling->state == UI_STATE_CLICK)
 	{
@@ -582,23 +601,32 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_min_input->show = 1;
 		editor->event_max_input->show = 1;
 		editor->event_speed_input->show = 1;
+
+		editor->selected_event->type = CEILING;
 	}
 	else if (editor->event_type_light->state == UI_STATE_CLICK)
 	{
 		editor->event_sector_input->show = 1;
 		editor->event_min_input->show = 1;
 		editor->event_max_input->show = 1;
+		
+		editor->selected_event->type = LIGHT;
 	}
 	else if (editor->event_type_store->state == UI_STATE_CLICK)
 	{
+		editor->selected_event->type = STORE;
 	}
 	else if (editor->event_type_hazard->state == UI_STATE_CLICK)
 	{
 		editor->event_speed_input->show = 1;
+
+		editor->selected_event->type = HAZARD;
 	}
 	else if (editor->event_type_audio->state == UI_STATE_CLICK)
 	{
 		editor->event_sector_input->show = 1;
+
+		editor->selected_event->type = AUDIO;
 	}
 	else if (editor->event_type_spawn->state == UI_STATE_CLICK)
 	{
@@ -606,6 +634,8 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_min_input->show = 1;
 		editor->event_max_input->show = 1;
 		editor->event_speed_input->show = 1;
+
+		editor->selected_event->type = SPAWN;
 	}
 
 	//
@@ -702,14 +732,14 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 	{
 		int	len;
 
-		len = ft_strlen(ui_input_text_get(editor->name_input));
+		len = ft_strlen(ui_input_get_text(editor->name_input));
 		if (len < 1)
 			ft_printf("[%s] Map name len is less than 1 (it\'s : %d), won\'t slide.\n", __FUNCTION__, len);
 		else
 		{
 			char	*actual_full_path;
 
-			actual_full_path = ft_strjoiner(MAP_PATH, ui_input_text_get(editor->name_input), ".dnd", NULL);
+			actual_full_path = ft_strjoiner(MAP_PATH, ui_input_get_text(editor->name_input), ".dnd", NULL);
 			set_map(editor, actual_full_path);
 			ft_strdel(&actual_full_path);
 		}

@@ -11,50 +11,67 @@ t_event	*event_new(void)
 t_event_elem	*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent)
 {
 	t_event_elem	*event_elem;
-	t_ui_element	*button;
-	t_ui_element	*info;
+	t_ui_recipe		*menu_recipe;
 	t_ui_recipe		*button_recipe;
 	t_ui_recipe		*info_recipe;
 
+	menu_recipe = ui_list_get_recipe_by_id(layout->recipes, "event_menu_prefab");
 	button_recipe = ui_list_get_recipe_by_id(layout->recipes, "event_button_prefab");
 	info_recipe = ui_list_get_recipe_by_id(layout->recipes, "event_info_prefab");
 
 	event_elem = ft_memalloc(sizeof(t_event_elem));
+
+	event_elem->menu = ft_memalloc(sizeof(t_ui_element));
+	ui_menu_new(win, event_elem->menu);
+	ui_element_parent_set(event_elem->menu, parent, UI_TYPE_ELEMENT);
+	((t_ui_menu *)event_elem->menu->element)->event_and_render_children = 1;
+	ui_element_edit(event_elem->menu, menu_recipe);
+
+	event_elem->info = ft_memalloc(sizeof(t_ui_element));
+	ui_label_new(win, event_elem->info);
+	ui_element_parent_set(event_elem->info, event_elem->menu, UI_TYPE_ELEMENT);
+	ui_element_edit(event_elem->info, info_recipe);
+	ui_element_set_id(event_elem->info, "event_info");
 	
-	button = ft_memalloc(sizeof(t_ui_element));
-	ui_button_new(win, button);
-	ui_element_parent_set(button, parent, UI_TYPE_ELEMENT);
-	ui_element_edit(button, button_recipe);
+	event_elem->button = ft_memalloc(sizeof(t_ui_element));
+	ui_button_new(win, event_elem->button);
+	ui_element_parent_set(event_elem->button, event_elem->menu, UI_TYPE_ELEMENT);
+	ui_element_edit(event_elem->button, button_recipe);
 
-	info = ft_memalloc(sizeof(t_ui_element));
-	ui_label_new(win, info);
-	info->z = 1;
-	ui_element_parent_set(info, button, UI_TYPE_ELEMENT);
-	ui_element_edit(info, info_recipe);
-
-	event_elem->button = button;
-	event_elem->info = info;
 	return (event_elem);
 }
 
-void	event_elem_fill(t_editor *editor, t_event_elem *event_elem)
+void	event_elem_update(t_editor *editor, t_event_elem *event_elem)
 {
 	char	temp[20];
 	char	*temp2;
+	char	*final_info;
 
-	temp2 = ft_strjoin("event_", ft_b_itoa(editor->event_amount++, temp));
-	ui_label_text_set(ui_button_get_label_element(event_elem->button), temp2);
-	ft_strdel(&temp2);
-
-	t_vec2	new_pos;
+	if (!event_elem)
+		return ;
+	final_info = NULL;
 	/*
-	new_pos = vec2(event_elem->button->pos.x,
-		event_elem->button->pos.h * (editor->event_amount - 1) + (editor->event_amount - 1) * 10);
+	final_info = ft_sprintf("%s, %s, %s, %s, %s, %s",
+			ui_dropdown_active_text(editor->event_type_dropdown),
+			ui_dropdown_active_text(editor->event_action_dropdown),
+			ui_dropdown_active_text(editor->event_id_dropdown),
+			ui_input_get_text(editor->event_sector_input),
+			ui_input_get_text(editor->event_min_input),
+			ui_input_get_text(editor->event_max_input)
+		);
 		*/
-	new_pos = vec2(event_elem->button->pos.x, ((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y + 10);
-	ui_element_pos_set2(event_elem->button, new_pos);
-
-	ui_label_text_set(event_elem->info, "just showing random text to test if this is working");
+	ft_printf("Event:\n");
+	if (!event_elem->event)
+	{
+		ft_printf("[%s] For some reason we dont have an event.\n", __FUNCTION__);
+		return ;
+	}
+	ft_printf("do we even have an event ? : %d\n", event_elem->event ? 1 : 0);
+	ft_printf("the num value of the type is : %d\n", event_elem->event->type);
+	ft_printf("we want to put in the event info : %s\n", g_event_type[event_elem->event->type]);
+	ft_stradd(&final_info, g_event_type[event_elem->event->type]);
+	ui_label_text_set(event_elem->info, final_info);
+	ft_strdel(&final_info);
 }
 
 /*

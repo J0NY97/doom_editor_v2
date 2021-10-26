@@ -41,9 +41,11 @@ struct s_spawn
 */
 typedef struct s_event_elem
 {
+	t_ui_element	*menu;
 	t_ui_element	*button;
 	t_ui_element	*info;
 	t_event			*event;
+	int				nth;
 }					t_event_elem;
 
 /*
@@ -178,6 +180,8 @@ typedef struct s_editor
 	t_list			*events;
 
 	t_list			*event_elements;
+	t_list			*event_element_buttons;
+	t_ui_element	*active_event_elem;
 	t_list			*event_id_buttons;
 	int				event_id_buttons_made;
 	int				event_id_buttons_in_use;
@@ -315,7 +319,7 @@ t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, floa
 
 // Event
 t_event_elem		*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent);
-void				event_elem_fill(t_editor *editor, t_event_elem *event_elem);
+void				event_elem_update(t_editor *editor, t_event_elem *event_elem);
 void				fill_event_id_dropdown(t_editor *editor, int event_type);
 t_event				*event_new(void);
 
