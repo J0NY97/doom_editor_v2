@@ -572,7 +572,20 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->selected_event = event_elem->event;
 	}
 	ui_list_radio_event(editor->event_element_buttons, &editor->active_event_elem, e);
-	event_elem_update(editor, editor->active_event_elem);
+
+	t_list	*curr;
+	curr = editor->event_elements;
+	while (curr)
+	{
+		if (((t_event_elem *)curr->content)->button == editor->active_event_elem)
+		{
+			editor->selected_event_elem = curr->content;
+			editor->selected_event = editor->selected_event_elem->event;
+			break;
+		}
+		curr = curr->next;
+	}
+	event_elem_update(editor, editor->selected_event_elem);
 
 	editor->event_sector_input->show = 0;
 	editor->event_min_input->show = 0;
