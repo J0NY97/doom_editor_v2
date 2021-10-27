@@ -561,11 +561,14 @@ void	event_events(t_editor *editor, SDL_Event e)
 			curr = curr->next;
 		}
 
-		ft_printf("a new element clicked. lets updated some dropdowns.\n");
+		ft_printf("a new event button clicked. lets updated some dropdowns.\n");
 
 		ui_dropdown_activate(editor->event_type_dropdown,
 			ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_type_dropdown)->children,
 				g_event_type[editor->selected_event_elem->event->type]));
+		ui_dropdown_activate(editor->event_action_dropdown,
+			ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_action_dropdown)->children,
+				g_event_action[editor->selected_event_elem->event->action]));
 	}
 
 	if (editor->add_event_button->state == UI_STATE_CLICK)
