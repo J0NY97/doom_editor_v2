@@ -142,6 +142,33 @@ Window win_main
 			{
 				Input wall_texture_scale_input {};
 			};
+			Menu sprite_edit_menu
+			{
+				Menu sprite_label_menu
+				{
+					Label sprite_edit_label {};
+				};
+				Label sprite_scale_label
+				{
+					Input sprite_scale_input {};
+				};
+				Dropdown sprite_state_dropdown
+				{
+					Menu sprite_state_drop_menu
+					{
+						Button sprite_state_static {};
+						Button sprite_state_loop {};
+						Button sprite_state_action {}; // maybe remove
+					};
+				};
+				Button sprite_add_button {};	
+				Button sprite_remove_button {};	
+				Label sprite_texture_label
+				{
+					Button sprite_texture_button {};
+					Menu sprite_texture_image {};
+				};
+			};
 		};
 	};
 	Menu entity_edit_menu

@@ -343,7 +343,7 @@ ceiling_texture_image
 
 texture_menu : toolbox_menu_prefab
 {
-	xywh : 251, 71, 250, 500;
+	xywh : 251, 22, 250, 500;
 };
 
 texture_menu_label_menu : label_menu_prefab
@@ -505,6 +505,94 @@ wall_texture_scale_input
 	text_align : left center;
 	type : numbers;
 	title : 1;
+};
+
+///////////////////
+// Sprite Edit Menu
+///////////////////
+sprite_edit_menu : toolbox_menu_prefab
+{
+	xywh : 251, 22, 750, 250;
+};
+
+sprite_label_menu : label_menu_prefab
+{
+	w : 750;
+};
+sprite_edit_label : label_menu_label_prefab
+{
+	title : Sprite Edit;
+};
+
+sprite_add_button : confirm_button_prefab
+{
+	xywh : 10, 35, 50, 20;
+	title : Add;
+};
+
+sprite_remove_button : cancel_button_prefab
+{
+	xywh : 70, 35, 50, 20;
+	title : Remove;
+};
+
+sprite_texture_label
+{
+	x : 10;
+	y : 65;
+	title : Texture;
+};
+sprite_texture_button
+{
+	xywh : -1, 19, 27, 27;
+	title : :;
+	//bg_color_default : 0x00;
+	bg_color_hover : 0xff0000ff;
+	bg_color_click : 0xff00ff00;
+};
+sprite_texture_image
+{
+	xywh : 0, 20, 25, 25;
+	bg_image : ui_images/damage.png;
+};
+
+sprite_scale_label
+{
+	xywh : 70, 65, 50, 20;
+	title : Scale:;
+};
+sprite_scale_input
+{
+	xywh : 0, 20, 50, 20;
+	title : 1.0;
+	text_align : center left;
+};
+
+sprite_drop_button_prefab : drop_button_prefab
+{
+	w : 100;
+};
+sprite_state_dropdown
+{
+	xywh : 10, 125, 110, 20;
+	text_pos : 2, 2, 108, 18;
+	title : State;
+};
+sprite_state_drop_menu
+{
+	w : 100;
+};
+sprite_state_static : sprite_drop_button_prefab
+{
+	title : Static;
+};
+sprite_state_loop : sprite_drop_button_prefab
+{
+	title : Loop;
+};
+sprite_state_action : sprite_drop_button_prefab
+{
+	title : Action;
 };
 
 ///////////////////

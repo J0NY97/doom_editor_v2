@@ -100,6 +100,9 @@ typedef struct s_editor
 	t_ui_element	*texture_menu;
 	t_ui_element	*texture_menu_close_button;
 
+	// Sprites
+	t_ui_element	*sprite_edit_menu;
+
 	// Entity
 	t_ui_element	*entity_edit_menu;
 	t_ui_element	*close_entity_edit_button;
@@ -163,6 +166,7 @@ typedef struct s_editor
 
 	t_point			*selected_point;
 	t_wall			*selected_wall;
+	t_sprite		*selected_sprite;
 	t_sector		*selected_sector;
 	t_entity		*selected_entity;
 	t_event			*selected_event;
@@ -203,8 +207,10 @@ struct s_point
 };
 
 /*
+ * t_vec2i	pos;			the position on the wall ingame;
  * int		texture;		the id of the texture used;
  * int		state;			loop, static, or action; (not sure yet what these are);
+ * t_vec4i	screen_pos;		the position of the sprite on the screen, used for rendering and event handling;
 */
 struct s_sprite
 {
@@ -212,6 +218,8 @@ struct s_sprite
 	int				texture;
 	float			scale;
 	int				state;
+
+	t_vec4i			screen_pos;
 };
 /*
  * t_vec2i		middle;		a small line coming out from the middle of the wall that will be used to select a wall if there are 2 on top of eachother; the line should also be drawn inwards of the sector;

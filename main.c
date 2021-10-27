@@ -771,6 +771,11 @@ void	edit_window_events(t_editor *editor, SDL_Event e)
 		ui_window_flag_set(editor->win_edit, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
 }
 
+void	sprite_events(t_editor *editor, SDL_Event e)
+{
+	editor->sprite_edit_menu->show = 1;
+}
+
 void	user_events(t_editor *editor, SDL_Event e)
 {
 	t_vec2i	actual_pos;
@@ -803,13 +808,27 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_event = NULL;
 	}
 
+	/*
 	if (editor->sector_button->state == UI_STATE_CLICK)
+	{
 		sector_events(editor, e);
+		if (editor->selected_wall
+			&& editor->wall_button->state == UI_STATE_CLICK)
+	*/
+			sprite_events(editor, e);
+	/*
+		else
+		{
+			editor->selected_sprite = NULL;
+			editor->sprite_edit_menu->show = 0;
+		}
+	}
 	else
 	{
 		editor->selected_sector = NULL;
 		editor->sector_edit_menu->show = 0;
 	}
+	*/
 
 	if (editor->entity_button->state == UI_STATE_CLICK)
 		entity_events(editor, e);
@@ -1059,6 +1078,7 @@ void	editor_init(t_editor *editor)
 	editor->floor_texture_scale_input = ui_list_get_element_by_id(editor->layout.elements, "floor_texture_scale_input");
 	editor->ceiling_texture_scale_input = ui_list_get_element_by_id(editor->layout.elements, "ceiling_texture_scale_input");
 
+	// Wall
 	editor->menu_wall_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_wall_edit");
 	editor->close_wall_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_wall_edit_button");
 	editor->solid_checkbox = ui_list_get_element_by_id(editor->layout.elements, "solidity_checkbox");
@@ -1073,6 +1093,9 @@ void	editor_init(t_editor *editor)
 	editor->texture_menu = ui_list_get_element_by_id(editor->layout.elements, "texture_menu");
 	editor->texture_menu->show = 0;
 	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
+
+	// Sprite
+	editor->sprite_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "sprite_edit_menu");
 
 	// Entity Edit
 	editor->entity_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "entity_edit_menu");
