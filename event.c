@@ -47,29 +47,35 @@ void	event_elem_update(t_editor *editor, t_event_elem *event_elem)
 	char	*temp2;
 	char	*final_info;
 
-	if (!event_elem)
+	if (!event_elem || !event_elem->event)
 		return ;
 	final_info = NULL;
-	/*
-	final_info = ft_sprintf("%s, %s, %s, %s, %s, %s",
-			ui_dropdown_active_text(editor->event_type_dropdown),
-			ui_dropdown_active_text(editor->event_action_dropdown),
-			ui_dropdown_active_text(editor->event_id_dropdown),
-			ui_input_get_text(editor->event_sector_input),
-			ui_input_get_text(editor->event_min_input),
-			ui_input_get_text(editor->event_max_input)
-		);
-		*/
-	ft_printf("Event:\n");
-	if (!event_elem->event)
+	int		i;
+	char	*tem;
+	// Type
+	i = -1;
+	tem = ui_dropdown_active_text(editor->event_type_dropdown);
+	while (++i < EVENT_TYPE_AMOUNT && tem)
 	{
-		ft_printf("[%s] For some reason we dont have an event.\n", __FUNCTION__);
-		return ;
+		if (ft_strequ(g_event_type[i], tem))
+		{
+			event_elem->event->type = i;
+			break ;
+		}
 	}
-	ft_printf("do we even have an event ? : %d\n", event_elem->event ? 1 : 0);
-	ft_printf("the num value of the type is : %d\n", event_elem->event->type);
-	ft_printf("we want to put in the event info : %s\n", g_event_type[event_elem->event->type]);
-	ft_stradd(&final_info, g_event_type[event_elem->event->type]);
+	// Action
+	i = -1;
+	tem = ui_dropdown_active_text(editor->event_action_dropdown);
+	while (++i < EVENT_ACTION_AMOUNT && tem)
+	{
+		if (ft_strequ(g_event_action[i], tem))
+		{
+			event_elem->event->action = i;
+			break ;
+		}
+	}
+
+	final_info = ft_sprintf("%s, %s", g_event_type[event_elem->event->type], g_event_action[event_elem->event->action]);
 	ui_label_text_set(event_elem->info, final_info);
 	ft_strdel(&final_info);
 }

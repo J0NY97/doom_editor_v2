@@ -754,6 +754,11 @@ event_drop_button_prefab : drop_button_prefab
 	w : 65;
 };
 
+event_drop_menu_prefab
+{
+	w : 65;
+};
+
 ////// Event Type DropDown Menu ////////
 event_type_dropdown : event_dropdown_prefab
 {
@@ -761,9 +766,8 @@ event_type_dropdown : event_dropdown_prefab
 	y : 0;
 	title : Type;
 };
-event_type_menu
+event_type_menu : event_drop_menu_prefab
 {
-	w : 65: 
 };
 event_type_audio : event_drop_button_prefab
 {
@@ -801,6 +805,10 @@ event_action_dropdown : event_dropdown_prefab
 	y : 0;
 	title : Action;
 };
+event_action_menu : event_drop_menu_prefab
+{
+};
+
 event_action_shoot : event_drop_button_prefab
 {
 	title : Shoot;
@@ -815,7 +823,7 @@ event_action_sector : event_drop_button_prefab
 };
 event_action_null : event_drop_button_prefab
 {
-	title : NULL;
+	title : None;
 };
 
 event_id_dropdown : event_dropdown_prefab
@@ -824,6 +832,10 @@ event_id_dropdown : event_dropdown_prefab
 	y : 0;
 	title : ID;
 };
+event_id_menu : event_drop_menu_prefab
+{
+};
+
 event_sector_input
 {
 	xywh : 0, 21, 235, 20;

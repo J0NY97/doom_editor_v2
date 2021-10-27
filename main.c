@@ -545,47 +545,63 @@ void	entity_events(t_editor *editor, SDL_Event e)
 
 void	event_events(t_editor *editor, SDL_Event e)
 {
+
+	if (ui_list_radio_event(editor->event_element_buttons, &editor->active_event_elem))
+	{
+		t_list	*curr;
+		curr = editor->event_elements;
+		while (curr)
+		{
+			if (((t_event_elem *)curr->content)->button == editor->active_event_elem)
+			{
+				editor->selected_event_elem = curr->content;
+				editor->selected_event = editor->selected_event_elem->event;
+				break;
+			}
+			curr = curr->next;
+		}
+
+		ft_printf("a new element clicked. lets updated some dropdowns.\n");
+
+		ui_dropdown_activate(editor->event_type_dropdown,
+			ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_type_dropdown)->children,
+				g_event_type[editor->selected_event_elem->event->type]));
+	}
+
 	if (editor->add_event_button->state == UI_STATE_CLICK)
 	{
 		t_event_elem	*event_elem;
-		char			*temp2;
-		char			temp[20];
-
-		ft_printf("Trying to make new event\n");
-		event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
-		event_elem->event = event_new();
-		event_elem->nth = editor->event_amount++;
-
-		temp2 = ft_strjoin("event_", ft_b_itoa(event_elem->nth, temp));
-		ui_label_text_set(ui_button_get_label_element(event_elem->button), temp2);
-		ft_strdel(&temp2);
-
-		t_vec2	new_pos;
-		new_pos = vec2(event_elem->menu->pos.x, ((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y + 10);
-		ui_element_pos_set2(event_elem->menu, new_pos);
-		
-		add_to_list(&editor->event_elements, event_elem, sizeof(t_event_elem));
-		add_to_list(&editor->event_element_buttons, event_elem->button, sizeof(t_ui_element));
-		add_to_list(&editor->events, event_elem->event, sizeof(t_event));
-		ft_printf("New event added (%d)\n", editor->event_amount);
-		editor->active_event_elem = event_elem->button;
-		editor->selected_event = event_elem->event;
-	}
-	ui_list_radio_event(editor->event_element_buttons, &editor->active_event_elem, e);
-
-	t_list	*curr;
-	curr = editor->event_elements;
-	while (curr)
-	{
-		if (((t_event_elem *)curr->content)->button == editor->active_event_elem)
+		if (editor->selected_event_elem == NULL)
 		{
-			editor->selected_event_elem = curr->content;
-			editor->selected_event = editor->selected_event_elem->event;
-			break;
+			char			*temp2;
+			char			temp[20];
+
+			ft_printf("Trying to make new event\n");
+			event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
+			event_elem->event = event_new();
+			event_elem->nth = editor->event_amount++;
+
+			temp2 = ft_strjoin("event_", ft_b_itoa(event_elem->nth, temp));
+			ui_label_text_set(ui_button_get_label_element(event_elem->button), temp2);
+			ft_strdel(&temp2);
+
+			t_vec2	new_pos;
+			new_pos = vec2(event_elem->menu->pos.x, ((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y + 10);
+			ui_element_pos_set2(event_elem->menu, new_pos);
+			
+			add_to_list(&editor->event_elements, event_elem, sizeof(t_event_elem));
+			add_to_list(&editor->event_element_buttons, event_elem->button, sizeof(t_ui_element));
+			add_to_list(&editor->events, event_elem->event, sizeof(t_event));
+			ft_printf("New event added (%d)\n", editor->event_amount);
+			editor->selected_event_elem = event_elem;
+			editor->active_event_elem = event_elem->button;
+			editor->selected_event = event_elem->event;
 		}
-		curr = curr->next;
+		event_elem_update(editor, editor->selected_event_elem);
+		editor->selected_event_elem = NULL;
+		editor->active_event_elem = NULL;
+		editor->selected_event = NULL;
 	}
-	event_elem_update(editor, editor->selected_event_elem);
 
 	editor->event_sector_input->show = 0;
 	editor->event_min_input->show = 0;
@@ -605,8 +621,6 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_min_input->show = 1;
 		editor->event_max_input->show = 1;
 		editor->event_speed_input->show = 1;
-
-		editor->selected_event->type = FLOOR;
 	}
 	else if (editor->event_type_ceiling->state == UI_STATE_CLICK)
 	{
@@ -614,32 +628,23 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_min_input->show = 1;
 		editor->event_max_input->show = 1;
 		editor->event_speed_input->show = 1;
-
-		editor->selected_event->type = CEILING;
 	}
 	else if (editor->event_type_light->state == UI_STATE_CLICK)
 	{
 		editor->event_sector_input->show = 1;
 		editor->event_min_input->show = 1;
 		editor->event_max_input->show = 1;
-		
-		editor->selected_event->type = LIGHT;
 	}
 	else if (editor->event_type_store->state == UI_STATE_CLICK)
 	{
-		editor->selected_event->type = STORE;
 	}
 	else if (editor->event_type_hazard->state == UI_STATE_CLICK)
 	{
 		editor->event_speed_input->show = 1;
-
-		editor->selected_event->type = HAZARD;
 	}
 	else if (editor->event_type_audio->state == UI_STATE_CLICK)
 	{
 		editor->event_sector_input->show = 1;
-
-		editor->selected_event->type = AUDIO;
 	}
 	else if (editor->event_type_spawn->state == UI_STATE_CLICK)
 	{
@@ -647,8 +652,6 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_min_input->show = 1;
 		editor->event_max_input->show = 1;
 		editor->event_speed_input->show = 1;
-
-		editor->selected_event->type = SPAWN;
 	}
 
 	//

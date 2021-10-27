@@ -8,22 +8,32 @@ enum e_player_action
 	NONE,
 	SHOOTING,
 	CLICKING,
-	SECTOR
+	SECTOR,
+	EVENT_ACTION_AMOUNT
+};
+
+static const char	*g_event_action[EVENT_ACTION_AMOUNT] =
+{
+	"None",
+	"Shoot",
+	"Click",
+	"Sector"
 };
 
 enum e_event_type
 {
-	NONE_TYPE,
+	NONE_TYPE = 0,
 	CEILING,
 	FLOOR,
 	STORE,
 	HAZARD,
 	AUDIO,
 	SPAWN,
-	LIGHT
+	LIGHT,
+	EVENT_TYPE_AMOUNT
 };
 
-static const char	*g_event_type[LIGHT] =
+static const char	*g_event_type[EVENT_TYPE_AMOUNT] =
 {
 	"None",
 	"Ceiling",
