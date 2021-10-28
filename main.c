@@ -771,9 +771,74 @@ void	edit_window_events(t_editor *editor, SDL_Event e)
 		ui_window_flag_set(editor->win_edit, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
 }
 
+void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall)
+{
+	SDL_Surface	*surface;
+	t_vec2i		dist;
+	float		aspect;
+
+//	ft_printf("wall redner size : %d %d\n", (int)editor->wall_render->pos.w, (int)editor->wall_render->pos.h);
+
+	dist.x = distancei(wall->p1->pos.v, wall->p2->pos.v, 2);
+	dist.y = sector->ceiling_height - sector->floor_height;
+//	ft_printf("distance : %d %d\n", dist.x, dist.y);
+	aspect = get_ratio(vec2i(dist.x, dist.y), vec2i(editor->wall_render->pos.w, editor->wall_render->pos.h));
+//	ft_printf("aspect2 : %.2f\n", aspect);
+	surface = ui_surface_new(dist.x * aspect, dist.y * aspect);
+//	ft_printf("size : %d %d\n", surface->w, surface->h);
+	ui_surface_fill(surface, 0xff00ff00);
+
+	// Render the Texture
+	SDL_Surface	*texture = editor->wall_textures[wall->wall_texture];
+	t_vec2i		from = vec2i(ft_min(texture->w, texture->h), ft_min(texture->w, texture->h));
+	t_vec2i		scaled_size = vec2i(64 * wall->texture_scale, 64 * wall->texture_scale);
+	t_vec2i		dim = vec2i(ft_min(scaled_size.x, scaled_size.y), ft_min(scaled_size.x, scaled_size.y));
+	int			xtexturecount = surface->w / dim.x;
+	int			ytexturecount = surface->h / dim.y;
+	for (int j = 0; j <= ytexturecount; j++)
+		for (int i = 0; i <= xtexturecount; i++)
+			SDL_BlitScaled(texture, &(SDL_Rect){0, 0, from.x, from.y}, surface, &(SDL_Rect){i * dim.x, j * dim.y, dim.x, dim.y});
+
+	// Render the sprites;
+	t_sprite	*sprite;
+	t_list		*curr;
+
+	curr = wall->sprites;
+	while (curr)
+	{
+		sprite = curr->content;
+		texture = editor->wall_textures[sprite->texture];
+		from = vec2i(ft_min(texture->w, texture->h), ft_min(texture->w, texture->h));
+		scaled_size = vec2i(64 * sprite->scale, 64 * sprite->scale);
+		dim = vec2i(ft_min(scaled_size.x, scaled_size.y), ft_min(scaled_size.x, scaled_size.y));
+		SDL_BlitScaled(texture, &(SDL_Rect){0, 0, from.x, from.y}, surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, dim.x, dim.y});
+		curr = curr->next;
+	}
+
+	SDL_UpdateTexture(editor->wall_render->texture, NULL, surface->pixels, surface->pitch);
+	SDL_FreeSurface(surface);
+}
+
 void	sprite_events(t_editor *editor, SDL_Event e)
 {
+	if (!editor->selected_wall || !editor->selected_sector)
+	{
+		ft_printf("[%s] We need both selected wall and sector for this function, and currently we dont have both so no function running for you.\n");
+		return ;
+	}
+
 	editor->sprite_edit_menu->show = 1;
+
+	if (editor->sprite_add_button->state == UI_STATE_CLICK)
+	{
+		t_sprite	*sprite;
+
+		sprite = sprite_new();
+		add_to_list(&editor->selected_wall->sprites, sprite, sizeof(t_sprite));
+		ft_printf("New Sprite Added (%d)\n", ++editor->selected_wall->sprite_amount);
+	}
+
+	render_wall_on_sprite_menu(editor, editor->selected_sector, editor->selected_wall);
 }
 
 void	user_events(t_editor *editor, SDL_Event e)
@@ -808,15 +873,12 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_event = NULL;
 	}
 
-	/*
 	if (editor->sector_button->state == UI_STATE_CLICK)
 	{
 		sector_events(editor, e);
 		if (editor->selected_wall
 			&& editor->wall_button->state == UI_STATE_CLICK)
-	*/
 			sprite_events(editor, e);
-	/*
 		else
 		{
 			editor->selected_sprite = NULL;
@@ -828,7 +890,6 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_sector = NULL;
 		editor->sector_edit_menu->show = 0;
 	}
-	*/
 
 	if (editor->entity_button->state == UI_STATE_CLICK)
 		entity_events(editor, e);
@@ -1096,6 +1157,14 @@ void	editor_init(t_editor *editor)
 
 	// Sprite
 	editor->sprite_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "sprite_edit_menu");
+	editor->sprite_add_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_add_button");
+	editor->sprite_remove_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_remove_button");
+	editor->wall_render = ui_list_get_element_by_id(editor->layout.elements, "wall_render");
+	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
+	{
+		ft_printf("Load Image : %s\n", g_map_textures[i].path);
+		editor->wall_textures[i] = load_bxpm_to_surface(g_map_textures[i].path);
+	}
 
 	// Entity Edit
 	editor->entity_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "entity_edit_menu");

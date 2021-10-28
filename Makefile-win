@@ -6,6 +6,9 @@ SRCS = \
 	./sector.c \
 	./entity.c \
 	./event.c \
+	./sprite.c \
+	./math.c \
+	./bxpm.c \
 	./set_map.c \
 	./args_parser.c \
 	./help.c \
@@ -23,15 +26,17 @@ INCLUDES = \
 	-I$(LIB_FOLDER)/libft \
 	-I$(LIB_FOLDER)/libpf \
 	-I$(LIB_FOLDER)/libui \
+	-I$(LIB_FOLDER)/libbxpm \
 	$(SDL_INC) \
 
 LIB_FOLDERS = \
 	-L$(LIB_FOLDER)/libft \
 	-L$(LIB_FOLDER)/libpf \
 	-L$(LIB_FOLDER)/libui \
+	-L$(LIB_FOLDER)/libbxpm \
 	$(SDL_LIB_DIR) \
 
-LIB = $(SDL_LIB) -lui -lpf -lft
+LIB = $(SDL_LIB) -lui -lpf -lft -lbxpm
 
 FLAGS = -Wall -Wextra
 

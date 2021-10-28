@@ -8,6 +8,8 @@
 # include "SDL.h"
 # include "SDL_ttf.h"
 # include "SDL_image.h"
+# include "math.h"
+# include "bxpm.h"
 
 # include "temp.h" // not needed when we are using the real enum.h;
 
@@ -102,6 +104,9 @@ typedef struct s_editor
 
 	// Sprites
 	t_ui_element	*sprite_edit_menu;
+	t_ui_element	*sprite_add_button;
+	t_ui_element	*sprite_remove_button;
+	t_ui_element	*wall_render;
 
 	// Entity
 	t_ui_element	*entity_edit_menu;
@@ -157,6 +162,7 @@ typedef struct s_editor
 	t_vec2i			mouse_pos;
 	t_vec2i			offset;
 
+	SDL_Surface		*wall_textures[MAP_TEXTURE_AMOUNT];
 	SDL_Texture		*entity_textures[ENTITY_AMOUNT + 1];
 
 	t_vec2i			first_point;
@@ -182,6 +188,7 @@ typedef struct s_editor
 	t_list			*sectors;
 	t_list			*entities;
 	t_list			*events;
+	t_list			*sprites;
 
 	t_list			*event_elements;
 	t_list			*event_element_buttons;
@@ -240,6 +247,7 @@ struct s_wall
 	float			texture_scale;
 
 	t_list			*sprites;
+	int				sprite_amount;
 };
 
 /*
@@ -332,6 +340,9 @@ void				event_elem_update(t_editor *editor, t_event_elem *event_elem);
 void				fill_event_id_dropdown(t_editor *editor, int event_type);
 t_event				*event_new(void);
 
+// Sprite
+t_sprite			*sprite_new(void);
+
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);
 void				try_reading_map(t_editor *editor);
@@ -343,5 +354,8 @@ void				set_map(t_editor *editor, char *name);
 Uint32				random_blue_color(void);
 t_vec2i				conversion(t_editor *editor, t_vec2i v);
 void				remove_from_list(t_list **list, void *pointer);
+
+// Bxpm
+SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);
 
 #endif

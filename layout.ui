@@ -168,6 +168,7 @@ Window win_main
 					Button sprite_texture_button {};
 					Menu sprite_texture_image {};
 				};
+				Menu wall_render {};
 			};
 		};
 	};

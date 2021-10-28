@@ -576,7 +576,7 @@ sprite_state_dropdown
 {
 	xywh : 10, 125, 110, 20;
 	text_pos : 2, 2, 108, 18;
-	title : State;
+	title : Type;
 };
 sprite_state_drop_menu
 {
@@ -593,6 +593,11 @@ sprite_state_loop : sprite_drop_button_prefab
 sprite_state_action : sprite_drop_button_prefab
 {
 	title : Action;
+};
+
+wall_render
+{
+	xywh : 140, 35, 600, 205;
 };
 
 ///////////////////
