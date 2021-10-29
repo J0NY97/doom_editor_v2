@@ -243,12 +243,7 @@ Window win_main
 			};
 			Dropdown event_id_dropdown
 			{
-				Menu event_id_menu
-				{
-					Button event_id_0 {};
-					Button event_id_1 {};
-					Button event_id_2 {};
-				};
+				Menu event_id_menu {};
 			};
 			Input event_sector_input {};
 			Input event_min_input {};

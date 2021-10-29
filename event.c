@@ -23,19 +23,19 @@ t_event_elem	*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_elem
 
 	event_elem->menu = ft_memalloc(sizeof(t_ui_element));
 	ui_menu_new(win, event_elem->menu);
-	ui_element_parent_set(event_elem->menu, parent, UI_TYPE_ELEMENT);
+	ui_element_set_parent(event_elem->menu, parent, UI_TYPE_ELEMENT);
 	((t_ui_menu *)event_elem->menu->element)->event_and_render_children = 1;
 	ui_element_edit(event_elem->menu, menu_recipe);
 
 	event_elem->info = ft_memalloc(sizeof(t_ui_element));
 	ui_label_new(win, event_elem->info);
-	ui_element_parent_set(event_elem->info, event_elem->menu, UI_TYPE_ELEMENT);
+	ui_element_set_parent(event_elem->info, event_elem->menu, UI_TYPE_ELEMENT);
 	ui_element_edit(event_elem->info, info_recipe);
 	ui_element_set_id(event_elem->info, "event_info");
 	
 	event_elem->button = ft_memalloc(sizeof(t_ui_element));
 	ui_button_new(win, event_elem->button);
-	ui_element_parent_set(event_elem->button, event_elem->menu, UI_TYPE_ELEMENT);
+	ui_element_set_parent(event_elem->button, event_elem->menu, UI_TYPE_ELEMENT);
 	ui_element_edit(event_elem->button, button_recipe);
 
 	return (event_elem);

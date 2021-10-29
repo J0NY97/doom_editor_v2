@@ -15,5 +15,5 @@ void	sprite_print(t_sprite *sprite)
 	print_veci(sprite->pos.v, 2);
 	ft_printf("\ttexture : %d\n", sprite->texture);
 	ft_printf("\tscale : %.2f\n", sprite->scale);
-	ft_printf("\tstate : %d\n", sprite->state);
+	ft_printf("\ttype : %d\n", sprite->type);
 }

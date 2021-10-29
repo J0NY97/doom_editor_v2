@@ -661,9 +661,64 @@ void	event_events(t_editor *editor, SDL_Event e)
 	}
 
 	//
-	if (editor->event_id_dropdown->show)
-		if (ui_dropdown_open(editor->event_id_dropdown))
-			ft_printf("event id dropdown clicked, we want to update now.\n");
+	if (editor->event_id_dropdown->show
+		&& ui_dropdown_open(editor->event_id_dropdown)
+		&& (editor->event_action_shoot->state == UI_STATE_CLICK
+			|| editor->event_action_click->state == UI_STATE_CLICK))
+	{
+		ft_printf("event id dropdown clicked, we want to update now.\n");
+
+		t_list		*curr;
+		t_list		*curr_button;
+		t_sprite	*sprite;
+		int			id;
+		char		temp_str[20];
+
+		// Count how many of type action we have in sprites; save in event_id_buttons_in_use;
+		// Might aswell update the ids of them;
+		id = -1;
+		editor->event_id_buttons_in_use = 0;
+		curr = editor->sprites;
+		while (curr)
+		{
+			sprite = curr->content;
+			if (sprite->type == ACTION)
+				editor->event_id_buttons_in_use++;
+			sprite->id = ++id;
+			curr = curr->next;
+		}
+		// Create as many buttons as we have sprites with action as type;
+		while (editor->event_id_buttons_made < editor->event_id_buttons_in_use)
+		{
+			t_ui_element	*elem;
+			elem = ft_memalloc(sizeof(t_ui_element));
+			ui_button_new(editor->win_main, elem);
+			ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
+			// ui_element_edit(elem, recipe);
+			editor->event_id_buttons_made++;
+		}
+		// Fill all the buttons with the id of all the sprites;
+		curr = editor->sprites;
+		curr_button = editor->event_id_menu->children;
+		while (curr) // curr_button should never be NULL before curr!
+		{
+			sprite = curr->content;
+			((t_ui_element *)curr_button->content)->show = 1;
+			if (sprite->type == ACTION)
+				ui_button_set_text(curr_button->content, ft_b_itoa(sprite->id, temp_str));
+			curr = curr->next;
+			curr_button = curr_button->next;
+		}
+		// If we have more made buttons than buttons in use,
+		// 	go through the rest of them and hide them.
+		while (curr_button)
+		{
+			((t_ui_element *)curr_button->content)->show = 0;
+			curr_button = curr_button->next;
+		}
+
+		ft_printf("Event iD buttons in use : %d, made : %d\n", editor->event_id_buttons_in_use, editor->event_id_buttons_made);
+	}
 }
 
 void	spawn_events(t_editor *editor, SDL_Event e)
@@ -837,7 +892,6 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	// Draw lines on the surface borders for debugging purposes;
 	ui_surface_draw_border(surface, 1, 0xff00ff00);
 
-//	SDL_UpdateTexture(editor->wall_render->texture, NULL, surface->pixels, surface->pitch);
 	SDL_UpdateTexture(editor->wall_render->texture, &(SDL_Rect){0, 0, surface->w, surface->h}, surface->pixels, surface->pitch);
 	SDL_FreeSurface(surface);
 }
@@ -858,7 +912,9 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 		editor->selected_sprite->pos = vec4i(0, 0, 64, 64);
 		editor->selected_sprite->texture = 0;
 		editor->selected_sprite->scale = 1.0f;
+		editor->selected_sprite->type = ACTION;
 		add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
+		add_to_list(&editor->sprites, editor->selected_sprite, sizeof(t_sprite));
 		ft_printf("New Sprite Added (%d)\n", ++editor->selected_wall->sprite_amount);
 	}
 	render_wall_on_sprite_menu(editor, editor->selected_sector, editor->selected_wall);
@@ -1267,6 +1323,7 @@ void	editor_init(t_editor *editor)
 	editor->event_type_dropdown = ui_list_get_element_by_id(editor->layout.elements, "event_type_dropdown");
 	editor->event_action_dropdown = ui_list_get_element_by_id(editor->layout.elements, "event_action_dropdown");
 	editor->event_id_dropdown = ui_list_get_element_by_id(editor->layout.elements, "event_id_dropdown");
+	editor->event_id_menu = ui_dropdown_get_menu_element(editor->event_id_dropdown);
 	editor->event_sector_input = ui_list_get_element_by_id(editor->layout.elements, "event_sector_input");
 	editor->event_min_input = ui_list_get_element_by_id(editor->layout.elements, "event_min_input");
 	editor->event_max_input = ui_list_get_element_by_id(editor->layout.elements, "event_max_input");
@@ -1280,6 +1337,11 @@ void	editor_init(t_editor *editor)
 	editor->event_type_hazard = ui_list_get_element_by_id(editor->layout.elements, "event_type_hazard");
 	editor->event_type_audio = ui_list_get_element_by_id(editor->layout.elements, "event_type_audio");
 	editor->event_type_spawn = ui_list_get_element_by_id(editor->layout.elements, "event_type_spawn");
+	// actions
+	editor->event_action_click = ui_list_get_element_by_id(editor->layout.elements, "event_action_click");
+	editor->event_action_shoot = ui_list_get_element_by_id(editor->layout.elements, "event_action_shoot");
+	editor->event_action_sector = ui_list_get_element_by_id(editor->layout.elements, "event_action_sector");
+	editor->event_action_null = ui_list_get_element_by_id(editor->layout.elements, "event_action_null");
 
 	// Save Window
 	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");

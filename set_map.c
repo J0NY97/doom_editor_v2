@@ -97,7 +97,7 @@ char	*get_wall_sprites(t_wall *wall, int *id)
 		*id += 1;
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\n",
 				*id, wall->id, sprite->pos.x, sprite->pos.y,
-				sprite->texture, sprite->scale, sprite->state);
+				sprite->texture, sprite->scale, sprite->type);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
@@ -113,7 +113,7 @@ char	*set_sprites(t_editor *editor)
 	int		total_sprites;
 
 	total_sprites = -1;
-	final = ft_sprintf("type:wsprite\twall\tx\ty\ttexture\tscale\tstate\n");
+	final = ft_sprintf("type:wsprite\twall\tx\ty\ttexture\tscale\ttype\n");
 	curr = editor->walls;
 	while (curr)
 	{

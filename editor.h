@@ -23,6 +23,13 @@ typedef struct	s_sector	t_sector;
 typedef struct	s_entity	t_entity;
 typedef struct	s_event		t_event;
 
+enum e_types_of_stuff
+{
+	TYPE_NONE,
+	TYPE_SECTOR,
+	TYPE_SPRITE
+};
+
 typedef struct s_fps
 {
 	float	curr;
@@ -126,6 +133,7 @@ typedef struct s_editor
 	t_ui_element	*event_type_dropdown;
 	t_ui_element	*event_action_dropdown;
 	t_ui_element	*event_id_dropdown;
+	t_ui_element	*event_id_menu;
 	t_ui_element	*event_sector_input;
 	t_ui_element	*event_min_input;
 	t_ui_element	*event_max_input;
@@ -139,6 +147,11 @@ typedef struct s_editor
 	t_ui_element	*event_type_hazard;
 	t_ui_element	*event_type_audio;
 	t_ui_element	*event_type_spawn;
+	// actions
+	t_ui_element	*event_action_click;
+	t_ui_element	*event_action_shoot;
+	t_ui_element	*event_action_sector;
+	t_ui_element	*event_action_null;
 
 
 	t_ui_element	*mouse_info_label;
@@ -193,10 +206,12 @@ typedef struct s_editor
 	t_list			*events;
 	t_list			*sprites;
 
+	// Event
 	t_list			*event_elements;
 	t_list			*event_element_buttons;
 	t_ui_element	*active_event_elem;
 	t_event_elem	*selected_event_elem;
+	// id
 	t_list			*event_id_buttons;
 	int				event_id_buttons_made;
 	int				event_id_buttons_in_use;
@@ -223,10 +238,11 @@ struct s_point
 */
 struct s_sprite
 {
+	int				id;
 	t_vec4i			pos;
 	int				texture;
 	float			scale;
-	int				state;
+	int				type;
 };
 /*
  * t_vec2i		middle;		a small line coming out from the middle of the wall that will be used to select a wall if there are 2 on top of eachother; the line should also be drawn inwards of the sector;
@@ -296,6 +312,8 @@ struct s_entity
  * int		id;						id of the sector/wall sprite/whatever else it could be;
  * char		*sector;				no idea;
  * int		min, max, speed;		other info for some of the event types;
+ * int		pointer_type;			either TYPE_SECTOR or TYPE_SPRITE;
+ * void		*pointer;				either t_sector or t_sprite depending on do you have type as shoot/click or sector;
 */
 struct s_event	
 {
@@ -306,6 +324,9 @@ struct s_event
 	int				min;
 	int				max;
 	int				speed;
+
+	int				pointer_type;
+	void			*pointer;
 };
 
 // Point
