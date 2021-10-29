@@ -116,6 +116,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 				{
 					t_wall	*wall;
 					wall = wall_new();
+					wall->wall_texture = 1;
 					wall->p1 = get_point_from_sector_around_radius(editor->selected_sector, editor->first_point, 0.0f);
 					if (!wall->p1)
 					{
@@ -175,7 +176,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 				ft_printf("sector inputs updated\n");
 			}
 		}
-		else if (editor->selected_sector
+		else if (editor->selected_sector // MOVE SECTOR
 			&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
 			&& !editor->selected_point
 			&& !editor->selected_wall)
@@ -228,7 +229,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 					if (point)
 						editor->selected_point = point;
 				}
-				else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+				else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT) // MOVE POINT
 					editor->selected_point->pos = vec2i_add(editor->selected_point->pos, move_amount);
 			}
 			else
@@ -256,7 +257,9 @@ void	sector_events(t_editor *editor, SDL_Event e)
 						ui_input_set_text(editor->wall_texture_scale_input, ft_b_ftoa(editor->selected_wall->texture_scale, 2, temp_str));
 					}
 				}
-				else if (editor->selected_wall && editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+				else if (editor->selected_wall // MOVE WALL
+					&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
+					&& !(editor->wall_render->show == 1 && ui_element_is_hover(editor->sprite_edit_menu))) // dont move the wall if we are hovering over the sprite_edit_menu;
 				{
 					editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, move_amount);
 					editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, move_amount);
@@ -767,8 +770,12 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 
 void	edit_window_events(t_editor *editor, SDL_Event e)
 {
+	if (!editor->win_edit->show)
+		return ;
 	if (editor->edit_button->state == UI_STATE_CLICK)
 		ui_window_flag_set(editor->win_edit, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
+	if (ui_input_exit(editor->map_scale_input))
+		editor->map_scale = ft_atof(ui_input_get_text(editor->map_scale_input));
 }
 
 void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall)
@@ -779,14 +786,16 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 
 //	ft_printf("wall redner size : %d %d\n", (int)editor->wall_render->pos.w, (int)editor->wall_render->pos.h);
 
+	// TODO: figure out if we even need any of the mapscale here, since if everything gets scaled up... it doesnt look like anything is scaling up;
 	dist.x = distancei(wall->p1->pos.v, wall->p2->pos.v, 2);
-	dist.y = sector->ceiling_height - sector->floor_height;
+	dist.y = (sector->ceiling_height - sector->floor_height);
 //	ft_printf("distance : %d %d\n", dist.x, dist.y);
 	aspect = get_ratio(vec2i(dist.x, dist.y), vec2i(editor->wall_render->pos.w, editor->wall_render->pos.h));
 //	ft_printf("aspect2 : %.2f\n", aspect);
 	surface = ui_surface_new(dist.x * aspect, dist.y * aspect);
 //	ft_printf("size : %d %d\n", surface->w, surface->h);
-	ui_surface_fill(surface, 0xff00ff00);
+
+	ui_texture_fill(editor->win_main->renderer, editor->wall_render->texture, 0xff000000);
 
 	// Render the Texture
 	SDL_Surface	*texture = editor->wall_textures[wall->wall_texture];
@@ -809,13 +818,27 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 		sprite = curr->content;
 		texture = editor->wall_textures[sprite->texture];
 		from = vec2i(ft_min(texture->w, texture->h), ft_min(texture->w, texture->h));
-		scaled_size = vec2i(64 * sprite->scale, 64 * sprite->scale);
+		sprite->pos.w = 64 * sprite->scale;
+		sprite->pos.h = 64 * sprite->scale;
 		dim = vec2i(ft_min(scaled_size.x, scaled_size.y), ft_min(scaled_size.x, scaled_size.y));
 		SDL_BlitScaled(texture, &(SDL_Rect){0, 0, from.x, from.y}, surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, dim.x, dim.y});
 		curr = curr->next;
 	}
+	// Draw rect around selected sprite;
+	t_vec2i	p1;
+	t_vec2i	p2;
+	if (editor->selected_sprite)
+	{
+		p1 = vec2i(editor->selected_sprite->pos.x, editor->selected_sprite->pos.y);
+		p2 = vec2i(p1.x + editor->selected_sprite->pos.w, p1.y + editor->selected_sprite->pos.h);
+		ui_surface_rect_draw(surface, p1, p2, 0xff0000ff);
+	}
 
-	SDL_UpdateTexture(editor->wall_render->texture, NULL, surface->pixels, surface->pitch);
+	// Draw lines on the surface borders for debugging purposes;
+	ui_surface_draw_border(surface, 1, 0xff00ff00);
+
+//	SDL_UpdateTexture(editor->wall_render->texture, NULL, surface->pixels, surface->pitch);
+	SDL_UpdateTexture(editor->wall_render->texture, &(SDL_Rect){0, 0, surface->w, surface->h}, surface->pixels, surface->pitch);
 	SDL_FreeSurface(surface);
 }
 
@@ -831,14 +854,50 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 
 	if (editor->sprite_add_button->state == UI_STATE_CLICK)
 	{
-		t_sprite	*sprite;
-
-		sprite = sprite_new();
-		add_to_list(&editor->selected_wall->sprites, sprite, sizeof(t_sprite));
+		editor->selected_sprite = sprite_new();
+		editor->selected_sprite->pos = vec4i(0, 0, 64, 64);
+		editor->selected_sprite->texture = 0;
+		editor->selected_sprite->scale = 1.0f;
+		add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
 		ft_printf("New Sprite Added (%d)\n", ++editor->selected_wall->sprite_amount);
 	}
-
 	render_wall_on_sprite_menu(editor, editor->selected_sector, editor->selected_wall);
+
+	// Selecting Sprite
+	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+		&& ui_element_is_hover(editor->wall_render))
+	{
+		t_list		*curr;
+		t_sprite	*sprite;
+		t_vec2i		actual_mouse_pos;
+
+		actual_mouse_pos = vec2i(editor->win_main->mouse_pos.x - editor->wall_render->screen_pos.x,
+				editor->win_main->mouse_pos.y - editor->wall_render->screen_pos.y);
+		curr = editor->selected_wall->sprites;
+		while (curr)
+		{
+			sprite = curr->content;
+			if (vec2_in_vec4(actual_mouse_pos, sprite->pos))
+			{
+				ft_printf("We have clicked a sprite.\n");
+				editor->selected_sprite = sprite;
+				break ;
+			}
+			curr = curr->next;
+		}
+	}
+
+	// Moving Sprite
+	if (editor->selected_sprite
+		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+	{
+		t_vec2i	move_amount;
+
+		move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+		move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+		editor->selected_sprite->pos.x = editor->selected_sprite->pos.x + move_amount.x;
+		editor->selected_sprite->pos.y = editor->selected_sprite->pos.y + move_amount.y;
+	}
 }
 
 void	user_events(t_editor *editor, SDL_Event e)
@@ -1160,6 +1219,7 @@ void	editor_init(t_editor *editor)
 	editor->sprite_add_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_add_button");
 	editor->sprite_remove_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_remove_button");
 	editor->wall_render = ui_list_get_element_by_id(editor->layout.elements, "wall_render");
+	ui_element_textures_redo(editor->wall_render); // its dumb that i have to do this;
 	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
 	{
 		ft_printf("Load Image : %s\n", g_map_textures[i].path);
@@ -1230,6 +1290,8 @@ void	editor_init(t_editor *editor)
 
 	// Edit Window
 	editor->win_edit = ui_list_get_window_by_id(editor->layout.windows, "win_edit");
+	editor->map_scale_input = ui_list_get_element_by_id(editor->layout.elements, "map_scale_input");
+	editor->map_scale = 1.0f;
 
 	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
 

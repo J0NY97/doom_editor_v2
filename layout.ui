@@ -163,6 +163,7 @@ Window win_main
 				};
 				Button sprite_add_button {};	
 				Button sprite_remove_button {};	
+				Button sprite_confirm_button {};
 				Label sprite_texture_label
 				{
 					Button sprite_texture_button {};

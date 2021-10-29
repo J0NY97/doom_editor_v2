@@ -1041,4 +1041,5 @@ map_scale_input
 	xywh : 0, 20, 100, 20;
 	title : 1.0;
 	text_align : center left;
+	type : numbers;
 };
