@@ -157,6 +157,7 @@ typedef struct s_editor
 	t_ui_element	*mouse_info_label;
 	t_ui_element	*sector_info_label;
 	t_ui_element	*sub_info_label;
+	t_ui_element	*sprite_info_label;
 	t_ui_element	*misc_info_label;
 
 	t_ui_window		*win_save;
@@ -349,6 +350,7 @@ t_sector			*sector_new(void);
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
 int					remove_sector(t_editor *editor, t_sector *sector);
+int					get_next_sector_id(t_list *list);
 
 // Entity
 t_entity			*entity_new(void);
@@ -368,7 +370,9 @@ void				remove_event_from_list(t_event *event, t_list **list);
 
 // Sprite
 t_sprite			*sprite_new(void);
+void				sprite_free(t_sprite *sprite);
 void				sprite_print(t_sprite *sprite);
+int					get_next_sprite_id(t_list *list);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);

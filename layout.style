@@ -643,13 +643,25 @@ selected_sector_info
 
 selected_sub_label
 {
-	xywh : 120, 100, 50, 20;
+	xywh : 120, 80, 50, 20;
 	title : Wall/Point:;
 };
 selected_sub_info
 {
 	xywh : 0, 20, 70, 20;
 	title : [sub info];
+	max_w : 90;
+};
+
+selected_sprite_label
+{
+	xywh : 120, 150, 50, 20;
+	title : Sprite:;
+};
+selected_sprite_info
+{
+	xywh : 0, 20, 70, 20;
+	title : [sprite info];
 	max_w : 90;
 };
 

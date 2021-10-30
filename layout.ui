@@ -46,6 +46,10 @@ Window win_main
 			{
 				Label selected_sub_info {};
 			};
+			Label selected_sprite_label
+			{
+				Label selected_sprite_info {};
+			};
 		};
 	};
 	Menu sector_edit_menu

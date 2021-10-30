@@ -97,7 +97,8 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			if (!editor->selected_sector)
 			{
 				editor->selected_sector = sector_new();
-				editor->selected_sector->id = ++editor->sector_amount;
+				editor->selected_sector->id = get_next_sector_id(editor->sectors);
+				++editor->sector_amount;
 				add_to_list(&editor->sectors, editor->selected_sector, sizeof(t_sector));
 			}
 			if (editor->selected_sector)
@@ -211,6 +212,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			else if (editor->selected_sector)
 			{
 				remove_sector(editor, editor->selected_sector);
+				--editor->sector_amount;
 				editor->selected_sector = NULL;
 			}
 			if (was_removed)
@@ -686,12 +688,10 @@ void	event_events(t_editor *editor, SDL_Event e)
 		t_list		*curr;
 		t_list		*curr_button;
 		t_sprite	*sprite;
-		int			id;
 		char		temp_str[20];
 
 		// Count how many of type action we have in sprites; save in event_id_buttons_in_use;
 		// Might aswell update the ids of them;
-		id = -1;
 		editor->event_id_buttons_in_use = 0;
 		curr = editor->sprites;
 		while (curr)
@@ -699,7 +699,6 @@ void	event_events(t_editor *editor, SDL_Event e)
 			sprite = curr->content;
 			if (sprite->type == ACTION)
 				editor->event_id_buttons_in_use++;
-			sprite->id = ++id;
 			curr = curr->next;
 		}
 		// Create as many buttons as we have sprites with action as type;
@@ -807,6 +806,13 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 			final_str = ft_sprintf("iD : %d\np1 : %d, %d\np2 : %d, %d\n", wall->id, wall->p1->pos.x, wall->p1->pos.y, wall->p2->pos.x, wall->p2->pos.y);
 			ui_label_text_set(editor->sub_info_label, final_str);
 			ft_strdel(&final_str);
+			if (editor->selected_sprite)
+			{
+				t_sprite *sprite = editor->selected_sprite;
+				final_str = ft_sprintf("iD : %d\npos : %d, %d\n", sprite->id, sprite->pos.x, sprite->pos.y);
+				ui_label_text_set(editor->sprite_info_label, final_str);
+				ft_strdel(&final_str);
+			}
 		}
 		else
 			ui_label_text_set(editor->sub_info_label, "NONE");
@@ -931,6 +937,7 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 		editor->selected_sprite->texture = 0;
 		editor->selected_sprite->scale = 1.0f;
 		editor->selected_sprite->type = ACTION;
+		editor->selected_sprite->id = get_next_sprite_id(editor->sprites);
 		add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
 		add_to_list(&editor->sprites, editor->selected_sprite, sizeof(t_sprite));
 		++editor->selected_wall->sprite_amount;
@@ -940,7 +947,9 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 	{
 		if (editor->selected_sprite)
 		{
-			remove_sprite_from_wall(editor->selected_sprite, editor->selected_wall);
+			remove_from_list(&editor->sprites, editor->selected_sprite);
+			remove_from_list(&editor->selected_wall->sprites, editor->selected_sprite);
+			sprite_free(editor->selected_sprite);
 			editor->selected_sprite = NULL;
 			--editor->selected_wall->sprite_amount;
 			ft_printf("Sprite Removed (total : %d)\n", editor->selected_wall->sprite_amount);
@@ -1341,6 +1350,8 @@ void	editor_init(t_editor *editor)
 	editor->mouse_info_label = ui_list_get_element_by_id(editor->layout.elements, "mouse_hover_info");
 	editor->sub_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sub_info");
 	ui_label_get_label(editor->sub_info_label)->max_w = editor->sub_info_label->pos.w;
+	editor->sprite_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sprite_info");
+	ui_label_get_label(editor->sprite_info_label)->max_w = editor->sprite_info_label->pos.w;
 	editor->misc_info_label = ui_list_get_element_by_id(editor->layout.elements, "misc_info");
 	ui_label_get_label(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
 

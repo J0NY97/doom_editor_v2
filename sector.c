@@ -50,3 +50,23 @@ int	remove_sector(t_editor *editor, t_sector *sector)
 	ft_printf("[%s] Sector removed from editor->sectors\n", __FUNCTION__);
 	return (1);
 }
+
+int	get_next_sector_id(t_list *list)
+{
+	t_sector	*sector;
+	int			total;
+	int			should_be_total;
+	int			i;
+
+	total = 0;
+	i = 0;
+	while (list)
+	{
+		sector = list->content;
+		total += sector->id;
+		i++;
+		list = list->next;
+	}
+	should_be_total = i * (i + 1) / 2;
+	return (should_be_total - total);
+}
