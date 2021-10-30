@@ -704,7 +704,6 @@ void	event_events(t_editor *editor, SDL_Event e)
 			sprite = sprite_lst->content;
 			if (sprite->type == ACTION) // make new element or fill element with the correct id;
 			{
-				++i;
 				if (button_lst && button_lst->content) // we have button;
 				{
 					if (!button_lst->content)
@@ -725,6 +724,7 @@ void	event_events(t_editor *editor, SDL_Event e)
 					ui_element_edit(elem, event_id_button);
 				}
 			}
+			++i;
 			sprite_lst = sprite_lst->next;
 		}
 		// Finally remove all the extra buttons;
@@ -917,7 +917,10 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	// Draw lines on the surface borders for debugging purposes;
 	ui_surface_draw_border(surface, 1, 0xff00ff00);
 
-	SDL_UpdateTexture(editor->wall_render->texture, &(SDL_Rect){0, 0, surface->w, surface->h}, surface->pixels, surface->pitch);
+	int	w;
+	int h;
+	SDL_QueryTexture(editor->wall_render->texture, NULL, NULL, &w, &h); // TODO : from element take queried texture w and h, and remove this; (TODO: add to the element struct texture w/h which will be taken when recreating texture);
+	SDL_UpdateTexture(editor->wall_render->texture, &(SDL_Rect){0, 0, ft_min(surface->w, w), ft_min(surface->h, h)}, surface->pixels, surface->pitch);
 	SDL_FreeSurface(surface);
 }
 
@@ -1314,7 +1317,7 @@ void	editor_init(t_editor *editor)
 	editor->sprite_add_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_add_button");
 	editor->sprite_remove_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_remove_button");
 	editor->wall_render = ui_list_get_element_by_id(editor->layout.elements, "wall_render");
-	ui_element_textures_redo(editor->wall_render); // its dumb that i have to do this;
+//	ui_element_textures_redo(editor->wall_render); // its dumb that i have to do this;
 	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
 	{
 		ft_printf("Load Image : %s\n", g_map_textures[i].path);
