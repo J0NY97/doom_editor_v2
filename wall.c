@@ -94,3 +94,19 @@ int	remove_wall(t_editor *editor, t_wall *wall)
 	ft_printf("[%s] Done removing wall.\n", __FUNCTION__);
 	return (1);
 }
+
+void	remove_sprite_from_wall(t_sprite *sprite, t_wall *wall)
+{
+	t_list	*curr;
+
+	curr = wall->sprites;
+	while (curr)
+	{
+		if (curr->content == sprite)
+		{
+			free(curr->content);
+			ft_lstdelone_nonfree(&wall->sprites, curr);
+		}
+		curr = curr->next;
+	}
+}

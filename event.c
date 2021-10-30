@@ -8,6 +8,54 @@ t_event	*event_new(void)
 	return (event);
 }
 
+void	event_free(t_event *event)
+{
+	event->pointer = NULL;
+	ft_strdel(&event->sector);
+	free(event);
+}
+
+void	remove_event_from_list(t_event *event, t_list **list)
+{
+	t_list	*curr;
+
+	curr = *list;
+	while (curr)
+	{
+		if (event == curr->content)
+		{
+			ft_lstdelone_nonfree(list, curr);
+			event_free(event);
+		}
+		curr = curr->next;
+	}
+}
+
+void	event_elem_free(t_event_elem *elem)
+{
+	ui_element_free(elem->menu);
+	ui_element_free(elem->button);
+	ui_element_free(elem->info);
+	elem->event = NULL; // This is just a pointer;
+	free(elem);
+}
+
+void	remove_event_elem_from_list(t_event_elem *elem, t_list **list)
+{
+	t_list	*curr;
+
+	curr = *list;
+	while (curr)
+	{
+		if (curr->content == elem)
+		{
+			event_elem_free(elem);	
+			ft_lstdelone_nonfree(list, curr);
+		}
+		curr = curr->next;
+	}
+}
+
 t_event_elem	*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent)
 {
 	t_event_elem	*event_elem;

@@ -608,6 +608,21 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->active_event_elem = NULL;
 		editor->selected_event = NULL;
 	}
+	else if (editor->remove_event_button->state == UI_STATE_CLICK)
+	{
+		if (editor->selected_event && editor->selected_event_elem)
+		{
+			remove_event_from_list(editor->selected_event, &editor->events);
+			ui_element_remove_from_list(editor->selected_event_elem->button, &editor->event_element_buttons);
+			remove_event_elem_from_list(editor->selected_event_elem, &editor->event_elements);
+			editor->selected_event_elem = NULL;
+			editor->active_event_elem = NULL;
+			editor->selected_event = NULL;
+			--editor->event_amount;
+			//<---- HERE!!! TODO: realign all the elements on event_id_menu;
+			ft_printf("Removing event. (total : %d)\n", editor->event_amount);
+		}
+	}
 
 	editor->event_sector_input->show = 0;
 	editor->event_min_input->show = 0;
@@ -688,13 +703,16 @@ void	event_events(t_editor *editor, SDL_Event e)
 			curr = curr->next;
 		}
 		// Create as many buttons as we have sprites with action as type;
+		t_ui_recipe	*event_id_button;
+		if (editor->event_id_buttons_made < editor->event_id_buttons_in_use)
+			event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
 		while (editor->event_id_buttons_made < editor->event_id_buttons_in_use)
 		{
 			t_ui_element	*elem;
 			elem = ft_memalloc(sizeof(t_ui_element));
 			ui_button_new(editor->win_main, elem);
 			ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
-			// ui_element_edit(elem, recipe);
+			ui_element_edit(elem, event_id_button);
 			editor->event_id_buttons_made++;
 		}
 		// Fill all the buttons with the id of all the sprites;
@@ -915,7 +933,18 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 		editor->selected_sprite->type = ACTION;
 		add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
 		add_to_list(&editor->sprites, editor->selected_sprite, sizeof(t_sprite));
-		ft_printf("New Sprite Added (%d)\n", ++editor->selected_wall->sprite_amount);
+		++editor->selected_wall->sprite_amount;
+		ft_printf("New Sprite Added (%d)\n", editor->selected_wall->sprite_amount);
+	}
+	else if (editor->sprite_remove_button->state == UI_STATE_CLICK)
+	{
+		if (editor->selected_sprite)
+		{
+			remove_sprite_from_wall(editor->selected_sprite, editor->selected_wall);
+			editor->selected_sprite = NULL;
+			--editor->selected_wall->sprite_amount;
+			ft_printf("Sprite Removed (total : %d)\n", editor->selected_wall->sprite_amount);
+		}
 	}
 	render_wall_on_sprite_menu(editor, editor->selected_sector, editor->selected_wall);
 

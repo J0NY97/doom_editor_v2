@@ -337,6 +337,7 @@ int					remove_point(t_editor *editor, t_point *point);
 
 // Wall
 t_wall				*wall_new(void);
+void				remove_sprite_from_wall(t_sprite *sprite, t_wall *wall);
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
 t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
@@ -357,9 +358,13 @@ t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, floa
 
 // Event
 t_event_elem		*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent);
+void				event_elem_free(t_event_elem *elem);
+void				remove_event_elem_from_list(t_event_elem *elem, t_list **list);
 void				event_elem_update(t_editor *editor, t_event_elem *event_elem);
 void				fill_event_id_dropdown(t_editor *editor, int event_type);
 t_event				*event_new(void);
+void				event_free(t_event *event);
+void				remove_event_from_list(t_event *event, t_list **list);
 
 // Sprite
 t_sprite			*sprite_new(void);

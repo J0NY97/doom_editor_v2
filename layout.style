@@ -928,6 +928,10 @@ event_id_dropdown : event_dropdown_prefab
 event_id_menu : event_drop_menu_prefab
 {
 };
+event_id_button : drop_button_prefab
+{
+	w : 55;
+};
 
 event_sector_input
 {
