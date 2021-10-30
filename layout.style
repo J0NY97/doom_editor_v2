@@ -939,6 +939,7 @@ event_id_dropdown : event_dropdown_prefab
 };
 event_id_menu : event_drop_menu_prefab
 {
+	bg_color : 0xffffff00;
 };
 event_id_button : drop_button_prefab
 {

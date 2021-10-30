@@ -677,64 +677,65 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_speed_input->show = 1;
 	}
 
-	//
+	// ID SPAGHETT
 	if (editor->event_id_dropdown->show
 		&& ui_dropdown_open(editor->event_id_dropdown)
 		&& (editor->event_action_shoot->state == UI_STATE_CLICK
 			|| editor->event_action_click->state == UI_STATE_CLICK))
 	{
 		ft_printf("event id dropdown clicked, we want to update now.\n");
+		/*
+		 * Version 3
+		*/
+		t_list			*sprite_lst;
+		t_list			*button_lst;
+		t_list			*button_prev;
+		char			temp_str[10];
+		t_ui_recipe		*event_id_button;
 
-		t_list		*curr;
-		t_list		*curr_button;
-		t_sprite	*sprite;
-		char		temp_str[20];
-
-		// Count how many of type action we have in sprites; save in event_id_buttons_in_use;
-		// Might aswell update the ids of them;
-		editor->event_id_buttons_in_use = 0;
-		curr = editor->sprites;
-		while (curr)
+		event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
+		sprite_lst = editor->sprites;
+		button_lst = editor->event_id_menu->children;
+		button_prev = NULL;
+		int	i = -1;
+		while (sprite_lst)
 		{
-			sprite = curr->content;
-			if (sprite->type == ACTION)
-				editor->event_id_buttons_in_use++;
-			curr = curr->next;
+			t_sprite *sprite;
+			sprite = sprite_lst->content;
+			if (sprite->type == ACTION) // make new element or fill element with the correct id;
+			{
+				++i;
+				if (button_lst && button_lst->content) // we have button;
+				{
+					if (!button_lst->content)
+						ft_printf("[%s] Came across button that has t_list but not t_ui_element in content...\n", __FUNCTION__);
+					else
+					{
+						ui_button_set_text(button_lst->content, ft_b_itoa(sprite->id, temp_str));
+						button_prev = button_lst;
+						button_lst = button_lst->next;
+					}
+				}
+				else // create new button to list end and add ui_element as content;
+				{
+					t_ui_element *elem = ft_memalloc(sizeof(t_ui_element));
+					ui_button_new(editor->win_main, elem);
+					ui_button_set_text(elem, ft_b_itoa(sprite->id, temp_str));
+					ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
+					ui_element_edit(elem, event_id_button);
+				}
+			}
+			sprite_lst = sprite_lst->next;
 		}
-		// Create as many buttons as we have sprites with action as type;
-		t_ui_recipe	*event_id_button;
-		if (editor->event_id_buttons_made < editor->event_id_buttons_in_use)
-			event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
-		while (editor->event_id_buttons_made < editor->event_id_buttons_in_use)
+		// Finally remove all the extra buttons;
+		while (button_lst)
 		{
-			t_ui_element	*elem;
-			elem = ft_memalloc(sizeof(t_ui_element));
-			ui_button_new(editor->win_main, elem);
-			ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
-			ui_element_edit(elem, event_id_button);
-			editor->event_id_buttons_made++;
+			t_ui_element	*extra_elem;
+			extra_elem = button_lst->content;
+			ui_element_free(extra_elem);
+			free(extra_elem);
+			button_lst = button_lst->next;
 		}
-		// Fill all the buttons with the id of all the sprites;
-		curr = editor->sprites;
-		curr_button = editor->event_id_menu->children;
-		while (curr) // curr_button should never be NULL before curr!
-		{
-			sprite = curr->content;
-			((t_ui_element *)curr_button->content)->show = 1;
-			if (sprite->type == ACTION)
-				ui_button_set_text(curr_button->content, ft_b_itoa(sprite->id, temp_str));
-			curr = curr->next;
-			curr_button = curr_button->next;
-		}
-		// If we have more made buttons than buttons in use,
-		// 	go through the rest of them and hide them.
-		while (curr_button)
-		{
-			((t_ui_element *)curr_button->content)->show = 0;
-			curr_button = curr_button->next;
-		}
-
-		ft_printf("Event iD buttons in use : %d, made : %d\n", editor->event_id_buttons_in_use, editor->event_id_buttons_made);
 	}
 }
 
