@@ -58,11 +58,27 @@ typedef struct s_event_elem
 }					t_event_elem;
 
 /*
+ * t_ui_element		*button;			button of the texture elem; t_ui_button
+ * t_ui_element		*image;				image of the texture elem; t_ui_menu
+ * int				id;					corresponds to the editor->textures array;
+*/
+typedef struct s_texture_elem
+{
+	int				id;
+	t_ui_element	*button;
+	t_ui_element	*image;
+}					t_texture_elem;
+
+/*
  * SDL_Texture		*drawing_texture;		the texture surface will be texturified on and the rendered on screen;
  * SDL_Surface		*drawing_surface;		the surface on where the grid and all the sectors are drawn on;
  * t_vec2i			mouse_pos;				taking into consideration the grid gap_size, every point is default 10 pix x*y;
  * t_vec2i			offset;					when moving the grid this will change, im not sure how i did it last time;
  * TTF_Font			*font;					default font for everything so taht we dont waste fps by closing and opening it;
+ *
+ * t_list			*texture_elems;			list of texture_elems; t_texture_elem;
+ * t_list			*texture_buttons;		from texture_elem the button, so that we can use radio_event on it; t_ui_element;
+ * t_ui_element		*active_texture_button;	the currently active texture button;
 */
 typedef struct s_editor
 {
@@ -108,13 +124,24 @@ typedef struct s_editor
 
 	t_ui_element	*texture_menu;
 	t_ui_element	*texture_menu_close_button;
+	t_list			*texture_elems;
+	t_list			*texture_buttons;
+	t_ui_element	*active_texture_button;
 
 	// Sprites
 	t_ui_element	*sprite_edit_menu;
 	t_ui_element	*sprite_add_button;
 	t_ui_element	*sprite_confirm_button;
 	t_ui_element	*sprite_remove_button;
+	t_ui_element	*sprite_scale_input;
+	t_ui_element	*sprite_type_dropdown;
+	t_ui_element	*sprite_type_static;
+	t_ui_element	*sprite_type_loop;
+	t_ui_element	*sprite_type_action;
 	t_ui_element	*wall_render;
+
+	t_ui_element	*sprite_texture_button;
+	t_ui_element	*sprite_texture_image;
 
 	// Entity
 	t_ui_element	*entity_edit_menu;
@@ -308,9 +335,10 @@ struct s_entity
 };
 
 /*
+ * int		id;						id of the event;
  * int		type;					e_event_type;
  * int		action;					e_event_action;
- * int		id;						id of the sector/wall sprite/whatever else it could be;
+ * int		target_id;				id of the sector/wall sprite/whatever else it could be;
  * char		*sector;				no idea;
  * int		min, max, speed;		other info for some of the event types;
  * int		pointer_type;			either TYPE_SECTOR or TYPE_SPRITE;
@@ -318,9 +346,10 @@ struct s_entity
 */
 struct s_event	
 {
+	int				id;
 	int				type;
 	int				action;
-	int				id;
+	int				target_id;
 	char			*sector;
 	int				min;
 	int				max;
@@ -373,6 +402,7 @@ t_sprite			*sprite_new(void);
 void				sprite_free(t_sprite *sprite);
 void				sprite_print(t_sprite *sprite);
 int					get_next_sprite_id(t_list *list);
+t_sprite			*get_sprite_from_list_at_pos(t_list *list, t_vec2i pos);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);

@@ -117,7 +117,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 				{
 					t_wall	*wall;
 					wall = wall_new();
-					wall->wall_texture = 1;
+					wall->wall_texture = 7;
 					wall->p1 = get_point_from_sector_around_radius(editor->selected_sector, editor->first_point, 0.0f);
 					if (!wall->p1)
 					{
@@ -236,6 +236,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			}
 			else
 				editor->selected_point = NULL;
+
 			// Wall
 			if (editor->wall_button->state == UI_STATE_CLICK)
 			{
@@ -864,24 +865,18 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	t_vec2i		dist;
 	float		aspect;
 
-//	ft_printf("wall redner size : %d %d\n", (int)editor->wall_render->pos.w, (int)editor->wall_render->pos.h);
-
-	// TODO: figure out if we even need any of the mapscale here, since if everything gets scaled up... it doesnt look like anything is scaling up;
 	dist.x = distancei(wall->p1->pos.v, wall->p2->pos.v, 2);
 	dist.y = (sector->ceiling_height - sector->floor_height);
-//	ft_printf("distance : %d %d\n", dist.x, dist.y);
 	aspect = get_ratio(vec2i(dist.x, dist.y), vec2i(editor->wall_render->pos.w, editor->wall_render->pos.h));
-//	ft_printf("aspect2 : %.2f\n", aspect);
 	surface = ui_surface_new(dist.x * aspect, dist.y * aspect);
-//	ft_printf("size : %d %d\n", surface->w, surface->h);
 
 	ui_texture_fill(editor->win_main->renderer, editor->wall_render->texture, 0xff000000);
 
 	// Render the Texture
 	SDL_Surface	*texture = editor->wall_textures[wall->wall_texture];
 	t_vec2i		from = vec2i(ft_min(texture->w, texture->h), ft_min(texture->w, texture->h));
-	t_vec2i		scaled_size = vec2i(64 * wall->texture_scale, 64 * wall->texture_scale);
-	t_vec2i		dim = vec2i(ft_min(scaled_size.x, scaled_size.y), ft_min(scaled_size.x, scaled_size.y));
+	t_vec2i		scaled_texture_size = vec2i(texture->w * wall->texture_scale, texture->h * wall->texture_scale);
+	t_vec2i		dim = vec2i(ft_min(scaled_texture_size.x, scaled_texture_size.y), ft_min(scaled_texture_size.x, scaled_texture_size.y));
 	int			xtexturecount = surface->w / dim.x;
 	int			ytexturecount = surface->h / dim.y;
 	for (int j = 0; j <= ytexturecount; j++)
@@ -898,10 +893,17 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 		sprite = curr->content;
 		texture = editor->wall_textures[sprite->texture];
 		from = vec2i(ft_min(texture->w, texture->h), ft_min(texture->w, texture->h));
-		sprite->pos.w = 64 * sprite->scale;
-		sprite->pos.h = 64 * sprite->scale;
-		dim = vec2i(ft_min(scaled_size.x, scaled_size.y), ft_min(scaled_size.x, scaled_size.y));
-		SDL_BlitScaled(texture, &(SDL_Rect){0, 0, from.x, from.y}, surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, dim.x, dim.y});
+		if (sprite->type == STATIC)
+		{
+			sprite->pos.w = texture->w * sprite->scale;
+			sprite->pos.h = texture->h * sprite->scale;
+		}
+		else
+		{
+			sprite->pos.w = 64 * sprite->scale;
+			sprite->pos.h = 64 * sprite->scale;
+		}
+		SDL_BlitScaled(texture, &(SDL_Rect){0, 0, from.x, from.y}, surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, sprite->pos.w, sprite->pos.h});
 		curr = curr->next;
 	}
 	// Draw rect around selected sprite;
@@ -934,18 +936,28 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 
 	editor->sprite_edit_menu->show = 1;
 
-	if (editor->sprite_add_button->state == UI_STATE_CLICK)
+	if (editor->sprite_add_button->state == UI_STATE_CLICK) // TODO: if selected_sprite update the sprite, if not make new one;
 	{
-		editor->selected_sprite = sprite_new();
-		editor->selected_sprite->pos = vec4i(0, 0, 64, 64);
-		editor->selected_sprite->texture = 0;
-		editor->selected_sprite->scale = 1.0f;
-		editor->selected_sprite->type = ACTION;
-		editor->selected_sprite->id = get_next_sprite_id(editor->sprites);
-		add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
-		add_to_list(&editor->sprites, editor->selected_sprite, sizeof(t_sprite));
-		++editor->selected_wall->sprite_amount;
-		ft_printf("New Sprite Added (%d)\n", editor->selected_wall->sprite_amount);
+		if (!editor->selected_sprite)
+		{
+			editor->selected_sprite = sprite_new();
+			editor->selected_sprite->pos = vec4i(0, 0, 64, 64);
+			editor->selected_sprite->texture = 0; // get_texture(editor); // TODO: make function for this since we are using it in many different places;
+			editor->selected_sprite->id = get_next_sprite_id(editor->sprites);
+			add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
+			add_to_list(&editor->sprites, editor->selected_sprite, sizeof(t_sprite));
+			++editor->selected_wall->sprite_amount;
+			ft_printf("New Sprite Added (%d)\n", editor->selected_wall->sprite_amount);
+		}
+		// TODO: updated selected_sprite with the current stuff in the ui inputs;
+		editor->selected_sprite->scale = ft_atof(ui_input_get_text(editor->sprite_scale_input));
+		if (editor->sprite_type_loop->state == UI_STATE_CLICK)
+			editor->selected_sprite->type = LOOP;
+		else if (editor->sprite_type_action->state == UI_STATE_CLICK)
+			editor->selected_sprite->type = ACTION;
+		else // default static
+			editor->selected_sprite->type = STATIC;
+		editor->selected_sprite = NULL;
 	}
 	else if (editor->sprite_remove_button->state == UI_STATE_CLICK)
 	{
@@ -959,29 +971,37 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 			ft_printf("Sprite Removed (total : %d)\n", editor->selected_wall->sprite_amount);
 		}
 	}
+	else if (editor->sprite_texture_button->state == UI_STATE_CLICK)
+		editor->texture_menu->show = 1;
+
+	// Wall Render
 	render_wall_on_sprite_menu(editor, editor->selected_sector, editor->selected_wall);
 
 	// Selecting Sprite
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& ui_element_is_hover(editor->wall_render))
 	{
-		t_list		*curr;
-		t_sprite	*sprite;
 		t_vec2i		actual_mouse_pos;
+		t_sprite	*sprite;
 
 		actual_mouse_pos = vec2i(editor->win_main->mouse_pos.x - editor->wall_render->screen_pos.x,
 				editor->win_main->mouse_pos.y - editor->wall_render->screen_pos.y);
-		curr = editor->selected_wall->sprites;
-		while (curr)
+		sprite = get_sprite_from_list_at_pos(editor->selected_wall->sprites, actual_mouse_pos);
+		if (sprite) // new sprite found, update ui;
 		{
-			sprite = curr->content;
-			if (vec2_in_vec4(actual_mouse_pos, sprite->pos))
-			{
-				ft_printf("We have clicked a sprite.\n");
-				editor->selected_sprite = sprite;
-				break ;
-			}
-			curr = curr->next;
+			editor->selected_sprite = sprite;
+
+			// TODO: update ui;
+			char	temp_str[20];
+			ft_strnclr(temp_str, 20);
+
+			ui_input_set_text(editor->sprite_scale_input, ft_b_ftoa(sprite->scale, 2, temp_str));
+			if (editor->selected_sprite->type == STATIC)
+				ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_static);
+			else if (editor->selected_sprite->type == LOOP)
+				ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_loop);
+			else if (editor->selected_sprite->type == ACTION)
+				ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_action);
 		}
 	}
 
@@ -996,6 +1016,12 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 		editor->selected_sprite->pos.x = editor->selected_sprite->pos.x + move_amount.x;
 		editor->selected_sprite->pos.y = editor->selected_sprite->pos.y + move_amount.y;
 	}
+}
+
+void	texture_menu_events(t_editor *editor, SDL_Event e)
+{
+	(void)editor;
+	(void)e;
 }
 
 void	user_events(t_editor *editor, SDL_Event e)
@@ -1047,6 +1073,9 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_sector = NULL;
 		editor->sector_edit_menu->show = 0;
 	}
+
+	if (editor->texture_menu->show)
+		texture_menu_events(editor, e);
 
 	if (editor->entity_button->state == UI_STATE_CLICK)
 		entity_events(editor, e);
@@ -1308,21 +1337,62 @@ void	editor_init(t_editor *editor)
 	editor->ceiling_wall_angle_input = ui_list_get_element_by_id(editor->layout.elements, "ceiling_wall_angle_input");
 	editor->wall_texture_scale_input = ui_list_get_element_by_id(editor->layout.elements, "wall_texture_scale_input");
 
-	editor->texture_menu = ui_list_get_element_by_id(editor->layout.elements, "texture_menu");
-	editor->texture_menu->show = 0;
-	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
-
 	// Sprite
 	editor->sprite_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "sprite_edit_menu");
 	editor->sprite_add_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_add_button");
 	editor->sprite_remove_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_remove_button");
+	editor->sprite_scale_input = ui_list_get_element_by_id(editor->layout.elements, "sprite_scale_input");
+	editor->sprite_type_dropdown = ui_list_get_element_by_id(editor->layout.elements, "sprite_type_dropdown");
+	editor->sprite_type_static = ui_list_get_element_by_id(editor->layout.elements, "sprite_type_static");
+	editor->sprite_type_loop = ui_list_get_element_by_id(editor->layout.elements, "sprite_type_loop");
+	editor->sprite_type_action = ui_list_get_element_by_id(editor->layout.elements, "sprite_type_action");
+	editor->sprite_texture_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_texture_button");
+	editor->sprite_texture_image = ui_list_get_element_by_id(editor->layout.elements, "sprite_texture_image");
 	editor->wall_render = ui_list_get_element_by_id(editor->layout.elements, "wall_render");
 //	ui_element_textures_redo(editor->wall_render); // its dumb that i have to do this;
 	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
 	{
-		ft_printf("Load Image : %s\n", g_map_textures[i].path);
+		ft_printf("Load Image (%d) : %s\n", i, g_map_textures[i].path);
 		editor->wall_textures[i] = load_bxpm_to_surface(g_map_textures[i].path);
 	}
+
+	// Texture Menu
+	editor->texture_menu = ui_list_get_element_by_id(editor->layout.elements, "texture_menu");
+	editor->texture_menu->show = 0;
+	((t_ui_menu *)editor->texture_menu->element)->event_and_render_children = 1;
+	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
+	t_ui_recipe	*texture_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button");
+	t_ui_recipe	*texture_image_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_image");
+	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
+	{
+		t_texture_elem	*texture_elem;
+		texture_elem = ft_memalloc(sizeof(t_texture_elem));
+
+		texture_elem->button = ft_memalloc(sizeof(t_ui_element));
+		ui_button_new(editor->win_main, texture_elem->button);
+		ui_element_set_parent(texture_elem->button, editor->texture_menu, UI_TYPE_ELEMENT);
+		ui_element_edit(texture_elem->button, texture_button_recipe);
+
+		texture_elem->image = ft_memalloc(sizeof(t_ui_element));
+		ui_menu_new(editor->win_main, texture_elem->image);
+		ui_element_set_parent(texture_elem->image, texture_elem->button, UI_TYPE_ELEMENT);
+		ui_element_edit(texture_elem->image, texture_image_recipe);
+
+		texture_elem->id = i;
+
+		ui_element_image_set(texture_elem->image, UI_STATE_AMOUNT, editor->wall_textures[i]);
+		ui_element_pos_set2(texture_elem->button,
+			vec2((i * texture_elem->button->pos.w) + (i * 10) + 10, texture_elem->button->pos.y));
+
+		add_to_list(&editor->texture_elems, texture_elem, sizeof(t_texture_elem));
+		add_to_list(&editor->texture_buttons, texture_elem->button, sizeof(t_ui_element));
+
+		ft_printf("[%s] Texture elem #%d made.\n", __FUNCTION__, i);
+	}
+	// TODO: make sure this function is made at some point; (added them here so i dont forget);
+	ui_recipe_free(texture_button_recipe);
+	ui_recipe_free(texture_image_recipe);
+
 
 	// Entity Edit
 	editor->entity_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "entity_edit_menu");

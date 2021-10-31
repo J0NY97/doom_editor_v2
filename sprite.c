@@ -42,3 +42,19 @@ int	get_next_sprite_id(t_list *list)
 	should_be_total = i * (i + 1) / 2;
 	return (should_be_total - total);
 }
+
+t_sprite	*get_sprite_from_list_at_pos(t_list *list, t_vec2i pos)
+{
+	t_list		*curr;
+	t_sprite	*sprite;
+
+	curr = list;
+	while (curr)
+	{
+		sprite = curr->content;
+		if (vec2_in_vec4(pos, sprite->pos))
+			return (sprite);
+		curr = curr->next;
+	}
+	return (NULL);
+}

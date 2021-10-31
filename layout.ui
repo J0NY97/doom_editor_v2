@@ -106,7 +106,6 @@ Window win_main
 				Label texture_menu_label {};
 				Button texture_menu_close_button {};
 			};
-			Button texture_0 {};
 		};
 		Menu menu_wall_edit
 		{
@@ -156,18 +155,17 @@ Window win_main
 				{
 					Input sprite_scale_input {};
 				};
-				Dropdown sprite_state_dropdown
+				Dropdown sprite_type_dropdown
 				{
-					Menu sprite_state_drop_menu
+					Menu sprite_type_drop_menu
 					{
-						Button sprite_state_static {};
-						Button sprite_state_loop {};
-						Button sprite_state_action {}; // maybe remove
+						Button sprite_type_static {};
+						Button sprite_type_loop {};
+						Button sprite_type_action {}; // maybe remove
 					};
 				};
 				Button sprite_add_button {};	
 				Button sprite_remove_button {};	
-				Button sprite_confirm_button {};
 				Label sprite_texture_label
 				{
 					Button sprite_texture_button {};

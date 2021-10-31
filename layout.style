@@ -361,12 +361,18 @@ texture_menu_close_button : close_button_prefab
 
 };
 
-texture_0
+texture_button
 {
 	xywh : 10, 30, 50, 50;
-	bg_color_hover : 0xffff0000;
-	bg_image_default : ui_images/damage.png;
-	title : :;
+	bg_color_default : 0xff000000;
+	bg_color_hover : 0xff0000ff;
+	bg_color_click : 0xff00ff00;
+	title : ID;
+};
+texture_image
+{
+	xywh : 1, 1, 48, 48;
+	bg_image : ui_images/damage.png;
 };
 
 menu_wall_edit : toolbox_menu_prefab
@@ -572,25 +578,25 @@ sprite_drop_button_prefab : drop_button_prefab
 {
 	w : 100;
 };
-sprite_state_dropdown
+sprite_type_dropdown
 {
 	xywh : 10, 125, 110, 20;
 	text_pos : 2, 2, 108, 18;
 	title : Type;
 };
-sprite_state_drop_menu
+sprite_type_drop_menu
 {
 	w : 100;
 };
-sprite_state_static : sprite_drop_button_prefab
+sprite_type_static : sprite_drop_button_prefab
 {
 	title : Static;
 };
-sprite_state_loop : sprite_drop_button_prefab
+sprite_type_loop : sprite_drop_button_prefab
 {
 	title : Loop;
 };
-sprite_state_action : sprite_drop_button_prefab
+sprite_type_action : sprite_drop_button_prefab
 {
 	title : Action;
 };
