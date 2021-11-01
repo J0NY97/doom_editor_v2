@@ -805,7 +805,7 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 		else if (editor->selected_wall)
 		{
 			t_wall *wall = editor->selected_wall;
-			final_str = ft_sprintf("iD : %d\np1 : %d, %d\np2 : %d, %d\n", wall->id, wall->p1->pos.x, wall->p1->pos.y, wall->p2->pos.x, wall->p2->pos.y);
+			final_str = ft_sprintf("iD : %d\np1 : %d, %d\np2 : %d, %d\ndist : %.2f\n", wall->id, wall->p1->pos.x, wall->p1->pos.y, wall->p2->pos.x, wall->p2->pos.y, distance(wall->p1->pos.v, wall->p2->pos.v, 2));
 			ui_label_text_set(editor->sub_info_label, final_str);
 			ft_strdel(&final_str);
 			if (editor->selected_sprite)
@@ -815,6 +815,8 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 				ui_label_text_set(editor->sprite_info_label, final_str);
 				ft_strdel(&final_str);
 			}
+			else
+				ui_label_text_set(editor->sprite_info_label, "NONE");
 		}
 		else
 			ui_label_text_set(editor->sub_info_label, "NONE");
@@ -826,6 +828,7 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 	}
 }
 
+// TODO: for some reason the map gets saved like 20 times when you click the save_button;
 void	save_window_events(t_editor *editor, SDL_Event e)
 {
 	if (editor->save_button->state == UI_STATE_CLICK)
@@ -845,6 +848,7 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 			actual_full_path = ft_strjoiner(MAP_PATH, ui_input_get_text(editor->name_input), ".dnd", NULL);
 			set_map(editor, actual_full_path);
 			ft_strdel(&actual_full_path);
+			ui_window_flag_set(editor->win_save, UI_WINDOW_HIDE);
 		}
 	}
 }
@@ -861,27 +865,28 @@ void	edit_window_events(t_editor *editor, SDL_Event e)
 
 void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall)
 {
-	SDL_Surface	*surface;
-	t_vec2i		dist;
-	float		aspect;
-
-	dist.x = distancei(wall->p1->pos.v, wall->p2->pos.v, 2);
-	dist.y = (sector->ceiling_height - sector->floor_height);
-	aspect = get_ratio(vec2i(dist.x, dist.y), vec2i(editor->wall_render->pos.w, editor->wall_render->pos.h));
-	surface = ui_surface_new(dist.x * aspect, dist.y * aspect);
-
+	// Clear the wall render from last frame, since we dont draw over the whole texture;
 	ui_texture_fill(editor->win_main->renderer, editor->wall_render->texture, 0xff000000);
 
-	// Render the Texture
-	SDL_Surface	*texture = editor->wall_textures[wall->wall_texture];
-	t_vec2i		from = vec2i(ft_min(texture->w, texture->h), ft_min(texture->w, texture->h));
-	t_vec2i		scaled_texture_size = vec2i(texture->w * wall->texture_scale, texture->h * wall->texture_scale);
-	t_vec2i		dim = vec2i(ft_min(scaled_texture_size.x, scaled_texture_size.y), ft_min(scaled_texture_size.x, scaled_texture_size.y));
-	int			xtexturecount = surface->w / dim.x;
-	int			ytexturecount = surface->h / dim.y;
-	for (int j = 0; j <= ytexturecount; j++)
-		for (int i = 0; i <= xtexturecount; i++)
-			SDL_BlitScaled(texture, &(SDL_Rect){0, 0, from.x, from.y}, surface, &(SDL_Rect){i * dim.x, j * dim.y, dim.x, dim.y});
+	SDL_Surface	*surface;
+	t_vec2		dist;
+	float		aspect;
+
+	dist.x = distance(wall->p1->pos.v, wall->p2->pos.v, 2);
+	dist.y = (sector->ceiling_height - sector->floor_height);
+	float	amount_x = (dist.x / wall->texture_scale);
+	float	amount_y = (dist.y / wall->texture_scale);
+	int		size = 64;
+	aspect = get_ratio_f(vec2(amount_x * size, amount_y * size), vec2(editor->wall_render->pos.w, editor->wall_render->pos.h));
+
+	float scale = size * aspect;
+	surface = ui_surface_new((size * amount_x) * aspect, (size * amount_y) * aspect);
+
+	SDL_Surface	*texture = editor->wall_textures[wall->wall_texture]; // DONT FREE!
+
+	for (int j = 0; j <= amount_y; j++)
+		for (int i = 0; i <= amount_x; i++)
+			SDL_BlitScaled(texture, NULL, surface, &(SDL_Rect){i * scale, j * scale, scale, scale});
 
 	// Render the sprites;
 	t_sprite	*sprite;
@@ -892,7 +897,6 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	{
 		sprite = curr->content;
 		texture = editor->wall_textures[sprite->texture];
-		from = vec2i(ft_min(texture->w, texture->h), ft_min(texture->w, texture->h));
 		if (sprite->type == STATIC)
 		{
 			sprite->pos.w = texture->w * sprite->scale;
@@ -903,7 +907,7 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 			sprite->pos.w = 64 * sprite->scale;
 			sprite->pos.h = 64 * sprite->scale;
 		}
-		SDL_BlitScaled(texture, &(SDL_Rect){0, 0, from.x, from.y}, surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, sprite->pos.w, sprite->pos.h});
+		SDL_BlitScaled(texture, NULL, surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, size, sprite->pos.h});
 		curr = curr->next;
 	}
 	// Draw rect around selected sprite;
@@ -923,6 +927,7 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	int h;
 	SDL_QueryTexture(editor->wall_render->texture, NULL, NULL, &w, &h); // TODO : from element take queried texture w and h, and remove this; (TODO: add to the element struct texture w/h which will be taken when recreating texture);
 	SDL_UpdateTexture(editor->wall_render->texture, &(SDL_Rect){0, 0, ft_min(surface->w, w), ft_min(surface->h, h)}, surface->pixels, surface->pitch);
+
 	SDL_FreeSurface(surface);
 }
 
@@ -1286,7 +1291,6 @@ void	user_render(t_editor *editor)
 
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
 	SDL_FillRect(editor->drawing_surface, NULL, 0);
-
 }
 
 void	editor_init(t_editor *editor)
