@@ -874,13 +874,13 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 
 	dist.x = distance(wall->p1->pos.v, wall->p2->pos.v, 2);
 	dist.y = (sector->ceiling_height - sector->floor_height);
-	float	amount_x = (dist.x / wall->texture_scale);
-	float	amount_y = (dist.y / wall->texture_scale);
 	int		size = 64;
-	aspect = get_ratio_f(vec2(amount_x * size, amount_y * size), vec2(editor->wall_render->pos.w, editor->wall_render->pos.h));
+	float	amount_x = dist.x / wall->texture_scale;
+	float	amount_y = dist.y / wall->texture_scale;
+	aspect = get_ratio_f(vec2(dist.x * size, dist.y * size), vec2(editor->wall_render->pos.w, editor->wall_render->pos.h));
 
-	float scale = size * aspect;
-	surface = ui_surface_new((size * amount_x) * aspect, (size * amount_y) * aspect);
+	float scale = (size * wall->texture_scale) * aspect;
+	surface = ui_surface_new(dist.x * size * aspect, dist.y * size * aspect);
 
 	SDL_Surface	*texture = editor->wall_textures[wall->wall_texture]; // DONT FREE!
 
@@ -899,15 +899,15 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 		texture = editor->wall_textures[sprite->texture];
 		if (sprite->type == STATIC)
 		{
-			sprite->pos.w = texture->w * sprite->scale;
-			sprite->pos.h = texture->h * sprite->scale;
+			sprite->pos.w = (size * sprite->scale) * aspect;
+			sprite->pos.h = (size * sprite->scale) * aspect;
 		}
 		else
 		{
 			sprite->pos.w = 64 * sprite->scale;
 			sprite->pos.h = 64 * sprite->scale;
 		}
-		SDL_BlitScaled(texture, NULL, surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, size, sprite->pos.h});
+		SDL_BlitScaled(texture, NULL, surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, sprite->pos.w, sprite->pos.h});
 		curr = curr->next;
 	}
 	// Draw rect around selected sprite;
