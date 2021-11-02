@@ -1385,11 +1385,21 @@ void	editor_init(t_editor *editor)
 		texture_elem->id = i;
 
 		ui_element_image_set(texture_elem->image, UI_STATE_AMOUNT, editor->wall_textures[i]);
+
+		int	x = 10;
+		int y = 35;
+		int	amount_x = editor->texture_menu->pos.w / (texture_elem->button->pos.w + 5 + x);
 		ui_element_pos_set2(texture_elem->button,
-			vec2((i * texture_elem->button->pos.w) + (i * 10) + 10, texture_elem->button->pos.y));
+			vec2(x + (i % (amount_x + 1)) * (texture_elem->button->pos.w + 5),
+				y + (i / (amount_x + 1)) * (texture_elem->button->pos.h + 5)));
 
 		add_to_list(&editor->texture_elems, texture_elem, sizeof(t_texture_elem));
 		add_to_list(&editor->texture_buttons, texture_elem->button, sizeof(t_ui_element));
+		// Adding the eleemnts to the layout elements;
+		/*
+		add_to_list(&editor->layout.elements, texture_elem->image, UI_TYPE_ELEMENT);
+		add_to_list(&editor->layout.elements, texture_elem->button, UI_TYPE_ELEMENT);
+		*/
 
 		ft_printf("[%s] Texture elem #%d made.\n", __FUNCTION__, i);
 	}
@@ -1547,7 +1557,7 @@ int	main(int ac, char **av)
 		}
 		// User Render
 		user_render(&editor);
-		
+
 		ui_layout_render(&editor.layout);
 	}
 }
