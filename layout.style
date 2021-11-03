@@ -361,9 +361,13 @@ texture_menu_close_button : close_button_prefab
 
 };
 
-texture_button
+texture_button_menu
 {
 	xywh : 10, 30, 50, 50;
+};
+texture_button
+{
+	xywh : 0, 0, 50, 50;
 	bg_color_default : 0xff000000;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;

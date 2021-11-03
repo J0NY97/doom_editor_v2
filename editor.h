@@ -65,6 +65,7 @@ typedef struct s_event_elem
 typedef struct s_texture_elem
 {
 	int				id;
+	t_ui_element	*menu;
 	t_ui_element	*button;
 	t_ui_element	*image;
 }					t_texture_elem;
@@ -117,10 +118,15 @@ typedef struct s_editor
 	t_ui_element	*portal_checkbox;
 	t_ui_element	*solid_checkbox;
 	t_ui_element	*wall_texture_button;
+	t_ui_element	*wall_texture_image;
 	t_ui_element	*portal_texture_button;
+	t_ui_element	*portal_texture_image;
 	t_ui_element	*floor_wall_angle_input;
 	t_ui_element	*ceiling_wall_angle_input;
 	t_ui_element	*wall_texture_scale_input;
+
+	t_list			*texture_opening_buttons;
+	t_ui_element	*active_texture_opening_button;
 
 	t_ui_element	*texture_menu;
 	t_ui_element	*texture_menu_close_button;

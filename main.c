@@ -248,6 +248,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 					if (wall) // this is where we go when new wall selected;
 					{
 						editor->selected_wall = wall;
+						ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->id]);
 
 						// update wall ui;
 
@@ -426,9 +427,6 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			}
 		}
 
-		// Texture Menu
-		if (editor->texture_menu_close_button->state == UI_STATE_CLICK)
-			editor->texture_menu->show = 0;
 
 		if (editor->floor_texture_button->state == UI_STATE_CLICK)
 			editor->texture_menu->show = 1;
@@ -1025,8 +1023,44 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 
 void	texture_menu_events(t_editor *editor, SDL_Event e)
 {
-	(void)editor;
-	(void)e;
+	t_texture_elem	*selected_texture_elem;
+
+	if (editor->texture_menu_close_button->state == UI_STATE_CLICK)
+	{
+		editor->texture_menu->show = 0;
+		editor->active_texture_opening_button = NULL;
+	}
+
+	selected_texture_elem = NULL;
+	// If new active;
+	if (ui_list_radio_event(editor->texture_buttons, &editor->active_texture_button))
+	{
+		// Loop through texture_elem and compare which button we have clicked;	
+		t_list	*curr;
+		curr = editor->texture_elems;
+		while (curr)
+		{
+			if (((t_texture_elem *)curr->content)->button == editor->active_texture_button)
+			{
+				selected_texture_elem = curr->content;
+				break ;
+			}
+			curr = curr->next;
+		}
+		// If texture found;
+		if (selected_texture_elem)
+		{
+			// Set selected whatever
+			if (editor->active_texture_opening_button == editor->wall_texture_button)
+			{
+				if (editor->selected_wall)
+				{
+					editor->selected_wall->wall_texture = selected_texture_elem->id;
+					ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
+				}
+			}
+		}
+	}
 }
 
 void	user_events(t_editor *editor, SDL_Event e)
@@ -1060,6 +1094,8 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_entity = NULL;
 		editor->selected_event = NULL;
 	}
+
+	ui_list_radio_event(editor->texture_opening_buttons, &editor->active_texture_opening_button);
 
 	if (editor->sector_button->state == UI_STATE_CLICK)
 	{
@@ -1321,6 +1357,8 @@ void	editor_init(t_editor *editor)
 	editor->sector_edit_ok_button = ui_list_get_element_by_id(editor->layout.elements, "sector_edit_ok_button");
 	editor->floor_texture_button = ui_list_get_element_by_id(editor->layout.elements, "floor_texture_button");
 	editor->ceiling_texture_button = ui_list_get_element_by_id(editor->layout.elements, "ceiling_texture_button");
+	add_to_list(&editor->texture_opening_buttons, editor->floor_texture_button, UI_TYPE_ELEMENT);
+	add_to_list(&editor->texture_opening_buttons, editor->ceiling_texture_button, UI_TYPE_ELEMENT);
 	// Inputs;
 	editor->floor_height_input = ui_list_get_element_by_id(editor->layout.elements, "floor_height_input");
 	editor->ceiling_height_input = ui_list_get_element_by_id(editor->layout.elements, "ceiling_height_input");
@@ -1336,7 +1374,11 @@ void	editor_init(t_editor *editor)
 	editor->portal_checkbox = ui_list_get_element_by_id(editor->layout.elements, "portal_checkbox");
 	editor->split_wall_button = ui_list_get_element_by_id(editor->layout.elements, "split_wall_button");
 	editor->wall_texture_button = ui_list_get_element_by_id(editor->layout.elements, "wall_texture_button");
+	editor->wall_texture_image = ui_list_get_element_by_id(editor->layout.elements, "wall_texture_image");
 	editor->portal_texture_button = ui_list_get_element_by_id(editor->layout.elements, "portal_texture_button");
+	editor->portal_texture_image = ui_list_get_element_by_id(editor->layout.elements, "portal_texture_image");
+	add_to_list(&editor->texture_opening_buttons, editor->wall_texture_button, UI_TYPE_ELEMENT);
+	add_to_list(&editor->texture_opening_buttons, editor->portal_texture_button, UI_TYPE_ELEMENT);
 	editor->floor_wall_angle_input = ui_list_get_element_by_id(editor->layout.elements, "floor_wall_angle_input");
 	editor->ceiling_wall_angle_input = ui_list_get_element_by_id(editor->layout.elements, "ceiling_wall_angle_input");
 	editor->wall_texture_scale_input = ui_list_get_element_by_id(editor->layout.elements, "wall_texture_scale_input");
@@ -1351,9 +1393,9 @@ void	editor_init(t_editor *editor)
 	editor->sprite_type_loop = ui_list_get_element_by_id(editor->layout.elements, "sprite_type_loop");
 	editor->sprite_type_action = ui_list_get_element_by_id(editor->layout.elements, "sprite_type_action");
 	editor->sprite_texture_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_texture_button");
+	add_to_list(&editor->texture_opening_buttons, editor->sprite_texture_button, UI_TYPE_ELEMENT);
 	editor->sprite_texture_image = ui_list_get_element_by_id(editor->layout.elements, "sprite_texture_image");
 	editor->wall_render = ui_list_get_element_by_id(editor->layout.elements, "wall_render");
-//	ui_element_textures_redo(editor->wall_render); // its dumb that i have to do this;
 	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
 	{
 		ft_printf("Load Image (%d) : %s\n", i, g_map_textures[i].path);
@@ -1365,6 +1407,7 @@ void	editor_init(t_editor *editor)
 	editor->texture_menu->show = 0;
 	((t_ui_menu *)editor->texture_menu->element)->event_and_render_children = 1;
 	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
+	t_ui_recipe	*texture_menu_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button_menu");
 	t_ui_recipe	*texture_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button");
 	t_ui_recipe	*texture_image_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_image");
 	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
@@ -1372,41 +1415,40 @@ void	editor_init(t_editor *editor)
 		t_texture_elem	*texture_elem;
 		texture_elem = ft_memalloc(sizeof(t_texture_elem));
 
-		texture_elem->button = ft_memalloc(sizeof(t_ui_element));
-		ui_button_new(editor->win_main, texture_elem->button);
-		ui_element_set_parent(texture_elem->button, editor->texture_menu, UI_TYPE_ELEMENT);
-		ui_element_edit(texture_elem->button, texture_button_recipe);
-
-		texture_elem->image = ft_memalloc(sizeof(t_ui_element));
-		ui_menu_new(editor->win_main, texture_elem->image);
-		ui_element_set_parent(texture_elem->image, texture_elem->button, UI_TYPE_ELEMENT);
-		ui_element_edit(texture_elem->image, texture_image_recipe);
-
-		texture_elem->id = i;
-
-		ui_element_image_set(texture_elem->image, UI_STATE_AMOUNT, editor->wall_textures[i]);
+		texture_elem->menu = ft_memalloc(sizeof(t_ui_element));
+		ui_menu_new(editor->win_main, texture_elem->menu);
+		ui_element_set_parent(texture_elem->menu, editor->texture_menu, UI_TYPE_ELEMENT);
+		ui_element_edit(texture_elem->menu, texture_menu_button_recipe);
+		ui_element_set_id(texture_elem->menu, "texture_button_menu");
+		((t_ui_menu *)texture_elem->menu->element)->event_and_render_children = 1;
 
 		int	x = 10;
 		int y = 35;
-		int	amount_x = editor->texture_menu->pos.w / (texture_elem->button->pos.w + 5 + x);
-		ui_element_pos_set2(texture_elem->button,
-			vec2(x + (i % (amount_x + 1)) * (texture_elem->button->pos.w + 5),
-				y + (i / (amount_x + 1)) * (texture_elem->button->pos.h + 5)));
+		int	amount_x = editor->texture_menu->pos.w / (texture_elem->menu->pos.w + 5 + x);
+		ui_element_pos_set2(texture_elem->menu,
+			vec2(x + (i % (amount_x + 1)) * (texture_elem->menu->pos.w + 5),
+				y + (i / (amount_x + 1)) * (texture_elem->menu->pos.h + 5)));
+
+		texture_elem->image = ft_memalloc(sizeof(t_ui_element));
+		ui_menu_new(editor->win_main, texture_elem->image);
+		ui_element_set_parent(texture_elem->image, texture_elem->menu, UI_TYPE_ELEMENT);
+		ui_element_edit(texture_elem->image, texture_image_recipe);
+		ui_element_set_id(texture_elem->image, "texture_image");
+		ui_element_image_set(texture_elem->image, UI_STATE_AMOUNT, editor->wall_textures[i]);
+
+		texture_elem->button = ft_memalloc(sizeof(t_ui_element));
+		ui_button_new(editor->win_main, texture_elem->button);
+		ui_element_set_parent(texture_elem->button, texture_elem->menu, UI_TYPE_ELEMENT);
+		ui_element_edit(texture_elem->button, texture_button_recipe);
+		ui_element_set_id(texture_elem->button, "texture_button");
+
+		texture_elem->id = i;
 
 		add_to_list(&editor->texture_elems, texture_elem, sizeof(t_texture_elem));
 		add_to_list(&editor->texture_buttons, texture_elem->button, sizeof(t_ui_element));
-		// Adding the eleemnts to the layout elements;
-		/*
-		add_to_list(&editor->layout.elements, texture_elem->image, UI_TYPE_ELEMENT);
-		add_to_list(&editor->layout.elements, texture_elem->button, UI_TYPE_ELEMENT);
-		*/
 
 		ft_printf("[%s] Texture elem #%d made.\n", __FUNCTION__, i);
 	}
-	// TODO: make sure this function is made at some point; (added them here so i dont forget);
-	ui_recipe_free(texture_button_recipe);
-	ui_recipe_free(texture_image_recipe);
-
 
 	// Entity Edit
 	editor->entity_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "entity_edit_menu");
@@ -1548,12 +1590,6 @@ int	main(int ac, char **av)
 			// User Events
 			user_events(&editor, e);
 
-			if (e.key.keysym.scancode == SDL_SCANCODE_P)
-			{
-				t_ui_element *b = ui_list_get_element_by_id(editor.layout.elements, "event_0");
-				ui_element_print(b);
-				ui_element_print(ui_button_get_label_element(b));
-			}
 		}
 		// User Render
 		user_render(&editor);
