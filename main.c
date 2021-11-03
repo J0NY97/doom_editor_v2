@@ -157,7 +157,8 @@ void	sector_events(t_editor *editor, SDL_Event e)
 	{
 		t_sector	*sector;
 
-		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+			&& !hover_over_open_menus(editor))
 		{
 			// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
 			sector = get_sector_from_list_around_radius(editor->sectors, actual_pos, 1);
@@ -241,7 +242,8 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			if (editor->wall_button->state == UI_STATE_CLICK)
 			{
 				t_wall	*wall;
-				if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+				if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+					&& !hover_over_open_menus(editor))
 				{
 					// we dont want to make selected_wall NULL if we dont select a wall;
 					wall = get_wall_from_list_around_radius(editor->selected_sector->walls, actual_pos, 1.0f);
@@ -249,6 +251,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 					{
 						editor->selected_wall = wall;
 						ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->id]);
+						ft_printf("Wall selected our wall texture shoudl be : %d\n", wall->id);
 
 						// update wall ui;
 
@@ -881,6 +884,7 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	surface = ui_surface_new(dist.x * size * aspect, dist.y * size * aspect);
 
 	SDL_Surface	*texture = editor->wall_textures[wall->wall_texture]; // DONT FREE!
+	ft_printf("wall_texture is : %d\n", wall->wall_texture);
 
 	for (int j = 0; j <= amount_y; j++)
 		for (int i = 0; i <= amount_x; i++)

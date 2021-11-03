@@ -421,6 +421,7 @@ void				set_map(t_editor *editor, char *name);
 Uint32				random_blue_color(void);
 t_vec2i				conversion(t_editor *editor, t_vec2i v);
 void				remove_from_list(t_list **list, void *pointer);
+int					hover_over_open_menus(t_editor *editor);
 
 // Bxpm
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);

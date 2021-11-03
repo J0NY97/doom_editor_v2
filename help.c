@@ -19,4 +19,13 @@ t_vec2i	conversion(t_editor *editor, t_vec2i v)
 	return (result);
 }
 
-
+int	hover_over_open_menus(t_editor *editor)
+{
+	if (ui_element_is_hover(editor->sector_edit_menu)
+		|| ui_element_is_hover(editor->menu_wall_edit)
+		|| ui_element_is_hover(editor->sprite_edit_menu)
+		|| ui_element_is_hover(editor->texture_menu)
+		|| ui_element_is_hover(editor->menu_toolbox_top))
+		return (1);
+	return (0);
+}
