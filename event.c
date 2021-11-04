@@ -159,6 +159,14 @@ void	update_event(t_editor *editor, t_event *event)
 			event->pointer = get_sprite_by_id_from_list(editor->sprites, ft_atoi(active_text));
 		}
 	}
+	// Sector
+	// TODO
+	// Min
+	// TODO
+	// Max
+	// TODO
+	// Speed
+	// TODO
 	ft_printf("Success.\n");
 }
 

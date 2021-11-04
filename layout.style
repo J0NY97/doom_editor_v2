@@ -979,7 +979,8 @@ event_id_button : drop_button_prefab
 event_sector_input
 {
 	xywh : 0, 21, 235, 20;
-	title : sector;
+	title : ;
+	placeholder : Sector;
 	text_align : center;
 };
 event_min_input
@@ -988,7 +989,8 @@ event_min_input
 	y : 42;
 	w : 75;
 	h : 20;
-	title : min;
+	title : ;
+	placeholder : Min;
 	text_align : center;
 };
 event_max_input
@@ -997,16 +999,15 @@ event_max_input
 	y : 42;
 	w : 75;
 	h : 20;
-	title : max;
+	title : ;
+	placeholder : Max;
 	text_align : center;
 };
 event_speed_input
 {
-	x : 160;
-	y : 42;
-	w : 75;
-	h : 20;
-	title : speed;
+	xywh : 160, 42, 75, 20;
+	title : ;
+	placeholder : Speed;
 	text_align : center;
 };
 

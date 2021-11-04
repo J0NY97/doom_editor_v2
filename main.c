@@ -1503,14 +1503,14 @@ void	editor_init(t_editor *editor)
 	editor->entity_yaw_slider = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_slider");
 
 	editor->sector_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sector_info");
-	ui_label_get_label(editor->sector_info_label)->max_w = editor->sector_info_label->pos.w;
+	ui_label_get(editor->sector_info_label)->max_w = editor->sector_info_label->pos.w;
 	editor->mouse_info_label = ui_list_get_element_by_id(editor->layout.elements, "mouse_hover_info");
 	editor->sub_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sub_info");
-	ui_label_get_label(editor->sub_info_label)->max_w = editor->sub_info_label->pos.w;
+	ui_label_get(editor->sub_info_label)->max_w = editor->sub_info_label->pos.w;
 	editor->sprite_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sprite_info");
-	ui_label_get_label(editor->sprite_info_label)->max_w = editor->sprite_info_label->pos.w;
+	ui_label_get(editor->sprite_info_label)->max_w = editor->sprite_info_label->pos.w;
 	editor->misc_info_label = ui_list_get_element_by_id(editor->layout.elements, "misc_info");
-	ui_label_get_label(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
+	ui_label_get(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
 
 	// Event edit
 	editor->event_scrollbar = ui_list_get_element_by_id(editor->layout.elements, "event_scrollbar");
