@@ -58,3 +58,14 @@ t_sprite	*get_sprite_from_list_at_pos(t_list *list, t_vec2i pos)
 	}
 	return (NULL);
 }
+
+t_sprite	*get_sprite_by_id_from_list(t_list *list, int id)
+{
+	while (list)
+	{
+		if (((t_sprite *)list->content)->id == id)
+			return (list->content);
+		list = list->next;	
+	}
+	return (NULL);
+}

@@ -52,9 +52,16 @@ typedef struct s_event_elem
 {
 	t_ui_element	*menu;
 	t_ui_element	*button;
-	t_ui_element	*info;
+	t_ui_element	*id;
+	t_ui_element	*type;
+	t_ui_element	*action;
+	t_ui_element	*target_id;
+	t_ui_element	*sector;
+	t_ui_element	*min;
+	t_ui_element	*max;
+	t_ui_element	*speed;
+
 	t_event			*event;
-	int				nth;
 }					t_event_elem;
 
 /*
@@ -345,7 +352,6 @@ struct s_entity
  * int		id;						id of the event;
  * int		type;					e_event_type;
  * int		action;					e_event_action;
- * int		target_id;				id of the sector/wall sprite/whatever else it could be;
  * char		*sector;				no idea;
  * int		min, max, speed;		other info for some of the event types;
  * int		pointer_type;			either TYPE_SECTOR or TYPE_SPRITE;
@@ -356,7 +362,6 @@ struct s_event
 	int				id;
 	int				type;
 	int				action;
-	int				target_id;
 	char			*sector;
 	int				min;
 	int				max;
@@ -387,6 +392,7 @@ void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
 int					remove_sector(t_editor *editor, t_sector *sector);
 int					get_next_sector_id(t_list *list);
+t_sector			*get_sector_by_id_from_list(t_list *list, int id);
 
 // Entity
 t_entity			*entity_new(void);
@@ -399,10 +405,12 @@ t_event_elem		*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_ele
 void				event_elem_free(t_event_elem *elem);
 void				remove_event_elem_from_list(t_event_elem *elem, t_list **list);
 void				event_elem_update(t_editor *editor, t_event_elem *event_elem);
-void				fill_event_id_dropdown(t_editor *editor, int event_type);
 t_event				*event_new(void);
 void				event_free(t_event *event);
 void				remove_event_from_list(t_event *event, t_list **list);
+int					get_next_event_id(t_list *list);
+void				update_event(t_editor *editor, t_event *event);
+void				update_event_elem(t_event_elem *elem);
 
 // Sprite
 t_sprite			*sprite_new(void);
@@ -410,6 +418,7 @@ void				sprite_free(t_sprite *sprite);
 void				sprite_print(t_sprite *sprite);
 int					get_next_sprite_id(t_list *list);
 t_sprite			*get_sprite_from_list_at_pos(t_list *list, t_vec2i pos);
+t_sprite			*get_sprite_by_id_from_list(t_list *list, int id);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);

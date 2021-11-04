@@ -25,6 +25,7 @@ int	hover_over_open_menus(t_editor *editor)
 		|| ui_element_is_hover(editor->menu_wall_edit)
 		|| ui_element_is_hover(editor->sprite_edit_menu)
 		|| ui_element_is_hover(editor->texture_menu)
+		|| ui_element_is_hover(editor->event_edit_menu)
 		|| ui_element_is_hover(editor->menu_toolbox_top))
 		return (1);
 	return (0);

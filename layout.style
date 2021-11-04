@@ -807,28 +807,71 @@ event_scrollbar
 
 event_menu_prefab
 {
-	xywh : 10, 70, 200, 60;
+	xywh : 0, 0, 220, 60;
 	flag : render_on_parent;
 	text_color : 0xffffffff;
 	text_pos : 2, 2, 200, 60;
 };
 event_button_prefab
 {
-	xywh : 0, 0, 200, 60;
+	xywh : 0, 0, 220, 60;
 	bg_color_default : 0xffff0000;
 	bg_color_hover : 0xffffff00;
 	bg_color_click : 0xffff00ff;
 	flag : render_on_parent;
 	text_color : 0xffffffff;
 	text_pos : 2, 2, 200, 60;
+	title :;
 };
-event_info_prefab
+event_id_prefab
 {
-	xywh : 0, 0, 200, 60;
-	text_pos : 2, 15, 200, 40;
+	xywh : 0, 0, 55, 20;
 	text_color : 0xffffffff;
-	title : this is text inside the thing that will show info of the event i hope this doesnt look like shiet;
+	title : ID;
 };
+event_type_prefab
+{
+	xywh : 55, 0, 55, 20;
+	text_color : 0xffffffff;
+	title : TYPE;
+};
+event_action_prefab
+{
+	xywh : 110, 0, 55, 20;
+	text_color : 0xffffffff;
+	title : ACTION;
+};
+event_target_id_prefab
+{
+	xywh : 165, 0, 55, 20;
+	text_color : 0xffffffff;
+	title : TARGET_ID;
+};
+event_sector_prefab
+{
+	xywh : 0, 20, 220, 20;
+	text_color : 0xffffffff;
+	title : SECTOR;
+};
+event_min_prefab
+{
+	xywh : 0, 40, 55, 20;
+	text_color : 0xffffffff;
+	title : MIN;
+};
+event_max_prefab
+{
+	xywh : 74, 40, 55, 20;
+	text_color : 0xffffffff;
+	title : MAX;
+};
+event_speed_prefab
+{
+	xywh : 149, 40, 55, 20;
+	text_color : 0xffffffff;
+	title : SPEED;
+};
+
 
 event_dropdown_prefab
 {

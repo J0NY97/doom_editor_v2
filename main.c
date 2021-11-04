@@ -552,7 +552,11 @@ void	entity_events(t_editor *editor, SDL_Event e)
 
 void	event_events(t_editor *editor, SDL_Event e)
 {
+	char	target_id_text[20];
 
+	ft_strnclr(target_id_text, 20);
+
+	// Lets see if we have gotten a new active event_elem;
 	if (ui_list_radio_event(editor->event_element_buttons, &editor->active_event_elem))
 	{
 		t_list	*curr;
@@ -576,8 +580,20 @@ void	event_events(t_editor *editor, SDL_Event e)
 		ui_dropdown_activate(editor->event_action_dropdown,
 			ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_action_dropdown)->children,
 				g_event_action[editor->selected_event_elem->event->action]));
+
+		if (editor->selected_event->pointer)
+		{
+			if (editor->selected_event->pointer_type == SECTOR)
+				ft_b_itoa(((t_sector *)editor->selected_event->pointer)->id, target_id_text);
+			else
+				ft_b_itoa(((t_sprite *)editor->selected_event->pointer)->id, target_id_text);
+		}
+		ui_dropdown_activate(editor->event_id_dropdown,
+			ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_id_dropdown)->children,
+				target_id_text));
 	}
 
+	// If add button is clicked;
 	if (editor->add_event_button->state == UI_STATE_CLICK)
 	{
 		t_event_elem	*event_elem;
@@ -589,11 +605,7 @@ void	event_events(t_editor *editor, SDL_Event e)
 			ft_printf("Trying to make new event\n");
 			event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
 			event_elem->event = event_new();
-			event_elem->nth = editor->event_amount++;
-
-			temp2 = ft_strjoin("event_", ft_b_itoa(event_elem->nth, temp));
-			ui_label_set_text(ui_button_get_label_element(event_elem->button), temp2);
-			ft_strdel(&temp2);
+			event_elem->event->id = get_next_event_id(editor->events);
 
 			t_vec2	new_pos;
 			new_pos = vec2(event_elem->menu->pos.x, ((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y + 10);
@@ -607,11 +619,13 @@ void	event_events(t_editor *editor, SDL_Event e)
 			editor->active_event_elem = event_elem->button;
 			editor->selected_event = event_elem->event;
 		}
-		event_elem_update(editor, editor->selected_event_elem);
+		update_event(editor, editor->selected_event_elem->event);
+		update_event_elem(editor->selected_event_elem);
+
 		editor->selected_event_elem = NULL;
 		editor->active_event_elem = NULL;
 		editor->selected_event = NULL;
-	}
+	} // Else if remove button is clicked;
 	else if (editor->remove_event_button->state == UI_STATE_CLICK)
 	{
 		if (editor->selected_event && editor->selected_event_elem)
@@ -679,7 +693,10 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_speed_input->show = 1;
 	}
 
-	// ID SPAGHETT
+	// TARGET ID SPAGHETT:
+	// 	basically goes through all the wsprites in the map and looks for action types
+	// 	only those are added to the dropdown menu as buttons;
+	// 	(does this everytime you click on the dropdown to show)
 	if (editor->event_id_dropdown->show
 		&& ui_dropdown_open(editor->event_id_dropdown)
 		&& (editor->event_action_shoot->state == UI_STATE_CLICK

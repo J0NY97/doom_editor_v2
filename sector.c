@@ -40,6 +40,17 @@ t_sector	*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allo
 	return (final);
 }
 
+t_sector	*get_sector_by_id_from_list(t_list *list, int id)
+{
+	while (list)
+	{
+		if (((t_sector *)list->content)->id == id)
+			return (list->content);
+		list = list->next;
+	}
+	return (NULL);
+}
+
 int	remove_sector(t_editor *editor, t_sector *sector)
 {
 	if (!sector)
