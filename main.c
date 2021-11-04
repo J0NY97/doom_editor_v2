@@ -592,7 +592,7 @@ void	event_events(t_editor *editor, SDL_Event e)
 			event_elem->nth = editor->event_amount++;
 
 			temp2 = ft_strjoin("event_", ft_b_itoa(event_elem->nth, temp));
-			ui_label_text_set(ui_button_get_label_element(event_elem->button), temp2);
+			ui_label_set_text(ui_button_get_label_element(event_elem->button), temp2);
 			ft_strdel(&temp2);
 
 			t_vec2	new_pos;
@@ -779,53 +779,53 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 	if (e.type == SDL_MOUSEMOTION)
 	{
 		final_str = ft_sprintf("%d, %d", actual_pos.x, actual_pos.y);
-		ui_label_text_set(editor->mouse_info_label, final_str);
+		ui_label_set_text(editor->mouse_info_label, final_str);
 		ft_strdel(&final_str);
 	}
 
 	// TODO: figure out when to update this;
 	final_str = ft_sprintf("points : %d\nwalls : %d\nsectors : %d\nentities : %d\n",
 			editor->point_amount, editor->wall_amount, editor->sector_amount, editor->entity_amount);
-	ui_label_text_set(editor->misc_info_label, final_str);
+	ui_label_set_text(editor->misc_info_label, final_str);
 	ft_strdel(&final_str);
 
 	if (editor->selected_sector)
 	{
 		t_sector *sector = editor->selected_sector;
 		final_str = ft_sprintf("iD : %d\npos : %d, %d\nWalls : %d\n", sector->id, sector->center.x, sector->center.y, sector->wall_amount);
-		ui_label_text_set(editor->sector_info_label, final_str);
+		ui_label_set_text(editor->sector_info_label, final_str);
 		ft_strdel(&final_str);
 
 		if (editor->selected_point)
 		{
 			t_point *point = editor->selected_point;
 			final_str = ft_sprintf("iD : %d\npos : %d, %d\n", point->id, point->pos.x, point->pos.y);
-			ui_label_text_set(editor->sub_info_label, final_str);
+			ui_label_set_text(editor->sub_info_label, final_str);
 			ft_strdel(&final_str);
 		}
 		else if (editor->selected_wall)
 		{
 			t_wall *wall = editor->selected_wall;
 			final_str = ft_sprintf("iD : %d\np1 : %d, %d\np2 : %d, %d\ndist : %.2f\n", wall->id, wall->p1->pos.x, wall->p1->pos.y, wall->p2->pos.x, wall->p2->pos.y, distance(wall->p1->pos.v, wall->p2->pos.v, 2));
-			ui_label_text_set(editor->sub_info_label, final_str);
+			ui_label_set_text(editor->sub_info_label, final_str);
 			ft_strdel(&final_str);
 			if (editor->selected_sprite)
 			{
 				t_sprite *sprite = editor->selected_sprite;
 				final_str = ft_sprintf("iD : %d\npos : %d, %d\n", sprite->id, sprite->pos.x, sprite->pos.y);
-				ui_label_text_set(editor->sprite_info_label, final_str);
+				ui_label_set_text(editor->sprite_info_label, final_str);
 				ft_strdel(&final_str);
 			}
 			else
-				ui_label_text_set(editor->sprite_info_label, "NONE");
+				ui_label_set_text(editor->sprite_info_label, "NONE");
 		}
 		else
-			ui_label_text_set(editor->sub_info_label, "NONE");
+			ui_label_set_text(editor->sub_info_label, "NONE");
 	}
 	else
 	{
-		ui_label_text_set(editor->sector_info_label, "NONE");
-		ui_label_text_set(editor->sub_info_label, "NONE");
+		ui_label_set_text(editor->sector_info_label, "NONE");
+		ui_label_set_text(editor->sub_info_label, "NONE");
 	}
 }
 
@@ -884,7 +884,6 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	surface = ui_surface_new(dist.x * size * aspect, dist.y * size * aspect);
 
 	SDL_Surface	*texture = editor->wall_textures[wall->wall_texture]; // DONT FREE!
-	ft_printf("wall_texture is : %d\n", wall->wall_texture);
 
 	for (int j = 0; j <= amount_y; j++)
 		for (int i = 0; i <= amount_x; i++)
@@ -1039,7 +1038,7 @@ void	texture_menu_events(t_editor *editor, SDL_Event e)
 	// If new active;
 	if (ui_list_radio_event(editor->texture_buttons, &editor->active_texture_button))
 	{
-		// Loop through texture_elem and compare which button we have clicked;	
+				// Loop through texture_elem and compare which button we have clicked;	
 		t_list	*curr;
 		curr = editor->texture_elems;
 		while (curr)
@@ -1099,8 +1098,6 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_event = NULL;
 	}
 
-	ui_list_radio_event(editor->texture_opening_buttons, &editor->active_texture_opening_button);
-
 	if (editor->sector_button->state == UI_STATE_CLICK)
 	{
 		sector_events(editor, e);
@@ -1119,6 +1116,14 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->sector_edit_menu->show = 0;
 	}
 
+	if (ui_list_radio_event(editor->texture_opening_buttons, &editor->active_texture_opening_button))
+	{
+		// change text of the menu to the correct button;
+		ui_label_set_text(editor->texture_menu_label, ui_button_get_text(editor->active_texture_opening_button));
+		ft_printf("Our texture menu text shoudl be : %s\n", ui_button_get_text(editor->active_texture_opening_button));
+		ui_element_print(editor->active_texture_opening_button);
+		ui_element_print(ui_button_get_label_element(editor->active_texture_opening_button));
+	}
 	if (editor->texture_menu->show)
 		texture_menu_events(editor, e);
 
@@ -1411,6 +1416,7 @@ void	editor_init(t_editor *editor)
 	editor->texture_menu->show = 0;
 	((t_ui_menu *)editor->texture_menu->element)->event_and_render_children = 1;
 	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
+	editor->texture_menu_label = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_label");
 	t_ui_recipe	*texture_menu_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button_menu");
 	t_ui_recipe	*texture_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button");
 	t_ui_recipe	*texture_image_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_image");

@@ -129,6 +129,7 @@ typedef struct s_editor
 	t_ui_element	*active_texture_opening_button;
 
 	t_ui_element	*texture_menu;
+	t_ui_element	*texture_menu_label;
 	t_ui_element	*texture_menu_close_button;
 	t_list			*texture_elems;
 	t_list			*texture_buttons;

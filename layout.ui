@@ -89,14 +89,12 @@ Window win_main
 		{
 			Input ceiling_texture_scale_input {};
 		};
-		Label floor_texture_label
+		Button floor_texture_button
 		{
-			Button floor_texture_button {};
 			Menu floor_texture_image {};
 		};
-		Label ceiling_texture_label
+		Button ceiling_texture_button
 		{
-			Button ceiling_texture_button {};
 			Menu ceiling_texture_image {};
 		};
 		Menu texture_menu
@@ -123,14 +121,12 @@ Window win_main
 			{
 				Checkbox solidity_checkbox {};
 			};
-			Label wall_texture_label
+			Button wall_texture_button
 			{
-				Button wall_texture_button {};
 				Menu wall_texture_image {};
 			};
-			Label portal_texture_label
+			Button portal_texture_button
 			{
-				Button portal_texture_button {};
 				Menu portal_texture_image {};
 			};
 			Label floor_wall_angle_label
@@ -166,9 +162,8 @@ Window win_main
 				};
 				Button sprite_add_button {};	
 				Button sprite_remove_button {};	
-				Label sprite_texture_label
+				Button sprite_texture_button
 				{
-					Button sprite_texture_button {};
 					Menu sprite_texture_image {};
 				};
 				Menu wall_render {};

@@ -124,7 +124,7 @@ void	event_elem_update(t_editor *editor, t_event_elem *event_elem)
 	}
 
 	final_info = ft_sprintf("%s, %s", g_event_type[event_elem->event->type], g_event_action[event_elem->event->action]);
-	ui_label_text_set(event_elem->info, final_info);
+	ui_label_set_text(event_elem->info, final_info);
 	ft_strdel(&final_info);
 }
 

@@ -301,43 +301,33 @@ ceiling_texture_scale_input
 	text_align : left center;
 };
 
-floor_texture_label
-{
-	xywh : 10, 220, 50, 20;
-	title : Floor Texture:;
-};
-
 floor_texture_button
 {
-	xywh : -1, 19, 27, 27;
-	title : :;
+	xywh : 10, 240, 27, 27;
+	text_pos : 0, -20, 100, 50;
+	title : Floor Texture;
 	//bg_color_default : 0x00;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
 };
 floor_texture_image
 {
-	xywh : 0, 20, 25, 25;
+	xywh : 1, 1, 25, 25;
 	bg_image : ui_images/damage.png;
-};
-
-ceiling_texture_label
-{
-	xywh : 120, 220, 50, 20;
-	title : Ceiling Texture:;
 };
 
 ceiling_texture_button
 {
-	xywh : -1, 19, 27, 27;
+	xywh : 120, 240, 27, 27;
+	text_pos : 0, -20, 100, 50;
 	//bg_color_default : 0xffb0b0b0;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
-	title : :;
+	title : Ceiling Texture;
 };
 ceiling_texture_image
 {
-	xywh : 0, 20, 25, 25;
+	xywh : 1, 1, 25, 25;
 	bg_image : ui_images/damage.png;
 };
 
@@ -437,41 +427,33 @@ solidity_checkbox
 	bg_image_click : ui_images/tick_box_on.png;
 };
 
-wall_texture_label
-{
-	xywh : 10, 120, 50, 20;
-	title : Wall Texture:;
-};
 wall_texture_button
 {
-	xywh : -1, 19, 27, 27;
-	title : :;
+	xywh : 10, 140, 27, 27;
+	text_pos : 0, -20, 120, 50;
+	title : Wall Texture;
 	//bg_color_default : 0x00;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
 };
 wall_texture_image
 {
-	xywh : 0, 20, 25, 25;
+	xywh : 1, 1, 25, 25;
 	bg_image : ui_images/damage.png;
 };
 
-portal_texture_label
-{
-	xywh : 120, 120, 50, 20;
-	title : Portal Texture:;
-};
 portal_texture_button
 {
-	xywh : -1, 19, 27, 27;
-	title : :;
+	xywh : 120, 140, 27, 27;
+	text_pos : 0, -20, 120, 50;
+	title : Portal Texture;
 	//bg_color_default : 0x00;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
 };
 portal_texture_image
 {
-	xywh : 0, 20, 25, 25;
+	xywh : 1, 1, 25, 25;
 	bg_image : ui_images/damage.png;
 };
 
@@ -546,23 +528,18 @@ sprite_remove_button : cancel_button_prefab
 	title : Remove;
 };
 
-sprite_texture_label
-{
-	x : 10;
-	y : 65;
-	title : Texture;
-};
 sprite_texture_button
 {
-	xywh : -1, 19, 27, 27;
-	title : :;
+	xywh : 10, 85, 27, 27;
+	text_pos : 0, -20, 100, 50;
+	title : Sprite Texture;
 	//bg_color_default : 0x00;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
 };
 sprite_texture_image
 {
-	xywh : 0, 20, 25, 25;
+	xywh : 1, 1, 25, 25;
 	bg_image : ui_images/damage.png;
 };
 
