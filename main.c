@@ -460,7 +460,8 @@ void	entity_events(t_editor *editor, SDL_Event e)
 	}
 	else if (editor->select_button->state == UI_STATE_CLICK)
 	{
-		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+			&& !ui_element_is_hover(editor->entity_edit_menu))
 		{
 			t_entity *entity = get_entity_from_list_around_radius(editor->entities, actual_pos, 1.0f);
 			// we dont want to overwrite the currently selected entity if we dont actually find a new one;
@@ -471,6 +472,10 @@ void	entity_events(t_editor *editor, SDL_Event e)
 				// when selecting new entity this happens;
 				ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(editor->selected_entity->yaw, temp_str));
 				ui_slider_value_set(editor->entity_yaw_slider, editor->selected_entity->yaw);
+				ui_input_set_text(editor->entity_z_input, ft_b_itoa(editor->selected_entity->z, temp_str));
+
+				ft_printf("type : %d\n", editor->selected_entity->type);
+				//ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_textures[editor->selected_entity->type]);
 			}
 		}
 		else if (editor->selected_entity
@@ -1528,6 +1533,7 @@ void	editor_init(t_editor *editor)
 	}
 	editor->entity_dropdown = ui_list_get_element_by_id(editor->layout.elements, "entity_dropdown");
 	editor->entity_image = ui_list_get_element_by_id(editor->layout.elements, "entity_image");
+	editor->entity_z_input = ui_list_get_element_by_id(editor->layout.elements, "entity_z_input");
 	editor->entity_yaw_input = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_input");
 	editor->entity_yaw_slider = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_slider");
 
