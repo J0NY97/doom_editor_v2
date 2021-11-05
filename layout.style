@@ -685,10 +685,11 @@ entity_dropdown
 };
 entity_drop_button_prefab : drop_button_prefab
 {
-	w : 100;
+	w : 90;
 };
 entity_drop_menu
 {
+	w : 90;
 };
 entity_alfred_button : entity_drop_button_prefab
 {

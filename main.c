@@ -175,6 +175,8 @@ void	sector_events(t_editor *editor, SDL_Event e)
 				ui_input_set_text(editor->lighting_input, ft_b_itoa(editor->selected_sector->lighting, temp_str));
 				ui_input_set_text(editor->floor_texture_scale_input, ft_b_ftoa(editor->selected_sector->floor_scale, 2, temp_str));
 				ui_input_set_text(editor->ceiling_texture_scale_input, ft_b_ftoa(editor->selected_sector->ceiling_scale, 2, temp_str));
+				ui_element_image_set(editor->ceiling_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_sector->ceiling_texture]);
+				ui_element_image_set(editor->floor_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_sector->floor_texture]);
 				ft_printf("sector inputs updated\n");
 			}
 		}
@@ -250,8 +252,8 @@ void	sector_events(t_editor *editor, SDL_Event e)
 					if (wall) // this is where we go when new wall selected;
 					{
 						editor->selected_wall = wall;
-						ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->id]);
-						ft_printf("Wall selected our wall texture shoudl be : %d\n", wall->id);
+						ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->wall_texture]);
+						ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->portal_texture]);
 
 						// update wall ui;
 
@@ -429,16 +431,6 @@ void	sector_events(t_editor *editor, SDL_Event e)
 				editor->selected_wall->texture_scale = scale;
 			}
 		}
-
-
-		if (editor->floor_texture_button->state == UI_STATE_CLICK)
-			editor->texture_menu->show = 1;
-		else if (editor->ceiling_texture_button->state == UI_STATE_CLICK)
-			editor->texture_menu->show = 1;
-		else if (editor->wall_texture_button->state == UI_STATE_CLICK)
-			editor->texture_menu->show = 1;
-		else if (editor->portal_texture_button->state == UI_STATE_CLICK)
-			editor->texture_menu->show = 1;
 	}
 }
 
@@ -507,16 +499,12 @@ void	entity_events(t_editor *editor, SDL_Event e)
 			if (ui_dropdown_exit(editor->entity_dropdown)
 				&& ui_dropdown_get_dropdown(editor->entity_dropdown)->active)
 			{
-				ft_printf("We are checking for name\n");
 				int	i = 0;
 				while (++i < ENTITY_AMOUNT + 1) // i know that we are starting at 1, unset is 0;
 				{
-					ft_printf("%s, ", g_entity_data[i - 1].name);
-					ft_printf("%s\n", ui_button_get_label(ui_dropdown_get_dropdown(editor->entity_dropdown)->active)->text);
 					if (ft_strequ(g_entity_data[i - 1].name, ui_button_get_label(ui_dropdown_get_dropdown(editor->entity_dropdown)->active)->text))
 					{
 						editor->selected_entity->type = i;
-						ft_printf("entity type : %d selected.\n", editor->selected_entity->type);
 						break ;
 					}
 				}
@@ -909,23 +897,28 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	// Render the sprites;
 	t_sprite	*sprite;
 	t_list		*curr;
+	t_vec4i		xywh;
 
 	curr = wall->sprites;
 	while (curr)
 	{
 		sprite = curr->content;
 		texture = editor->wall_textures[sprite->texture];
+		xywh = vec4i(0, 0, texture->w, texture->h);
 		if (sprite->type == STATIC)
 		{
 			sprite->pos.w = (size * sprite->scale) * aspect;
-			sprite->pos.h = (size * sprite->scale) * aspect;
+			sprite->pos.h = (float)texture->h * ((float)sprite->pos.w / (float)texture->w);
 		}
 		else
 		{
-			sprite->pos.w = 64 * sprite->scale;
-			sprite->pos.h = 64 * sprite->scale;
+			xywh.w = 64;
+			xywh.h = 64;
+			sprite->pos.w = (size * sprite->scale) * aspect;
+			sprite->pos.h = (float)texture->h * ((float)sprite->pos.w / (float)xywh.w);
 		}
-		SDL_BlitScaled(texture, NULL, surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, sprite->pos.w, sprite->pos.h});
+		SDL_BlitScaled(texture, &(SDL_Rect){xywh.x, xywh.y, xywh.w, xywh.h},
+			surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, sprite->pos.w, sprite->pos.h});
 		curr = curr->next;
 	}
 	// Draw rect around selected sprite;
@@ -965,7 +958,9 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 		{
 			editor->selected_sprite = sprite_new();
 			editor->selected_sprite->pos = vec4i(0, 0, 64, 64);
-			editor->selected_sprite->texture = 0; // get_texture(editor); // TODO: make function for this since we are using it in many different places;
+			editor->selected_sprite->texture = 0;
+			if (editor->active_texture_button_id > -1)
+				editor->selected_sprite->texture = editor->active_texture_button_id;
 			editor->selected_sprite->id = get_next_sprite_id(editor->sprites);
 			add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
 			add_to_list(&editor->sprites, editor->selected_sprite, sizeof(t_sprite));
@@ -994,8 +989,6 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 			ft_printf("Sprite Removed (total : %d)\n", editor->selected_wall->sprite_amount);
 		}
 	}
-	else if (editor->sprite_texture_button->state == UI_STATE_CLICK)
-		editor->texture_menu->show = 1;
 
 	// Wall Render
 	render_wall_on_sprite_menu(editor, editor->selected_sector, editor->selected_wall);
@@ -1030,7 +1023,8 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 
 	// Moving Sprite
 	if (editor->selected_sprite
-		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
+		&& ui_element_is_hover(editor->sprite_edit_menu))
 	{
 		t_vec2i	move_amount;
 
@@ -1048,6 +1042,7 @@ void	texture_menu_events(t_editor *editor, SDL_Event e)
 	if (editor->texture_menu_close_button->state == UI_STATE_CLICK)
 	{
 		editor->texture_menu->show = 0;
+		editor->active_texture_opening_button->state = UI_STATE_DEFAULT;
 		editor->active_texture_opening_button = NULL;
 	}
 
@@ -1055,7 +1050,7 @@ void	texture_menu_events(t_editor *editor, SDL_Event e)
 	// If new active;
 	if (ui_list_radio_event(editor->texture_buttons, &editor->active_texture_button))
 	{
-				// Loop through texture_elem and compare which button we have clicked;	
+		// Loop through texture_elem and compare which button we have clicked;	
 		t_list	*curr;
 		curr = editor->texture_elems;
 		while (curr)
@@ -1063,12 +1058,14 @@ void	texture_menu_events(t_editor *editor, SDL_Event e)
 			if (((t_texture_elem *)curr->content)->button == editor->active_texture_button)
 			{
 				selected_texture_elem = curr->content;
+				editor->active_texture_button_id = selected_texture_elem->id;
 				break ;
 			}
 			curr = curr->next;
 		}
 		// If texture found;
-		if (selected_texture_elem)
+		if (selected_texture_elem
+			&& editor->active_texture_button_id > -1)
 		{
 			// Set selected whatever
 			if (editor->active_texture_opening_button == editor->wall_texture_button)
@@ -1078,6 +1075,36 @@ void	texture_menu_events(t_editor *editor, SDL_Event e)
 					editor->selected_wall->wall_texture = selected_texture_elem->id;
 					ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
 				}
+			}
+			else if (editor->active_texture_opening_button == editor->portal_texture_button)
+			{
+				if (editor->selected_wall)
+				{
+					editor->selected_wall->portal_texture = selected_texture_elem->id;
+					ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
+				}
+			}
+			else if (editor->active_texture_opening_button == editor->floor_texture_button)
+			{
+				if (editor->selected_sector)
+				{
+					editor->selected_sector->floor_texture = selected_texture_elem->id;
+					ui_element_image_set(editor->floor_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
+				}
+			}
+			else if (editor->active_texture_opening_button == editor->ceiling_texture_button)
+			{
+				if (editor->selected_sector)
+				{
+					editor->selected_sector->ceiling_texture = selected_texture_elem->id;
+					ui_element_image_set(editor->ceiling_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
+				}
+			}
+			else if (editor->active_texture_opening_button == editor->sprite_texture_button)
+			{
+				if (editor->selected_sprite)
+					editor->selected_sprite->texture = selected_texture_elem->id;
+				ui_element_image_set(editor->sprite_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
 			}
 		}
 	}
@@ -1137,9 +1164,9 @@ void	user_events(t_editor *editor, SDL_Event e)
 	{
 		// change text of the menu to the correct button;
 		ui_label_set_text(editor->texture_menu_label, ui_button_get_text(editor->active_texture_opening_button));
-		ft_printf("Our texture menu text shoudl be : %s\n", ui_button_get_text(editor->active_texture_opening_button));
-		ui_element_print(editor->active_texture_opening_button);
-		ui_element_print(ui_button_get_label_element(editor->active_texture_opening_button));
+		editor->active_texture_button = NULL;
+		editor->active_texture_button_id = -1;
+		editor->texture_menu->show = 1;
 	}
 	if (editor->texture_menu->show)
 		texture_menu_events(editor, e);
@@ -1383,6 +1410,8 @@ void	editor_init(t_editor *editor)
 	editor->sector_edit_ok_button = ui_list_get_element_by_id(editor->layout.elements, "sector_edit_ok_button");
 	editor->floor_texture_button = ui_list_get_element_by_id(editor->layout.elements, "floor_texture_button");
 	editor->ceiling_texture_button = ui_list_get_element_by_id(editor->layout.elements, "ceiling_texture_button");
+	editor->floor_texture_image = ui_list_get_element_by_id(editor->layout.elements, "floor_texture_image");
+	editor->ceiling_texture_image = ui_list_get_element_by_id(editor->layout.elements, "ceiling_texture_image");
 	add_to_list(&editor->texture_opening_buttons, editor->floor_texture_button, UI_TYPE_ELEMENT);
 	add_to_list(&editor->texture_opening_buttons, editor->ceiling_texture_button, UI_TYPE_ELEMENT);
 	// Inputs;

@@ -111,7 +111,9 @@ typedef struct s_editor
 	t_ui_element	*close_sector_edit_button;
 	t_ui_element	*sector_edit_ok_button;
 	t_ui_element	*floor_texture_button;
+	t_ui_element	*floor_texture_image;
 	t_ui_element	*ceiling_texture_button;
+	t_ui_element	*ceiling_texture_image;
 	t_ui_element	*floor_height_input;
 	t_ui_element	*ceiling_height_input;
 	t_ui_element	*gravity_input;
@@ -141,6 +143,7 @@ typedef struct s_editor
 	t_list			*texture_elems;
 	t_list			*texture_buttons;
 	t_ui_element	*active_texture_button;
+	int				active_texture_button_id;
 
 	// Sprites
 	t_ui_element	*sprite_edit_menu;
@@ -432,6 +435,7 @@ Uint32				random_blue_color(void);
 t_vec2i				conversion(t_editor *editor, t_vec2i v);
 void				remove_from_list(t_list **list, void *pointer);
 int					hover_over_open_menus(t_editor *editor);
+float				get_aspect(float w, float h);
 
 // Bxpm
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);

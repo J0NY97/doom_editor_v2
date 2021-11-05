@@ -30,3 +30,8 @@ int	hover_over_open_menus(t_editor *editor)
 		return (1);
 	return (0);
 }
+
+float	get_aspect(float w, float h)
+{
+	return (w / h);
+}
