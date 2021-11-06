@@ -110,3 +110,18 @@ void	remove_sprite_from_wall(t_sprite *sprite, t_wall *wall)
 		curr = curr->next;
 	}
 }
+
+void	remove_wall_list_angles(t_list *list, int which)
+{
+	t_wall	*wall;
+
+	while (list)
+	{
+		wall = list->content;
+		if (which == 0)
+			wall->floor_angle = 0;
+		else if (which == 1)
+			wall->ceiling_angle = 0;
+		list = list->next;
+	}
+}

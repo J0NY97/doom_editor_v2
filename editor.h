@@ -225,6 +225,7 @@ typedef struct s_editor
 
 	SDL_Surface		*wall_textures[MAP_TEXTURE_AMOUNT];
 	SDL_Texture		*entity_textures[ENTITY_AMOUNT + 1];
+	SDL_Surface		*entity_texture_surfaces[ENTITY_AMOUNT + 1];
 
 	t_vec2i			first_point;
 	t_vec2i			second_point;
@@ -388,6 +389,7 @@ void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
 t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
 t_vec2i				get_wall_middle(t_wall *wall);
 int					remove_wall(t_editor *editor, t_wall *wall);
+void				remove_wall_list_angles(t_list *list, int which);
 
 // Sector
 t_sector			*sector_new(void);

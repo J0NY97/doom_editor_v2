@@ -252,6 +252,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 					if (wall) // this is where we go when new wall selected;
 					{
 						editor->selected_wall = wall;
+						editor->active_texture_button = NULL; // unselect currently selected texture;
 						ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->wall_texture]);
 						ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->portal_texture]);
 
@@ -408,6 +409,8 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			{
 				int		angle;
 				angle = ft_clamp(ft_atoi(ui_input_get_text(editor->floor_wall_angle_input)), -45, 45);
+				if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
+					remove_wall_list_angles(editor->selected_sector->walls, 0); // 0 is floor;
 				ft_b_itoa(angle, temp_str);
 				ui_input_set_text(editor->floor_wall_angle_input, temp_str);
 				editor->selected_wall->floor_angle = angle;
@@ -417,6 +420,8 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			{
 				int		angle;
 				angle = ft_clamp(ft_atoi(ui_input_get_text(editor->ceiling_wall_angle_input)), -45, 45);
+				if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
+					remove_wall_list_angles(editor->selected_sector->walls, 1); // 1 is ceiling;
 				ft_b_itoa(angle, temp_str);
 				ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
 				editor->selected_wall->ceiling_angle = angle;
@@ -474,8 +479,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 				ui_slider_value_set(editor->entity_yaw_slider, editor->selected_entity->yaw);
 				ui_input_set_text(editor->entity_z_input, ft_b_itoa(editor->selected_entity->z, temp_str));
 
-				ft_printf("type : %d\n", editor->selected_entity->type);
-				//ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_textures[editor->selected_entity->type]);
+				ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_texture_surfaces[editor->selected_entity->type]);
 			}
 		}
 		else if (editor->selected_entity
@@ -502,33 +506,18 @@ void	entity_events(t_editor *editor, SDL_Event e)
 			}
 			
 			if (ui_dropdown_exit(editor->entity_dropdown)
-				&& ui_dropdown_get_dropdown(editor->entity_dropdown)->active)
+				&& ui_dropdown_active(editor->entity_dropdown))
 			{
 				int	i = 0;
-				while (++i < ENTITY_AMOUNT + 1) // i know that we are starting at 1, unset is 0;
+				while (++i <= ENTITY_AMOUNT) // i know that we are starting at 1, unset is 0;
 				{
-					if (ft_strequ(g_entity_data[i - 1].name, ui_button_get_label(ui_dropdown_get_dropdown(editor->entity_dropdown)->active)->text))
+					if (ft_strequ(g_entity_data[i - 1].name, ui_dropdown_active_text(editor->entity_dropdown)))
 					{
 						editor->selected_entity->type = i;
 						break ;
 					}
 				}
-				// update entity image;
-				t_vec4i	pos;
-				int type = editor->selected_entity->type - 1;
-				if (type > 0)
-				{
-					SDL_Surface	*surface = ui_surface_image_new(g_entity_data[type].path);
-					SDL_Surface *blat = ui_surface_new(10, 10);
-					pos.x = g_entity_data[type].tc[0];
-					pos.y = g_entity_data[type].tc[1];
-					pos.w = g_entity_data[type].tc[2];
-					pos.h = g_entity_data[type].tc[3];
-					SDL_BlitScaled(surface, &(SDL_Rect){pos.x, pos.y, pos.w, pos.h}, blat, NULL);
-					ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, blat);
-					SDL_FreeSurface(surface);
-					SDL_FreeSurface(blat);
-				}
+				ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_texture_surfaces[editor->selected_entity->type]);
 			}
 		}
 
@@ -1514,22 +1503,21 @@ void	editor_init(t_editor *editor)
 	// Entity Edit
 	editor->entity_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "entity_edit_menu");
 	editor->close_entity_edit_button = ui_list_get_element_by_id(editor->layout.elements, "close_entity_edit_button");
+	editor->entity_texture_surfaces[0] = ui_surface_image_new("ui_images/damage.png");
 	editor->entity_textures[0] = ui_texture_create_from_path(editor->win_main->renderer, "ui_images/damage.png");
-	for (int i = 1; i < ENTITY_AMOUNT + 1; i++)
+	for (int i = 1; i <= ENTITY_AMOUNT; i++)
 	{
 		t_vec4i	pos;
 		ft_printf("Load Image : %s\n", g_entity_data[i - 1].path);
 		SDL_Surface	*surface = ui_surface_image_new(g_entity_data[i - 1].path);
-		SDL_Surface *blat = ui_surface_new(10, 10);
+		editor->entity_texture_surfaces[i] = ui_surface_new(10, 10);
 		pos.x = g_entity_data[i - 1].tc[0];
 		pos.y = g_entity_data[i - 1].tc[1];
 		pos.w = g_entity_data[i - 1].tc[2];
 		pos.h = g_entity_data[i - 1].tc[3];
-		SDL_BlitScaled(surface, &(SDL_Rect){pos.x, pos.y, pos.w, pos.h}, blat, NULL);
-		editor->entity_textures[i] = SDL_CreateTextureFromSurface(editor->win_main->renderer, blat);
+		SDL_BlitScaled(surface, &(SDL_Rect){pos.x, pos.y, pos.w, pos.h}, editor->entity_texture_surfaces[i], NULL);
+		editor->entity_textures[i] = SDL_CreateTextureFromSurface(editor->win_main->renderer, editor->entity_texture_surfaces[i]);
 		SDL_FreeSurface(surface);
-		SDL_FreeSurface(blat);
-	//	editor->entity_textures[i] = ui_texture_create_from_path(editor->win_main->renderer, g_entity_data[i - 1].path);
 	}
 	editor->entity_dropdown = ui_list_get_element_by_id(editor->layout.elements, "entity_dropdown");
 	editor->entity_image = ui_list_get_element_by_id(editor->layout.elements, "entity_image");
