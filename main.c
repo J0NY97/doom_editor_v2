@@ -628,14 +628,6 @@ void	event_events(t_editor *editor, SDL_Event e)
 	editor->event_min_input->show = 0;
 	editor->event_max_input->show = 0;
 	editor->event_speed_input->show = 0;
-	editor->event_action_dropdown->show = 0;
-	editor->event_id_dropdown->show = 0;
-	if (ui_dropdown_active(editor->event_type_dropdown))
-	{
-		editor->event_action_dropdown->show = 1;
-		editor->event_id_dropdown->show = 1;
-	}
-
 	if (editor->event_type_floor->state == UI_STATE_CLICK)
 	{
 		editor->event_sector_input->show = 1;

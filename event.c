@@ -160,13 +160,31 @@ void	update_event(t_editor *editor, t_event *event)
 		}
 	}
 	// Sector
-	// TODO
+	/*
+	active_text = ui_input_get_text(editor->event_sector_input);
+	ft_printf("sector : %s\n");
+	if (active_text)
+	{
+		if (event->sector)
+			ft_strdel(&event->sector);
+		event->sector = ft_strdup(active_text);
+	}
 	// Min
-	// TODO
+	active_text = ui_input_get_text(editor->event_min_input);
+	ft_printf("min : %s\n");
+	if (active_text)
+		event->min = ft_atoi(active_text);
 	// Max
-	// TODO
+	active_text = ui_input_get_text(editor->event_max_input);
+	ft_printf("max : %s\n");
+	if (active_text)
+		event->max = ft_atoi(active_text);
 	// Speed
-	// TODO
+	active_text = ui_input_get_text(editor->event_speed_input);
+	ft_printf("speed : %s\n");
+	if (active_text)
+		event->speed = ft_atoi(active_text);
+		*/
 	ft_printf("Success.\n");
 }
 
