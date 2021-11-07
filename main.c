@@ -672,62 +672,58 @@ void	event_events(t_editor *editor, SDL_Event e)
 	// 	only those are added to the dropdown menu as buttons;
 	// 	(does this everytime you click on the dropdown to show)
 	if (editor->event_id_dropdown->show
-		&& ui_dropdown_open(editor->event_id_dropdown)
-		&& (editor->event_action_shoot->state == UI_STATE_CLICK
-			|| editor->event_action_click->state == UI_STATE_CLICK))
+		&& ui_dropdown_open(editor->event_id_dropdown))
 	{
-		ft_printf("event id dropdown clicked, we want to update now.\n");
-		/*
-		 * Version 3
-		*/
-		t_list			*sprite_lst;
-		t_list			*button_lst;
-		t_list			*button_prev;
-		char			temp_str[10];
-		t_ui_recipe		*event_id_button;
-
-		event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
-		sprite_lst = editor->sprites;
-		button_lst = editor->event_id_menu->children;
-		button_prev = NULL;
-		int	i = -1;
-		while (sprite_lst)
+		if (editor->event_action_sector->state == UI_STATE_CLICK)
 		{
-			t_sprite *sprite;
-			sprite = sprite_lst->content;
-			if (sprite->type == ACTION) // make new element or fill element with the correct id;
+
+		}
+		else
+		{
+			t_list			*sprite_lst;
+			t_list			*button_lst;
+			t_list			*button_prev;
+			char			temp_str[10];
+			t_ui_recipe		*event_id_button;
+			t_sprite		*sprite;
+
+			event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
+			sprite_lst = editor->sprites;
+			button_lst = editor->event_id_menu->children;
+			button_prev = NULL;
+			int	i = -1;
+			while (sprite_lst)
 			{
-				if (button_lst && button_lst->content) // we have button;
+				sprite = sprite_lst->content;
+				if (sprite->type == ACTION) // make new element or fill element with the correct id;
 				{
-					if (!button_lst->content)
-						ft_printf("[%s] Came across button that has t_list but not t_ui_element in content...\n", __FUNCTION__);
-					else
+					if (button_lst && button_lst->content) // we have button;
 					{
 						ui_button_set_text(button_lst->content, ft_b_itoa(sprite->id, temp_str));
 						button_prev = button_lst;
 						button_lst = button_lst->next;
 					}
+					else // create new button to list end and add ui_element as content;
+					{
+						t_ui_element *elem = ft_memalloc(sizeof(t_ui_element));
+						ui_button_new(editor->win_main, elem);
+						ui_button_set_text(elem, ft_b_itoa(sprite->id, temp_str));
+						ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
+						ui_element_edit(elem, event_id_button);
+					}
 				}
-				else // create new button to list end and add ui_element as content;
-				{
-					t_ui_element *elem = ft_memalloc(sizeof(t_ui_element));
-					ui_button_new(editor->win_main, elem);
-					ui_button_set_text(elem, ft_b_itoa(sprite->id, temp_str));
-					ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
-					ui_element_edit(elem, event_id_button);
-				}
+				++i;
+				sprite_lst = sprite_lst->next;
 			}
-			++i;
-			sprite_lst = sprite_lst->next;
-		}
-		// Finally remove all the extra buttons;
-		while (button_lst)
-		{
-			t_ui_element	*extra_elem;
-			extra_elem = button_lst->content;
-			ui_element_free(extra_elem);
-			free(extra_elem);
-			button_lst = button_lst->next;
+			// Finally remove all the extra buttons;
+			while (button_lst)
+			{
+				t_ui_element	*extra_elem;
+				extra_elem = button_lst->content;
+				ui_element_free(extra_elem);
+				free(extra_elem);
+				button_lst = button_lst->next;
+			}
 		}
 	}
 }
@@ -1541,6 +1537,9 @@ void	editor_init(t_editor *editor)
 	editor->event_max_input = ui_list_get_element_by_id(editor->layout.elements, "event_max_input");
 	editor->event_speed_input = ui_list_get_element_by_id(editor->layout.elements, "event_speed_input");
 	editor->event_menu = ui_list_get_element_by_id(editor->layout.elements, "event_menu");
+
+	ui_element_print(editor->event_sector_input);
+	ui_element_print(editor->event_min_input);
 	// types
 	editor->event_type_floor = ui_list_get_element_by_id(editor->layout.elements, "event_type_floor");
 	editor->event_type_ceiling = ui_list_get_element_by_id(editor->layout.elements, "event_type_ceiling");

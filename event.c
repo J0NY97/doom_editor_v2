@@ -159,8 +159,9 @@ void	update_event(t_editor *editor, t_event *event)
 			event->pointer = get_sprite_by_id_from_list(editor->sprites, ft_atoi(active_text));
 		}
 	}
+	ft_printf(" halfway ");
+
 	// Sector
-	/*
 	active_text = ui_input_get_text(editor->event_sector_input);
 	ft_printf("sector : %s\n");
 	if (active_text)
@@ -184,7 +185,6 @@ void	update_event(t_editor *editor, t_event *event)
 	ft_printf("speed : %s\n");
 	if (active_text)
 		event->speed = ft_atoi(active_text);
-		*/
 	ft_printf("Success.\n");
 }
 

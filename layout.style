@@ -993,6 +993,7 @@ event_min_input
 	title : ;
 	placeholder : Min;
 	text_align : center;
+	type : numbers;
 };
 event_max_input
 {
@@ -1003,6 +1004,7 @@ event_max_input
 	title : ;
 	placeholder : Max;
 	text_align : center;
+	type : numbers;
 };
 event_speed_input
 {
@@ -1010,6 +1012,7 @@ event_speed_input
 	title : ;
 	placeholder : Speed;
 	text_align : center;
+	type : numbers;
 };
 
 ///////////////////
