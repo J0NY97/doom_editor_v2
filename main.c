@@ -239,44 +239,6 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			}
 			else
 				editor->selected_point = NULL;
-
-			// Wall
-			if (editor->wall_button->state == UI_STATE_CLICK)
-			{
-				t_wall	*wall;
-				if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
-					&& !hover_over_open_menus(editor))
-				{
-					// we dont want to make selected_wall NULL if we dont select a wall;
-					wall = get_wall_from_list_around_radius(editor->selected_sector->walls, actual_pos, 1.0f);
-					if (wall) // this is where we go when new wall selected;
-					{
-						editor->selected_wall = wall;
-						editor->active_texture_button = NULL; // unselect currently selected texture;
-						ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->wall_texture]);
-						ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->portal_texture]);
-
-						// update wall ui;
-
-						// TODO: ui_checkbox really needs an update, i dont think this is the way to change the toggle state of the checkbox; (it is the way, but shouldnt);
-						editor->solid_checkbox->is_click = editor->selected_wall->solid;
-						editor->portal_checkbox->is_click = editor->selected_wall->neighbor != NULL;
-
-						ui_input_set_text(editor->floor_wall_angle_input, ft_b_itoa(editor->selected_wall->floor_angle, temp_str));
-						ui_input_set_text(editor->ceiling_wall_angle_input, ft_b_itoa(editor->selected_wall->ceiling_angle, temp_str));
-						ui_input_set_text(editor->wall_texture_scale_input, ft_b_ftoa(editor->selected_wall->texture_scale, 2, temp_str));
-					}
-				}
-				else if (editor->selected_wall // MOVE WALL
-					&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
-					&& !(editor->wall_render->show == 1 && ui_element_is_hover(editor->sprite_edit_menu))) // dont move the wall if we are hovering over the sprite_edit_menu;
-				{
-					editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, move_amount);
-					editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, move_amount);
-				}
-			}
-			else
-				editor->selected_wall = NULL;
 		}
 		else
 		{
@@ -354,87 +316,123 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			editor->sector_edit_menu->show = 0;
 			editor->selected_sector = NULL;
 		}
+	}
+}
 
-		// Sector Edit Menu
-		if (editor->sector_button->state == UI_STATE_CLICK && editor->selected_sector)
-			editor->sector_edit_menu->show = 1;
-		else
-			editor->sector_edit_menu->show = 0;
+void	wall_events(t_editor *editor, SDL_Event e)
+{
+	t_vec2i	actual_pos;
+	t_vec2i	move_amount;
+	char	temp_str[20];
 
-		// Close Wall Menu Button
-		if (editor->close_wall_edit_button->state == UI_STATE_CLICK)
+	ft_strnclr(temp_str, 20);
+
+	//calculate_hover(editor); // aleady done;
+	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
+	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
+	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+
+	// Wall
+	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+		&& !hover_over_open_menus(editor))
+	{
+		t_wall	*wall;
+		// we dont want to make selected_wall NULL if we dont select a wall;
+		wall = get_wall_from_list_around_radius(editor->selected_sector->walls, actual_pos, 1.0f);
+		if (wall) // this is where we go when new wall selected;
 		{
-			editor->menu_wall_edit->show = 0;
-			editor->selected_wall = NULL;
+			editor->selected_wall = wall;
+			editor->active_texture_button = NULL; // unselect currently selected texture;
+			editor->selected_sprite = NULL;
+			ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->wall_texture]);
+			ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->portal_texture]);
+
+			// TODO: ui_checkbox really needs an update, i dont think this is the way to change the toggle state of the checkbox; (it is the way, but shouldnt);
+			editor->solid_checkbox->is_click = editor->selected_wall->solid;
+			editor->portal_checkbox->is_click = editor->selected_wall->neighbor != NULL;
+
+			ui_input_set_text(editor->floor_wall_angle_input, ft_b_itoa(editor->selected_wall->floor_angle, temp_str));
+			ui_input_set_text(editor->ceiling_wall_angle_input, ft_b_itoa(editor->selected_wall->ceiling_angle, temp_str));
+			ui_input_set_text(editor->wall_texture_scale_input, ft_b_ftoa(editor->selected_wall->texture_scale, 2, temp_str));
+		}
+	}
+	else if (editor->selected_wall // MOVE WALL
+		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
+		&& !(editor->wall_render->show == 1
+		&& ui_element_is_hover(editor->sprite_edit_menu))) // only move wall if we are hovering over the sprite_edit_menu;
+	{
+		editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, move_amount);
+		editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, move_amount);
+	}
+
+	// Close Wall Menu Button
+	if (editor->close_wall_edit_button->state == UI_STATE_CLICK)
+	{
+		editor->menu_wall_edit->show = 0;
+		editor->selected_wall = NULL;
+	}
+
+	if (editor->selected_wall)
+	{
+		if (editor->split_wall_button->state == UI_STATE_CLICK)
+		{
+			t_point	*p1;
+			t_point	*p2;
+			t_point	*p3;
+			t_wall	*new_wall;
+
+			p1 = editor->selected_wall->p1;
+			p2 = editor->selected_wall->p2;
+			p3 = ft_memalloc(sizeof(t_point));
+			p3->pos = get_wall_middle(editor->selected_wall);
+			add_to_list(&editor->points, p3, sizeof(t_point));
+
+			editor->selected_wall->p1 = p3;
+
+			new_wall = wall_new();
+			new_wall->p1 = p1;
+			new_wall->p2 = p3;
+			add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
+			add_to_list(&editor->walls, new_wall, sizeof(t_wall));
+		}
+		// TODO: ui_checkbox really needs an updated, we dont want to update these everytime, we want someway to only do stuff if the toggle state has changed;
+		editor->selected_wall->solid = editor->solid_checkbox->state == UI_STATE_CLICK;
+		
+		// TODO : this needs rework;
+		if (editor->portal_checkbox->state == UI_STATE_CLICK)
+			if (!check_if_you_can_make_wall_portal(editor))
+				editor->portal_checkbox->state = UI_STATE_DEFAULT;
+
+		if (ui_input_exit(editor->floor_wall_angle_input))
+		{
+			int		angle;
+			angle = ft_clamp(ft_atoi(ui_input_get_text(editor->floor_wall_angle_input)), -45, 45);
+			if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
+				remove_wall_list_angles(editor->selected_sector->walls, 0); // 0 is floor;
+			ft_b_itoa(angle, temp_str);
+			ui_input_set_text(editor->floor_wall_angle_input, temp_str);
+			editor->selected_wall->floor_angle = angle;
 		}
 
-		// Wall Edit Menu
-		if (editor->wall_button->state == UI_STATE_CLICK && editor->selected_wall)
-			editor->menu_wall_edit->show = 1;
-		else
-			editor->menu_wall_edit->show = 0;
-
-		if (editor->selected_sector && editor->selected_wall)
+		if (ui_input_exit(editor->ceiling_wall_angle_input))
 		{
-			if (editor->split_wall_button->state == UI_STATE_CLICK)
-			{
-				t_point	*p1;
-				t_point	*p2;
-				t_point	*p3;
-				t_wall	*new_wall;
+			int		angle;
+			angle = ft_clamp(ft_atoi(ui_input_get_text(editor->ceiling_wall_angle_input)), -45, 45);
+			if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
+				remove_wall_list_angles(editor->selected_sector->walls, 1); // 1 is ceiling;
+			ft_b_itoa(angle, temp_str);
+			ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
+			editor->selected_wall->ceiling_angle = angle;
+		}
 
-				p1 = editor->selected_wall->p1;
-				p2 = editor->selected_wall->p2;
-				p3 = ft_memalloc(sizeof(t_point));
-				p3->pos = get_wall_middle(editor->selected_wall);
-				add_to_list(&editor->points, p3, sizeof(t_point));
-
-				editor->selected_wall->p1 = p3;
-
-				new_wall = wall_new();
-				new_wall->p1 = p1;
-				new_wall->p2 = p3;
-				add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
-				add_to_list(&editor->walls, new_wall, sizeof(t_wall));
-			}
-			// TODO: ui_checkbox really needs an updated, we dont want to update these everytime, we want someway to only do stuff if the toggle state has changed;
-			editor->selected_wall->solid = editor->solid_checkbox->state == UI_STATE_CLICK;
-			
-			// TODO : this needs rework;
-			if (editor->portal_checkbox->state == UI_STATE_CLICK)
-				if (!check_if_you_can_make_wall_portal(editor))
-					editor->portal_checkbox->state = UI_STATE_DEFAULT;
-
-			if (ui_input_exit(editor->floor_wall_angle_input))
-			{
-				int		angle;
-				angle = ft_clamp(ft_atoi(ui_input_get_text(editor->floor_wall_angle_input)), -45, 45);
-				if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
-					remove_wall_list_angles(editor->selected_sector->walls, 0); // 0 is floor;
-				ft_b_itoa(angle, temp_str);
-				ui_input_set_text(editor->floor_wall_angle_input, temp_str);
-				editor->selected_wall->floor_angle = angle;
-			}
-
-			if (ui_input_exit(editor->ceiling_wall_angle_input))
-			{
-				int		angle;
-				angle = ft_clamp(ft_atoi(ui_input_get_text(editor->ceiling_wall_angle_input)), -45, 45);
-				if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
-					remove_wall_list_angles(editor->selected_sector->walls, 1); // 1 is ceiling;
-				ft_b_itoa(angle, temp_str);
-				ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
-				editor->selected_wall->ceiling_angle = angle;
-			}
-
-			if (ui_input_exit(editor->wall_texture_scale_input))
-			{
-				float	scale;
-				scale = ft_fclamp(ft_atof(ui_input_get_text(editor->wall_texture_scale_input)), -10.0f, 10.0f);
-				ft_b_ftoa(scale, 2, temp_str);
-				ui_input_set_text(editor->wall_texture_scale_input, temp_str);
-				editor->selected_wall->texture_scale = scale;
-			}
+		if (ui_input_exit(editor->wall_texture_scale_input))
+		{
+			float	scale;
+			scale = ft_fclamp(ft_atof(ui_input_get_text(editor->wall_texture_scale_input)), -10.0f, 10.0f);
+			ft_b_ftoa(scale, 2, temp_str);
+			ui_input_set_text(editor->wall_texture_scale_input, temp_str);
+			editor->selected_wall->texture_scale = scale;
 		}
 	}
 }
@@ -676,7 +674,45 @@ void	event_events(t_editor *editor, SDL_Event e)
 	{
 		if (editor->event_action_sector->state == UI_STATE_CLICK)
 		{
+			t_list		*sector_list;
+			t_list		*button_lst;
+			t_list		*button_prev;
+			t_sector	*sector;
+			char		temp_str[10];
+			t_ui_recipe	*event_id_button;
 
+			event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
+			sector_list = editor->sectors;
+			button_lst = editor->event_id_menu->children;
+			button_prev = NULL;
+			while (sector_list)
+			{
+				sector = sector_list->content;
+				if (button_lst && button_lst->content) // we have button;
+				{
+					ui_button_set_text(button_lst->content, ft_b_itoa(sector->id, temp_str));
+					button_prev = button_lst;
+					button_lst = button_lst->next;
+				}
+				else // create new button to list end and add ui_element as content;
+				{
+					t_ui_element *elem = ft_memalloc(sizeof(t_ui_element));
+					ui_button_new(editor->win_main, elem);
+					ui_button_set_text(elem, ft_b_itoa(sector->id, temp_str));
+					ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
+					ui_element_edit(elem, event_id_button);
+				}
+				sector_list = sector_list->next;
+			}
+			// Finally remove all the extra buttons;
+			while (button_lst)
+			{
+				t_ui_element	*extra_elem;
+				extra_elem = button_lst->content;
+				ui_element_free(extra_elem);
+				free(extra_elem);
+				button_lst = button_lst->next;
+			}
 		}
 		else
 		{
@@ -691,7 +727,6 @@ void	event_events(t_editor *editor, SDL_Event e)
 			sprite_lst = editor->sprites;
 			button_lst = editor->event_id_menu->children;
 			button_prev = NULL;
-			int	i = -1;
 			while (sprite_lst)
 			{
 				sprite = sprite_lst->content;
@@ -712,7 +747,6 @@ void	event_events(t_editor *editor, SDL_Event e)
 						ui_element_edit(elem, event_id_button);
 					}
 				}
-				++i;
 				sprite_lst = sprite_lst->next;
 			}
 			// Finally remove all the extra buttons;
@@ -1117,29 +1151,50 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->offset.y -= (editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y);
 	}
 
+	// Removing all the selected whatevers.
 	if (ui_button(editor->draw_button))
 	{
 		editor->selected_sector = NULL;
 		editor->selected_entity = NULL;
 		editor->selected_event = NULL;
+		editor->selected_sprite = NULL;
+		editor->selected_wall = NULL;
 	}
 
+	// Sector Events
 	if (editor->sector_button->state == UI_STATE_CLICK)
 	{
-		sector_events(editor, e);
-		if (editor->selected_wall
-			&& editor->wall_button->state == UI_STATE_CLICK)
-			sprite_events(editor, e);
+		if (editor->selected_sector
+			&& editor->select_button->state == UI_STATE_CLICK)
+			editor->sector_edit_menu->show = 1;
 		else
-		{
-			editor->selected_sprite = NULL;
-			editor->sprite_edit_menu->show = 0;
-		}
+			editor->sector_edit_menu->show = 0;
+		sector_events(editor, e);
 	}
 	else
 	{
 		editor->selected_sector = NULL;
 		editor->sector_edit_menu->show = 0;
+	}
+
+	// Wall Events
+	if (editor->wall_button->state == UI_STATE_CLICK)
+	{
+		if (editor->selected_wall)
+		{
+			editor->menu_wall_edit->show = 1;
+			sprite_events(editor, e);
+		}
+		else
+			editor->menu_wall_edit->show = 0;
+		wall_events(editor, e);
+	}
+	else
+	{
+		editor->selected_wall = NULL;
+		editor->menu_wall_edit->show = 0;
+		editor->selected_sprite = NULL;
+		editor->sprite_edit_menu->show = 0;
 	}
 
 	if (ui_list_radio_event(editor->texture_opening_buttons, &editor->active_texture_opening_button))
