@@ -482,9 +482,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 		}
 		else if (editor->selected_entity
 			&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
-		{
 			editor->selected_entity->pos = vec2i_add(editor->selected_entity->pos, move_amount);
-		}
 
 		if (editor->selected_entity)
 		{
@@ -501,6 +499,12 @@ void	entity_events(t_editor *editor, SDL_Event e)
 				int	angle = ui_slider_get_slider(editor->entity_yaw_slider)->value;
 				editor->selected_entity->yaw = angle;
 				ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(angle, temp_str));
+			}
+
+			if (ui_input_exit(editor->entity_z_input))
+			{
+				int	z_value = ft_atoi(ui_input_get_text(editor->entity_z_input));
+				editor->selected_entity->z = z_value;
 			}
 			
 			if (ui_dropdown_exit(editor->entity_dropdown)

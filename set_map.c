@@ -271,15 +271,24 @@ char	*set_event(t_editor *editor)
 	char	*final;
 	char	*temp;
 	t_list	*curr;
+	t_event	*event;
 	int		id;
+	int		target_id;
 
 	id = -1;
-	final = ft_sprintf("type:event\tt\ta\ti\n");
+	final = ft_sprintf("type:event\tTYPE\tACTION\tID\tSECTOR\tMIN\tMAX\tSPEED\n");
 	curr = editor->events;
 	while (curr)
 	{
-		temp = ft_sprintf("%d\t%d\t%d\t%d\n",
-				++id, 0, 0, 0);
+		event = curr->content;
+		event->id = ++id;
+		if (event->pointer_type == SECTOR)
+			target_id = ((t_sector *)event->pointer)->id;
+		else
+			target_id = ((t_sprite *)event->pointer)->id;
+		temp = ft_sprintf("%d\t%d\t%d\t%d\t%s\t%d\t%d\t%d\n",
+				event->id, event->type, event->action, target_id,
+				event->sector, event->min, event->max, event->speed);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
