@@ -427,10 +427,10 @@ t_sprite			*get_sprite_by_id_from_list(t_list *list, int id);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);
-void				try_reading_map(t_editor *editor);
 
 // Get && Set
 void				set_map(t_editor *editor, char *name);
+void				get_map(t_editor *editor, char *map);
 
 // Help
 Uint32				random_blue_color(void);

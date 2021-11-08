@@ -158,5 +158,6 @@ int					ft_arrlen(char **arr);
 double				ft_timer_end(void);
 void				ft_timer_start(void);
 void				ft_lstdelone_nonfree(t_list **lst, t_list *del);
+char				*ft_get_file_content(char *file);
 
 #endif

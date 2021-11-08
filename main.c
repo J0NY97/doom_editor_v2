@@ -1670,7 +1670,7 @@ int	main(int ac, char **av)
 	editor_init(&editor);
 	draw_init(&editor);
 	if (args_parser(&editor, ac, av))
-		try_reading_map(&editor);
+		get_map(&editor, editor.map_full_path);
 	else
 		ft_printf("[%s] No map given to open.\n", __FUNCTION__);
 

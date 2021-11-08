@@ -32,6 +32,7 @@ RAW =	add_to_list.c\
 		ft_dellstnode.c\
 		ft_filetostr.c\
 		ft_ftoa.c\
+		ft_get_file_content.c\
 		ft_isalnum.c\
 		ft_isalpha.c\
 		ft_isascii.c\

@@ -28,18 +28,3 @@ int	args_parser(t_editor *editor, int ac, char **av)
 	}
 	return (0);
 }
-
-void	try_reading_map(t_editor *editor)
-{
-	int	fd;
-
-	fd = open(editor->map_full_path, O_RDONLY);
-	if (fd < 0)
-	{
-		ft_printf("[%s] Couldn't open map : [%s] does it exist [%d].\n", __FUNCTION__, editor->map_full_path, access(editor->map_full_path, F_OK));
-		close(fd);
-		return ;
-	}
-	ft_printf("[%s] Map <%s> opened successfully.\n", __FUNCTION__, editor->map_full_path);
-	close(fd);
-}

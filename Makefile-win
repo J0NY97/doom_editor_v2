@@ -10,6 +10,7 @@ SRCS = \
 	./math.c \
 	./bxpm.c \
 	./set_map.c \
+	./get_map.c \
 	./args_parser.c \
 	./help.c \
 
