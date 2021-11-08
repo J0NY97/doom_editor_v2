@@ -1,8 +1,176 @@
 #include "editor.h"
 
+/*
+ * Only the map type is usefull here, for the correct tickbox to be ticked;
+*/
+void	get_map_info(t_editor *editor, char **lines, int *i)
+{
+	char	**args;
+
+	ft_printf("Getting Map Info. ");
+	args = ft_strsplit(lines[*i + 1], '\t');
+	editor->map_type = 0;
+	if (ft_strnequ(args[1], "story", 5))
+		editor->map_type = 1;
+	*i += 2;
+	ft_arraydel(args);
+	ft_printf("Success.\n");
+}
+
+void	get_points(t_editor *editor, char **lines, int *i)
+{
+	char	**args;
+	t_point	*point;
+
+	ft_printf("Getting Points. ");
+	while (lines[*i])
+	{
+		*i += 1;
+		if (lines[*i][0] == '-')
+			break ;
+		args = ft_strsplit(lines[*i], '\t');
+		point = ft_memalloc(sizeof(t_point));
+		point->id = ft_atoi(args[0]);
+		point->pos.x = ft_atoi(args[1]);
+		point->pos.y = ft_atoi(args[2]);
+		add_to_list(&editor->points, point, sizeof(t_point));
+		ft_arraydel(args);
+	}
+	ft_printf("Success.\n");
+}
+
+void	get_walls(t_editor *editor, char **lines, int *i)
+{
+	char	**args;
+	t_wall	*wall;
+
+	ft_printf("Getting Walls. ");
+	while (lines[*i])
+	{
+		*i += 1;
+		if (lines[*i][0] == '-')
+			break ;
+		args = ft_strsplit(lines[*i], '\t');
+		wall = wall_new();
+		wall->id = ft_atoi(args[0]);
+		wall->p1 = get_point_with_id(editor->points, ft_atoi(args[1]));
+		wall->p2 = get_point_with_id(editor->points, ft_atoi(args[2]));
+		wall->wall_texture = ft_atoi(args[3]);
+		wall->portal_texture = ft_atoi(args[4]);
+		wall->texture_scale = ft_atof(args[5]);
+		wall->solid = ft_atoi(args[6]);
+		ft_arraydel(args);
+	}
+	ft_printf("Success.\n");
+}
+
+void	get_sprites(t_editor *editor, char **lines, int *i)
+{
+	char		**args;
+	t_sprite	*sprite;
+	int			wall_id;
+	t_wall		*parent_wall;
+
+	ft_printf("Getting Sprites. ");
+	while (lines[*i])
+	{
+		*i += 1;
+		if (lines[*i][0] == '-')
+			break ;
+		args = ft_strsplit(lines[*i], '\t');
+		wall_id = ft_atoi(args[1]);
+		parent_wall = get_wall_with_id(editor->walls, wall_id);
+		if (parent_wall)
+		{
+			sprite = sprite_new();
+			sprite->id = ft_atoi(args[0]);
+			sprite->pos.x = ft_atoi(args[2]);
+			sprite->pos.x = ft_atoi(args[3]);
+			add_to_list(&parent_wall->sprites, sprite, sizeof(t_sprite));
+		}
+		else
+			ft_printf("[%s] No wall with id %d found, ignoring.\n");
+		ft_arraydel(args);
+	}
+}
+
+/*
+ * search from 'list' walls with 'id' in 'id_str' (delim with ' '(space)) and add to 'sector'->walls;
+ * and also settings neighbor ids at the same time, becuase why not;
+*/
+void	get_sector_walls(t_list *list, char *id_str, char *neighbor_str, t_sector *sector) 
+{
+	char	**wall_ids;	
+	char	**neigh_ids;
+	int		i;
+	t_wall	*wall;
+	int		id;
+
+	i = -1;
+	wall_ids = ft_strsplit(id_str, ' ');
+	neigh_ids = ft_strsplit(neighbor_str, ' ');
+	while (wall_ids[++i])
+	{
+		id = ft_atoi(wall_ids[i]);
+		wall = get_wall_with_id(list, i);
+		if (wall)
+		{
+			wall->neighbor_id = ft_atoi(neigh_ids[i]);
+			add_to_list(&sector->walls, wall, sizeof(t_wall));
+		}
+		else
+			ft_printf("[%s] Couldnt find wall with id : %d.\n", __FUNCTION__, id);
+	}
+	ft_arraydel(wall_ids);
+}
+
+void	get_sectors(t_editor *editor, char **lines, int *i)
+{
+	char		**args;
+	t_sector	*sector;
+
+	ft_printf("Getting Sectors. ");
+	while (lines[*i])
+	{
+		*i += 1;
+		if (lines[*i][0] == '-')
+			break ;
+		args = ft_strsplit(lines[*i], '\t');
+		sector = sector_new();
+		sector->id = ft_atoi(args[0]);
+		get_sector_walls(editor->walls, args[1], args[2], sector);
+		sector->gravity = ft_atoi(args[3]);
+		sector->lighting = ft_atoi(args[4]);
+		ft_arraydel(args);
+	}
+	ft_printf("Success.\n");
+}
+
+
 void	get_map(t_editor *editor, char *map)
 {
-	char	*file_content = ft_get_file_content(map);
-	ft_putstr(file_content);
-	exit(0);
+	char	*file_content;
+	char	**lines;
+	int		i;
+
+	ft_printf("[%s] Getting map <%s>.\n", __FUNCTION__, map);
+	file_content = ft_get_file_content(map);
+	lines = ft_strsplit(file_content, '\n');
+	i = -1;
+	while (lines[++i])
+	{
+		if (ft_strnequ(lines[i], "type:map", 8))
+			get_map_info(editor, lines, &i);
+		else if (ft_strnequ(lines[i], "type:point", 10))
+			get_points(editor, lines, &i);
+		else if (ft_strnequ(lines[i], "type:wall", 9))
+			get_walls(editor, lines, &i);
+		else if (ft_strnequ(lines[i], "type:wsprite", 12))
+			get_sprites(editor, lines, &i);
+		else if (ft_strnequ(lines[i], "type:sector", 11))
+			get_sectors(editor, lines, &i);
+	}
+	ft_arraydel(lines);
+	ft_strdel(&file_content);
+	ft_printf("[%s] Success getting map.\n", __FUNCTION__);
 }

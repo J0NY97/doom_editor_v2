@@ -860,6 +860,11 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 	if (editor->save_button->state == UI_STATE_CLICK)
 		ui_window_flag_set(editor->win_save, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
 
+	if (editor->story_button->state == UI_STATE_CLICK)
+		editor->map_type = 1;
+	else
+		editor->map_type = 0;
+
 	if (editor->confirm_save_button->state == UI_STATE_CLICK)
 	{
 		int	len;
@@ -1627,6 +1632,7 @@ void	editor_init(t_editor *editor)
 
 	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
 
+	editor->map_type = 0; // endless = 0, story = 1;
 	editor->map_name = ft_strdup("map_name.doom");
 	ft_printf("[%s] %s\n", __FUNCTION__, SDL_GetError());
 }

@@ -50,7 +50,14 @@ enum e_wsprite_action
 {
 	STATIC,
 	LOOP,
-	ACTION
+	ACTION,
+	SPRITE_TYPE_AMOUNT
+};
+static const char	*g_sprite_type[SPRITE_TYPE_AMOUNT] =
+{
+	"STATIC",
+	"LOOP",
+	"ACTION"
 };
 
 typedef struct s_id_and_path

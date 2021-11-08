@@ -56,6 +56,17 @@ int	vector_in_rect_of_radius(t_vec2i p, t_vec2i v1, t_vec2i v2, float radius)
 	return (0);
 }
 
+t_wall	*get_wall_with_id(t_list *list, int id)
+{
+	while (list)
+	{
+		if (((t_wall *)list->content)->id == id)
+			return (list->content);
+		list = list->next;
+	}
+	return (NULL);
+}
+
 t_wall	*get_wall_from_list_around_radius(
 		t_list *list, t_vec2i pos, float allowed_radius)
 {

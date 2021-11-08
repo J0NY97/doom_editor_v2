@@ -5,6 +5,17 @@ void	point_render(t_editor *editor, t_point *point, Uint32 color)
 	ui_surface_circle_draw_filled(editor->drawing_surface, conversion(editor, point->pos), 3, color);
 }
 
+t_point	*get_point_with_id(t_list *list, int id)
+{
+	while (list)
+	{
+		if (((t_point *)list->content)->id == id)
+			return (list->content);
+		list = list->next;
+	}
+	return (NULL);
+}
+
 t_point	*get_point_from_list_at_pos(t_list *list, t_vec2i v)
 {
 	t_list	*curr;

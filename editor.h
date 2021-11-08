@@ -87,6 +87,8 @@ typedef struct s_texture_elem
  * t_list			*texture_elems;			list of texture_elems; t_texture_elem;
  * t_list			*texture_buttons;		from texture_elem the button, so that we can use radio_event on it; t_ui_element;
  * t_ui_element		*active_texture_button;	the currently active texture button;
+ *
+ * int				map_type;				0 = endless, 1 = story;
 */
 typedef struct s_editor
 {
@@ -264,6 +266,7 @@ typedef struct s_editor
 
 	t_spawn			spawn;
 
+	int				map_type;
 	char			*map_name;
 	char			*map_full_path;
 	float			map_scale;
@@ -292,6 +295,7 @@ struct s_sprite
 };
 /*
  * t_vec2i		middle;		a small line coming out from the middle of the wall that will be used to select a wall if there are 2 on top of eachother; the line should also be drawn inwards of the sector;
+ * int			neighbor_id;	this is only used when getting the map, because we need to have gotten all the sectors before actually setting the actual sector of each wall;
 */
 struct s_wall
 {
@@ -303,7 +307,10 @@ struct s_wall
 	int				portal_texture;
 
 	int				solid;
+
 	t_sector		*neighbor;
+	int				neighbor_id;
+
 	int				floor_angle;
 	int				ceiling_angle;
 	float			texture_scale;
@@ -377,6 +384,7 @@ struct s_event
 
 // Point
 void				point_render(t_editor *editor, t_point *point, Uint32 color);
+t_point				*get_point_with_id(t_list *list, int id);
 t_point				*get_point_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
 t_point				*get_point_from_sector_around_radius(t_sector *sector, t_vec2i pos, float allowed_radius);
 int					remove_point(t_editor *editor, t_point *point);
@@ -386,6 +394,7 @@ t_wall				*wall_new(void);
 void				remove_sprite_from_wall(t_sprite *sprite, t_wall *wall);
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
+t_wall				*get_wall_with_id(t_list *list, int id);
 t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
 t_vec2i				get_wall_middle(t_wall *wall);
 int					remove_wall(t_editor *editor, t_wall *wall);
