@@ -568,6 +568,7 @@ sprite_type_dropdown
 sprite_type_drop_menu
 {
 	w : 100;
+	h : 100;
 };
 sprite_type_static : sprite_drop_button_prefab
 {

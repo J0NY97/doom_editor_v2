@@ -95,10 +95,9 @@ char	*get_wall_sprites(t_wall *wall, int *id)
 	{
 		sprite = curr->content;
 		*id += 1;
-		ft_printf("A Sprite : %d : %s\n", sprite->type, g_sprite_type[sprite->type]);
-		temp = ft_sprintf("%d\n%d\n%d\n%d\n%d\n%d\n%s\n",
+		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\t%s\n",
 				*id, wall->id, sprite->pos.x, sprite->pos.y,
-				sprite->texture, sprite->scale, g_sprite_type[sprite->type]);
+				sprite->texture, (int)(sprite->scale * 100), g_sprite_type[sprite->type]);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
@@ -317,23 +316,23 @@ void	set_map(t_editor *editor, char *name)
 	}
 	editor_cleanup(editor);
 	char *delim = ft_sprintf("-\n");
-	ft_printf("Setting Info.\n");
+//	ft_printf("Setting Info.\n");
 	char *info = set_map_info(editor);
-	ft_printf("Setting Spawn.\n");
+//	ft_printf("Setting Spawn.\n");
 	char *spawn = set_spawn(editor);
-	ft_printf("Setting Points.\n");
+//	ft_printf("Setting Points.\n");
 	char *points = set_points(editor);
-	ft_printf("Setting Walls.\n");
+//	ft_printf("Setting Walls.\n");
 	char *walls = set_walls(editor);
-	ft_printf("Setting Sprites.\n");
+//	ft_printf("Setting Sprites.\n");
 	char *sprites = set_sprites(editor);
-	ft_printf("Setting Sectors.\n");
+//	ft_printf("Setting Sectors.\n");
 	char *sectors = set_sectors(editor);
-	ft_printf("Setting FandC.\n");
+//	ft_printf("Setting FandC.\n");
 	char *fandc = set_fandc(editor);
-	ft_printf("Setting Entitties.\n");
+//	ft_printf("Setting Entitties.\n");
 	char *entity = set_entity(editor);
-	ft_printf("Setting Events.\n");
+//	ft_printf("Setting Events.\n");
 	char *event = set_event(editor);
 	ft_dprintf(fd, "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
 		info, delim,

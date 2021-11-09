@@ -19,6 +19,9 @@ t_vec2i	conversion(t_editor *editor, t_vec2i v)
 	return (result);
 }
 
+/*
+ * NOTE: selection_drop_menu closes when you click something so thats why we have to see if it was last frame clicked;
+*/
 int	hover_over_open_menus(t_editor *editor)
 {
 	if (ui_element_is_hover(editor->sector_edit_menu)
@@ -26,6 +29,7 @@ int	hover_over_open_menus(t_editor *editor)
 		|| ui_element_is_hover(editor->sprite_edit_menu)
 		|| ui_element_is_hover(editor->texture_menu)
 		|| ui_element_is_hover(editor->event_edit_menu)
+		|| ui_element_was_hover(editor->selection_dropdown_menu)
 		|| ui_element_is_hover(editor->menu_toolbox_top))
 		return (1);
 	return (0);

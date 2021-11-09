@@ -153,169 +153,181 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			}
 		}
 	}
-	else if (editor->select_button->state == UI_STATE_CLICK)
+}
+
+void	*sector_edit_events(t_editor *editor)
+{
+	t_sector	*sector;
+	t_vec2i	actual_pos;
+	t_vec2i	move_amount;
+	char	temp_str[20];
+
+	ft_strnclr(temp_str, 20);
+
+	//calculate_hover(editor); // aleady done;
+	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
+	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
+	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+
+	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+		&& !hover_over_open_menus(editor))
 	{
-		t_sector	*sector;
-
-		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
-			&& !hover_over_open_menus(editor))
+		// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
+		sector = get_sector_from_list_around_radius(editor->sectors, actual_pos, 1);
+		if (sector) // this is the place where everything happens when you select new sector;
 		{
-			// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
-			sector = get_sector_from_list_around_radius(editor->sectors, actual_pos, 1);
-			if (sector) // this is the place where everything happens when you select new sector;
-			{
-				editor->selected_sector = sector;
-				editor->selected_wall = NULL;
-				editor->selected_point = NULL;
-
-				// update sector ui;
-				ui_input_set_text(editor->floor_height_input, ft_b_itoa(editor->selected_sector->floor_height, temp_str));
-				ui_input_set_text(editor->ceiling_height_input, ft_b_itoa(editor->selected_sector->ceiling_height, temp_str));
-				ui_input_set_text(editor->gravity_input, ft_b_itoa(editor->selected_sector->gravity, temp_str));
-				ui_input_set_text(editor->lighting_input, ft_b_itoa(editor->selected_sector->lighting, temp_str));
-				ui_input_set_text(editor->floor_texture_scale_input, ft_b_ftoa(editor->selected_sector->floor_scale, 2, temp_str));
-				ui_input_set_text(editor->ceiling_texture_scale_input, ft_b_ftoa(editor->selected_sector->ceiling_scale, 2, temp_str));
-				ui_element_image_set(editor->ceiling_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_sector->ceiling_texture]);
-				ui_element_image_set(editor->floor_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_sector->floor_texture]);
-				ft_printf("sector inputs updated\n");
-			}
-		}
-		else if (editor->selected_sector // MOVE SECTOR
-			&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
-			&& !editor->selected_point
-			&& !editor->selected_wall)
-		{
-			t_list	*wall_list;
-			t_wall	*wall;
-
-			wall_list = editor->selected_sector->walls;
-			while (wall_list)
-			{
-				wall = wall_list->content;
-				wall->p1->pos = vec2i_add(wall->p1->pos, move_amount);
-				wall->p2->pos = vec2i_add(wall->p2->pos, move_amount);
-				wall_list = wall_list->next;
-			}
-		}
-
-		// Remove
-		if (editor->remove_button->state == UI_STATE_CLICK)
-		{
-			int	was_removed = 0;
-			if (editor->selected_point)
-			{
-				remove_point(editor, editor->selected_point);
-				editor->selected_point = NULL;
-			}
-			else if (editor->selected_wall)
-			{
-				remove_wall(editor, editor->selected_wall);
-				editor->selected_point = NULL;
-			}
-			else if (editor->selected_sector)
-			{
-				remove_sector(editor, editor->selected_sector);
-				--editor->sector_amount;
-				editor->selected_sector = NULL;
-			}
-			if (was_removed)
-				sector_cleanup(editor);
-		}
-
-		if (editor->selected_sector)
-		{
-			// Point
-			if (editor->point_button->state == UI_STATE_CLICK)
-			{
-				t_point	*point;
-				if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
-				{
-					point = get_point_from_sector_around_radius(editor->selected_sector, actual_pos, 1.0f);
-					if (point)
-						editor->selected_point = point;
-				}
-				else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT) // MOVE POINT
-					editor->selected_point->pos = vec2i_add(editor->selected_point->pos, move_amount);
-			}
-			else
-				editor->selected_point = NULL;
-		}
-		else
-		{
+			editor->selected_sector = sector;
 			editor->selected_wall = NULL;
 			editor->selected_point = NULL;
+
+			// update sector ui;
+			ui_input_set_text(editor->floor_height_input, ft_b_itoa(editor->selected_sector->floor_height, temp_str));
+			ui_input_set_text(editor->ceiling_height_input, ft_b_itoa(editor->selected_sector->ceiling_height, temp_str));
+			ui_input_set_text(editor->gravity_input, ft_b_itoa(editor->selected_sector->gravity, temp_str));
+			ui_input_set_text(editor->lighting_input, ft_b_itoa(editor->selected_sector->lighting, temp_str));
+			ui_input_set_text(editor->floor_texture_scale_input, ft_b_ftoa(editor->selected_sector->floor_scale, 2, temp_str));
+			ui_input_set_text(editor->ceiling_texture_scale_input, ft_b_ftoa(editor->selected_sector->ceiling_scale, 2, temp_str));
+			ui_element_image_set(editor->ceiling_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_sector->ceiling_texture]);
+			ui_element_image_set(editor->floor_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_sector->floor_texture]);
+			ft_printf("sector inputs updated\n");
 		}
+	}
+	else if (editor->selected_sector // MOVE SECTOR
+		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
+		&& !editor->selected_point
+		&& !editor->selected_wall)
+	{
+		t_list	*wall_list;
+		t_wall	*wall;
 
-		if (editor->selected_sector && editor->sector_edit_menu->show)
+		wall_list = editor->selected_sector->walls;
+		while (wall_list)
 		{
-			int	f_height = ft_atoi(ui_input_get_text(editor->floor_height_input));
-			int	c_height = ft_atoi(ui_input_get_text(editor->ceiling_height_input));
-			int gravity = ft_atoi(ui_input_get_text(editor->gravity_input));
-			int lighting = ft_atoi(ui_input_get_text(editor->lighting_input));
-
-			if (ui_input_exit(editor->floor_height_input))
-			{
-				f_height = ft_min(f_height, c_height);
-				ft_b_itoa(f_height, temp_str);
-				ui_input_set_text(editor->floor_height_input, temp_str);
-			}
-			if (ui_input_exit(editor->ceiling_height_input))
-			{
-				c_height = ft_max(f_height, c_height);
-				ft_b_itoa(c_height, temp_str);
-				ui_input_set_text(editor->ceiling_height_input, temp_str);
-			}
-			editor->selected_sector->floor_height = f_height;
-			editor->selected_sector->ceiling_height = c_height;
-
-			if (ui_input_exit(editor->gravity_input))
-			{
-				gravity = ft_clamp(gravity, 0, 100);
-				ft_b_itoa(gravity, temp_str);
-				ui_input_set_text(editor->gravity_input, temp_str);
-			}
-			editor->selected_sector->gravity = gravity;
-
-			if (ui_input_exit(editor->lighting_input))
-			{
-				lighting = ft_clamp(lighting, 0, 100);
-				ft_b_itoa(lighting, temp_str);
-				ui_input_set_text(editor->lighting_input, temp_str);
-			}
-			editor->selected_sector->lighting = lighting;
-
-			float f_scale = ft_atof(ui_input_get_text(editor->floor_texture_scale_input));
-			float c_scale = ft_atof(ui_input_get_text(editor->ceiling_texture_scale_input));
-
-			if (ui_input_exit(editor->floor_texture_scale_input))
-			{
-				f_scale = ft_fclamp(f_scale, 0.1f, 100.0f);
-				ft_b_ftoa(f_scale, 2, temp_str);
-				ui_input_set_text(editor->floor_texture_scale_input, temp_str);
-			}
-			if (ui_input_exit(editor->ceiling_texture_scale_input))
-			{
-				c_scale = ft_fclamp(c_scale, 0.1f, 100.0f);
-				ft_b_ftoa(c_scale, 2, temp_str);
-				ui_input_set_text(editor->ceiling_texture_scale_input, temp_str);
-			}
-			editor->selected_sector->floor_scale = f_scale;
-			editor->selected_sector->ceiling_scale = c_scale;
+			wall = wall_list->content;
+			wall->p1->pos = vec2i_add(wall->p1->pos, move_amount);
+			wall->p2->pos = vec2i_add(wall->p2->pos, move_amount);
+			wall_list = wall_list->next;
 		}
+	}
 
-		// Sector Edit Ok Button
-		if (editor->sector_edit_ok_button->state == UI_STATE_CLICK)
+	// Remove
+	if (editor->remove_button->state == UI_STATE_CLICK)
+	{
+		int	was_removed = 0;
+		if (editor->selected_point)
 		{
-			editor->selected_wall = NULL;
+			remove_point(editor, editor->selected_point);
 			editor->selected_point = NULL;
 		}
-
-		// Close Sector Menu Button
-		if (editor->close_sector_edit_button->state == UI_STATE_CLICK)
+		else if (editor->selected_wall)
 		{
-			editor->sector_edit_menu->show = 0;
+			remove_wall(editor, editor->selected_wall);
+			editor->selected_point = NULL;
+		}
+		else if (editor->selected_sector)
+		{
+			remove_sector(editor, editor->selected_sector);
+			--editor->sector_amount;
 			editor->selected_sector = NULL;
 		}
+		if (was_removed)
+			sector_cleanup(editor);
+	}
+
+	if (editor->selected_sector)
+	{
+		// Point
+		if (editor->point_button->state == UI_STATE_CLICK)
+		{
+			t_point	*point;
+			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+			{
+				point = get_point_from_sector_around_radius(editor->selected_sector, actual_pos, 1.0f);
+				if (point)
+					editor->selected_point = point;
+			}
+			else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT) // MOVE POINT
+				editor->selected_point->pos = vec2i_add(editor->selected_point->pos, move_amount);
+		}
+		else
+			editor->selected_point = NULL;
+	}
+	else
+	{
+		editor->selected_wall = NULL;
+		editor->selected_point = NULL;
+	}
+
+	if (editor->selected_sector && editor->sector_edit_menu->show)
+	{
+		int	f_height = ft_atoi(ui_input_get_text(editor->floor_height_input));
+		int	c_height = ft_atoi(ui_input_get_text(editor->ceiling_height_input));
+		int gravity = ft_atoi(ui_input_get_text(editor->gravity_input));
+		int lighting = ft_atoi(ui_input_get_text(editor->lighting_input));
+
+		if (ui_input_exit(editor->floor_height_input))
+		{
+			f_height = ft_min(f_height, c_height);
+			ft_b_itoa(f_height, temp_str);
+			ui_input_set_text(editor->floor_height_input, temp_str);
+		}
+		if (ui_input_exit(editor->ceiling_height_input))
+		{
+			c_height = ft_max(f_height, c_height);
+			ft_b_itoa(c_height, temp_str);
+			ui_input_set_text(editor->ceiling_height_input, temp_str);
+		}
+		editor->selected_sector->floor_height = f_height;
+		editor->selected_sector->ceiling_height = c_height;
+
+		if (ui_input_exit(editor->gravity_input))
+		{
+			gravity = ft_clamp(gravity, 0, 100);
+			ft_b_itoa(gravity, temp_str);
+			ui_input_set_text(editor->gravity_input, temp_str);
+		}
+		editor->selected_sector->gravity = gravity;
+
+		if (ui_input_exit(editor->lighting_input))
+		{
+			lighting = ft_clamp(lighting, 0, 100);
+			ft_b_itoa(lighting, temp_str);
+			ui_input_set_text(editor->lighting_input, temp_str);
+		}
+		editor->selected_sector->lighting = lighting;
+
+		float f_scale = ft_atof(ui_input_get_text(editor->floor_texture_scale_input));
+		float c_scale = ft_atof(ui_input_get_text(editor->ceiling_texture_scale_input));
+
+		if (ui_input_exit(editor->floor_texture_scale_input))
+		{
+			f_scale = ft_fclamp(f_scale, 0.1f, 100.0f);
+			ft_b_ftoa(f_scale, 2, temp_str);
+			ui_input_set_text(editor->floor_texture_scale_input, temp_str);
+		}
+		if (ui_input_exit(editor->ceiling_texture_scale_input))
+		{
+			c_scale = ft_fclamp(c_scale, 0.1f, 100.0f);
+			ft_b_ftoa(c_scale, 2, temp_str);
+			ui_input_set_text(editor->ceiling_texture_scale_input, temp_str);
+		}
+		editor->selected_sector->floor_scale = f_scale;
+		editor->selected_sector->ceiling_scale = c_scale;
+	}
+
+	// Sector Edit Ok Button
+	if (editor->sector_edit_ok_button->state == UI_STATE_CLICK)
+	{
+		editor->selected_wall = NULL;
+		editor->selected_point = NULL;
+	}
+
+	// Close Sector Menu Button
+	if (editor->close_sector_edit_button->state == UI_STATE_CLICK)
+	{
+		editor->sector_edit_menu->show = 0;
+		editor->selected_sector = NULL;
 	}
 }
 
@@ -781,7 +793,7 @@ void	spawn_events(t_editor *editor, SDL_Event e)
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
-		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_toolbox_top->screen_pos))
+		if (!hover_over_open_menus(editor))
 			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 				editor->spawn.pos = actual_pos;
 	}
@@ -1173,12 +1185,18 @@ void	user_events(t_editor *editor, SDL_Event e)
 	// Sector Events
 	if (editor->sector_button->state == UI_STATE_CLICK)
 	{
-		if (editor->selected_sector
-			&& editor->select_button->state == UI_STATE_CLICK)
-			editor->sector_edit_menu->show = 1;
-		else
+		if (editor->select_button->state == UI_STATE_CLICK)
+		{
+			sector_edit_events(editor);
 			editor->sector_edit_menu->show = 0;
-		sector_events(editor, e);
+			if (editor->selected_sector)
+				editor->sector_edit_menu->show = 1;
+		}
+		else
+		{
+			sector_events(editor, e);
+			editor->sector_edit_menu->show = 0;
+		}
 	}
 	else
 	{
@@ -1439,6 +1457,7 @@ void	editor_init(t_editor *editor)
 	// Selection Menu
 	editor->menu_toolbox_top = ui_list_get_element_by_id(editor->layout.elements, "menu_toolbox_top");
 	editor->menu_selection = ui_list_get_element_by_id(editor->layout.elements, "menu_select_buttons");
+	editor->selection_dropdown_menu = ui_list_get_element_by_id(editor->layout.elements, "type_drop_menu");
 	editor->draw_button = ui_list_get_element_by_id(editor->layout.elements, "draw_button");
 	editor->select_button = ui_list_get_element_by_id(editor->layout.elements, "select_button");
 	editor->remove_button = ui_list_get_element_by_id(editor->layout.elements, "remove_button");
@@ -1696,6 +1715,8 @@ int	main(int ac, char **av)
 			// User Events
 			user_events(&editor, e);
 
+			if (e.key.keysym.scancode == SDL_SCANCODE_P)
+				ft_printf("Are we hovering over ? %d\n", ui_element_is_hover(editor.selection_dropdown_menu));
 		}
 		// User Render
 		user_render(&editor);

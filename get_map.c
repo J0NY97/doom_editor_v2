@@ -59,6 +59,7 @@ void	get_walls(t_editor *editor, char **lines, int *i)
 		wall->portal_texture = ft_atoi(args[4]);
 		wall->texture_scale = ft_atof(args[5]);
 		wall->solid = ft_atoi(args[6]);
+		add_to_list(&editor->walls, wall, sizeof(t_wall));
 		ft_arraydel(args);
 	}
 	ft_printf("Success.\n");
@@ -70,8 +71,10 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 	t_sprite	*sprite;
 	int			wall_id;
 	t_wall		*parent_wall;
+	int			ggg;
 
 	ft_printf("Getting Sprites. ");
+	ggg = -1;
 	while (lines[*i])
 	{
 		*i += 1;
@@ -86,10 +89,16 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 			sprite->id = ft_atoi(args[0]);
 			sprite->pos.x = ft_atoi(args[2]);
 			sprite->pos.x = ft_atoi(args[3]);
+			sprite->texture = ft_atoi(args[4]);
+			if (ft_atoi(args[5]) != 0)
+				sprite->scale = 100 / ft_atoi(args[5]);
+			while (++ggg < SPRITE_TYPE_AMOUNT)
+				if (ft_strequ(g_sprite_type[ggg], args[6]))
+					sprite->type = ggg;
 			add_to_list(&parent_wall->sprites, sprite, sizeof(t_sprite));
 		}
 		else
-			ft_printf("[%s] No wall with id %d found, ignoring.\n");
+			ft_printf("[%s] No wall with id %d found, ignoring.\n", __FUNCTION__, wall_id);
 		ft_arraydel(args);
 	}
 }
@@ -141,6 +150,7 @@ void	get_sectors(t_editor *editor, char **lines, int *i)
 		get_sector_walls(editor->walls, args[1], args[2], sector);
 		sector->gravity = ft_atoi(args[3]);
 		sector->lighting = ft_atoi(args[4]);
+		add_to_list(&editor->sectors, sector, sizeof(t_sector));
 		ft_arraydel(args);
 	}
 	ft_printf("Success.\n");

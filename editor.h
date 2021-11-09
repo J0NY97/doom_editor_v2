@@ -97,6 +97,7 @@ typedef struct s_editor
 
 	t_ui_element	*menu_toolbox_top;
 	t_ui_element	*menu_selection;
+	t_ui_element	*selection_dropdown_menu;
 	t_ui_element	*draw_button;
 	t_ui_element	*select_button;
 	t_ui_element	*point_button;
