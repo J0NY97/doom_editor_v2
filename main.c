@@ -123,18 +123,18 @@ void	sector_events(t_editor *editor, SDL_Event e)
 					{
 						wall->p1 = ft_memalloc(sizeof(t_point));
 						wall->p1->pos = editor->first_point;
+						add_to_list(&editor->points, wall->p1, sizeof(t_point));
 					}
 					wall->p2 = get_point_from_sector_around_radius(editor->selected_sector, editor->second_point, 0.0f);
 					if (!wall->p2)
 					{
 						wall->p2 = ft_memalloc(sizeof(t_point));
 						wall->p2->pos = editor->second_point;
+						add_to_list(&editor->points, wall->p2, sizeof(t_point));
 					}
 					editor->first_point_set = 0;
 					editor->second_point_set = 0;
 					++editor->selected_sector->wall_amount;
-					add_to_list(&editor->points, wall->p1, sizeof(t_point));
-					add_to_list(&editor->points, wall->p2, sizeof(t_point));
 					add_to_list(&editor->walls, wall, sizeof(t_wall));
 					add_to_list(&editor->selected_sector->walls, wall, sizeof(t_wall));
 					if (!editor->selected_sector->first_point_set)
@@ -983,7 +983,7 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 {
 	if (!editor->selected_wall || !editor->selected_sector)
 	{
-		ft_printf("[%s] We need both selected wall and sector for this function, and currently we dont have both so no function running for you.\n");
+		ft_printf("[%s] We need both selected wall and sector for this function, and currently we dont have both so no function running for you.\n", __FUNCTION__);
 		return ;
 	}
 

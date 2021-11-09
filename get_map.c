@@ -17,6 +17,21 @@ void	get_map_info(t_editor *editor, char **lines, int *i)
 	ft_printf("Success.\n");
 }
 
+void	get_spawn(t_editor *editor, char **lines, int *i)
+{
+	char	**args;
+
+	ft_printf("Getting Spawn. ");
+	args = ft_strsplit(lines[*i + 1], '\t');
+	editor->spawn.pos.x = ft_atoi(args[1]);
+	editor->spawn.pos.y = ft_atoi(args[2]);
+	editor->spawn.z = ft_atoi(args[3]);
+	editor->spawn.yaw = ft_atoi(args[4]);
+	*i += 2;
+	ft_arraydel(args);
+	ft_printf("Success.\n");
+}
+
 void	get_points(t_editor *editor, char **lines, int *i)
 {
 	char	**args;
@@ -156,6 +171,46 @@ void	get_sectors(t_editor *editor, char **lines, int *i)
 	ft_printf("Success.\n");
 }
 
+void	get_fc(t_editor *editor, char **lines, int *i)
+{
+	char		**args;
+	char		**slopes;
+	t_sector	*sector;
+	t_wall		*wall;
+	int			id;
+
+	ft_printf("Getting F&C. ");
+	while (lines[*i])
+	{
+		*i += 1;
+		if (lines[*i][0] == '-')
+			break ;
+		args = ft_strsplit(lines[*i], '\t');
+		id = ft_atoi(args[0]);
+		sector = get_sector_by_id_from_list(editor->sectors, id);
+		sector->floor_height = ft_atoi(args[1]);
+		sector->ceiling_height = ft_atoi(args[2]);
+		sector->floor_texture = ft_atoi(args[3]);
+		sector->ceiling_texture = ft_atoi(args[4]);
+		sector->floor_scale = ft_atof(args[5]);
+		sector->ceiling_scale = ft_atof(args[6]);
+		slopes = ft_strsplit(args[7], ' ');
+		if (ft_atoi(slopes[0]) != -1)
+		{
+			wall = get_wall_with_id(sector->walls, ft_atoi(slopes[0]));
+			if (wall)
+				wall->floor_angle = ft_atoi(slopes[1]);
+		}
+		if (ft_atoi(slopes[2]) != -1)
+		{
+			wall = get_wall_with_id(sector->walls, ft_atoi(slopes[2]));
+			if (wall)
+				wall->ceiling_angle = ft_atoi(slopes[3]);
+		}
+		ft_arraydel(args);
+	}
+	ft_printf("Success.\n");
+}
 
 void	get_map(t_editor *editor, char *map)
 {
@@ -171,6 +226,8 @@ void	get_map(t_editor *editor, char *map)
 	{
 		if (ft_strnequ(lines[i], "type:map", 8))
 			get_map_info(editor, lines, &i);
+		else if (ft_strnequ(lines[i], "type:spawn", 10))
+			get_spawn(editor, lines, &i);
 		else if (ft_strnequ(lines[i], "type:point", 10))
 			get_points(editor, lines, &i);
 		else if (ft_strnequ(lines[i], "type:wall", 9))
@@ -179,6 +236,8 @@ void	get_map(t_editor *editor, char *map)
 			get_sprites(editor, lines, &i);
 		else if (ft_strnequ(lines[i], "type:sector", 11))
 			get_sectors(editor, lines, &i);
+		else if (ft_strnequ(lines[i], "type:f&c", 8))
+			get_fc(editor, lines, &i);
 	}
 	ft_arraydel(lines);
 	ft_strdel(&file_content);

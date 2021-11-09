@@ -194,21 +194,31 @@ char	*set_sectors(t_editor *editor)
 
 char	*get_sector_wall_slopes(t_sector *sector)
 {
-	char	*final;
-	char	*temp;
 	t_list	*curr;
 	t_wall	*wall;
+	char	*floor;
+	char	*ceil;
+	char	*final;
 
 	curr = sector->walls;
-	final = NULL;
+	floor = NULL;
+	ceil = NULL;
 	while (curr)
 	{
 		wall = curr->content;
-		temp = ft_sprintf("%d ", wall->floor_angle);
-		ft_stradd(&final, temp);
-		ft_strdel(&temp);
+		if (wall->floor_angle != 0)
+			floor = ft_sprintf("%d %d ", wall->id, wall->floor_angle);
+		if (wall->ceiling_angle != 0)
+			ceil = ft_sprintf("%d %d", wall->id, wall->ceiling_angle);
 		curr = curr->next;
 	}
+	if (!floor)
+		floor = ft_sprintf("-1 -1 ");
+	if (!ceil)
+		ceil = ft_sprintf("-1 -1");
+	final = ft_strjoin(floor, ceil);
+	ft_strdel(&floor);
+	ft_strdel(&ceil);
 	return (final);
 }
 
