@@ -292,7 +292,7 @@ char	*set_event(t_editor *editor)
 	{
 		event = curr->content;
 		event->id = ++id;
-		if (event->pointer_type == SECTOR)
+		if (event->pointer_type == TYPE_SECTOR)
 			target_id = ((t_sector *)event->pointer)->id;
 		else
 			target_id = ((t_sprite *)event->pointer)->id;

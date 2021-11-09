@@ -585,7 +585,7 @@ void	event_events(t_editor *editor, SDL_Event e)
 
 		if (editor->selected_event->pointer)
 		{
-			if (editor->selected_event->pointer_type == SECTOR)
+			if (editor->selected_event->pointer_type == TYPE_SECTOR)
 				ft_b_itoa(((t_sector *)editor->selected_event->pointer)->id, target_id_text);
 			else
 				ft_b_itoa(((t_sprite *)editor->selected_event->pointer)->id, target_id_text);

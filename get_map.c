@@ -241,6 +241,41 @@ void	get_entity(t_editor *editor, char **lines, int *i)
 	ft_printf("Success.\n");
 }
 
+void	get_events(t_editor *editor, char **lines, int *i)
+{
+	char		**args;
+	t_event		*event;
+
+	ft_printf("Getting Events. ");
+	while (lines[*i])
+	{
+		*i += 1;
+		if (lines[*i][0] == '-')
+			break ;
+		args = ft_strsplit(lines[*i], '\t');
+		event = event_new();
+		event->id = ft_atoi(args[0]);
+		event->type = ft_atoi(args[1]);
+		event->action = ft_atoi(args[2]);
+		event->pointer_type = TYPE_SPRITE;
+		if (event->action == SECTOR)
+		{
+			event->pointer_type = TYPE_SECTOR;
+			event->pointer = get_sector_by_id_from_list(editor->sectors, ft_atoi(args[3]));
+		}
+		else
+			event->pointer = get_sprite_by_id_from_list(editor->sprites, ft_atoi(args[3]));
+		event->sector = ft_strdup(args[4]);
+		event->min = ft_atoi(args[5]);
+		event->max = ft_atoi(args[6]);
+		event->speed = ft_atoi(args[7]);
+		add_to_list(&editor->events, event, sizeof(t_event));
+		ft_arraydel(args);
+	}
+	// create_event_elems();
+	ft_printf("Success.\n");
+}
+
 void	get_map(t_editor *editor, char *map)
 {
 	char	*file_content;
@@ -269,6 +304,8 @@ void	get_map(t_editor *editor, char *map)
 			get_fc(editor, lines, &i);
 		else if (ft_strnequ(lines[i], "type:entity", 11))
 			get_entity(editor, lines, &i);
+		else if (ft_strnequ(lines[i], "type:event", 10))
+			get_events(editor, lines, &i);
 	}
 	ft_arraydel(lines);
 	ft_strdel(&file_content);

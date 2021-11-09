@@ -196,7 +196,7 @@ void	update_event_elem(t_event_elem *elem)
 	ui_label_set_text(elem->action, g_event_action[elem->event->action]);
 	if (elem->event->pointer)
 	{
-		if (elem->event->pointer_type == SECTOR)
+		if (elem->event->pointer_type == TYPE_SECTOR)
 			ui_label_set_text(elem->target_id, ft_b_itoa(((t_sector *)elem->event->pointer)->id, temp));
 		else
 			ui_label_set_text(elem->target_id, ft_b_itoa(((t_sprite *)elem->event->pointer)->id, temp));
