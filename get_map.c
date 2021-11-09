@@ -89,10 +89,10 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 	int			ggg;
 
 	ft_printf("Getting Sprites. ");
-	ggg = -1;
 	while (lines[*i])
 	{
 		*i += 1;
+		ggg = -1;
 		if (lines[*i][0] == '-')
 			break ;
 		args = ft_strsplit(lines[*i], '\t');
@@ -116,6 +116,7 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 			ft_printf("[%s] No wall with id %d found, ignoring.\n", __FUNCTION__, wall_id);
 		ft_arraydel(args);
 	}
+	ft_printf("Success.\n");
 }
 
 /*
@@ -212,6 +213,34 @@ void	get_fc(t_editor *editor, char **lines, int *i)
 	ft_printf("Success.\n");
 }
 
+void	get_entity(t_editor *editor, char **lines, int *i)
+{
+	char		**args;
+	t_entity	*entity;
+	int			ggg;
+
+	ft_printf("Getting Entitties. ");
+	while (lines[*i])
+	{
+		*i += 1;
+		ggg = -1;
+		if (lines[*i][0] == '-')
+			break ;
+		args = ft_strsplit(lines[*i], '\t');
+		entity = entity_new();
+		while (++ggg < ENTITY_AMOUNT)
+			if (ft_strequ(g_entity_data[ggg].name, args[1]))
+				entity->type = ggg;
+		entity->pos.x = ft_atoi(args[2]);
+		entity->pos.y = ft_atoi(args[3]);
+		entity->z = ft_atoi(args[4]);
+		entity->yaw = ft_atoi(args[5]);
+		add_to_list(&editor->entities, entity, sizeof(t_entity));
+		ft_arraydel(args);
+	}
+	ft_printf("Success.\n");
+}
+
 void	get_map(t_editor *editor, char *map)
 {
 	char	*file_content;
@@ -238,6 +267,8 @@ void	get_map(t_editor *editor, char *map)
 			get_sectors(editor, lines, &i);
 		else if (ft_strnequ(lines[i], "type:f&c", 8))
 			get_fc(editor, lines, &i);
+		else if (ft_strnequ(lines[i], "type:entity", 11))
+			get_entity(editor, lines, &i);
 	}
 	ft_arraydel(lines);
 	ft_strdel(&file_content);

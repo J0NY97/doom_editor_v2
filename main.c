@@ -113,6 +113,12 @@ void	sector_events(t_editor *editor, SDL_Event e)
 					editor->second_point_set = 1;
 					editor->second_point = actual_pos;
 				}
+
+				// We dont want you to be able to draw a 0 length wall;
+				if (editor->first_point_set
+					&& compare_veci(editor->first_point.v, editor->second_point.v, 2))
+					editor->second_point_set = 0;
+
 				if (editor->first_point_set && editor->second_point_set)
 				{
 					t_wall	*wall;
