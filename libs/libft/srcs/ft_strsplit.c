@@ -74,7 +74,7 @@ char	**ft_strsplit_nik(const char *s, char c)
 
 // HERE STARTS MINE
 
-int		get_word_count(const char *str, char c)
+int		ft_strwordcount(const char *str, char c)
 {
 	int	i;
 	int	count;
@@ -92,7 +92,7 @@ int		get_word_count(const char *str, char c)
 	return (count);
 }
 
-char	**ft_strsplit(const char *str, char c)
+char	**ft_strsplit_old(const char *str, char c)
 {
 	char	**arr;
 	int		i;
@@ -102,7 +102,7 @@ char	**ft_strsplit(const char *str, char c)
 	if (!str)
 		return (NULL);
 	i = -1;
-	arr = malloc(sizeof(char *) * (get_word_count(str, c) + 1));
+	arr = malloc(sizeof(char *) * (ft_strwordcount(str, c) + 1));
 	prev_i = 0;
 	i = -1;
 	wc = -1;
@@ -136,7 +136,7 @@ static int	ft_wordlen(char const *str, char c, int x)
 	return (i);
 }
 
-char	**ft_strsplit_old(char const *s, char c)
+char	**ft_strsplit(char const *s, char c)
 {
 	char	**arr;
 	int		x[3];

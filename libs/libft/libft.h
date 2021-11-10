@@ -152,6 +152,7 @@ void				ft_swap(int *a, int *b);
 int					ft_tolower(int c);
 int					ft_toupper(int c);
 int					ft_wordcount(const char *s, char c);
+int					ft_strwordcount(const char *str, char c);
 int					get_next_line(const int fd, char **line);
 char				*ft_b_itoa(int nbr, char *buffer);
 char				*ft_b_ftoa(double d, int precision, char *buffer);

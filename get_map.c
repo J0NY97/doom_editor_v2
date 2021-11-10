@@ -3,17 +3,12 @@
 /*
  * Only the map type is usefull here, for the correct tickbox to be ticked;
 */
-void	get_map_info(t_editor *editor, char **lines, int *i)
+void	get_map_info(t_editor *editor, char **args)
 {
-	char	**args;
-
 	ft_printf("Getting Map Info. ");
-	args = ft_strsplit(lines[*i + 1], '\t');
 	editor->map_type = 0;
 	if (ft_strnequ(args[1], "story", 5))
 		editor->map_type = 1;
-	*i += 2;
-	ft_arraydel(args);
 	ft_printf("Success.\n");
 }
 
@@ -305,6 +300,23 @@ void	get_events(t_editor *editor, char **lines, int *i)
 	ft_printf("Success.\n");
 }
 
+void	helper_pelper(t_editor *editor, char **lines, int *i, void	(*f)(t_editor *, char **))
+{
+	char		**args;
+	t_event		*event;
+
+	ft_printf("Getting Events. ");
+	while (lines[*i])
+	{
+		*i += 1;
+		if (lines[*i][0] == '-')
+			break ;
+		args = ft_strsplit(lines[*i], '\t');
+		f(editor, args);
+		ft_arraydel(args);
+	}
+}
+
 void	get_map(t_editor *editor, char *map)
 {
 	char	*file_content;
@@ -318,7 +330,7 @@ void	get_map(t_editor *editor, char *map)
 	while (lines[++i])
 	{
 		if (ft_strnequ(lines[i], "type:map", 8))
-			get_map_info(editor, lines, &i);
+			helper_pelper(editor, lines, &i, &get_map_info);
 		else if (ft_strnequ(lines[i], "type:spawn", 10))
 			get_spawn(editor, lines, &i);
 		else if (ft_strnequ(lines[i], "type:point", 10))

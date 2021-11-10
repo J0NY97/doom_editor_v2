@@ -1725,8 +1725,11 @@ int	main(int ac, char **av)
 	SDL_Event	e;
 
 	ui_sdl_init();
+	ft_printf("Inited\n");
 	editor_init(&editor);
+	ft_printf("Edittted\n");
 	draw_init(&editor);
+	ft_printf("Drawitted\n");
 	if (args_parser(&editor, ac, av))
 		get_map(&editor, editor.map_full_path);
 	else
