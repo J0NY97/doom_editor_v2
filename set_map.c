@@ -301,8 +301,8 @@ char	*set_event(t_editor *editor)
 			sector_text = ft_strdup(event->sector);
 		else
 			sector_text = ft_strdup("-");
-		temp = ft_sprintf("%d\t%d\t%d\t%d\t%s\t%d\t%d\t%d\n",
-				event->id, event->type, event->action, target_id,
+		temp = ft_sprintf("%d\t%s\t%s\t%d\t%s\t%d\t%d\t%d\n",
+				event->id, g_event_type[event->type], g_event_action[event->action], target_id,
 				sector_text, event->min, event->max, event->speed);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);

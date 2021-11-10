@@ -274,12 +274,26 @@ void	get_events(t_editor *editor, char **lines, int *i)
 		args = ft_strsplit(lines[*i], '\t');
 		event = event_new();
 		event->id = ft_atoi(args[0]);
-		event->type = ft_atoi(args[1]);
-		event->action = ft_atoi(args[2]);
+		for (int d = 0; d < EVENT_TYPE_AMOUNT - 1; d++)
+		{
+			if (ft_strequ(args[1], g_event_type[d]))
+			{
+				event->type = d;
+				break ;
+			}
+		}
+		for (int d = 0; d < EVENT_ACTION_AMOUNT; d++)
+		{
+			if (ft_strequ(args[2], g_event_action[d]))
+			{
+				event->action = d;
+				break ;
+			}
+		}	
 		event->pointer_type = TYPE_SPRITE;
 		if (event->action == SECTOR)
 		{
-			event->pointer_type = TYPE_SECTOR;
+			event->pointer_type = SECTOR;
 			event->pointer = get_sector_by_id_from_list(editor->sectors, ft_atoi(args[3]));
 		}
 		else

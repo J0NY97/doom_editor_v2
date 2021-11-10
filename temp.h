@@ -15,10 +15,10 @@ enum e_player_action
 
 static const char	*g_event_action[EVENT_ACTION_AMOUNT] =
 {
-	"None",
-	"Shoot",
-	"Click",
-	"Sector"
+	"NONE",
+	"SHOOT",
+	"CLICK",
+	"SECTOR"
 };
 
 enum e_event_type
