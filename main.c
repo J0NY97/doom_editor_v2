@@ -470,8 +470,8 @@ void	entity_events(t_editor *editor, SDL_Event e)
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
-		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_toolbox_top->screen_pos)
-			&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT) // draw
+		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+			&& !hover_over_open_menus(editor))
 		{
 			t_entity	*entity = entity_new();
 			entity->pos = actual_pos;
@@ -590,9 +590,17 @@ void	event_events(t_editor *editor, SDL_Event e)
 			else
 				ft_b_itoa(((t_sprite *)editor->selected_event->pointer)->id, target_id_text);
 		}
-		ui_dropdown_activate(editor->event_id_dropdown,
-			ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_id_dropdown)->children,
-				target_id_text));
+		// Activate ID button;
+		t_ui_element	*id_button = ui_list_get_button_with_text(
+				ui_dropdown_get_menu_element(editor->event_id_dropdown)->children, target_id_text);
+		if (!id_button)
+		{
+			update_id_dropdown(editor, editor->selected_event->pointer_type);
+			id_button = ui_list_get_button_with_text(
+					ui_dropdown_get_menu_element(editor->event_id_dropdown)->children, target_id_text);
+		}
+
+		ui_dropdown_activate(editor->event_id_dropdown, id_button);
 	}
 
 	// If add button is clicked;
@@ -687,32 +695,90 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_speed_input->show = 1;
 	}
 
-	// TARGET ID SPAGHETT:
-	// 	basically goes through all the wsprites in the map and looks for action types
-	// 	only those are added to the dropdown menu as buttons;
-	// 	(does this everytime you click on the dropdown to show)
+	// Update ID Dropdown;
 	if (editor->event_id_dropdown->show
 		&& ui_dropdown_open(editor->event_id_dropdown))
 	{
 		if (editor->event_action_sector->state == UI_STATE_CLICK)
-		{
-			t_list		*sector_list;
-			t_list		*button_lst;
-			t_list		*button_prev;
-			t_sector	*sector;
-			char		temp_str[10];
-			t_ui_recipe	*event_id_button;
+			update_id_dropdown(editor, TYPE_SECTOR);
+		else
+			update_id_dropdown(editor, TYPE_SPRITE);
+	}
+}
 
-			event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
-			sector_list = editor->sectors;
-			button_lst = editor->event_id_menu->children;
-			button_prev = NULL;
-			while (sector_list)
+/*
+ * This function updates the dropdown no matter what;
+ * all the checks needs to be done when calling it;
+*/
+void	update_id_dropdown(t_editor *editor, int action)
+{
+	// TARGET ID SPAGHETT:
+	// 	basically goes through all the wsprites in the map and looks for action types
+	// 	only those are added to the dropdown menu as buttons;
+	// 	(does this everytime you click on the dropdown to show)
+	if (action == TYPE_SECTOR)
+	{
+		t_list		*sector_list;
+		t_list		*button_lst;
+		t_list		*button_prev;
+		t_sector	*sector;
+		char		temp_str[10];
+		t_ui_recipe	*event_id_button;
+
+		event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
+		sector_list = editor->sectors;
+		button_lst = editor->event_id_menu->children;
+		button_prev = NULL;
+		while (sector_list)
+		{
+			sector = sector_list->content;
+			if (button_lst && button_lst->content) // we have button;
 			{
-				sector = sector_list->content;
+				ui_button_set_text(button_lst->content, ft_b_itoa(sector->id, temp_str));
+				button_prev = button_lst;
+				button_lst = button_lst->next;
+			}
+			else // create new button to list end and add ui_element as content;
+			{
+				t_ui_element *elem = ft_memalloc(sizeof(t_ui_element));
+				ui_button_new(editor->win_main, elem);
+				ui_button_set_text(elem, ft_b_itoa(sector->id, temp_str));
+				ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
+				ui_element_edit(elem, event_id_button);
+			}
+			sector_list = sector_list->next;
+		}
+		// Finally remove all the extra buttons;
+		while (button_lst)
+		{
+			t_ui_element	*extra_elem;
+			extra_elem = button_lst->content;
+			ui_element_free(extra_elem);
+			free(extra_elem);
+			button_lst = button_lst->next;
+		}
+	}
+	else
+	{
+		t_list			*sprite_lst;
+		t_list			*button_lst;
+		t_list			*button_prev;
+		char			temp_str[10];
+		t_ui_recipe		*event_id_button;
+		t_sprite		*sprite;
+
+		event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
+		sprite_lst = editor->sprites;
+		button_lst = editor->event_id_menu->children;
+		button_prev = NULL;
+		while (sprite_lst)
+		{
+			sprite = sprite_lst->content;
+			if (sprite->type == ACTION) // make new element or fill element with the correct id;
+			{
 				if (button_lst && button_lst->content) // we have button;
 				{
-					ui_button_set_text(button_lst->content, ft_b_itoa(sector->id, temp_str));
+					ui_button_set_text(button_lst->content, ft_b_itoa(sprite->id, temp_str));
 					button_prev = button_lst;
 					button_lst = button_lst->next;
 				}
@@ -720,66 +786,21 @@ void	event_events(t_editor *editor, SDL_Event e)
 				{
 					t_ui_element *elem = ft_memalloc(sizeof(t_ui_element));
 					ui_button_new(editor->win_main, elem);
-					ui_button_set_text(elem, ft_b_itoa(sector->id, temp_str));
+					ui_button_set_text(elem, ft_b_itoa(sprite->id, temp_str));
 					ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
 					ui_element_edit(elem, event_id_button);
 				}
-				sector_list = sector_list->next;
 			}
-			// Finally remove all the extra buttons;
-			while (button_lst)
-			{
-				t_ui_element	*extra_elem;
-				extra_elem = button_lst->content;
-				ui_element_free(extra_elem);
-				free(extra_elem);
-				button_lst = button_lst->next;
-			}
+			sprite_lst = sprite_lst->next;
 		}
-		else
+		// Finally remove all the extra buttons;
+		while (button_lst)
 		{
-			t_list			*sprite_lst;
-			t_list			*button_lst;
-			t_list			*button_prev;
-			char			temp_str[10];
-			t_ui_recipe		*event_id_button;
-			t_sprite		*sprite;
-
-			event_id_button = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
-			sprite_lst = editor->sprites;
-			button_lst = editor->event_id_menu->children;
-			button_prev = NULL;
-			while (sprite_lst)
-			{
-				sprite = sprite_lst->content;
-				if (sprite->type == ACTION) // make new element or fill element with the correct id;
-				{
-					if (button_lst && button_lst->content) // we have button;
-					{
-						ui_button_set_text(button_lst->content, ft_b_itoa(sprite->id, temp_str));
-						button_prev = button_lst;
-						button_lst = button_lst->next;
-					}
-					else // create new button to list end and add ui_element as content;
-					{
-						t_ui_element *elem = ft_memalloc(sizeof(t_ui_element));
-						ui_button_new(editor->win_main, elem);
-						ui_button_set_text(elem, ft_b_itoa(sprite->id, temp_str));
-						ui_element_set_parent(elem, editor->event_id_menu, UI_TYPE_ELEMENT);
-						ui_element_edit(elem, event_id_button);
-					}
-				}
-				sprite_lst = sprite_lst->next;
-			}
-			// Finally remove all the extra buttons;
-			while (button_lst)
-			{
-				t_ui_element	*extra_elem;
-				extra_elem = button_lst->content;
-				ui_element_free(extra_elem);
-				free(extra_elem);
-				button_lst = button_lst->next;
-			}
+			t_ui_element	*extra_elem;
+			extra_elem = button_lst->content;
+			ui_element_free(extra_elem);
+			free(extra_elem);
+			button_lst = button_lst->next;
 		}
 	}
 }

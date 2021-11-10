@@ -111,6 +111,7 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 				if (ft_strequ(g_sprite_type[ggg], args[6]))
 					sprite->type = ggg;
 			add_to_list(&parent_wall->sprites, sprite, sizeof(t_sprite));
+			add_to_list(&editor->sprites, sprite, sizeof(t_sprite));
 		}
 		else
 			ft_printf("[%s] No wall with id %d found, ignoring.\n", __FUNCTION__, wall_id);
@@ -147,6 +148,7 @@ void	get_sector_walls(t_list *list, char *id_str, char *neighbor_str, t_sector *
 			ft_printf("[%s] Couldnt find wall with id : %d.\n", __FUNCTION__, id);
 	}
 	ft_arraydel(wall_ids);
+	// get_all_actual_sectors();
 }
 
 void	get_sectors(t_editor *editor, char **lines, int *i)
@@ -271,8 +273,13 @@ void	get_events(t_editor *editor, char **lines, int *i)
 		event->speed = ft_atoi(args[7]);
 		add_to_list(&editor->events, event, sizeof(t_event));
 		ft_arraydel(args);
+
+		t_event_elem *event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
+		event_elem->event = event;
+		update_event_elem(event_elem);
+		add_to_list(&editor->event_elements, event_elem, sizeof(t_event_elem));
+		add_to_list(&editor->event_element_buttons, event_elem->button, sizeof(t_ui_element));
 	}
-	// create_event_elems();
 	ft_printf("Success.\n");
 }
 

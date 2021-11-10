@@ -426,6 +426,7 @@ void				remove_event_from_list(t_event *event, t_list **list);
 int					get_next_event_id(t_list *list);
 void				update_event(t_editor *editor, t_event *event);
 void				update_event_elem(t_event_elem *elem);
+void				update_id_dropdown(t_editor *editor, int action);
 
 // Sprite
 t_sprite			*sprite_new(void);
