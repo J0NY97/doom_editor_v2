@@ -141,6 +141,7 @@ char				*ft_strremove(char *str, const char *sub);
 int					ft_strreplace(char **dest, char **src);
 void				ft_strrev(char *str);
 char				**ft_strsplit(char const *s, char c);
+char				**ft_strsplit_nik(const char *s, char c);
 size_t				ft_strspn(const char *s, const char *accept);
 char				*ft_strstr(const char *haystack, const char *needle);
 char				*ft_strsub(char const *s, unsigned int start, size_t len);

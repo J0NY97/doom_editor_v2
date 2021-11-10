@@ -138,7 +138,7 @@ void	get_sector_walls(t_list *list, char *id_str, char *neighbor_str, t_sector *
 	while (wall_ids[++i])
 	{
 		id = ft_atoi(wall_ids[i]);
-		wall = get_wall_with_id(list, i);
+		wall = get_wall_with_id(list, id);
 		if (wall)
 		{
 			wall->neighbor_id = ft_atoi(neigh_ids[i]);
@@ -148,7 +148,28 @@ void	get_sector_walls(t_list *list, char *id_str, char *neighbor_str, t_sector *
 			ft_printf("[%s] Couldnt find wall with id : %d.\n", __FUNCTION__, id);
 	}
 	ft_arraydel(wall_ids);
-	// get_all_actual_sectors();
+}
+
+/*
+ * From the sector wall goes throguh all and gets the actual sector from the neighbor id in the walls;
+*/
+void	get_all_actual_sectors(t_editor *editor)
+{
+	t_list	*curr_sec;
+	t_list	*curr_wall;
+
+	curr_sec = editor->sectors;
+	while (curr_sec)
+	{
+		curr_wall = ((t_sector *)curr_sec->content)->walls;
+		while (curr_wall)
+		{
+			((t_wall *)curr_wall->content)->neighbor =
+					get_sector_by_id_from_list(editor->sectors, ((t_wall *)curr_wall->content)->neighbor_id);
+			curr_wall = curr_wall->next;
+		}
+		curr_sec = curr_sec->next;
+	}
 }
 
 void	get_sectors(t_editor *editor, char **lines, int *i)
@@ -171,6 +192,7 @@ void	get_sectors(t_editor *editor, char **lines, int *i)
 		add_to_list(&editor->sectors, sector, sizeof(t_sector));
 		ft_arraydel(args);
 	}
+	get_all_actual_sectors(editor);
 	ft_printf("Success.\n");
 }
 
@@ -313,6 +335,7 @@ void	get_map(t_editor *editor, char *map)
 			get_entity(editor, lines, &i);
 		else if (ft_strnequ(lines[i], "type:event", 10))
 			get_events(editor, lines, &i);
+		ft_printf("just printing for the fun of it.\n");
 	}
 	ft_arraydel(lines);
 	ft_strdel(&file_content);

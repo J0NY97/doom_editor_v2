@@ -284,6 +284,7 @@ char	*set_event(t_editor *editor)
 	t_event	*event;
 	int		id;
 	int		target_id;
+	char	*sector_text;
 
 	id = -1;
 	final = ft_sprintf("type:event\tTYPE\tACTION\tID\tSECTOR\tMIN\tMAX\tSPEED\n");
@@ -296,11 +297,16 @@ char	*set_event(t_editor *editor)
 			target_id = ((t_sector *)event->pointer)->id;
 		else
 			target_id = ((t_sprite *)event->pointer)->id;
+		if (event->sector)
+			sector_text = ft_strdup(event->sector);
+		else
+			sector_text = ft_strdup("-");
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%s\t%d\t%d\t%d\n",
 				event->id, event->type, event->action, target_id,
-				event->sector, event->min, event->max, event->speed);
+				sector_text, event->min, event->max, event->speed);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
+		ft_strdel(&sector_text);
 		curr = curr->next;
 	}
 	return (final);

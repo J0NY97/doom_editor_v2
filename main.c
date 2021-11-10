@@ -21,6 +21,7 @@ void	draw_hover(t_editor *editor)
 			convert_back, 0xffffff00);
 }
 
+// TODO: WTF is this name, please rename;
 t_wall	*check_if_sector_has_same_kind_of_wall(t_sector *sector, t_wall *wall)
 {
 	t_list	*curr;
@@ -186,6 +187,7 @@ void	*sector_edit_events(t_editor *editor)
 			editor->selected_sector = sector;
 			editor->selected_wall = NULL;
 			editor->selected_point = NULL;
+			editor->active_texture_button = NULL; // unselect currently selected texture;
 
 			// update sector ui;
 			ui_input_set_text(editor->floor_height_input, ft_b_itoa(editor->selected_sector->floor_height, temp_str));
@@ -1240,7 +1242,11 @@ void	user_events(t_editor *editor, SDL_Event e)
 			sprite_events(editor, e);
 		}
 		else
+		{
+			editor->selected_sprite = NULL;
 			editor->menu_wall_edit->show = 0;
+			editor->sprite_edit_menu->show = 0;
+		}
 		wall_events(editor, e);
 	}
 	else
