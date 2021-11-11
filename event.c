@@ -72,7 +72,8 @@ t_event_elem	*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_elem
 	event_elem->menu = ft_memalloc(sizeof(t_ui_element));
 	ui_menu_new(win, event_elem->menu);
 	ui_element_set_parent(event_elem->menu, parent, UI_TYPE_ELEMENT);
-	((t_ui_menu *)event_elem->menu->element)->event_and_render_children = 1;
+	((t_ui_menu *)event_elem->menu->element)->event_children = 1;
+	((t_ui_menu *)event_elem->menu->element)->render_children = 1;
 	ui_element_edit(event_elem->menu, ui_list_get_recipe_by_id(layout->recipes, "event_menu_prefab"));
 
 	event_elem->id = ft_memalloc(sizeof(t_ui_element));

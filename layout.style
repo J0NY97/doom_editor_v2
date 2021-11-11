@@ -334,6 +334,7 @@ ceiling_texture_image
 texture_menu : toolbox_menu_prefab
 {
 	xywh : 251, 22, 250, 500;
+	flags : event_children render_children;
 };
 
 texture_menu_label_menu : label_menu_prefab
@@ -797,7 +798,7 @@ event_menu
 {
 	xywh : 10, 110, 220, 380;
 	bg_color : 0xffa0a0a0;
-	flag : event_and_render_children;
+	flag : event_children render_children;
 };
 event_scrollbar
 {
@@ -948,19 +949,19 @@ event_action_menu : event_drop_menu_prefab
 
 event_action_shoot : event_drop_button_prefab
 {
-	title : Shoot;
+	title : SHOOT;
 };
 event_action_click : event_drop_button_prefab
 {
-	title : Click;
+	title : CLICK;
 };
 event_action_sector : event_drop_button_prefab
 {
-	title : Sector;
+	title : SECTOR;
 };
 event_action_null : event_drop_button_prefab
 {
-	title : None;
+	title : NONE;
 };
 
 event_id_dropdown : event_dropdown_prefab
@@ -975,7 +976,7 @@ event_id_menu : event_drop_menu_prefab
 };
 event_id_button : drop_button_prefab
 {
-	w : 55;
+	w : 65;
 };
 
 event_sector_input

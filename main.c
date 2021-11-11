@@ -560,6 +560,27 @@ void	event_events(t_editor *editor, SDL_Event e)
 
 	ft_strnclr(target_id_text, 20);
 
+	if (ui_dropdown_is_open(editor->event_action_dropdown)
+		|| ui_dropdown_is_open(editor->event_type_dropdown)
+		|| ui_dropdown_is_open(editor->event_id_dropdown))
+	{
+		ui_menu_get_menu(editor->event_menu)->event_children = 0;
+		editor->event_scrollbar->event = 0;
+		editor->event_sector_input->event = 0;
+		editor->event_min_input->event = 0;
+		editor->event_max_input->event = 0;
+		editor->event_speed_input->event = 0;
+	}
+	else
+	{
+		ui_menu_get_menu(editor->event_menu)->event_children = 1;
+		editor->event_scrollbar->event = 1;
+		editor->event_sector_input->event = 1;
+		editor->event_min_input->event = 1;
+		editor->event_max_input->event = 1;
+		editor->event_speed_input->event = 1;
+	}
+
 	// Lets see if we have gotten a new active event_elem;
 	if (ui_list_radio_event(editor->event_element_buttons, &editor->active_event_elem))
 	{
@@ -652,49 +673,6 @@ void	event_events(t_editor *editor, SDL_Event e)
 			//<---- HERE!!! TODO: realign all the elements on event_id_menu;
 			ft_printf("Removing event. (total : %d)\n", editor->event_amount);
 		}
-	}
-
-	editor->event_sector_input->show = 0;
-	editor->event_min_input->show = 0;
-	editor->event_max_input->show = 0;
-	editor->event_speed_input->show = 0;
-	if (editor->event_type_floor->state == UI_STATE_CLICK)
-	{
-		editor->event_sector_input->show = 1;
-		editor->event_min_input->show = 1;
-		editor->event_max_input->show = 1;
-		editor->event_speed_input->show = 1;
-	}
-	else if (editor->event_type_ceiling->state == UI_STATE_CLICK)
-	{
-		editor->event_sector_input->show = 1;
-		editor->event_min_input->show = 1;
-		editor->event_max_input->show = 1;
-		editor->event_speed_input->show = 1;
-	}
-	else if (editor->event_type_light->state == UI_STATE_CLICK)
-	{
-		editor->event_sector_input->show = 1;
-		editor->event_min_input->show = 1;
-		editor->event_max_input->show = 1;
-	}
-	else if (editor->event_type_store->state == UI_STATE_CLICK)
-	{
-	}
-	else if (editor->event_type_hazard->state == UI_STATE_CLICK)
-	{
-		editor->event_speed_input->show = 1;
-	}
-	else if (editor->event_type_audio->state == UI_STATE_CLICK)
-	{
-		editor->event_sector_input->show = 1;
-	}
-	else if (editor->event_type_spawn->state == UI_STATE_CLICK)
-	{
-		editor->event_sector_input->show = 1;
-		editor->event_min_input->show = 1;
-		editor->event_max_input->show = 1;
-		editor->event_speed_input->show = 1;
 	}
 
 	// Update ID Dropdown;
@@ -1231,6 +1209,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 	{
 		editor->selected_sector = NULL;
 		editor->sector_edit_menu->show = 0;
+		editor->wall_button->state = UI_STATE_DEFAULT;
 	}
 
 	// Wall Events
@@ -1473,6 +1452,7 @@ void	user_render(t_editor *editor)
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
 	SDL_RenderCopy(editor->win_main->renderer, editor->drawing_texture, NULL, NULL);
 
+	// NOTE: this is the only thing drawn on the texture;
 	draw_entities(editor, editor->entities);
 
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
@@ -1558,7 +1538,6 @@ void	editor_init(t_editor *editor)
 	// Texture Menu
 	editor->texture_menu = ui_list_get_element_by_id(editor->layout.elements, "texture_menu");
 	editor->texture_menu->show = 0;
-	((t_ui_menu *)editor->texture_menu->element)->event_and_render_children = 1;
 	editor->texture_menu_close_button = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_close_button");
 	editor->texture_menu_label = ui_list_get_element_by_id(editor->layout.elements, "texture_menu_label");
 	t_ui_recipe	*texture_menu_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button_menu");
@@ -1574,7 +1553,8 @@ void	editor_init(t_editor *editor)
 		ui_element_set_parent(texture_elem->menu, editor->texture_menu, UI_TYPE_ELEMENT);
 		ui_element_edit(texture_elem->menu, texture_menu_button_recipe);
 		ui_element_set_id(texture_elem->menu, "texture_button_menu");
-		((t_ui_menu *)texture_elem->menu->element)->event_and_render_children = 1;
+		((t_ui_menu *)texture_elem->menu->element)->event_children = 1;
+		((t_ui_menu *)texture_elem->menu->element)->render_children = 1;
 
 		int	x = 10;
 		int y = 35;

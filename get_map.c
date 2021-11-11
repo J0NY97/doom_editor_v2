@@ -293,7 +293,7 @@ void	get_events(t_editor *editor, char **lines, int *i)
 		event->pointer_type = TYPE_SPRITE;
 		if (event->action == SECTOR)
 		{
-			event->pointer_type = SECTOR;
+			event->pointer_type = TYPE_SECTOR;
 			event->pointer = get_sector_by_id_from_list(editor->sectors, ft_atoi(args[3]));
 		}
 		else
