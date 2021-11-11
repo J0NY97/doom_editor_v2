@@ -978,10 +978,10 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	// Draw lines on the surface borders for debugging purposes;
 	ui_surface_draw_border(surface, 1, 0xff00ff00);
 
-	int	w;
-	int h;
-	SDL_QueryTexture(editor->wall_render->texture, NULL, NULL, &w, &h); // TODO : from element take queried texture w and h, and remove this; (TODO: add to the element struct texture w/h which will be taken when recreating texture);
-	SDL_UpdateTexture(editor->wall_render->texture, &(SDL_Rect){0, 0, ft_min(surface->w, w), ft_min(surface->h, h)}, surface->pixels, surface->pitch);
+	SDL_UpdateTexture(editor->wall_render->texture,
+		&(SDL_Rect){0, 0, ft_min(surface->w, editor->wall_render->current_texture_size.x),
+			ft_min(surface->h, editor->wall_render->current_texture_size.y)},
+		surface->pixels, surface->pitch);
 
 	SDL_FreeSurface(surface);
 }
