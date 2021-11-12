@@ -888,7 +888,30 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 	}
 }
 
-// TODO: for some reason the map gets saved like 20 times when you click the save_button;
+void	send_info_message(t_editor *editor, char *text)
+{
+	editor->info_label_start_timer = SDL_GetTicks();
+	editor->info_label_timer = 0;
+	ui_label_color_set(editor->info_label, 0xffffffff);
+	ui_label_set_text(editor->info_label, text);
+	editor->info_label->show = 1;
+}
+
+void	update_info_label(t_editor *editor)
+{
+	t_rgba	new_col;
+
+	if (editor->info_label->show
+		&& SDL_GetTicks() - editor->info_label_start_timer >= editor->info_label_timer)
+	{
+		new_col = hex_to_rgba(ui_label_get_color(editor->info_label));
+		new_col.a -= 2;
+		ui_label_color_set(editor->info_label, rgba_to_hex(new_col));
+		if (new_col.a <= 0)
+			editor->info_label->show = 0;
+	}
+}
+
 void	save_window_events(t_editor *editor, SDL_Event e)
 {
 	if (editor->save_button->state == UI_STATE_CLICK)
@@ -899,7 +922,9 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 	else
 		editor->map_type = 0;
 
-	if (editor->confirm_save_button->state == UI_STATE_CLICK)
+	if (!editor->win_save->show)
+		return ;
+	if (ui_button(editor->confirm_save_button))
 	{
 		int	len;
 
@@ -914,6 +939,7 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 			set_map(editor, actual_full_path);
 			ft_strdel(&actual_full_path);
 			ui_window_flag_set(editor->win_save, UI_WINDOW_HIDE);
+			send_info_message(editor, "Sap Maved Fuccesssully!");
 		}
 	}
 }
@@ -1182,6 +1208,9 @@ void	user_events(t_editor *editor, SDL_Event e)
 	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+
+	// Info Label events
+	update_info_label(editor);
 
 	// Reset Grid Pos
 	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
@@ -1625,14 +1654,18 @@ void	editor_init(t_editor *editor)
 	editor->entity_yaw_slider = ui_list_get_element_by_id(editor->layout.elements, "entity_yaw_slider");
 
 	editor->sector_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sector_info");
-	ui_label_get(editor->sector_info_label)->max_w = editor->sector_info_label->pos.w;
+	ui_label_get_label(editor->sector_info_label)->max_w = editor->sector_info_label->pos.w;
 	editor->mouse_info_label = ui_list_get_element_by_id(editor->layout.elements, "mouse_hover_info");
 	editor->sub_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sub_info");
-	ui_label_get(editor->sub_info_label)->max_w = editor->sub_info_label->pos.w;
+	ui_label_get_label(editor->sub_info_label)->max_w = editor->sub_info_label->pos.w;
 	editor->sprite_info_label = ui_list_get_element_by_id(editor->layout.elements, "selected_sprite_info");
-	ui_label_get(editor->sprite_info_label)->max_w = editor->sprite_info_label->pos.w;
+	ui_label_get_label(editor->sprite_info_label)->max_w = editor->sprite_info_label->pos.w;
 	editor->misc_info_label = ui_list_get_element_by_id(editor->layout.elements, "misc_info");
-	ui_label_get(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
+	ui_label_get_label(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
+
+	// Global Info (used for telling user you have saved map for example)
+	editor->info_label = ui_list_get_element_by_id(editor->layout.elements, "info_label");
+	editor->info_label->show = 0;
 
 	// Event edit
 	editor->event_scrollbar = ui_list_get_element_by_id(editor->layout.elements, "event_scrollbar");
@@ -1720,11 +1753,8 @@ int	main(int ac, char **av)
 	SDL_Event	e;
 
 	ui_sdl_init();
-	ft_printf("Inited\n");
 	editor_init(&editor);
-	ft_printf("Edittted\n");
 	draw_init(&editor);
-	ft_printf("Drawitted\n");
 	if (args_parser(&editor, ac, av))
 		get_map(&editor, editor.map_full_path);
 	else
@@ -1742,16 +1772,14 @@ int	main(int ac, char **av)
 		while (SDL_PollEvent(&e))
 		{
 			ui_layout_event(&editor.layout, e);
-
-			// User Events
 			user_events(&editor, e);
-
 			if (e.key.keysym.scancode == SDL_SCANCODE_P)
-				ft_printf("Are we hovering over ? %d\n", ui_element_is_hover(editor.selection_dropdown_menu));
+			{
+				ft_printf("(MOUSE)");
+				print_veci(editor.win_main->mouse_pos.v, 2);
+			}
 		}
-		// User Render
 		user_render(&editor);
-
 		ui_layout_render(&editor.layout);
 	}
 }

@@ -207,6 +207,10 @@ typedef struct s_editor
 	t_ui_element	*sprite_info_label;
 	t_ui_element	*misc_info_label;
 
+	t_ui_element	*info_label;
+	int				info_label_timer;
+	int				info_label_start_timer;
+
 	t_ui_window		*win_save;
 	t_ui_element	*story_button;
 	t_ui_element	*endless_button;

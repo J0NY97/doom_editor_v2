@@ -177,6 +177,19 @@ Window win_main
 			Label entity_edit_label {};
 		};
 		Button close_entity_edit_button {};
+			Label entity_z_label
+		{
+			Input entity_z_input {};
+		};
+		Label entity_yaw_label
+		{
+			Input entity_yaw_input {};
+			Slider entity_yaw_slider
+			{
+				Button entity_yaw_slider_button {};
+			};
+		};
+		Menu entity_image {};
 		Dropdown entity_dropdown
 		{
 			Menu entity_drop_menu
@@ -194,19 +207,7 @@ Window win_main
 				Button entity_medkit_button {};
 			};
 		};
-		Label entity_z_label
-		{
-			Input entity_z_input {};
-		};
-		Label entity_yaw_label
-		{
-			Input entity_yaw_input {};
-			Slider entity_yaw_slider
-			{
-				Button entity_yaw_slider_button {};
-			};
-		};
-		Menu entity_image {};
+
 	};
 	Menu event_edit_menu
 	{
@@ -249,6 +250,7 @@ Window win_main
 		};
 		Menu event_menu {};
 	};
+	Label info_label {};
 };
 
 Window win_save

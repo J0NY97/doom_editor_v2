@@ -111,6 +111,7 @@ type_dropdown
 	title : Type;
 	xywh : 80, 10, 60, 20;
 	text_align : left center;
+	z : 10000000;
 };
 
 point_button : select_button_prefab
@@ -191,7 +192,7 @@ save_button : select_button_prefab
 
 sector_edit_menu : toolbox_menu_prefab
 {
-	xywh : 0, 71, 250, 500;
+	xywh : 0, 71, 250, 280;
 };
 
 label_menu_prefab
@@ -372,7 +373,7 @@ texture_image
 
 menu_wall_edit : toolbox_menu_prefab
 {
-	xywh : 0, 501, 250, 400;
+	xywh : 0, 281, 250, 280;
 };
 
 wall_label_menu : label_menu_prefab
@@ -505,7 +506,7 @@ wall_texture_scale_input
 ///////////////////
 sprite_edit_menu : toolbox_menu_prefab
 {
-	xywh : 251, 22, 750, 250;
+	xywh : 0, 281, 750, 250;
 };
 
 sprite_label_menu : label_menu_prefab
@@ -660,7 +661,7 @@ selected_sprite_info
 
 entity_edit_menu : toolbox_menu_prefab
 {
-	xywh : 0, 71, 250, 500;
+	xywh : 0, 71, 250, 200;
 };
 entity_label_menu : label_menu_prefab
 {
@@ -684,7 +685,7 @@ entity_dropdown
 {
 	xywh : 10, 30, 100, 20;
 	text_align : left center;
-	z : -100;
+	z : 100;
 };
 entity_drop_button_prefab : drop_button_prefab
 {
@@ -693,7 +694,6 @@ entity_drop_button_prefab : drop_button_prefab
 entity_drop_menu
 {
 	w : 90;
-	z : -100;
 };
 entity_alfred_button : entity_drop_button_prefab
 {
@@ -1075,6 +1075,15 @@ confirm_save_button : confirm_button_prefab
 	title : Save;
 };
 
+///////////////////
+// Info Label
+///////////////////
+info_label
+{
+	x : 100;
+	y : 100;
+	text_size : 128;
+};
 
 ///////////////////
 // Edit Map Window
