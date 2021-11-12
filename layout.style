@@ -1080,9 +1080,10 @@ confirm_save_button : confirm_button_prefab
 ///////////////////
 info_label
 {
-	x : 100;
-	y : 100;
+	xywh : 0, 0, 1920, 1080;
+	text_pos : 0, 0, 1920, 1080;
 	text_size : 128;
+	z : 9999999999;
 };
 
 ///////////////////
