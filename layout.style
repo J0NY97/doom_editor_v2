@@ -684,6 +684,7 @@ entity_dropdown
 {
 	xywh : 10, 30, 100, 20;
 	text_align : left center;
+	z : -100;
 };
 entity_drop_button_prefab : drop_button_prefab
 {
@@ -692,6 +693,7 @@ entity_drop_button_prefab : drop_button_prefab
 entity_drop_menu
 {
 	w : 90;
+	z : -100;
 };
 entity_alfred_button : entity_drop_button_prefab
 {

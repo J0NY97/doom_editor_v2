@@ -465,6 +465,21 @@ void	entity_events(t_editor *editor, SDL_Event e)
 
 	ft_strnclr(temp_str, 20);
 
+
+	// If the dropdown menu is open, lets ignore all other inputs;
+	if (ui_dropdown_is_open(editor->entity_dropdown))
+	{
+		editor->entity_yaw_input->event = 0;
+		editor->entity_yaw_slider->event = 0;
+		editor->entity_z_input->event = 0;
+	}
+	else
+	{
+		editor->entity_yaw_input->event = 1;
+		editor->entity_yaw_slider->event = 1;
+		editor->entity_z_input->event = 1;
+	}
+
 //	calculate_hover(editor); // already calculated in user_events();
 	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
 	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
