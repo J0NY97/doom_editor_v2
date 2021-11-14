@@ -942,7 +942,7 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 			set_map(editor, actual_full_path);
 			ft_strdel(&actual_full_path);
 			ui_window_flag_set(editor->win_save, UI_WINDOW_HIDE);
-			send_info_message(editor, "Sap Maved Fuccesssully!");
+			send_info_message(editor, "Map Saved Muccessfully!");
 		}
 	}
 }
