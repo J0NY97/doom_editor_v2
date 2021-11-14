@@ -935,7 +935,10 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 		{
 			char	*actual_full_path;
 
-			actual_full_path = ft_strjoiner(MAP_PATH, ui_input_get_text(editor->name_input), ".dnd", NULL);
+			if (editor->map_type == 1)
+				actual_full_path = ft_strjoiner(MAP_PATH, ui_input_get_text(editor->name_input), ".dnds", NULL);
+			else
+				actual_full_path = ft_strjoiner(MAP_PATH, ui_input_get_text(editor->name_input), ".dnde", NULL);
 			set_map(editor, actual_full_path);
 			ft_strdel(&actual_full_path);
 			ui_window_flag_set(editor->win_save, UI_WINDOW_HIDE);
