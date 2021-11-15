@@ -1509,7 +1509,7 @@ void	user_render(t_editor *editor)
 void	editor_init(t_editor *editor)
 {
 	memset(editor, 0, sizeof(t_editor));
-	ui_layout_load(&editor->layout, "layout.ui");
+	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
 
 	// Main Window
 	editor->win_main = ui_list_get_window_by_id(editor->layout.windows, "win_main");
@@ -1713,7 +1713,7 @@ void	editor_init(t_editor *editor)
 	editor->map_scale_input = ui_list_get_element_by_id(editor->layout.elements, "map_scale_input");
 	editor->map_scale = 1.0f;
 
-	editor->font = TTF_OpenFont("libs/libui/fonts/DroidSans.ttf", 20);
+	editor->font = TTF_OpenFont(UI_PATH"fonts/DroidSans.ttf", 20);
 
 	editor->map_type = 0; // endless = 0, story = 1;
 	editor->map_name = ft_strdup("map_name.doom");

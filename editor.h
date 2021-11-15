@@ -14,6 +14,7 @@
 # include "temp.h" // not needed when we are using the real enum.h;
 
 # define MAP_PATH "C:/Users/Jony/source/repos/map_editor_v2/maps/"
+# define EDITOR_PATH "C:/Users/Jony/source/repos/map_editor_v2/"
 
 typedef struct	s_spawn		t_spawn;
 typedef struct	s_point		t_point;

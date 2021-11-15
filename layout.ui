@@ -1,4 +1,6 @@
-style : layout.style;
+style : C:/Users/Jony/source/repos/map_editor_v2/layout.style;
+resource_dir : C:/Users/Jony/source/repos/map_editor_v2/temp_resources/;
+resource_dir : C:/Users/Jony/source/repos/map_editor_v2/ui_images/;
 
 Window win_main
 {
