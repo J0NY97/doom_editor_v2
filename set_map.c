@@ -213,9 +213,9 @@ char	*get_sector_wall_slopes(t_sector *sector)
 		curr = curr->next;
 	}
 	if (!floor)
-		floor = ft_sprintf("-1 -1 ");
+		floor = ft_sprintf("0 0 ");
 	if (!ceil)
-		ceil = ft_sprintf("-1 -1");
+		ceil = ft_sprintf("0 0");
 	final = ft_strjoin(floor, ceil);
 	ft_strdel(&floor);
 	ft_strdel(&ceil);
@@ -230,7 +230,6 @@ char	*set_fandc(t_editor *editor)
 	t_list		*curr;
 	t_sector	*sector;
 
-	// sl = floor_wall_id floor_angle ceiling_wall_id ceiling_angle;
 	final = ft_sprintf("type:f&c\tfh\tch\tftx\tctx\tfs\tcs\tsl\n");
 	curr = editor->sectors;
 	while (curr)

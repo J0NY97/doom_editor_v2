@@ -215,13 +215,13 @@ void	get_fc(t_editor *editor, char **lines, int *i)
 		sector->floor_scale = ft_atof(args[5]);
 		sector->ceiling_scale = ft_atof(args[6]);
 		slopes = ft_strsplit(args[7], ' ');
-		if (ft_atoi(slopes[0]) != -1)
+		if (ft_atoi(slopes[0]) != 0)
 		{
 			wall = get_wall_with_id(sector->walls, ft_atoi(slopes[0]));
 			if (wall)
 				wall->floor_angle = ft_atoi(slopes[1]);
 		}
-		if (ft_atoi(slopes[2]) != -1)
+		if (ft_atoi(slopes[2]) != 0)
 		{
 			wall = get_wall_with_id(sector->walls, ft_atoi(slopes[2]));
 			if (wall)

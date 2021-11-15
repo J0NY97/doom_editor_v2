@@ -108,7 +108,9 @@ draw_button : select_button_prefab
 select_button : select_button_prefab
 {
 	x : 45;
-	title : Select;
+	bg_image_default : select_button.png;
+	bg_image_hover : select_button_hover.png;
+	bg_image_click : select_button_click.png;
 };
 
 type_dropdown
@@ -312,7 +314,7 @@ floor_texture_button
 	xywh : 10, 240, 27, 27;
 	text_pos : 0, -20, 100, 50;
 	title : Floor Texture;
-	//bg_color_default : 0x00;
+	text_color : 0xff000000;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
 };
@@ -326,10 +328,10 @@ ceiling_texture_button
 {
 	xywh : 120, 240, 27, 27;
 	text_pos : 0, -20, 100, 50;
-	//bg_color_default : 0xffb0b0b0;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
 	title : Ceiling Texture;
+	text_color : 0xff000000;
 };
 ceiling_texture_image
 {
@@ -439,7 +441,7 @@ wall_texture_button
 	xywh : 10, 140, 27, 27;
 	text_pos : 0, -20, 120, 50;
 	title : Wall Texture;
-	//bg_color_default : 0x00;
+	text_color : 0xff000000;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
 };
@@ -454,7 +456,7 @@ portal_texture_button
 	xywh : 120, 140, 27, 27;
 	text_pos : 0, -20, 120, 50;
 	title : Portal Texture;
-	//bg_color_default : 0x00;
+	text_color : 0xff000000;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
 };
@@ -540,7 +542,7 @@ sprite_texture_button
 	xywh : 10, 85, 27, 27;
 	text_pos : 0, -20, 100, 50;
 	title : Sprite Texture;
-	//bg_color_default : 0x00;
+	text_color : 0xff000000;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
 };
