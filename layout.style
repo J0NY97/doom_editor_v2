@@ -100,9 +100,9 @@ select_button_prefab
 
 draw_button : select_button_prefab
 {
-	bg_image_default : draw_mode.png;
-	bg_image_hover : draw_button_hover.png;
-	bg_image_click : draw_mode_click.png;
+	bg_image_default : draw_button_v2.png;
+	bg_image_hover : draw_button_hover_v2.png;
+	bg_image_click : draw_button_click_v2.png;
 };
 
 select_button : select_button_prefab
