@@ -407,14 +407,18 @@ t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float all
 t_vec2i				get_wall_middle(t_wall *wall);
 int					remove_wall(t_editor *editor, t_wall *wall);
 void				remove_wall_list_angles(t_list *list, int which);
+t_wall				*get_connected_wall(t_list *list, t_wall *wall);
+void				sort_walls(t_list *list);
 
 // Sector
 t_sector			*sector_new(void);
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
+t_vec2i				get_sector_center(t_editor *editor, t_sector *sector);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
 int					remove_sector(t_editor *editor, t_sector *sector);
 int					get_next_sector_id(t_list *list);
 t_sector			*get_sector_by_id_from_list(t_list *list, int id);
+int					check_sector_convexity(t_sector *sector);
 
 // Entity
 t_entity			*entity_new(void);

@@ -22,6 +22,30 @@ void	sector_render(t_editor *editor, t_sector *sector, Uint32 color)
 	draw_walls(editor, sector->walls, color);
 }
 
+t_vec2i	get_sector_center(t_editor *editor, t_sector *sector)
+{
+	int		i;
+	float	x;
+	float	y;
+	t_list	*wall;
+	t_wall	*w;
+
+	x = 0;
+	y = 0;
+	wall = sector->walls;
+	while (wall)
+	{
+		w = wall->content;
+		x += (w->p1->pos.x + w->p2->pos.x);
+		y += (w->p1->pos.y + w->p2->pos.y);
+		wall = wall->next;
+	}
+	i = ft_lstlen(sector->walls) * 2;
+	if (i < 2)
+		return (vec2i(-1, -1));
+	return (vec2i(x / i, y / i));
+}
+
 t_sector	*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius)
 {
 	t_sector	*sec;
@@ -78,4 +102,51 @@ int	get_next_sector_id(t_list *list)
 	}
 	should_be_total = i * (i + 1) / 2;
 	return (should_be_total - total);
+}
+
+/*
+ * Yoinked from here:
+ * http://www.sunshine2k.de/coding/java/Polygon/Convex/polygon.htm
+*/
+int	check_sector_convexity(t_sector *sector)
+{
+	t_vec2i	p;
+	t_vec2i	v;
+	t_vec2i	u;
+	int		res;
+	t_wall	*w1;
+	t_wall	*w2;
+	t_list	*curr;
+
+	if (sector->wall_amount < 2)
+		return (-1);
+	res = 0;
+	curr = sector->walls;
+	int i = 0;
+	while (curr)
+	{
+		w1 = curr->content;
+		w2 = get_connected_wall(sector->walls, w1);
+		if (!w2)
+		{
+			curr = curr->next;
+			continue ;
+		}
+		p = w1->p1->pos; 
+		t_vec2i tmp = w1->p2->pos;
+		v.x = tmp.x - p.x;
+		v.y = tmp.y - p.y;
+		u = w2->p2->pos;
+		if (i == 0)
+			res = u.x * v.y - u.y * v.x + v.x * p.y - v.y * p.x;
+		else
+		{
+			int newres = u.x * v.y - u.y * v.x + v.x * p.y - v.y * p.x;
+			if ((newres > 0 && res < 0) || (newres < 0 && res > 0))
+				return (0);
+		}
+		i++;
+		curr = curr->next;
+	}
+	return (1);
 }

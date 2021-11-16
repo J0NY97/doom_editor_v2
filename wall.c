@@ -20,6 +20,53 @@ void	wall_render(t_editor *editor, t_wall *wall, Uint32 color)
 	ui_surface_line_draw(editor->drawing_surface, p1, p2, color);
 }
 
+t_list	*get_next_wall_node(t_list *list, t_wall *wall)
+{
+	t_wall	*dest_wall;
+
+	while (list)
+	{
+		dest_wall = list->content;
+		if (dest_wall->p1 == wall->p2)
+			return (list);
+		list = list->next;
+	}
+	return (NULL);
+}
+
+void	sort_walls(t_list *list)
+{
+	t_list	*curr;
+	t_wall	*temp;
+	t_wall	*w1;
+	t_wall	*w2;
+	t_point	*point;
+
+	curr = list;
+	while (curr && curr->next)
+	{
+		w1 = curr->content;
+		w2 = curr->next->content;
+		if (w1->p1 != w2->p2) // if the second point in wall isnt the first point in 2nd wall, they are in wrong order;
+		{
+			if (w1->p1 == w2->p1) // but if the they are just flipped, just flip them back;
+			{
+				point = w2->p1;
+				w2->p1 = w2->p2;
+				w2->p2 = point;
+			}
+			else // the wall is in the wrong place, so lets move stuff around;
+			{
+				temp = w2;
+				t_list *correct = get_next_wall_node(list, w1);
+				curr->next->content = correct->content;
+				correct->content = w2;
+			}
+		}
+		curr = curr->next;	
+	}
+}
+
 float	distance_from_vector_to_wall(t_vec2i p0, t_wall *wall)
 {
 	t_vec2i		p1;
@@ -135,4 +182,18 @@ void	remove_wall_list_angles(t_list *list, int which)
 			wall->ceiling_angle = 0;
 		list = list->next;
 	}
+}
+
+t_wall	*get_connected_wall(t_list *list, t_wall *wall)
+{
+	t_wall	*dest_wall;
+
+	while (list)
+	{
+		dest_wall = list->content;
+		if (dest_wall->p1 == wall->p2)
+			return (dest_wall);
+		list = list->next;
+	}
+	return (NULL);
 }

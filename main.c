@@ -1382,13 +1382,23 @@ void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
 /*
  * Font should already be opened before this function call;
 */
-void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos)
+void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color)
 {
 	SDL_Surface	*text_surface;
+	t_rgba		rgba;
 
 	if (font)
 	{
-		text_surface = TTF_RenderText_Blended(font, text, (SDL_Color){255, 255, 255, 255});
+		rgba = hex_to_rgba(color);
+
+//		TTF_SetFontOutline(font, 1);
+//		TTF_SetFontKerning(font, 0);
+		TTF_SetFontHinting(font, TTF_HINTING_MONO);
+		text_surface = TTF_RenderText_Blended(font, text, (SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
+//		TTF_SetFontOutline(font, 0);
+//		TTF_SetFontKerning(font, 1);
+		TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
+
 		SDL_BlitSurface(text_surface, NULL, surface, 
 			&(SDL_Rect){pos.x - (text_surface->w / 2), pos.y - (text_surface->h / 2),
 			text_surface->w, text_surface->h});
@@ -1398,48 +1408,23 @@ void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos)
 		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
 }
 
-void	draw_sector_number(t_editor *editor, t_sector *sector)
-{
-	char	temp[20];
-
-	ft_b_itoa(sector->id, temp);
-	draw_text(editor->drawing_surface, temp, editor->font, conversion(editor, sector->center));
-}
-
-t_vec2i	get_sector_center(t_editor *editor, t_sector *sector)
-{
-	int		i;
-	float	x;
-	float	y;
-	t_list	*wall;
-	t_wall	*w;
-
-	x = 0;
-	y = 0;
-	wall = sector->walls;
-	while (wall)
-	{
-		w = wall->content;
-		x += (w->p1->pos.x + w->p2->pos.x);
-		y += (w->p1->pos.y + w->p2->pos.y);
-		wall = wall->next;
-	}
-	i = ft_lstlen(sector->walls) * 2;
-	if (i < 2)
-		return (vec2i(-1, -1));
-	return (vec2i(x / i, y / i));
-}
-
 void	draw_sectors(t_editor *editor, t_list *sectors)
 {
 	t_sector	*sector;
+	char		temp[20];
+	t_vec2i		converted_center;
 
 	while (sectors)
 	{
 		sector = sectors->content;
+		sort_walls(sector->walls); // TODO do this everytime the sector has been updated, not every frame (if its slow);
 		sector_render(editor, sector, sector->color);
 		sector->center = get_sector_center(editor, sector);
-		draw_sector_number(editor, sector);
+		converted_center = conversion(editor, sector->center);
+		ft_b_itoa(sector->id, temp);
+		draw_text(editor->drawing_surface, temp, editor->font, converted_center, 0xffffffff);
+		if (!check_sector_convexity(sector))
+			draw_text(editor->drawing_surface, "Not Convex!", editor->font, converted_center, 0xffff0000); 
 		sectors = sectors->next;
 	}
 }
