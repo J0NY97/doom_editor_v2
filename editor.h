@@ -159,6 +159,8 @@ typedef struct s_editor
 	t_ui_element	*sprite_type_static;
 	t_ui_element	*sprite_type_loop;
 	t_ui_element	*sprite_type_action;
+	t_ui_element	*sprite_x_input;
+	t_ui_element	*sprite_y_input;
 	t_ui_element	*wall_render;
 
 	t_ui_element	*sprite_texture_button;

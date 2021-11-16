@@ -1032,11 +1032,15 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 
 void	sprite_events(t_editor *editor, SDL_Event e)
 {
+	char	temp_str[20];
+
 	if (!editor->selected_wall || !editor->selected_sector)
 	{
 		ft_printf("[%s] We need both selected wall and sector for this function, and currently we dont have both so no function running for you.\n", __FUNCTION__);
 		return ;
 	}
+
+	ft_strnclr(temp_str, 20);
 
 	editor->sprite_edit_menu->show = 1;
 
@@ -1096,8 +1100,6 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 			editor->selected_sprite = sprite;
 
 			// TODO: update ui;
-			char	temp_str[20];
-			ft_strnclr(temp_str, 20);
 
 			ui_input_set_text(editor->sprite_scale_input, ft_b_ftoa(sprite->scale, 2, temp_str));
 			if (editor->selected_sprite->type == STATIC)
@@ -1106,20 +1108,34 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 				ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_loop);
 			else if (editor->selected_sprite->type == ACTION)
 				ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_action);
+			ui_input_set_text(editor->sprite_x_input, ft_b_itoa(sprite->pos.x, temp_str));
+			ui_input_set_text(editor->sprite_y_input, ft_b_itoa(sprite->pos.y, temp_str));
 		}
 	}
 
-	// Moving Sprite
-	if (editor->selected_sprite
-		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
-		&& ui_element_is_hover(editor->sprite_edit_menu))
+	// Editing Sprite
+	if (editor->selected_sprite)
 	{
-		t_vec2i	move_amount;
+		t_vec2i	move_amount = vec2i(0, 0);
+		// Moving
+		if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT // With mouse
+			&& ui_element_is_hover(editor->sprite_edit_menu))
+		{
+			move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+			move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+			editor->selected_sprite->pos.x = editor->selected_sprite->pos.x + move_amount.x;
+			editor->selected_sprite->pos.y = editor->selected_sprite->pos.y + move_amount.y;
+			ui_input_set_text(editor->sprite_x_input, ft_b_itoa(editor->selected_sprite->pos.x, temp_str));
+			ui_input_set_text(editor->sprite_y_input, ft_b_itoa(editor->selected_sprite->pos.y, temp_str));
+		}
+		if (ui_input_exit(editor->sprite_x_input))
+			editor->selected_sprite->pos.x = ft_atoi(ui_input_get_text(editor->sprite_x_input));
+		if (ui_input_exit(editor->sprite_y_input))
+			editor->selected_sprite->pos.y = ft_atoi(ui_input_get_text(editor->sprite_y_input));
 
-		move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-		move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
-		editor->selected_sprite->pos.x = editor->selected_sprite->pos.x + move_amount.x;
-		editor->selected_sprite->pos.y = editor->selected_sprite->pos.y + move_amount.y;
+		// Texture Scale
+		if (ui_input_exit(editor->sprite_scale_input))
+			editor->selected_sprite->scale = ft_atof(ui_input_get_text(editor->sprite_scale_input));
 	}
 }
 
@@ -1425,6 +1441,8 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		draw_text(editor->drawing_surface, temp, editor->font, converted_center, 0xffffffff);
 		if (!check_sector_convexity(sector))
 			draw_text(editor->drawing_surface, "Not Convex!", editor->font, converted_center, 0xffff0000); 
+		if (sector->ceiling_height - sector->floor_height < 0)
+			draw_text(editor->drawing_surface, "Floor & Ceiling Height Doesn\'t Make Sense!", editor->font, converted_center, 0xffffff00); 
 		sectors = sectors->next;
 	}
 }
@@ -1569,6 +1587,8 @@ void	editor_init(t_editor *editor)
 	editor->sprite_texture_button = ui_list_get_element_by_id(editor->layout.elements, "sprite_texture_button");
 	add_to_list(&editor->texture_opening_buttons, editor->sprite_texture_button, UI_TYPE_ELEMENT);
 	editor->sprite_texture_image = ui_list_get_element_by_id(editor->layout.elements, "sprite_texture_image");
+	editor->sprite_x_input = ui_list_get_element_by_id(editor->layout.elements, "sprite_x_input");
+	editor->sprite_y_input = ui_list_get_element_by_id(editor->layout.elements, "sprite_y_input");
 	editor->wall_render = ui_list_get_element_by_id(editor->layout.elements, "wall_render");
 	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
 	{

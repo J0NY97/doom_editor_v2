@@ -592,6 +592,32 @@ sprite_type_action : sprite_drop_button_prefab
 	title : Action;
 };
 
+sprite_x_label
+{
+	xywh : 10, 155, 50, 20;
+	title : X;
+};
+sprite_x_input
+{
+	xywh : 0, 20, 50, 20;
+	placeholder : x;
+	title : ;
+	text_align : center;
+};
+
+sprite_y_label
+{
+	xywh : 70, 155, 50, 20;
+	title : Y;
+};
+sprite_y_input
+{
+	xywh : 0, 20, 50, 20;
+	placeholder : y;
+	title : ;
+	text_align : center;
+};
+
 wall_render
 {
 	xywh : 140, 35, 600, 205;

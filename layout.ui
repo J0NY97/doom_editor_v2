@@ -153,6 +153,14 @@ Window win_main
 				{
 					Input sprite_scale_input {};
 				};
+				Label sprite_x_label
+				{
+					Input sprite_x_input {};
+				};
+				Label sprite_y_label
+				{
+					Input sprite_y_input {};
+				};
 				Dropdown sprite_type_dropdown
 				{
 					Menu sprite_type_drop_menu
