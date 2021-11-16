@@ -15,11 +15,15 @@ void	entity_render(t_editor *editor, t_entity *entity)
 
 	www = conversion(editor, entity->pos);
 	eee = vec2i(20, 20);
-//	ui_surface_circle_draw(editor->drawing_surface, conversion(editor, entity->pos), 5, 0xff0000ff);
+
 /*
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->drawing_texture);
-	SDL_RenderCopy(editor->win_main->renderer, editor->entity_textures[0], NULL, &(SDL_Rect){www.x, www.y, 10, 10});
+	if (editor->entity_textures[entity->type])
+		SDL_RenderCopy(editor->win_main->renderer, editor->entity_textures[entity->type], NULL, &(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2), eee.x, eee.y});
+	else
+		ft_printf("Entity texture doesnt exist\n");
 */
+
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
 	if (editor->entity_textures[entity->type])
 		SDL_RenderCopy(editor->win_main->renderer, editor->entity_textures[entity->type], NULL, &(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2), eee.x, eee.y});

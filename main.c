@@ -1328,13 +1328,14 @@ void	user_events(t_editor *editor, SDL_Event e)
 
 void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
 {
-	int		w_amount;
-	int		h_amount;
-	int		i;
+	int			w_amount;
+	int			h_amount;
+	int			i;
 
 	w_amount = surface->w / (gap_size * zoom);
 	h_amount = surface->h / (gap_size * zoom);
 	i = 0;
+//	SDL_FillRect(surface, NULL, 0xff000000); // fill the surface first;
 	while (i < w_amount || i < h_amount)
 	{
 		if (i < w_amount)
@@ -1487,7 +1488,15 @@ void	draw_spawn(t_editor *editor)
 
 void	user_render(t_editor *editor)
 {
-	draw_grid(editor->drawing_surface, editor->gap_size, editor->zoom);
+	// Grid stuff
+	if (editor->update_grid)
+	{
+		draw_grid(editor->grid_surface, editor->gap_size, editor->zoom);
+		editor->update_grid = 0;
+		ft_printf("[%s] We are updating grid surface.\n", __FUNCTION__);
+	}
+	SDL_BlitSurface(editor->grid_surface, NULL, editor->drawing_surface, NULL);
+
 	draw_sectors(editor, editor->sectors);
 	draw_hover(editor);
 	draw_selected(editor);
@@ -1727,6 +1736,8 @@ void	draw_init(t_editor *editor)
 	editor->gap_size = 10.0f;
 	editor->zoom = 1.0f;
 	editor->offset = vec2i(0, 0);
+	editor->grid_surface = ui_surface_new(editor->drawing_surface->w, editor->drawing_surface->h);
+	editor->update_grid = 1;
 }
 
 void	update_title_fps(SDL_Window *win, t_fps *fps)

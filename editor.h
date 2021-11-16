@@ -230,6 +230,8 @@ typedef struct s_editor
 	float			zoom;
 	t_vec2i			mouse_pos;
 	t_vec2i			offset;
+	SDL_Surface		*grid_surface;
+	bool			update_grid;
 
 	SDL_Surface		*wall_textures[MAP_TEXTURE_AMOUNT];
 	SDL_Texture		*entity_textures[ENTITY_AMOUNT + 1];
