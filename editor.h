@@ -256,6 +256,7 @@ typedef struct s_editor
 	int				wall_amount;
 	int				entity_amount;
 	int				event_amount;
+	int				sprite_amount;
 
 	t_list			*points;
 	t_list			*walls;
@@ -448,6 +449,7 @@ void				sprite_print(t_sprite *sprite);
 int					get_next_sprite_id(t_list *list);
 t_sprite			*get_sprite_from_list_at_pos(t_list *list, t_vec2i pos);
 t_sprite			*get_sprite_by_id_from_list(t_list *list, int id);
+char				**gen_sprite_id_texts(t_list *sprites);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);
@@ -462,6 +464,8 @@ t_vec2i				conversion(t_editor *editor, t_vec2i v);
 void				remove_from_list(t_list **list, void *pointer);
 int					hover_over_open_menus(t_editor *editor);
 float				get_aspect(float w, float h);
+char				**gen_sector_id_texts(t_list *sectors);
+void				create_buttons_to_list_from_texts_remove_extra(t_ui_element *parent, char **texts, t_ui_recipe *recipe);
 
 // Bxpm
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);

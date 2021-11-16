@@ -107,6 +107,8 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 					sprite->type = ggg;
 			add_to_list(&parent_wall->sprites, sprite, sizeof(t_sprite));
 			add_to_list(&editor->sprites, sprite, sizeof(t_sprite));
+			++parent_wall->sprite_amount;
+			++editor->sprite_amount;
 		}
 		else
 			ft_printf("[%s] No wall with id %d found, ignoring.\n", __FUNCTION__, wall_id);

@@ -249,14 +249,14 @@ Window win_main
 					Button event_action_null {};
 				};
 			};
-			Dropdown event_id_dropdown
-			{
-				Menu event_id_menu {};
-			};
 			Input event_sector_input {};
 			Input event_min_input {};
 			Input event_max_input {};
 			Input event_speed_input {};
+			Dropdown event_id_dropdown
+			{
+				Menu event_id_menu {};
+			};
 		};
 		Menu event_menu {};
 	};
