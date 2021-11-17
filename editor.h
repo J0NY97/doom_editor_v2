@@ -420,12 +420,14 @@ void				sort_walls(t_list *list);
 // Sector
 t_sector			*sector_new(void);
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
+t_sector			*get_sector_with_id(t_list *sectors, int id);
 t_vec2i				get_sector_center(t_editor *editor, t_sector *sector);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
 int					remove_sector(t_editor *editor, t_sector *sector);
 int					get_next_sector_id(t_list *list);
 t_sector			*get_sector_by_id_from_list(t_list *list, int id);
 int					check_sector_convexity(t_sector *sector);
+int					check_point_in_sector(t_sector *sector, t_vec2i p);
 
 // Entity
 t_entity			*entity_new(void);
@@ -470,6 +472,7 @@ int					hover_over_open_menus(t_editor *editor);
 float				get_aspect(float w, float h);
 char				**gen_sector_id_texts(t_list *sectors);
 void				create_buttons_to_list_from_texts_remove_extra(t_ui_element *parent, char **texts, t_ui_recipe *recipe);
+void				draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 
 // Bxpm
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);

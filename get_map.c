@@ -139,6 +139,7 @@ void	get_sector_walls(t_list *list, char *id_str, char *neighbor_str, t_sector *
 		if (wall)
 		{
 			wall->neighbor_id = ft_atoi(neigh_ids[i]);
+			++sector->wall_amount;
 			add_to_list(&sector->walls, wall, sizeof(t_wall));
 		}
 		else

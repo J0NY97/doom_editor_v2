@@ -22,6 +22,17 @@ void	sector_render(t_editor *editor, t_sector *sector, Uint32 color)
 	draw_walls(editor, sector->walls, color);
 }
 
+t_sector	*get_sector_with_id(t_list *sectors, int id)
+{
+	while (sectors)
+	{
+		if (((t_sector *)sectors->content)->id == id)
+			return (sectors->content);
+		sectors = sectors->next;
+	}
+	return (NULL);
+}
+
 t_vec2i	get_sector_center(t_editor *editor, t_sector *sector)
 {
 	int		i;
@@ -146,6 +157,34 @@ int	check_sector_convexity(t_sector *sector)
 				return (0);
 		}
 		i++;
+		curr = curr->next;
+	}
+	return (1);
+}
+
+/*
+ * The wall should be sorted, winding doesnt matter;
+*/
+int	check_point_in_sector(t_sector *sector, t_vec2i p)
+{
+	t_vec2i	p0;
+	t_vec2i	p1;
+	int		res;
+	t_wall	*wall;
+	t_list	*curr;
+
+	if (sector->wall_amount < 2)
+		return (-1);
+	res = 0;
+	curr = sector->walls;
+	while (curr)
+	{
+		wall = curr->content;
+		p0 = wall->p1->pos; 
+		p1 = wall->p2->pos;
+		res = (p.y - p0.y) * (p1.x - p0.x) - (p.x - p0.x) * (p1.y - p0.y);
+		if (res < 0)
+			return (0);
 		curr = curr->next;
 	}
 	return (1);

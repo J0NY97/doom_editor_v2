@@ -1444,8 +1444,11 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 
 void	draw_entities(t_editor *editor, t_list *entities)
 {
+	t_entity	*entity;
+
 	while (entities)
 	{
+		entity = entities->content;
 		entity_render(editor, entities->content);
 		entities = entities->next;
 	}
@@ -1453,9 +1456,29 @@ void	draw_entities(t_editor *editor, t_list *entities)
 
 void	draw_entities_yaw(t_editor *editor, t_list *entities)
 {
+	t_entity	*entity;
+
 	while (entities)
 	{
+		entity = entities->content;
 		entity_yaw_render(editor, entities->content);
+
+		// Check if entity inside a sector;
+		t_list *curr = editor->sectors;
+		int		found = 0;
+		while (curr)
+		{
+			if (check_point_in_sector(curr->content, entity->pos) == 1)
+			{
+				found = 1;
+				break ;
+			}
+			curr = curr->next;
+		}
+		if (!found)
+			draw_text(editor->drawing_surface, "Not Inside Sector!",
+				editor->font, conversion(editor, entity->pos), 0xffff0000); 
+
 		entities = entities->next;
 	}
 }
