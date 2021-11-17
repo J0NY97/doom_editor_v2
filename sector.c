@@ -170,6 +170,7 @@ int	check_point_in_sector(t_sector *sector, t_vec2i p)
 	t_vec2i	p0;
 	t_vec2i	p1;
 	int		res;
+	int		newres;
 	t_wall	*wall;
 	t_list	*curr;
 
@@ -177,14 +178,21 @@ int	check_point_in_sector(t_sector *sector, t_vec2i p)
 		return (-1);
 	res = 0;
 	curr = sector->walls;
+	int i = 0;
 	while (curr)
 	{
 		wall = curr->content;
 		p0 = wall->p1->pos; 
 		p1 = wall->p2->pos;
-		res = (p.y - p0.y) * (p1.x - p0.x) - (p.x - p0.x) * (p1.y - p0.y);
-		if (res < 0)
-			return (0);
+		if (i == 0)
+			res = (p.y - p0.y) * (p1.x - p0.x) - (p.x - p0.x) * (p1.y - p0.y);
+		else
+		{
+			newres = (p.y - p0.y) * (p1.x - p0.x) - (p.x - p0.x) * (p1.y - p0.y);
+			if ((newres > 0 && res < 0) || (newres < 0 && res > 0))
+				return (0);
+		}
+		i++;
 		curr = curr->next;
 	}
 	return (1);
