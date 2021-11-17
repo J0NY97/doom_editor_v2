@@ -466,7 +466,6 @@ void	entity_events(t_editor *editor, SDL_Event e)
 
 	ft_strnclr(temp_str, 20);
 
-
 	// If the dropdown menu is open, lets ignore all other inputs;
 	if (ui_dropdown_is_open(editor->entity_dropdown))
 	{
@@ -481,7 +480,6 @@ void	entity_events(t_editor *editor, SDL_Event e)
 		editor->entity_z_input->event = 1;
 	}
 
-//	calculate_hover(editor); // already calculated in user_events();
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->draw_button->state == UI_STATE_CLICK)
