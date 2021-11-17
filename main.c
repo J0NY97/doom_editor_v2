@@ -99,72 +99,70 @@ void	sector_events(t_editor *editor, SDL_Event e)
 
 	ft_strnclr(temp_str, 20);
 
-	if (editor->draw_button->state == UI_STATE_CLICK)
+	if (editor->draw_button->state == UI_STATE_CLICK
+		&& !hover_over_open_menus(editor)
+		&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 	{
-		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_toolbox_top->screen_pos)
-			&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+		if (!editor->selected_sector)
 		{
-			if (!editor->selected_sector)
+			editor->selected_sector = sector_new();
+			editor->selected_sector->id = get_next_sector_id(editor->sectors);
+			++editor->sector_amount;
+			add_to_list(&editor->sectors, editor->selected_sector, sizeof(t_sector));
+		}
+		if (editor->selected_sector)
+		{
+			if (!editor->first_point_set)
 			{
-				editor->selected_sector = sector_new();
-				editor->selected_sector->id = get_next_sector_id(editor->sectors);
-				++editor->sector_amount;
-				add_to_list(&editor->sectors, editor->selected_sector, sizeof(t_sector));
+				editor->first_point_set = 1;
+				editor->first_point = editor->mouse_pos;
 			}
-			if (editor->selected_sector)
+			else if (!editor->second_point_set)
 			{
-				if (!editor->first_point_set)
+				editor->second_point_set = 1;
+				editor->second_point = editor->mouse_pos;
+			}
+
+			// We dont want you to be able to draw a 0 length wall;
+			if (editor->first_point_set
+				&& compare_veci(editor->first_point.v, editor->second_point.v, 2))
+				editor->second_point_set = 0;
+
+			if (editor->first_point_set && editor->second_point_set)
+			{
+				t_wall	*wall;
+				wall = wall_new();
+				wall->wall_texture = 7;
+				wall->p1 = get_point_from_sector_around_radius(editor->selected_sector, editor->first_point, 0.0f);
+				if (!wall->p1)
 				{
+					wall->p1 = ft_memalloc(sizeof(t_point));
+					wall->p1->pos = editor->first_point;
+					add_to_list(&editor->points, wall->p1, sizeof(t_point));
+				}
+				wall->p2 = get_point_from_sector_around_radius(editor->selected_sector, editor->second_point, 0.0f);
+				if (!wall->p2)
+				{
+					wall->p2 = ft_memalloc(sizeof(t_point));
+					wall->p2->pos = editor->second_point;
+					add_to_list(&editor->points, wall->p2, sizeof(t_point));
+				}
+				editor->first_point_set = 0;
+				editor->second_point_set = 0;
+				++editor->selected_sector->wall_amount;
+				add_to_list(&editor->walls, wall, sizeof(t_wall));
+				add_to_list(&editor->selected_sector->walls, wall, sizeof(t_wall));
+				if (!editor->selected_sector->first_point_set)
+				{
+					editor->selected_sector->first_point = editor->first_point;
+					editor->selected_sector->first_point_set = 1;
+				}
+				if (compare_veci(editor->second_point.v, editor->selected_sector->first_point.v, 2))
+					editor->selected_sector = NULL;
+				else
+				{
+					editor->first_point = editor->second_point;
 					editor->first_point_set = 1;
-					editor->first_point = editor->mouse_pos;
-				}
-				else if (!editor->second_point_set)
-				{
-					editor->second_point_set = 1;
-					editor->second_point = editor->mouse_pos;
-				}
-
-				// We dont want you to be able to draw a 0 length wall;
-				if (editor->first_point_set
-					&& compare_veci(editor->first_point.v, editor->second_point.v, 2))
-					editor->second_point_set = 0;
-
-				if (editor->first_point_set && editor->second_point_set)
-				{
-					t_wall	*wall;
-					wall = wall_new();
-					wall->wall_texture = 7;
-					wall->p1 = get_point_from_sector_around_radius(editor->selected_sector, editor->first_point, 0.0f);
-					if (!wall->p1)
-					{
-						wall->p1 = ft_memalloc(sizeof(t_point));
-						wall->p1->pos = editor->first_point;
-						add_to_list(&editor->points, wall->p1, sizeof(t_point));
-					}
-					wall->p2 = get_point_from_sector_around_radius(editor->selected_sector, editor->second_point, 0.0f);
-					if (!wall->p2)
-					{
-						wall->p2 = ft_memalloc(sizeof(t_point));
-						wall->p2->pos = editor->second_point;
-						add_to_list(&editor->points, wall->p2, sizeof(t_point));
-					}
-					editor->first_point_set = 0;
-					editor->second_point_set = 0;
-					++editor->selected_sector->wall_amount;
-					add_to_list(&editor->walls, wall, sizeof(t_wall));
-					add_to_list(&editor->selected_sector->walls, wall, sizeof(t_wall));
-					if (!editor->selected_sector->first_point_set)
-					{
-						editor->selected_sector->first_point = editor->first_point;
-						editor->selected_sector->first_point_set = 1;
-					}
-					if (compare_veci(editor->second_point.v, editor->selected_sector->first_point.v, 2))
-						editor->selected_sector = NULL;
-					else
-					{
-						editor->first_point = editor->second_point;
-						editor->first_point_set = 1;
-					}
 				}
 			}
 		}
@@ -228,23 +226,29 @@ void	sector_edit_events(t_editor *editor)
 	{
 		int	was_removed = 0;
 		if (editor->selected_point)
-		{
-			remove_point(editor, editor->selected_point);
-			editor->selected_point = NULL;
-		}
+			was_removed = remove_point(editor, editor->selected_point);
 		else if (editor->selected_wall)
-		{
-			remove_wall(editor, editor->selected_wall);
-			editor->selected_point = NULL;
-		}
+			was_removed = remove_wall(editor, editor->selected_wall);
 		else if (editor->selected_sector)
 		{
-			remove_sector(editor, editor->selected_sector);
+			was_removed = remove_sector(editor, editor->selected_sector);
 			--editor->sector_amount;
 			editor->selected_sector = NULL;
 		}
+		else if (editor->selected_entity)
+		{
+			was_removed = remove_entity(editor, editor->selected_entity);
+			--editor->entity_amount;
+			editor->selected_entity = NULL;
+		}
 		if (was_removed)
+		{
+			editor->selected_point = NULL;
+			editor->selected_wall = NULL;
+			editor->selected_sprite = NULL;
+			editor->selected_entity = NULL;
 			sector_cleanup(editor);
+		}
 	}
 
 	if (editor->selected_sector)
@@ -349,10 +353,6 @@ void	wall_events(t_editor *editor, SDL_Event e)
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
-
-	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
-
 	// Wall
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor))
@@ -382,6 +382,8 @@ void	wall_events(t_editor *editor, SDL_Event e)
 		&& !(editor->wall_render->show == 1
 		&& ui_element_is_hover(editor->sprite_edit_menu))) // only move wall if we are hovering over the sprite_edit_menu;
 	{
+		move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+		move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 		editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, move_amount);
 		editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, move_amount);
 	}
@@ -784,11 +786,9 @@ void	spawn_events(t_editor *editor, SDL_Event e)
 
 	ft_strnclr(temp_str, 20);
 
+	// Update ui same frame the button is pressed;
 	if (editor->spawn_button->was_click)
-	{
-		ft_printf("spawn yaw : %d\n", editor->spawn.yaw);
 		ui_input_set_text(editor->spawn_yaw_input, ft_b_itoa(editor->spawn.yaw, temp_str));
-	}
 
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
@@ -1050,6 +1050,7 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 		if (!editor->selected_sprite) // unselects if you have one selected.
 		{
 			editor->selected_sprite = sprite_new();
+			editor->selected_sprite->parent = editor->selected_wall;
 			editor->selected_sprite->pos = vec4i(0, 0, 64, 64);
 			editor->selected_sprite->texture = 0;
 			if (editor->active_texture_button_id > -1)
@@ -1069,9 +1070,7 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 	{
 		if (editor->selected_sprite)
 		{
-			remove_from_list(&editor->sprites, editor->selected_sprite);
-			remove_from_list(&editor->selected_wall->sprites, editor->selected_sprite);
-			sprite_free(editor->selected_sprite);
+			remove_sprite(editor, editor->selected_sprite);
 			editor->selected_sprite = NULL;
 			--editor->selected_wall->sprite_amount;
 			--editor->sprite_amount;
@@ -1332,11 +1331,12 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 
 	if (editor->spawn_button->state == UI_STATE_CLICK)
-		spawn_events(editor, e);
-	else
 	{
-		//editor->spawn_edit_menu->show = 0;
+		editor->spawn_edit_menu->show = 1;
+		spawn_events(editor, e);
 	}
+	else
+		editor->spawn_edit_menu->show = 0;
 
 	info_menu_events(editor, e);
 	sector_hover_info_events(editor, e);

@@ -305,6 +305,7 @@ struct s_point
 */
 struct s_sprite
 {
+	t_wall			*parent;
 	int				id;
 	t_vec4i			pos;
 	int				texture;
@@ -409,6 +410,7 @@ int					remove_point(t_editor *editor, t_point *point);
 
 // Wall
 t_wall				*wall_new(void);
+void				remove_sprite(t_editor *editor, t_sprite *sprite);
 void				remove_sprite_from_wall(t_sprite *sprite, t_wall *wall);
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
@@ -434,6 +436,7 @@ int					check_point_in_sector(t_sector *sector, t_vec2i p);
 
 // Entity
 t_entity			*entity_new(void);
+int					remove_entity(t_editor *editor, t_entity *entity);
 void				entity_render(t_editor *editor, t_entity *entity);
 void				entity_yaw_render(t_editor *editor, t_entity *entity);
 t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);

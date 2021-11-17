@@ -10,6 +10,9 @@ t_sprite	*sprite_new(void)
 
 void	sprite_free(t_sprite *sprite)
 {
+	if (!sprite)
+		return ;
+	sprite->parent = NULL;
 	free(sprite);
 }
 
@@ -21,6 +24,19 @@ void	sprite_print(t_sprite *sprite)
 	ft_printf("\ttexture : %d\n", sprite->texture);
 	ft_printf("\tscale : %.2f\n", sprite->scale);
 	ft_printf("\ttype : %d\n", sprite->type);
+}
+
+/*
+ * Removes all traces of this sprite;
+*/
+void	remove_sprite(t_editor *editor, t_sprite *sprite)
+{
+	if (!sprite)
+		return ;
+	remove_from_list(&editor->sprites, sprite);
+	remove_from_list(&sprite->parent->sprites, sprite);
+	sprite_free(sprite);
+	sprite = NULL;
 }
 
 int	get_next_sprite_id(t_list *list)

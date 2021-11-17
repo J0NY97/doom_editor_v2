@@ -8,6 +8,23 @@ t_entity	*entity_new(void)
 	return (entity);
 }
 
+void	entity_free(t_entity *entity)
+{
+	if (!entity)
+		return ;
+	free(entity);
+	entity = NULL;
+}
+
+int	remove_entity(t_editor *editor, t_entity *entity)
+{
+	if (!entity)
+		return (0);
+	remove_from_list(&editor->entities, entity);
+	entity_free(entity);
+	return (1);
+}
+
 void	entity_render(t_editor *editor, t_entity *entity)
 {
 	t_vec2i	www;

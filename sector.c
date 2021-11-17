@@ -84,11 +84,15 @@ t_sector	*get_sector_by_id_from_list(t_list *list, int id)
 	return (NULL);
 }
 
+/*
+ * Removes all traces of this sector;
+*/
 int	remove_sector(t_editor *editor, t_sector *sector)
 {
 	if (!sector)
 		return (0);
 	remove_from_list(&editor->sectors, sector);
+	ft_lstdel(&sector->walls, &dummy_free_er);
 	free(sector);
 	sector = NULL;
 	ft_printf("[%s] Sector removed from editor->sectors\n", __FUNCTION__);

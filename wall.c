@@ -140,11 +140,25 @@ t_vec2i	get_wall_middle(t_wall *wall)
 	return (middle);
 }
 
+void	remove_all_wall_sprites(t_editor *editor, t_wall *wall)
+{
+	t_list	*curr;
+
+	curr = wall->sprites;
+	while (curr)
+	{
+		remove_sprite(editor, curr->content);
+		curr = curr->next;
+	}
+	ft_lstdel(&wall->sprites, &dummy_free_er);
+}
+
 int	remove_wall(t_editor *editor, t_wall *wall)
 {
 	if (!wall)
 		return (0);
 	remove_from_list(&editor->walls, wall);
+	remove_all_wall_sprites(editor, wall);
 	free(wall);
 	wall = NULL;
 	ft_printf("[%s] Done removing wall.\n", __FUNCTION__);
