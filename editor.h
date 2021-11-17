@@ -203,6 +203,9 @@ typedef struct s_editor
 	t_ui_element	*event_action_sector;
 	t_ui_element	*event_action_null;
 
+	// Spawn Elems
+	t_ui_element	*spawn_edit_menu;
+	t_ui_element	*spawn_yaw_input;
 
 	t_ui_element	*mouse_info_label;
 	t_ui_element	*sector_info_label;
@@ -211,8 +214,8 @@ typedef struct s_editor
 	t_ui_element	*misc_info_label;
 
 	t_ui_element	*info_label;
-	int				info_label_timer;
-	int				info_label_start_timer;
+	Uint32			info_label_timer;
+	Uint32			info_label_start_timer;
 
 	t_ui_element	*sector_hover_info_menu;
 	t_ui_element	*sector_hover_info_label;

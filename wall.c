@@ -37,7 +37,6 @@ t_list	*get_next_wall_node(t_list *list, t_wall *wall)
 void	sort_walls(t_list *list)
 {
 	t_list	*curr;
-	t_wall	*temp;
 	t_wall	*w1;
 	t_wall	*w2;
 	t_point	*point;
@@ -57,7 +56,6 @@ void	sort_walls(t_list *list)
 			}
 			else // the wall is in the wrong place, so lets move stuff around;
 			{
-				temp = w2;
 				t_list *correct = get_next_wall_node(list, w1);
 				curr->next->content = correct->content;
 				correct->content = w2;

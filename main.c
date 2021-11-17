@@ -20,6 +20,16 @@ void	draw_hover(t_editor *editor)
 	convert_back.y = (editor->mouse_pos.y - editor->offset.y) * (editor->gap_size * editor->zoom);
 	ui_surface_circle_draw_filled(editor->drawing_surface, convert_back, 3, 0xffffffff);
 
+	// Crosshair
+	ui_surface_line_draw(editor->drawing_surface,
+		vec2i(convert_back.x, 0),
+		vec2i(convert_back.x, editor->drawing_surface->h),
+		0x70b0b0b0);
+	ui_surface_line_draw(editor->drawing_surface,
+		vec2i(0, convert_back.y),
+		vec2i(editor->drawing_surface->w, convert_back.y),
+		0x70b0b0b0);
+
 	// Draw from first point to where you're hovering;
 	if (editor->first_point_set)
 		ui_surface_line_draw(editor->drawing_surface,
@@ -85,13 +95,10 @@ void	sector_cleanup(t_editor *editor)
 
 void	sector_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
 
-	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
 		if (!vec2_in_vec4(editor->win_main->mouse_pos, editor->menu_toolbox_top->screen_pos)
@@ -172,10 +179,8 @@ void	sector_edit_events(t_editor *editor)
 
 	ft_strnclr(temp_str, 20);
 
-	//calculate_hover(editor); // aleady done;
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
-
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor))
 	{
@@ -411,7 +416,7 @@ void	wall_events(t_editor *editor, SDL_Event e)
 			add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
 			add_to_list(&editor->walls, new_wall, sizeof(t_wall));
 		}
-		// TODO: ui_checkbox really needs an updated, we dont want to update these everytime, we want someway to only do stuff if the toggle state has changed;
+			// TODO: ui_checkbox really needs an updated, we dont want to update these everytime, we want someway to only do stuff if the toggle state has changed;
 		editor->selected_wall->solid = editor->solid_checkbox->state == UI_STATE_CLICK;
 		
 		// TODO : this needs rework;
@@ -646,9 +651,6 @@ void	event_events(t_editor *editor, SDL_Event e)
 		t_event_elem	*event_elem;
 		if (editor->selected_event_elem == NULL)
 		{
-			char			*temp2;
-			char			temp[20];
-
 			ft_printf("Trying to make new event\n");
 			event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
 			event_elem->event = event_new();
@@ -747,7 +749,6 @@ char	**gen_sector_id_texts(t_list *sectors)
 {
 	char		**arr;
 	char		temp[20];
-	t_list		*curr;
 	t_sector	*sector;
 
 	arr = NULL;
@@ -764,7 +765,6 @@ char	**gen_sprite_id_texts(t_list *sprites)
 {
 	char		**arr;
 	char		temp[20];
-	t_list		*curr;
 	t_sprite	*sprite;
 
 	arr = NULL;
@@ -784,8 +784,12 @@ void	spawn_events(t_editor *editor, SDL_Event e)
 
 	ft_strnclr(temp_str, 20);
 
-	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+	if (editor->spawn_button->was_click)
+	{
+		ft_printf("spawn yaw : %d\n", editor->spawn.yaw);
+		ui_input_set_text(editor->spawn_yaw_input, ft_b_itoa(editor->spawn.yaw, temp_str));
+	}
+
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
 		if (!hover_over_open_menus(editor))
@@ -794,10 +798,17 @@ void	spawn_events(t_editor *editor, SDL_Event e)
 	}
 	else if (editor->select_button->state == UI_STATE_CLICK)
 	{
-		// TODO: show spawn edit menu when select_button clicked;
-
+		move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+		move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 		if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
 			editor->spawn.pos = vec2i_add(editor->spawn.pos, move_amount);
+	}
+
+	// Yaw input
+	if (ui_input_exit(editor->spawn_yaw_input))
+	{
+		editor->spawn.yaw = ft_clamp(ft_atoi(ui_input_get_text(editor->spawn_yaw_input)), 0, 360);
+		ui_input_set_text(editor->spawn_yaw_input, ft_b_itoa(editor->spawn.yaw, temp_str));
 	}
 }
 
@@ -1212,14 +1223,11 @@ void	texture_menu_events(t_editor *editor, SDL_Event e)
 
 void	user_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
 
 	calculate_hover(editor);
-	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 
 	// Info Label events
 	update_info_label(editor);
@@ -1243,6 +1251,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_event = NULL;
 		editor->selected_sprite = NULL;
 		editor->selected_wall = NULL;
+		editor->selected_point = NULL;
 	}
 
 	// Sector Events
@@ -1326,7 +1335,6 @@ void	user_events(t_editor *editor, SDL_Event e)
 		spawn_events(editor, e);
 	else
 	{
-		//editor->selected_spawn = NULL;
 		//editor->spawn_edit_menu->show = 0;
 	}
 
@@ -1358,9 +1366,6 @@ void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
 
 void	draw_points(t_editor *editor, t_list *points, Uint32 color)
 {
-	int	i;
-
-	i = -1;
 	while (points)
 	{
 		point_render(editor, points->content, color);
@@ -1444,11 +1449,8 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 
 void	draw_entities(t_editor *editor, t_list *entities)
 {
-	t_entity	*entity;
-
 	while (entities)
 	{
-		entity = entities->content;
 		entity_render(editor, entities->content);
 		entities = entities->next;
 	}
@@ -1457,6 +1459,7 @@ void	draw_entities(t_editor *editor, t_list *entities)
 void	draw_entities_yaw(t_editor *editor, t_list *entities)
 {
 	t_entity	*entity;
+	t_sector	*inside_sector;
 
 	while (entities)
 	{
@@ -1466,11 +1469,13 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 		// Check if entity inside a sector;
 		t_list *curr = editor->sectors;
 		int		found = 0;
+		inside_sector = NULL;
 		while (curr)
 		{
 			if (check_point_in_sector(curr->content, entity->pos) == 1)
 			{
 				found = 1;
+				inside_sector = curr->content;
 				break ;
 			}
 			curr = curr->next;
@@ -1478,11 +1483,13 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 		if (!found)
 			draw_text(editor->drawing_surface, "Not Inside Sector!",
 				editor->font, conversion(editor, entity->pos), 0xffff0000); 
+		if (inside_sector && (entity->z < inside_sector->floor_height || entity->z > inside_sector->ceiling_height))
+			draw_text(editor->drawing_surface, "Z not between Floor & Ceiling!",
+				editor->font, conversion(editor, entity->pos), 0xffff0000); 
 
 		entities = entities->next;
 	}
 }
-
 
 void	draw_selected(t_editor *editor)
 {
@@ -1505,6 +1512,25 @@ void	draw_spawn(t_editor *editor)
 {
 	ui_surface_circle_draw_filled(editor->drawing_surface,
 		conversion(editor, editor->spawn.pos), 10, 0xff00ff00);
+
+	t_sector	*inside_sector = NULL;
+	t_list		*curr = editor->sectors;
+	int			found = 0;
+	while (curr)
+	{
+		if (check_point_in_sector(curr->content, editor->spawn.pos) == 1)
+		{
+			found = 1;
+			inside_sector = curr->content;
+			break ;
+		}
+		curr = curr->next;
+	}
+	if (!found)
+		draw_text(editor->drawing_surface, "Not Inside Sector!",
+			editor->font, conversion(editor, editor->spawn.pos), 0xffff0000); 
+	if (inside_sector)
+		editor->spawn.z = inside_sector->floor_height;
 }
 
 void	user_render(t_editor *editor)
@@ -1540,6 +1566,7 @@ void	editor_init(t_editor *editor)
 {
 	memset(editor, 0, sizeof(t_editor));
 	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
+	editor->spawn.yaw = 72; // REMOVE
 
 	// Main Window
 	editor->win_main = ui_list_get_window_by_id(editor->layout.windows, "win_main");
@@ -1737,6 +1764,10 @@ void	editor_init(t_editor *editor)
 	editor->event_action_sector = ui_list_get_element_by_id(editor->layout.elements, "event_action_sector");
 	editor->event_action_null = ui_list_get_element_by_id(editor->layout.elements, "event_action_null");
 
+	// Spawn Edit
+	editor->spawn_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "spawn_edit_menu");
+	editor->spawn_yaw_input = ui_list_get_element_by_id(editor->layout.elements, "spawn_yaw_input");
+
 	// Save Window
 	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");
 	editor->endless_button = ui_list_get_element_by_id(editor->layout.elements, "endless_button");
@@ -1752,7 +1783,7 @@ void	editor_init(t_editor *editor)
 	editor->font = TTF_OpenFont(UI_PATH"fonts/DroidSans.ttf", 20);
 
 	editor->map_type = 0; // endless = 0, story = 1;
-	editor->map_name = ft_strdup("map_name.doom");
+	editor->map_name = ft_strdup("map_name.dnd");
 	ft_printf("[%s] %s\n", __FUNCTION__, SDL_GetError());
 }
 

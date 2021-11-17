@@ -2,7 +2,7 @@ type:map	type	scale	vert	wall	sect
 0	endless	1	32	32	9
 -
 type:spawn	x	y	z	yaw
-0	51	25	0	0
+0	51	25	10	0
 -
 type:point
 0	42	13
@@ -86,7 +86,7 @@ type:sector	walls	neighbors	g	l
 8	26 27 28 29 30 31 	-1 -1 -1 -1 -1 -1 	20	0
 -
 type:f&c	fh	ch	ftx	ctx	fs	cs	sl
-0	0	20	0	0	10.00	10.00	0 0 0 0
+0	10	30	0	0	10.00	10.00	0 0 0 0
 1	0	20	0	0	10.00	10.00	0 0 0 0
 2	0	20	0	0	10.00	10.00	0 0 0 0
 3	0	20	0	0	10.00	10.00	0 0 0 0

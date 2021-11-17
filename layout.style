@@ -1053,6 +1053,28 @@ event_speed_input
 };
 
 ///////////////////
+// Spawn Edit Menu
+///////////////////
+
+spawn_edit_menu
+{
+	xywh : 0, 71, 130, 100;
+	bg_color : 0xffb0b0b0;
+};
+
+spawn_yaw_label
+{
+	xywh : 10, 10, 50, 20;
+	title : Yaw;
+};
+spawn_yaw_input
+{
+	xywh : 0, 20, 50, 20;
+	placeholder : Yaw;
+	title : 0;
+};
+
+///////////////////
 // Save Map Window
 ///////////////////
 win_save

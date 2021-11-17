@@ -260,6 +260,13 @@ Window win_main
 		};
 		Menu event_menu {};
 	};
+	Menu spawn_edit_menu
+	{
+		Label spawn_yaw_label
+		{
+			Input spawn_yaw_input {};
+		};
+	};
 	Label info_label {};
 	Menu sector_hover_info_menu
 	{
