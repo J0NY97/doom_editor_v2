@@ -1,17 +1,23 @@
 #include "editor.h"
 
+/*
+ * This calculates the actual position in game for the mouse;
+*/
 void	calculate_hover(t_editor *editor)
 {
-	editor->mouse_pos.x = editor->win_main->mouse_pos.x / (10.0f * editor->zoom);
-	editor->mouse_pos.y = editor->win_main->mouse_pos.y / (10.0f * editor->zoom);
+	editor->mouse_pos.x = (editor->win_main->mouse_pos.x / (editor->gap_size * editor->zoom)) + editor->offset.x;
+	editor->mouse_pos.y = (editor->win_main->mouse_pos.y / (editor->gap_size * editor->zoom)) + editor->offset.y;
 }
 
+/*
+ * From in game position calculate the screen position;
+*/
 void	draw_hover(t_editor *editor)
 {
 	t_vec2i	convert_back;
 
-	convert_back.x = editor->mouse_pos.x * (editor->gap_size * editor->zoom);
-	convert_back.y = editor->mouse_pos.y * (editor->gap_size * editor->zoom);
+	convert_back.x = (editor->mouse_pos.x - editor->offset.x) * (editor->gap_size * editor->zoom);
+	convert_back.y = (editor->mouse_pos.y - editor->offset.y) * (editor->gap_size * editor->zoom);
 	ui_surface_circle_draw_filled(editor->drawing_surface, convert_back, 3, 0xffffffff);
 
 	// Draw from first point to where you're hovering;
@@ -79,15 +85,11 @@ void	sector_cleanup(t_editor *editor)
 
 void	sector_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	actual_pos;
 	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
 
-	//calculate_hover(editor); // aleady done;
-	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
-	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->draw_button->state == UI_STATE_CLICK)
@@ -107,12 +109,12 @@ void	sector_events(t_editor *editor, SDL_Event e)
 				if (!editor->first_point_set)
 				{
 					editor->first_point_set = 1;
-					editor->first_point = actual_pos;
+					editor->first_point = editor->mouse_pos;
 				}
 				else if (!editor->second_point_set)
 				{
 					editor->second_point_set = 1;
-					editor->second_point = actual_pos;
+					editor->second_point = editor->mouse_pos;
 				}
 
 				// We dont want you to be able to draw a 0 length wall;
@@ -165,15 +167,12 @@ void	sector_events(t_editor *editor, SDL_Event e)
 void	sector_edit_events(t_editor *editor)
 {
 	t_sector	*sector;
-	t_vec2i	actual_pos;
 	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
 
 	//calculate_hover(editor); // aleady done;
-	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
-	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 
@@ -181,7 +180,7 @@ void	sector_edit_events(t_editor *editor)
 		&& !hover_over_open_menus(editor))
 	{
 		// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
-		sector = get_sector_from_list_around_radius(editor->sectors, actual_pos, 1);
+		sector = get_sector_from_list_around_radius(editor->sectors, editor->mouse_pos, 1);
 		if (sector) // this is the place where everything happens when you select new sector;
 		{
 			editor->selected_sector = sector;
@@ -251,7 +250,7 @@ void	sector_edit_events(t_editor *editor)
 			t_point	*point;
 			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 			{
-				point = get_point_from_sector_around_radius(editor->selected_sector, actual_pos, 1.0f);
+				point = get_point_from_sector_around_radius(editor->selected_sector, editor->mouse_pos, 1.0f);
 				if (point)
 					editor->selected_point = point;
 			}
@@ -341,15 +340,11 @@ void	sector_edit_events(t_editor *editor)
 
 void	wall_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	actual_pos;
 	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
 
-	//calculate_hover(editor); // aleady done;
-	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
-	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 
@@ -359,7 +354,7 @@ void	wall_events(t_editor *editor, SDL_Event e)
 	{
 		t_wall	*wall;
 		// we dont want to make selected_wall NULL if we dont select a wall;
-		wall = get_wall_from_list_around_radius(editor->selected_sector->walls, actual_pos, 1.0f);
+		wall = get_wall_from_list_around_radius(editor->selected_sector->walls, editor->mouse_pos, 1.0f);
 		if (wall) // this is where we go when new wall selected;
 		{
 			editor->selected_wall = wall;
@@ -459,7 +454,6 @@ void	wall_events(t_editor *editor, SDL_Event e)
 
 void	entity_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	actual_pos;
 	t_vec2i	move_amount;
 	char	temp_str[20];
 
@@ -481,8 +475,6 @@ void	entity_events(t_editor *editor, SDL_Event e)
 	}
 
 //	calculate_hover(editor); // already calculated in user_events();
-	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
-	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->draw_button->state == UI_STATE_CLICK)
@@ -491,7 +483,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 			&& !hover_over_open_menus(editor))
 		{
 			t_entity	*entity = entity_new();
-			entity->pos = actual_pos;
+			entity->pos = editor->mouse_pos;
 			++editor->entity_amount;
 			add_to_list(&editor->entities, entity, sizeof(t_entity));
 		}
@@ -501,7 +493,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 			&& !ui_element_is_hover(editor->entity_edit_menu))
 		{
-			t_entity *entity = get_entity_from_list_around_radius(editor->entities, actual_pos, 1.0f);
+			t_entity *entity = get_entity_from_list_around_radius(editor->entities, editor->mouse_pos, 1.0f);
 			// we dont want to overwrite the currently selected entity if we dont actually find a new one;
 			if (entity)
 			{
@@ -787,22 +779,18 @@ char	**gen_sprite_id_texts(t_list *sprites)
 
 void	spawn_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	actual_pos;
 	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
 
-//	calculate_hover(editor); // already calculated in user_events();
-	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
-	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
 		if (!hover_over_open_menus(editor))
 			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
-				editor->spawn.pos = actual_pos;
+				editor->spawn.pos = editor->mouse_pos;
 	}
 	else if (editor->select_button->state == UI_STATE_CLICK)
 	{
@@ -816,13 +804,10 @@ void	spawn_events(t_editor *editor, SDL_Event e)
 void	info_menu_events(t_editor *editor, SDL_Event e)
 {
 	char	*final_str;
-	t_vec2i	actual_pos;
 
-	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
-	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	if (e.type == SDL_MOUSEMOTION)
 	{
-		final_str = ft_sprintf("%d, %d", actual_pos.x, actual_pos.y);
+		final_str = ft_sprintf("%d, %d", editor->mouse_pos.x, editor->mouse_pos.y);
 		ui_label_set_text(editor->mouse_info_label, final_str);
 		ft_strdel(&final_str);
 	}
@@ -871,6 +856,26 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 		ui_label_set_text(editor->sector_info_label, "NONE");
 		ui_label_set_text(editor->sub_info_label, "NONE");
 	}
+}
+
+void	sector_hover_info_events(t_editor *editor, SDL_Event e)
+{
+	char		*temp;
+	t_sector	*sector;
+
+	if (!editor->hovered_sector)
+	{
+		editor->sector_hover_info_menu->show = 0;
+		return ;
+	}
+	sector = editor->hovered_sector;
+	editor->sector_hover_info_menu->show = 1;
+	temp = ft_sprintf("Sector Info\n\nID: %d\n%27cFloor-%7cCeiling-\nHeight : %14d %16d\nTexture : %12d %16d\nTexture Scale : %2.2f %12.2f\n",
+			sector->id, ' ', ' ', sector->floor_height, sector->ceiling_height, sector->floor_texture, sector->ceiling_texture, sector->floor_scale, sector->ceiling_scale);
+	ui_label_set_text(editor->sector_hover_info_label, temp);
+	ft_strdel(&temp);
+	ui_element_pos_set2(editor->sector_hover_info_menu,
+		vec2(editor->win_main->mouse_pos.x + 10, editor->win_main->mouse_pos.y + 10));
 }
 
 void	send_info_message(t_editor *editor, char *text)
@@ -1207,15 +1212,12 @@ void	texture_menu_events(t_editor *editor, SDL_Event e)
 
 void	user_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	actual_pos;
 	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
 
 	calculate_hover(editor);
-	actual_pos.x = editor->mouse_pos.x + editor->offset.x;
-	actual_pos.y = editor->mouse_pos.y + editor->offset.y;
 	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
 	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 
@@ -1329,6 +1331,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 
 	info_menu_events(editor, e);
+	sector_hover_info_events(editor, e);
 	save_window_events(editor, e);
 	edit_window_events(editor, e);
 }
@@ -1398,14 +1401,8 @@ void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Ui
 	{
 		rgba = hex_to_rgba(color);
 
-//		TTF_SetFontOutline(font, 1);
-//		TTF_SetFontKerning(font, 0);
 		TTF_SetFontHinting(font, TTF_HINTING_MONO);
 		text_surface = TTF_RenderText_Blended(font, text, (SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
-//		TTF_SetFontOutline(font, 0);
-//		TTF_SetFontKerning(font, 1);
-		TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
-
 		SDL_BlitSurface(text_surface, NULL, surface, 
 			&(SDL_Rect){pos.x - (text_surface->w / 2), pos.y - (text_surface->h / 2),
 			text_surface->w, text_surface->h});
@@ -1420,7 +1417,9 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 	t_sector	*sector;
 	char		temp[20];
 	t_vec2i		converted_center;
+	t_sector	*hovered_this_frame;
 
+	hovered_this_frame = NULL;
 	while (sectors)
 	{
 		sector = sectors->content;
@@ -1434,8 +1433,13 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 			draw_text(editor->drawing_surface, "Not Convex!", editor->font, converted_center, 0xffff0000); 
 		if (sector->ceiling_height - sector->floor_height < 0)
 			draw_text(editor->drawing_surface, "Floor & Ceiling Height Doesn\'t Make Sense!", editor->font, converted_center, 0xffffff00); 
+		// Get hovered
+		if (vec2_in_vec4(editor->mouse_pos,
+			vec4i(sector->center.x - 1, sector->center.y - 1, 3, 3)))
+			hovered_this_frame = sector;
 		sectors = sectors->next;
 	}
+	editor->hovered_sector = hovered_this_frame;
 }
 
 void	draw_entities(t_editor *editor, t_list *entities)
@@ -1674,6 +1678,10 @@ void	editor_init(t_editor *editor)
 	// Global Info (used for telling user you have saved map for example)
 	editor->info_label = ui_list_get_element_by_id(editor->layout.elements, "info_label");
 	editor->info_label->show = 0;
+
+	// Sector Hover Info
+	editor->sector_hover_info_menu = ui_list_get_element_by_id(editor->layout.elements, "sector_hover_info_menu");
+	editor->sector_hover_info_label = ui_list_get_element_by_id(editor->layout.elements, "sector_hover_info_label");
 
 	// Event edit
 	editor->event_scrollbar = ui_list_get_element_by_id(editor->layout.elements, "event_scrollbar");

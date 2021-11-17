@@ -541,7 +541,7 @@ sprite_texture_button
 {
 	xywh : 10, 85, 27, 27;
 	text_pos : 0, -20, 100, 50;
-	title : Sprite Texture;
+	title : Texture;
 	text_color : 0xff000000;
 	bg_color_hover : 0xff0000ff;
 	bg_color_click : 0xff00ff00;
@@ -1117,6 +1117,21 @@ info_label
 	text_pos : 0, 0, 1920, 1080;
 	text_size : 128;
 	z : 9999999999;
+};
+
+sector_hover_info_menu
+{
+	xywh : 0, 0, 185, 110;
+	bg_color : 0xffb0b0b0;
+	z : 99999999999;
+};
+
+sector_hover_info_label
+{
+	xywh : 5, 5, 190, 90;
+	text_pos : 5, 5, 190, 90;
+	text_color : 0xff000000;
+	title : NO INFO SET;
 };
 
 ///////////////////

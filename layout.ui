@@ -261,6 +261,10 @@ Window win_main
 		Menu event_menu {};
 	};
 	Label info_label {};
+	Menu sector_hover_info_menu
+	{
+		Label sector_hover_info_label {};
+	};
 };
 
 Window win_save

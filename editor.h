@@ -214,6 +214,10 @@ typedef struct s_editor
 	int				info_label_timer;
 	int				info_label_start_timer;
 
+	t_ui_element	*sector_hover_info_menu;
+	t_ui_element	*sector_hover_info_label;
+	t_sector		*hovered_sector;
+
 	t_ui_window		*win_save;
 	t_ui_element	*story_button;
 	t_ui_element	*endless_button;
