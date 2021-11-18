@@ -238,6 +238,7 @@ typedef struct s_editor
 	float			gap_size;
 	float			zoom;
 	t_vec2i			mouse_pos;
+	t_vec2i			move_amount;
 	t_vec2i			offset;
 	SDL_Surface		*grid_surface;
 	bool			update_grid;

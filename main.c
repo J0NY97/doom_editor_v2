@@ -7,6 +7,9 @@ void	calculate_hover(t_editor *editor)
 {
 	editor->mouse_pos.x = (editor->win_main->mouse_pos.x / (editor->gap_size * editor->zoom)) + editor->offset.x;
 	editor->mouse_pos.y = (editor->win_main->mouse_pos.y / (editor->gap_size * editor->zoom)) + editor->offset.y;
+
+	editor->move_amount.x = (editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x);
+	editor->move_amount.y = (editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y);
 }
 
 /*
@@ -192,13 +195,10 @@ void	sector_events(t_editor *editor, SDL_Event e)
 void	sector_edit_events(t_editor *editor)
 {
 	t_sector	*sector;
-	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
 
-	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor))
 	{
@@ -235,8 +235,8 @@ void	sector_edit_events(t_editor *editor)
 		while (wall_list)
 		{
 			wall = wall_list->content;
-			wall->p1->pos = vec2i_add(wall->p1->pos, move_amount);
-			wall->p2->pos = vec2i_add(wall->p2->pos, move_amount);
+			wall->p1->pos = vec2i_add(wall->p1->pos, editor->move_amount);
+			wall->p2->pos = vec2i_add(wall->p2->pos, editor->move_amount);
 			wall_list = wall_list->next;
 		}
 	}
@@ -254,7 +254,7 @@ void	sector_edit_events(t_editor *editor)
 					editor->selected_point = point;
 			}
 			else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT) // MOVE POINT
-				editor->selected_point->pos = vec2i_add(editor->selected_point->pos, move_amount);
+				editor->selected_point->pos = vec2i_add(editor->selected_point->pos, editor->move_amount);
 		}
 		else
 			editor->selected_point = NULL;
@@ -339,7 +339,6 @@ void	sector_edit_events(t_editor *editor)
 
 void	wall_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
@@ -372,10 +371,8 @@ void	wall_events(t_editor *editor, SDL_Event e)
 		&& !(editor->wall_render->show == 1
 		&& ui_element_is_hover(editor->sprite_edit_menu))) // only move wall if we are hovering over the sprite_edit_menu;
 	{
-		move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-		move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
-		editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, move_amount);
-		editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, move_amount);
+		editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, editor->move_amount);
+		editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, editor->move_amount);
 	}
 
 	// Close Wall Menu Button
@@ -449,7 +446,6 @@ void	wall_events(t_editor *editor, SDL_Event e)
 
 void	entity_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
@@ -468,8 +464,6 @@ void	entity_events(t_editor *editor, SDL_Event e)
 		editor->entity_z_input->event = 1;
 	}
 
-	move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-	move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
@@ -502,7 +496,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 		}
 		else if (editor->selected_entity
 			&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
-			editor->selected_entity->pos = vec2i_add(editor->selected_entity->pos, move_amount);
+			editor->selected_entity->pos = vec2i_add(editor->selected_entity->pos, editor->move_amount);
 
 		if (editor->selected_entity)
 		{
@@ -767,7 +761,6 @@ char	**gen_sprite_id_texts(t_list *sprites)
 
 void	spawn_events(t_editor *editor, SDL_Event e)
 {
-	t_vec2i	move_amount;
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
@@ -784,10 +777,8 @@ void	spawn_events(t_editor *editor, SDL_Event e)
 	}
 	else if (editor->select_button->state == UI_STATE_CLICK)
 	{
-		move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-		move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
 		if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
-			editor->spawn.pos = vec2i_add(editor->spawn.pos, move_amount);
+			editor->spawn.pos = vec2i_add(editor->spawn.pos, editor->move_amount);
 	}
 
 	// Yaw input
@@ -1098,15 +1089,12 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 	// Editing Sprite
 	if (editor->selected_sprite)
 	{
-		t_vec2i	move_amount = vec2i(0, 0);
 		// Moving
 		if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT // moving With mouse
 			&& ui_element_is_hover(editor->sprite_edit_menu))
 		{
-			move_amount.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
-			move_amount.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
-			editor->selected_sprite->pos.x = editor->selected_sprite->pos.x + move_amount.x;
-			editor->selected_sprite->pos.y = editor->selected_sprite->pos.y + move_amount.y;
+			editor->selected_sprite->pos.x = editor->selected_sprite->pos.x + editor->move_amount.x;
+			editor->selected_sprite->pos.y = editor->selected_sprite->pos.y + editor->move_amount.y;
 			ui_input_set_text(editor->sprite_x_input, ft_b_itoa(editor->selected_sprite->pos.x, temp_str));
 			ui_input_set_text(editor->sprite_y_input, ft_b_itoa(editor->selected_sprite->pos.y, temp_str));
 		}
