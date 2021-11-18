@@ -5,11 +5,17 @@
 */
 void	calculate_hover(t_editor *editor)
 {
+	editor->last_mouse_pos = editor->mouse_pos;
+
 	editor->mouse_pos.x = (editor->win_main->mouse_pos.x / (editor->gap_size * editor->zoom)) + editor->offset.x;
 	editor->mouse_pos.y = (editor->win_main->mouse_pos.y / (editor->gap_size * editor->zoom)) + editor->offset.y;
 
+	/*
 	editor->move_amount.x = (editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x);
 	editor->move_amount.y = (editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y);
+	*/
+	editor->move_amount.x = editor->mouse_pos.x - editor->last_mouse_pos.x;
+	editor->move_amount.y = editor->mouse_pos.y - editor->last_mouse_pos.y;
 }
 
 /*
@@ -228,6 +234,7 @@ void	sector_edit_events(t_editor *editor)
 		&& !editor->selected_point
 		&& !editor->selected_wall)
 	{
+		// NOTE: we only need to move the p1 because we sort the list of walls in the sector rendering;
 		t_list	*wall_list;
 		t_wall	*wall;
 
@@ -236,7 +243,7 @@ void	sector_edit_events(t_editor *editor)
 		{
 			wall = wall_list->content;
 			wall->p1->pos = vec2i_add(wall->p1->pos, editor->move_amount);
-			wall->p2->pos = vec2i_add(wall->p2->pos, editor->move_amount);
+		//	wall->p2->pos = vec2i_add(wall->p2->pos, editor->move_amount);
 			wall_list = wall_list->next;
 		}
 	}
@@ -1434,7 +1441,7 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		converted_center = conversion(editor, sector->center);
 		ft_b_itoa(sector->id, temp);
 		draw_text(editor->drawing_surface, temp, editor->font, converted_center, 0xffffffff);
-		if (!check_sector_convexity(sector))
+		if (!check_sector_convexity(editor, sector))
 			draw_text(editor->drawing_surface, "Not Convex!", editor->font, converted_center, 0xffff0000); 
 		if (sector->ceiling_height - sector->floor_height < 0)
 			draw_text(editor->drawing_surface, "Floor & Ceiling Height Doesn\'t Make Sense!", editor->font, converted_center, 0xffffff00); 
@@ -1460,7 +1467,9 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 {
 	t_entity	*entity;
 	t_sector	*inside_sector;
+	char		temp_str[20];
 
+	ft_strnclr(temp_str, 20);
 	while (entities)
 	{
 		entity = entities->content;
@@ -1468,21 +1477,22 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 
 		// Check if entity inside a sector;
 		t_list *curr = editor->sectors;
-		int		found = 0;
 		inside_sector = NULL;
 		while (curr)
 		{
 			if (check_point_in_sector(curr->content, entity->pos) == 1)
 			{
-				found = 1;
 				inside_sector = curr->content;
 				break ;
 			}
 			curr = curr->next;
 		}
-		if (!found)
+		if (!inside_sector)
 			draw_text(editor->drawing_surface, "Not Inside Sector!",
 				editor->font, conversion(editor, entity->pos), 0xffff0000); 
+		else if (inside_sector)
+			draw_text(editor->drawing_surface, ft_b_itoa(inside_sector->id, temp_str),
+				editor->font, conversion(editor, vec2i(entity->pos.x + 2, entity->pos.y)), 0xffb0b0b0); 
 		if (inside_sector && (entity->z < inside_sector->floor_height || entity->z > inside_sector->ceiling_height))
 			draw_text(editor->drawing_surface, "Z not between Floor & Ceiling!",
 				editor->font, conversion(editor, entity->pos), 0xffff0000); 

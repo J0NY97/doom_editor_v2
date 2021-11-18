@@ -123,8 +123,9 @@ int	get_next_sector_id(t_list *list)
 /*
  * Yoinked from here:
  * http://www.sunshine2k.de/coding/java/Polygon/Convex/polygon.htm
+ * https://github.com/Epicurius
 */
-int	check_sector_convexity(t_sector *sector)
+int	check_sector_convexity(t_editor *editor, t_sector *sector)
 {
 	t_vec2i	p;
 	t_vec2i	v;
@@ -148,18 +149,17 @@ int	check_sector_convexity(t_sector *sector)
 			curr = curr->next;
 			continue ;
 		}
-		p = w1->p1->pos; 
-		t_vec2i tmp = w1->p2->pos;
-		v.x = tmp.x - p.x;
-		v.y = tmp.y - p.y;
+		p = w1->p2->pos; 
+		v = w1->p1->pos; // This is the one we're comparing;
 		u = w2->p2->pos;
 		if (i == 0)
-			res = u.x * v.y - u.y * v.x + v.x * p.y - v.y * p.x;
+			res = (u.x - p.x) * (v.y - p.y) - (u.y - p.y) * (v.x - p.x);
 		else
 		{
-			int newres = u.x * v.y - u.y * v.x + v.x * p.y - v.y * p.x;
+			int newres = (u.x - p.x) * (v.y - p.y) - (u.y - p.y) * (v.x - p.x);
 			if ((newres > 0 && res < 0) || (newres < 0 && res > 0))
 				return (0);
+			res = newres;
 		}
 		i++;
 		curr = curr->next;
@@ -187,15 +187,16 @@ int	check_point_in_sector(t_sector *sector, t_vec2i p)
 	while (curr)
 	{
 		wall = curr->content;
-		p0 = wall->p1->pos; 
+		p0 = wall->p1->pos;
 		p1 = wall->p2->pos;
 		if (i == 0)
 			res = (p.y - p0.y) * (p1.x - p0.x) - (p.x - p0.x) * (p1.y - p0.y);
 		else
 		{
 			newres = (p.y - p0.y) * (p1.x - p0.x) - (p.x - p0.x) * (p1.y - p0.y);
-			if ((newres > 0 && res < 0) || (newres < 0 && res > 0))
+			if (newres == 0 || res == 0 || (newres > 0 && res < 0) || (newres < 0 && res > 0))
 				return (0);
+			res = newres;
 		}
 		i++;
 		curr = curr->next;
