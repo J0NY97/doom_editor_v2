@@ -39,11 +39,10 @@ void	get_points(t_editor *editor, char **lines, int *i)
 		if (lines[*i][0] == '-')
 			break ;
 		args = ft_strsplit(lines[*i], '\t');
-		point = ft_memalloc(sizeof(t_point));
+		point = add_point(editor);
 		point->id = ft_atoi(args[0]);
 		point->pos.x = ft_atoi(args[1]);
 		point->pos.y = ft_atoi(args[2]);
-		add_to_list(&editor->points, point, sizeof(t_point));
 		ft_arraydel(args);
 	}
 	ft_printf("Success.\n");
@@ -61,7 +60,7 @@ void	get_walls(t_editor *editor, char **lines, int *i)
 		if (lines[*i][0] == '-')
 			break ;
 		args = ft_strsplit(lines[*i], '\t');
-		wall = wall_new();
+		wall = add_wall(editor);
 		wall->id = ft_atoi(args[0]);
 		wall->p1 = get_point_with_id(editor->points, ft_atoi(args[1]));
 		wall->p2 = get_point_with_id(editor->points, ft_atoi(args[2]));
@@ -69,7 +68,6 @@ void	get_walls(t_editor *editor, char **lines, int *i)
 		wall->portal_texture = ft_atoi(args[4]);
 		wall->texture_scale = ft_atof(args[5]);
 		wall->solid = ft_atoi(args[6]);
-		add_to_list(&editor->walls, wall, sizeof(t_wall));
 		ft_arraydel(args);
 	}
 	ft_printf("Success.\n");
@@ -97,6 +95,7 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 		{
 			sprite = sprite_new();
 			sprite->id = ft_atoi(args[0]);
+			sprite->parent = parent_wall;
 			sprite->pos.x = ft_atoi(args[2]);
 			sprite->pos.x = ft_atoi(args[3]);
 			sprite->texture = ft_atoi(args[4]);

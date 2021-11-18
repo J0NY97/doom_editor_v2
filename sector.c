@@ -96,6 +96,7 @@ int	remove_sector(t_editor *editor, t_sector *sector)
 	free(sector);
 	sector = NULL;
 	ft_printf("[%s] Sector removed from editor->sectors\n", __FUNCTION__);
+	--editor->sector_amount;
 	return (1);
 }
 

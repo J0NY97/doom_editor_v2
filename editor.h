@@ -406,7 +406,9 @@ void				point_render(t_editor *editor, t_point *point, Uint32 color);
 t_point				*get_point_with_id(t_list *list, int id);
 t_point				*get_point_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
 t_point				*get_point_from_sector_around_radius(t_sector *sector, t_vec2i pos, float allowed_radius);
+t_point				*add_point(t_editor *editor);
 int					remove_point(t_editor *editor, t_point *point);
+void				remove_all_lonely_points(t_editor *editor);
 
 // Wall
 t_wall				*wall_new(void);
@@ -417,7 +419,9 @@ void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
 t_wall				*get_wall_with_id(t_list *list, int id);
 t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
 t_vec2i				get_wall_middle(t_wall *wall);
+t_wall				*add_wall(t_editor *editor);
 int					remove_wall(t_editor *editor, t_wall *wall);
+void				remove_all_lonely_walls(t_editor *editor);
 void				remove_wall_list_angles(t_list *list, int which);
 t_wall				*get_connected_wall(t_list *list, t_wall *wall);
 void				sort_walls(t_list *list);

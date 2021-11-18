@@ -5,6 +5,35 @@ void	point_render(t_editor *editor, t_point *point, Uint32 color)
 	ui_surface_circle_draw_filled(editor->drawing_surface, conversion(editor, point->pos), 3, color);
 }
 
+/*
+ * Creates new point and adds it to editor->points;
+ * Returns itself;
+*/
+t_point	*add_point(t_editor *editor)
+{
+	t_point	*point;	
+
+	point = ft_memalloc(sizeof(t_point));
+	++editor->point_amount;
+	add_to_list(&editor->points, point, sizeof(t_point));
+	return (point);
+}
+
+/*
+ * Removes point from all sectors, walls, and from anything else that are using this point;
+*/
+int	remove_point(t_editor *editor, t_point *point)
+{
+	if (!point)
+		return (0);
+	remove_from_list(&editor->points, point);
+	free(point);
+	point = NULL;
+	ft_printf("[%s] Done removing point.\n", __FUNCTION__);
+	--editor->point_amount;
+	return (1);
+}
+
 t_point	*get_point_with_id(t_list *list, int id)
 {
 	while (list)
@@ -100,20 +129,6 @@ t_point	*get_point_from_sector_around_radius(
 	return (temp);
 }
 
-/*
- * Removes point from all sectors, walls, and from anything else that are using this point;
-*/
-int	remove_point(t_editor *editor, t_point *point)
-{
-	if (!point)
-		return (0);
-	remove_from_list(&editor->points, point);
-	free(point);
-	point = NULL;
-	ft_printf("[%s] Done removing point.\n", __FUNCTION__);
-	return (1);
-}
-
 void	remove_from_list(t_list **list, void *pointer)
 {
 	t_list	*curr;
@@ -124,5 +139,61 @@ void	remove_from_list(t_list **list, void *pointer)
 		if (curr->content == pointer)
 			ft_lstdelone_nonfree(list, curr);
 		curr = curr->next;
+	}
+}
+
+/*
+ * Is this point a point in any of the point in wall;
+*/
+int	point_in_wall(t_wall *wall, t_point *point)
+{
+	return (wall->p1 == point || wall->p2 == point);
+}
+
+/*
+ * Is this point a point in any of the walls in sector;
+*/
+int	point_in_sector(t_sector *sector, t_point *point)
+{
+	t_list	*curr;
+
+	if (!sector || !point)
+		return (0);
+	curr = sector->walls;
+	while (curr)
+	{
+		if (point_in_wall(curr->content, point))
+			return (1);
+		curr = curr->next;
+	}
+	return (0);
+}
+
+/*
+ *  Check if the point is in any of the list of sectors; (must be list of t_sector);
+*/
+int	point_in_any_sector(t_list *sectors, t_point *point)
+{
+	while (sectors)
+	{
+		if (point_in_sector(sectors->content, point))
+			return (1);
+		sectors = sectors->next;
+	}
+	return (0);
+}
+
+void	remove_all_lonely_points(t_editor *editor)
+{
+	t_list	*curr;
+	t_list	*next;
+
+	curr = editor->points;
+	while (curr)
+	{
+		next = curr->next;
+		if (!point_in_any_sector(editor->sectors, curr->content))
+			remove_point(editor, curr->content);
+		curr = next;
 	}
 }

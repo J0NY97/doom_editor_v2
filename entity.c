@@ -22,6 +22,8 @@ int	remove_entity(t_editor *editor, t_entity *entity)
 		return (0);
 	remove_from_list(&editor->entities, entity);
 	entity_free(entity);
+	--editor->entity_amount;
+	ft_printf("[%s] Entity Removed.\n", __FUNCTION__);
 	return (1);
 }
 

@@ -34,9 +34,13 @@ void	remove_sprite(t_editor *editor, t_sprite *sprite)
 	if (!sprite)
 		return ;
 	remove_from_list(&editor->sprites, sprite);
-	remove_from_list(&sprite->parent->sprites, sprite);
+	if (!sprite->parent)
+		ft_printf("[%s] Sprite doesnt have parent... Error!\n", __FUNCTION__);
+	else
+		remove_from_list(&sprite->parent->sprites, sprite);
 	sprite_free(sprite);
 	sprite = NULL;
+	--editor->sprite_amount;
 }
 
 int	get_next_sprite_id(t_list *list)

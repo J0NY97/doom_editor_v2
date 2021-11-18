@@ -83,6 +83,24 @@ int	check_if_you_can_make_wall_portal(t_editor *editor)
 }
 
 /*
+ * 1. Remove all neighbors from walls that sector doesnt exist anymore;
+*/
+void	wall_cleanup(t_editor *editor)
+{
+	t_wall	*wall;
+	t_list	*curr;
+
+	curr = editor->walls;
+	while (curr)
+	{
+		wall = curr->content;
+		if (!get_sector_with_id(editor->sectors, wall->neighbor_id))
+			wall->neighbor = NULL;
+		curr = curr->next;
+	}
+}
+
+/*
  * 1. Remove all the points not a part of a sector;
  * 2. Remove all walls with either points NULL;
  * 2.5. Remove all neighbors not connected; (if a wall has neighbor but it's corresponding neighbor/sector doesn't have same wall as neighbor, or at all);
@@ -90,7 +108,12 @@ int	check_if_you_can_make_wall_portal(t_editor *editor)
 */
 void	sector_cleanup(t_editor *editor)
 {
-	(void)editor;
+	remove_all_lonely_walls(editor);
+	ft_printf("[%s] Done cleaning walls!\n", __FUNCTION__);
+	remove_all_lonely_points(editor);
+	ft_printf("[%s] Done cleaning points!\n", __FUNCTION__);
+	wall_cleanup(editor);
+	ft_printf("[%s] Cleanup crew done!\n", __FUNCTION__);
 }
 
 void	sector_events(t_editor *editor, SDL_Event e)
@@ -131,26 +154,23 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			if (editor->first_point_set && editor->second_point_set)
 			{
 				t_wall	*wall;
-				wall = wall_new();
+				wall = add_wall(editor);
 				wall->wall_texture = 7;
 				wall->p1 = get_point_from_sector_around_radius(editor->selected_sector, editor->first_point, 0.0f);
 				if (!wall->p1)
 				{
-					wall->p1 = ft_memalloc(sizeof(t_point));
+					wall->p1 = add_point(editor);
 					wall->p1->pos = editor->first_point;
-					add_to_list(&editor->points, wall->p1, sizeof(t_point));
 				}
 				wall->p2 = get_point_from_sector_around_radius(editor->selected_sector, editor->second_point, 0.0f);
 				if (!wall->p2)
 				{
-					wall->p2 = ft_memalloc(sizeof(t_point));
+					wall->p2 = add_point(editor);
 					wall->p2->pos = editor->second_point;
-					add_to_list(&editor->points, wall->p2, sizeof(t_point));
 				}
 				editor->first_point_set = 0;
 				editor->second_point_set = 0;
 				++editor->selected_sector->wall_amount;
-				add_to_list(&editor->walls, wall, sizeof(t_wall));
 				add_to_list(&editor->selected_sector->walls, wall, sizeof(t_wall));
 				if (!editor->selected_sector->first_point_set)
 				{
@@ -218,36 +238,6 @@ void	sector_edit_events(t_editor *editor)
 			wall->p1->pos = vec2i_add(wall->p1->pos, move_amount);
 			wall->p2->pos = vec2i_add(wall->p2->pos, move_amount);
 			wall_list = wall_list->next;
-		}
-	}
-
-	// Remove
-	if (editor->remove_button->state == UI_STATE_CLICK)
-	{
-		int	was_removed = 0;
-		if (editor->selected_point)
-			was_removed = remove_point(editor, editor->selected_point);
-		else if (editor->selected_wall)
-			was_removed = remove_wall(editor, editor->selected_wall);
-		else if (editor->selected_sector)
-		{
-			was_removed = remove_sector(editor, editor->selected_sector);
-			--editor->sector_amount;
-			editor->selected_sector = NULL;
-		}
-		else if (editor->selected_entity)
-		{
-			was_removed = remove_entity(editor, editor->selected_entity);
-			--editor->entity_amount;
-			editor->selected_entity = NULL;
-		}
-		if (was_removed)
-		{
-			editor->selected_point = NULL;
-			editor->selected_wall = NULL;
-			editor->selected_sprite = NULL;
-			editor->selected_entity = NULL;
-			sector_cleanup(editor);
 		}
 	}
 
@@ -406,17 +396,15 @@ void	wall_events(t_editor *editor, SDL_Event e)
 
 			p1 = editor->selected_wall->p1;
 			p2 = editor->selected_wall->p2;
-			p3 = ft_memalloc(sizeof(t_point));
+			p3 = add_point(editor);
 			p3->pos = get_wall_middle(editor->selected_wall);
-			add_to_list(&editor->points, p3, sizeof(t_point));
 
 			editor->selected_wall->p1 = p3;
 
-			new_wall = wall_new();
+			new_wall = add_wall(editor);
 			new_wall->p1 = p1;
 			new_wall->p2 = p3;
 			add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
-			add_to_list(&editor->walls, new_wall, sizeof(t_wall));
 		}
 			// TODO: ui_checkbox really needs an updated, we dont want to update these everytime, we want someway to only do stuff if the toggle state has changed;
 		editor->selected_wall->solid = editor->solid_checkbox->state == UI_STATE_CLICK;
@@ -1251,6 +1239,32 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_point = NULL;
 	}
 
+	// Remove button (dont remove it, it's its name)
+	if (editor->remove_button->state == UI_STATE_CLICK)
+	{
+		int	was_removed = 0;
+		/* Use this once they go through the parent and remove itself from their list too! (crash otherwise);
+		if (editor->selected_point)
+			was_removed = remove_point(editor, editor->selected_point);
+		else if (editor->selected_wall)
+			was_removed = remove_wall(editor, editor->selected_wall);
+		else*/ if (editor->selected_sector)
+		{
+			was_removed = remove_sector(editor, editor->selected_sector);
+			editor->selected_sector = NULL;
+		}
+		else if (editor->selected_entity)
+			was_removed = remove_entity(editor, editor->selected_entity);
+		if (was_removed)
+		{
+			editor->selected_point = NULL;
+			editor->selected_wall = NULL;
+			editor->selected_sprite = NULL;
+			editor->selected_entity = NULL;
+			sector_cleanup(editor);
+		}
+	}
+
 	// Sector Events
 	if (editor->sector_button->state == UI_STATE_CLICK)
 	{
@@ -1828,7 +1842,7 @@ int	main(int ac, char **av)
 	if (args_parser(&editor, ac, av))
 		get_map(&editor, editor.map_full_path);
 	else
-		ft_printf("[%s] No map given to open.\n", __FUNCTION__);
+		ft_printf("[%s] No map given.\n", __FUNCTION__);
 
 	t_fps	fps;
 	memset(&fps, 0, sizeof(t_fps));

@@ -20,6 +20,48 @@ void	wall_render(t_editor *editor, t_wall *wall, Uint32 color)
 	ui_surface_line_draw(editor->drawing_surface, p1, p2, color);
 }
 
+void	remove_all_wall_sprites(t_editor *editor, t_wall *wall)
+{
+	t_list	*curr;
+	t_list	*next;
+
+	curr = wall->sprites;
+	while (curr)
+	{
+		next = curr->next;
+		remove_sprite(editor, curr->content);
+		curr = next;
+	}
+}
+
+/*
+ * Removes wall from editor walls;
+*/
+int	remove_wall(t_editor *editor, t_wall *wall)
+{
+	if (!wall)
+		return (0);
+	remove_from_list(&editor->walls, wall);
+	remove_all_wall_sprites(editor, wall);
+	free(wall);
+	wall = NULL;
+	--editor->wall_amount;
+	return (1);
+}
+
+/*
+ * Add wall to editor->walls and returns itself;
+*/
+t_wall	*add_wall(t_editor *editor)
+{
+	t_wall	*wall;	
+
+	wall = wall_new();
+	add_to_list(&editor->walls, wall, sizeof(t_wall));
+	++editor->wall_amount;
+	return (wall);
+}
+
 t_list	*get_next_wall_node(t_list *list, t_wall *wall)
 {
 	t_wall	*dest_wall;
@@ -140,31 +182,6 @@ t_vec2i	get_wall_middle(t_wall *wall)
 	return (middle);
 }
 
-void	remove_all_wall_sprites(t_editor *editor, t_wall *wall)
-{
-	t_list	*curr;
-
-	curr = wall->sprites;
-	while (curr)
-	{
-		remove_sprite(editor, curr->content);
-		curr = curr->next;
-	}
-	ft_lstdel(&wall->sprites, &dummy_free_er);
-}
-
-int	remove_wall(t_editor *editor, t_wall *wall)
-{
-	if (!wall)
-		return (0);
-	remove_from_list(&editor->walls, wall);
-	remove_all_wall_sprites(editor, wall);
-	free(wall);
-	wall = NULL;
-	ft_printf("[%s] Done removing wall.\n", __FUNCTION__);
-	return (1);
-}
-
 void	remove_sprite_from_wall(t_sprite *sprite, t_wall *wall)
 {
 	t_list	*curr;
@@ -208,4 +225,65 @@ t_wall	*get_connected_wall(t_list *list, t_wall *wall)
 		list = list->next;
 	}
 	return (NULL);
+}
+
+///////////////////
+// Cleanup
+//////////////////
+
+int	wall_in_sector(t_sector *sector, t_wall *wall)
+{
+	t_list	*curr;
+
+	if (!wall)
+	{
+		ft_printf("[%s] Wall == NULL\n", __FUNCTION__);
+		return (-1);
+	}
+	curr = sector->walls;
+	while (curr)
+	{
+		if (curr->content == wall)
+			return (1);
+		curr = curr->next;
+	}
+	return (0);
+}
+
+int	wall_in_any_sector(t_list *sectors, t_wall *wall)
+{
+	if (!wall)
+	{
+		ft_printf("[%s] Wall == NULL\n", __FUNCTION__);
+		return (-1);
+	}
+	while (sectors)
+	{
+		if (wall_in_sector(sectors->content, wall))
+			return (1);
+		sectors = sectors->next;
+	}
+	return (0);
+}
+
+/*
+ * Removes all walls not a part of a sector;
+ * Remove all incomplete walls;
+*/
+void	remove_all_lonely_walls(t_editor *editor)
+{
+	t_wall	*wall;
+	t_list	*curr;
+	t_list	*next;
+
+	curr = editor->walls;
+	while (curr)
+	{
+		wall = curr->content;
+		next = curr->next;
+		if (!wall_in_any_sector(editor->sectors, wall)
+			|| wall->p1 == NULL || wall->p2 == NULL)
+			remove_wall(editor, curr->content);
+		curr = next;
+	}
 }
