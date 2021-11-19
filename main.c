@@ -1505,7 +1505,6 @@ void	draw_entities(t_editor *editor, t_list *entities)
 void	draw_entities_yaw(t_editor *editor, t_list *entities)
 {
 	t_entity	*entity;
-	t_sector	*inside_sector;
 	char		temp_str[20];
 
 	ft_strnclr(temp_str, 20);
@@ -1516,26 +1515,27 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 
 		// Check if entity inside a sector;
 		t_list *curr = editor->sectors;
-		inside_sector = NULL;
+		entity->inside_sector = NULL;
 		while (curr)
 		{
 			if (check_point_in_sector(curr->content, entity->pos) == 1)
 			{
-				inside_sector = curr->content;
+				entity->inside_sector = curr->content;
 				break ;
 			}
 			curr = curr->next;
 		}
-		if (!inside_sector)
+		if (!entity->inside_sector)
 		{
 			draw_text(editor->drawing_surface, "Not Inside Sector!",
 				editor->font, conversion(editor, entity->pos), 0xffff0000); 
 			editor->errors += 1;
 		}
-		else if (inside_sector)
-			draw_text(editor->drawing_surface, ft_b_itoa(inside_sector->id, temp_str),
+		else if (entity->inside_sector)
+			draw_text(editor->drawing_surface, ft_b_itoa(entity->inside_sector->id, temp_str),
 				editor->font, conversion(editor, vec2i(entity->pos.x + 2, entity->pos.y)), 0xffb0b0b0); 
-		if (inside_sector && (entity->z < inside_sector->floor_height || entity->z > inside_sector->ceiling_height))
+		if (entity->inside_sector
+			&& (entity->z < entity->inside_sector->floor_height || entity->z > entity->inside_sector->ceiling_height))
 		{
 			draw_text(editor->drawing_surface, "Z not between Floor & Ceiling!",
 				editor->font, conversion(editor, entity->pos), 0xffff0000); 
@@ -1568,26 +1568,25 @@ void	draw_spawn(t_editor *editor)
 	ui_surface_circle_draw_filled(editor->drawing_surface,
 		conversion(editor, editor->spawn.pos), 10, 0xff00ff00);
 
-	t_sector	*inside_sector = NULL;
 	t_list		*curr = editor->sectors;
-
+	editor->spawn.inside_sector = NULL;
 	while (curr)
 	{
 		if (check_point_in_sector(curr->content, editor->spawn.pos) == 1)
 		{
-			inside_sector = curr->content;
+			editor->spawn.inside_sector = curr->content;
 			break ;
 		}
 		curr = curr->next;
 	}
-	if (!inside_sector)
+	if (!editor->spawn.inside_sector)
 	{
 		draw_text(editor->drawing_surface, "Not Inside Sector!",
 			editor->font, conversion(editor, editor->spawn.pos), 0xffff0000); 
 		editor->errors += 1;
 	}
-	if (inside_sector)
-		editor->spawn.z = inside_sector->floor_height;
+	if (editor->spawn.inside_sector)
+		editor->spawn.z = editor->spawn.inside_sector->floor_height;
 }
 
 void	user_render(t_editor *editor)

@@ -44,6 +44,7 @@ struct s_spawn
 	t_vec2i			pos;
 	int				z;
 	int				yaw;
+	t_sector		*inside_sector;
 };
 
 /*
@@ -381,6 +382,7 @@ struct s_entity
 	t_vec2i			pos;
 	int				z;
 	int				yaw;
+	t_sector		*inside_sector;
 };
 
 /*

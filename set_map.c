@@ -23,13 +23,18 @@ char	*set_map_info(t_editor *editor)
 char	*set_spawn(t_editor *editor)
 {
 	char	*final;
+	int		inside_sector_id;
 
-	final = ft_sprintf("type:spawn\tx\ty\tz\tyaw\n%d\t%d\t%d\t%d\t%d\n",
+	inside_sector_id = -1;
+	if (editor->spawn.inside_sector)
+		inside_sector_id = editor->spawn.inside_sector->id;
+	final = ft_sprintf("type:spawn\tx\ty\tz\tyaw\tsector\n%d\t%d\t%d\t%d\t%d\t%d\n",
 			0,
 			editor->spawn.pos.x,
 			editor->spawn.pos.y,
 			editor->spawn.z,
-			editor->spawn.yaw);
+			editor->spawn.yaw,
+			inside_sector_id);
 	return (final);
 }
 
@@ -257,17 +262,21 @@ char	*set_entity(t_editor *editor)
 	t_list		*curr;
 	t_entity	*entity;
 	int			id;
+	int			inside_sector_id;
 
 	id = -1;
-	final = ft_sprintf("type:entity\tname\tx\ty\tz\td\n");
+	final = ft_sprintf("type:entity\tname\tx\ty\tz\td\tsector\n");
 	curr = editor->entities;
 	while (curr)
 	{
 		entity = curr->content;
-		temp = ft_sprintf("%d\t%s\t%d\t%d\t%d\t%d\n",
-				++id, g_entity_data[entity->type].name,
+		inside_sector_id = -1;
+		if (entity->inside_sector)
+			inside_sector_id = entity->inside_sector->id;
+		temp = ft_sprintf("%d\t%s\t%d\t%d\t%d\t%d\t%d\n",
+				++id, g_entity_data[entity->type - 1].name,
 				entity->pos.x, entity->pos.y, entity->z,
-				entity->yaw);
+				entity->yaw, inside_sector_id);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
