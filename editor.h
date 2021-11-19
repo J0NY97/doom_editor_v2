@@ -111,6 +111,8 @@ typedef struct s_editor
 	t_ui_element	*edit_button;
 	t_ui_element	*save_button;
 
+	t_ui_element	*error_label;
+
 	t_ui_element	*sector_edit_menu;
 	t_ui_element	*close_sector_edit_button;
 	t_ui_element	*sector_edit_ok_button;
@@ -243,6 +245,7 @@ typedef struct s_editor
 	t_vec2i			offset;
 	SDL_Surface		*grid_surface;
 	bool			update_grid;
+	int				errors; // (reset at start of user_render) this is keeping count on how many errors we have in map (both entity and sector), if we waant at some point the errors to be per sector and entity try to make this as 'changeable' as possible; (make this Uint and | (or) the SECTOR_ERROR | ENTITY_ERROR | SPAWN_ERROR...;
 
 	SDL_Surface		*wall_textures[MAP_TEXTURE_AMOUNT];
 	SDL_Texture		*entity_textures[ENTITY_AMOUNT + 1];
@@ -485,6 +488,7 @@ float				get_aspect(float w, float h);
 char				**gen_sector_id_texts(t_list *sectors);
 void				create_buttons_to_list_from_texts_remove_extra(t_ui_element *parent, char **texts, t_ui_recipe *recipe);
 void				draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
+void				draw_text_on_texture(SDL_Texture *texture, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 
 // Bxpm
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);

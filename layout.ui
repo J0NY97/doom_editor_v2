@@ -54,6 +54,7 @@ Window win_main
 			};
 		};
 	};
+	Label error_label {};
 	Menu sector_edit_menu
 	{
 		Menu sector_label_menu

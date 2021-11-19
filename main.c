@@ -927,7 +927,7 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 			set_map(editor, actual_full_path);
 			ft_strdel(&actual_full_path);
 			ui_window_flag_set(editor->win_save, UI_WINDOW_HIDE);
-			send_info_message(editor, "Map Saved Muccessfully!");
+			send_info_message(editor, "Map Saved Successfully!");
 		}
 	}
 }
@@ -1424,6 +1424,39 @@ void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Ui
 		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
 }
 
+/*
+ * NOTE: this doesnt work on texture that update every frame;
+ * NOTE: im not 100% sure this works;
+ * !! IMPORTANT !!! ^
+*/
+void	draw_text_on_texture(SDL_Texture *texture, char *text, TTF_Font *font, t_vec2i pos, Uint32 color)
+{
+	SDL_Surface	*text_surface;
+	t_rgba		rgba;
+	int			t_w;
+	int			t_h;
+	SDL_Rect	rect;
+
+	if (font)
+	{
+		rgba = hex_to_rgba(color);
+		TTF_SetFontHinting(font, TTF_HINTING_MONO);
+		text_surface = TTF_RenderText_Blended(font, text, (SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
+		// TODO : if this is a function that will stay for a longer time, consider chekcing the format to be the same as the one that the ttf outputs on the surface;
+		SDL_QueryTexture(texture, NULL, NULL, &t_w, &t_h);
+		rect.x = ft_clamp(pos.x - (text_surface->w / 2), 0, t_w);
+		rect.y = ft_clamp(pos.y - (text_surface->h / 2), 0, t_h);
+		rect.w = ft_clamp(text_surface->w, 0, t_w - rect.x);
+		rect.h = ft_clamp(text_surface->h, 0, t_h - rect.y);
+		SDL_UpdateTexture(texture, &rect, text_surface->pixels, text_surface->pitch);
+		SDL_FreeSurface(text_surface);
+	}
+	else
+		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
+}
+
+
+
 void	draw_sectors(t_editor *editor, t_list *sectors)
 {
 	t_sector	*sector;
@@ -1442,9 +1475,15 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		ft_b_itoa(sector->id, temp);
 		draw_text(editor->drawing_surface, temp, editor->font, converted_center, 0xffffffff);
 		if (!check_sector_convexity(editor, sector))
+		{
 			draw_text(editor->drawing_surface, "Not Convex!", editor->font, converted_center, 0xffff0000); 
+			editor->errors += 1;
+		}
 		if (sector->ceiling_height - sector->floor_height < 0)
+		{
 			draw_text(editor->drawing_surface, "Floor & Ceiling Height Doesn\'t Make Sense!", editor->font, converted_center, 0xffffff00); 
+			editor->errors += 1;
+		}
 		// Get hovered
 		if (vec2_in_vec4(editor->mouse_pos,
 			vec4i(sector->center.x - 1, sector->center.y - 1, 3, 3)))
@@ -1488,14 +1527,20 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 			curr = curr->next;
 		}
 		if (!inside_sector)
+		{
 			draw_text(editor->drawing_surface, "Not Inside Sector!",
 				editor->font, conversion(editor, entity->pos), 0xffff0000); 
+			editor->errors += 1;
+		}
 		else if (inside_sector)
 			draw_text(editor->drawing_surface, ft_b_itoa(inside_sector->id, temp_str),
 				editor->font, conversion(editor, vec2i(entity->pos.x + 2, entity->pos.y)), 0xffb0b0b0); 
 		if (inside_sector && (entity->z < inside_sector->floor_height || entity->z > inside_sector->ceiling_height))
+		{
 			draw_text(editor->drawing_surface, "Z not between Floor & Ceiling!",
 				editor->font, conversion(editor, entity->pos), 0xffff0000); 
+			editor->errors += 1;
+		}
 
 		entities = entities->next;
 	}
@@ -1525,26 +1570,29 @@ void	draw_spawn(t_editor *editor)
 
 	t_sector	*inside_sector = NULL;
 	t_list		*curr = editor->sectors;
-	int			found = 0;
+
 	while (curr)
 	{
 		if (check_point_in_sector(curr->content, editor->spawn.pos) == 1)
 		{
-			found = 1;
 			inside_sector = curr->content;
 			break ;
 		}
 		curr = curr->next;
 	}
-	if (!found)
+	if (!inside_sector)
+	{
 		draw_text(editor->drawing_surface, "Not Inside Sector!",
 			editor->font, conversion(editor, editor->spawn.pos), 0xffff0000); 
+		editor->errors += 1;
+	}
 	if (inside_sector)
 		editor->spawn.z = inside_sector->floor_height;
 }
 
 void	user_render(t_editor *editor)
 {
+	editor->errors = 0;
 	// Grid stuff
 	if (editor->update_grid)
 	{
@@ -1570,6 +1618,17 @@ void	user_render(t_editor *editor)
 
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
 	SDL_FillRect(editor->drawing_surface, NULL, 0);
+
+	if (editor->errors > 0)
+	{
+		char	*temp;
+		temp = ft_sprintf("Consider fixing the %d error(s) before saving!", editor->errors);
+		ui_label_set_text(editor->error_label, temp);
+		ft_strdel(&temp);
+		editor->error_label->show = 1;
+	}
+	else
+		editor->error_label->show = 0;
 }
 
 void	editor_init(t_editor *editor)
@@ -1613,6 +1672,9 @@ void	editor_init(t_editor *editor)
 	editor->lighting_input = ui_list_get_element_by_id(editor->layout.elements, "lighting_input");
 	editor->floor_texture_scale_input = ui_list_get_element_by_id(editor->layout.elements, "floor_texture_scale_input");
 	editor->ceiling_texture_scale_input = ui_list_get_element_by_id(editor->layout.elements, "ceiling_texture_scale_input");
+
+	// Error
+	editor->error_label = ui_list_get_element_by_id(editor->layout.elements, "error_label");
 
 	// Wall
 	editor->menu_wall_edit = ui_list_get_element_by_id(editor->layout.elements, "menu_wall_edit");

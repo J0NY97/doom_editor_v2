@@ -197,6 +197,22 @@ save_button : select_button_prefab
 	bg_image_click : save_button_click.png;
 };
 
+///////////////////
+// Error LabeL
+///////////////////
+
+error_label
+{
+	xywh : 300, 0, 100, 20;
+	title : NO ERROR;
+	text_color : 0xffff0000;
+	show : 0;
+};
+
+///////////////////
+// Sector Edit Menu
+///////////////////
+
 sector_edit_menu : toolbox_menu_prefab
 {
 	xywh : 0, 71, 250, 280;
@@ -324,6 +340,10 @@ floor_texture_image
 	bg_image : damage.png;
 };
 
+///////////////////
+// Texture Edit Menu
+///////////////////
+
 ceiling_texture_button
 {
 	xywh : 120, 240, 27, 27;
@@ -377,6 +397,10 @@ texture_image
 	xywh : 1, 1, 48, 48;
 	bg_image : damage.png;
 };
+
+///////////////////
+// Menu Edit Menu
+///////////////////
 
 menu_wall_edit : toolbox_menu_prefab
 {
