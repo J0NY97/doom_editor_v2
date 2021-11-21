@@ -244,59 +244,65 @@ void	sector_edit_events(t_editor *editor)
 
 	if (editor->selected_sector && editor->sector_edit_menu->show)
 	{
-		int	f_height = ft_atoi(ui_input_get_text(editor->floor_height_input));
-		int	c_height = ft_atoi(ui_input_get_text(editor->ceiling_height_input));
-		int gravity = ft_atoi(ui_input_get_text(editor->gravity_input));
-		int lighting = ft_atoi(ui_input_get_text(editor->lighting_input));
+		int	f_height;
+		int	c_height;
+		int gravity;
+		int lighting;
 
 		if (ui_input_exit(editor->floor_height_input))
 		{
-			f_height = ft_min(f_height, c_height);
+			f_height = ft_atoi(ui_input_get_text(editor->floor_height_input));
+			f_height = ft_min(f_height, editor->selected_sector->ceiling_height);
 			ft_b_itoa(f_height, temp_str);
 			ui_input_set_text(editor->floor_height_input, temp_str);
+			editor->selected_sector->floor_height = f_height;
 		}
 		if (ui_input_exit(editor->ceiling_height_input))
 		{
-			c_height = ft_max(f_height, c_height);
+			c_height = ft_atoi(ui_input_get_text(editor->ceiling_height_input));
+			c_height = ft_max(editor->selected_sector->floor_height, c_height);
 			ft_b_itoa(c_height, temp_str);
 			ui_input_set_text(editor->ceiling_height_input, temp_str);
+			editor->selected_sector->ceiling_height = c_height;
 		}
-		editor->selected_sector->floor_height = f_height;
-		editor->selected_sector->ceiling_height = c_height;
 
 		if (ui_input_exit(editor->gravity_input))
 		{
+			gravity = ft_atoi(ui_input_get_text(editor->gravity_input));
 			gravity = ft_clamp(gravity, 0, 100);
 			ft_b_itoa(gravity, temp_str);
 			ui_input_set_text(editor->gravity_input, temp_str);
+			editor->selected_sector->gravity = gravity;
 		}
-		editor->selected_sector->gravity = gravity;
 
 		if (ui_input_exit(editor->lighting_input))
 		{
+			lighting = ft_atoi(ui_input_get_text(editor->lighting_input));
 			lighting = ft_clamp(lighting, 0, 100);
 			ft_b_itoa(lighting, temp_str);
 			ui_input_set_text(editor->lighting_input, temp_str);
+			editor->selected_sector->lighting = lighting;
 		}
-		editor->selected_sector->lighting = lighting;
 
-		float f_scale = ft_atof(ui_input_get_text(editor->floor_texture_scale_input));
-		float c_scale = ft_atof(ui_input_get_text(editor->ceiling_texture_scale_input));
+		float f_scale;
+		float c_scale;
 
 		if (ui_input_exit(editor->floor_texture_scale_input))
 		{
+			f_scale = ft_atof(ui_input_get_text(editor->floor_texture_scale_input));
 			f_scale = ft_fclamp(f_scale, 0.1f, 100.0f);
 			ft_b_ftoa(f_scale, 2, temp_str);
 			ui_input_set_text(editor->floor_texture_scale_input, temp_str);
+			editor->selected_sector->floor_scale = f_scale;
 		}
 		if (ui_input_exit(editor->ceiling_texture_scale_input))
 		{
+			c_scale = ft_atof(ui_input_get_text(editor->ceiling_texture_scale_input));
 			c_scale = ft_fclamp(c_scale, 0.1f, 100.0f);
 			ft_b_ftoa(c_scale, 2, temp_str);
 			ui_input_set_text(editor->ceiling_texture_scale_input, temp_str);
+			editor->selected_sector->ceiling_scale = c_scale;
 		}
-		editor->selected_sector->floor_scale = f_scale;
-		editor->selected_sector->ceiling_scale = c_scale;
 	}
 
 	// Sector Edit Ok Button
@@ -336,15 +342,8 @@ void	wall_events(t_editor *editor, SDL_Event e)
 			editor->selected_wall = wall;
 			editor->active_texture_button = NULL; // unselect currently selected texture;
 			editor->selected_sprite = NULL;
-			ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->wall_texture]);
-			ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->portal_texture]);
 
-			ui_checkbox_toggle_accordingly(editor->solid_checkbox, editor->selected_wall->solid);
-			ui_checkbox_toggle_accordingly(editor->portal_checkbox, editor->selected_wall->neighbor);
-
-			ui_input_set_text(editor->floor_wall_angle_input, ft_b_itoa(editor->selected_wall->floor_angle, temp_str));
-			ui_input_set_text(editor->ceiling_wall_angle_input, ft_b_itoa(editor->selected_wall->ceiling_angle, temp_str));
-			ui_input_set_text(editor->wall_texture_scale_input, ft_b_ftoa(editor->selected_wall->texture_scale, 2, temp_str));
+			set_wall_ui(editor, wall); // fill the ui from this wall;
 		}
 	}
 	else if (editor->selected_wall // MOVE WALL
@@ -385,47 +384,7 @@ void	wall_events(t_editor *editor, SDL_Event e)
 			add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
 		}
 
-		editor->selected_wall->solid = editor->solid_checkbox->is_toggle;
-		
-		/*
-		if (editor->portal_checkbox->is_toggle)
-			if (!check_if_you_can_make_wall_portal(editor))
-				ui_checkbox_toggle_off(editor->portal_checkbox);
-				*/
-		if (editor->portal_checkbox->is_toggle)
-			if (!can_you_make_portal_of_this_wall(editor->sectors, editor->selected_sector, editor->selected_wall))
-				ui_checkbox_toggle_off(editor->portal_checkbox);
-
-		if (ui_input_exit(editor->floor_wall_angle_input))
-		{
-			int		angle;
-			angle = ft_clamp(ft_atoi(ui_input_get_text(editor->floor_wall_angle_input)), -45, 45);
-			if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
-				remove_wall_list_angles(editor->selected_sector->walls, 0); // 0 is floor;
-			ft_b_itoa(angle, temp_str);
-			ui_input_set_text(editor->floor_wall_angle_input, temp_str);
-			editor->selected_wall->floor_angle = angle;
-		}
-
-		if (ui_input_exit(editor->ceiling_wall_angle_input))
-		{
-			int		angle;
-			angle = ft_clamp(ft_atoi(ui_input_get_text(editor->ceiling_wall_angle_input)), -45, 45);
-			if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
-				remove_wall_list_angles(editor->selected_sector->walls, 1); // 1 is ceiling;
-			ft_b_itoa(angle, temp_str);
-			ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
-			editor->selected_wall->ceiling_angle = angle;
-		}
-
-		if (ui_input_exit(editor->wall_texture_scale_input))
-		{
-			float	scale;
-			scale = ft_fclamp(ft_atof(ui_input_get_text(editor->wall_texture_scale_input)), -10.0f, 10.0f);
-			ft_b_ftoa(scale, 2, temp_str);
-			ui_input_set_text(editor->wall_texture_scale_input, temp_str);
-			editor->selected_wall->texture_scale = scale;
-		}
+		get_wall_ui(editor, editor->selected_wall); // fill this wall from ui;
 	}
 }
 

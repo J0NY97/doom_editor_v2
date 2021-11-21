@@ -432,6 +432,8 @@ void				remove_all_lonely_walls(t_editor *editor);
 void				remove_wall_list_angles(t_list *list, int which);
 t_wall				*get_connected_wall(t_list *list, t_wall *wall);
 void				sort_walls(t_list *list);
+void				set_wall_ui(t_editor *editor, t_wall *wall);
+void				get_wall_ui(t_editor *editor, t_wall *wall);
 
 // Sector
 t_sector			*sector_new(void);
@@ -446,6 +448,9 @@ int					get_next_sector_id(t_list *list);
 t_sector			*get_sector_by_id_from_list(t_list *list, int id);
 int					check_sector_convexity(t_sector *sector);
 int					check_point_in_sector(t_sector *sector, t_vec2i p);
+
+// Kind of wall, and kind of not wall
+bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
 
 // Entity
 t_entity			*entity_new(void);

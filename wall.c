@@ -288,3 +288,63 @@ void	remove_all_lonely_walls(t_editor *editor)
 		curr = next;
 	}
 }
+
+void	set_wall_ui(t_editor *editor, t_wall *wall)
+{
+	char	temp_str[20];
+
+	ft_strnclr(temp_str, 20);
+
+	ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->wall_texture]);
+	ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->portal_texture]);
+
+	ui_checkbox_toggle_accordingly(editor->solid_checkbox, wall->solid);
+	ui_checkbox_toggle_accordingly(editor->portal_checkbox, wall->neighbor);
+
+	ui_input_set_text(editor->floor_wall_angle_input, ft_b_itoa(wall->floor_angle, temp_str));
+	ui_input_set_text(editor->ceiling_wall_angle_input, ft_b_itoa(wall->ceiling_angle, temp_str));
+	ui_input_set_text(editor->wall_texture_scale_input, ft_b_ftoa(wall->texture_scale, 2, temp_str));
+}
+
+void	get_wall_ui(t_editor *editor, t_wall *wall)
+{
+	int		angle;
+	float	scale;
+	char	temp_str[20];
+
+	ft_strnclr(temp_str, 20);
+
+	editor->selected_wall->solid = editor->solid_checkbox->is_toggle;
+
+	if (editor->portal_checkbox->is_toggle)
+		if (!can_you_make_portal_of_this_wall(editor->sectors, editor->selected_sector, wall)) // selected_sector here is the sector this wall is a part of ( replace if at some point we store the sector in the wall );
+			ui_checkbox_toggle_off(editor->portal_checkbox);
+
+	if (ui_input_exit(editor->floor_wall_angle_input))
+	{
+		angle = ft_clamp(ft_atoi(ui_input_get_text(editor->floor_wall_angle_input)), -45, 45);
+		if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
+			remove_wall_list_angles(editor->selected_sector->walls, 0); // 0 is floor;
+		ft_b_itoa(angle, temp_str);
+		ui_input_set_text(editor->floor_wall_angle_input, temp_str);
+		wall->floor_angle = angle;
+	}
+
+	if (ui_input_exit(editor->ceiling_wall_angle_input))
+	{
+		angle = ft_clamp(ft_atoi(ui_input_get_text(editor->ceiling_wall_angle_input)), -45, 45);
+		if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
+			remove_wall_list_angles(editor->selected_sector->walls, 1); // 1 is ceiling;
+		ft_b_itoa(angle, temp_str);
+		ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
+		wall->ceiling_angle = angle;
+	}
+
+	if (ui_input_exit(editor->wall_texture_scale_input))
+	{
+		scale = ft_fclamp(ft_atof(ui_input_get_text(editor->wall_texture_scale_input)), -10.0f, 10.0f);
+		ft_b_ftoa(scale, 2, temp_str);
+		ui_input_set_text(editor->wall_texture_scale_input, temp_str);
+		wall->texture_scale = scale;
+	}
+}
