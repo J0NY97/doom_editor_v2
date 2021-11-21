@@ -365,24 +365,7 @@ void	wall_events(t_editor *editor, SDL_Event e)
 	if (editor->selected_wall)
 	{
 		if (editor->split_wall_button->state == UI_STATE_CLICK)
-		{
-			t_point	*p1;
-			t_point	*p2;
-			t_point	*p3;
-			t_wall	*new_wall;
-
-			p1 = editor->selected_wall->p1;
-			p2 = editor->selected_wall->p2;
-			p3 = add_point(editor);
-			p3->pos = get_wall_middle(editor->selected_wall);
-
-			editor->selected_wall->p1 = p3;
-
-			new_wall = add_wall(editor);
-			new_wall->p1 = p1;
-			new_wall->p2 = p3;
-			add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
-		}
+			split_wall(editor, editor->selected_sector, editor->selected_wall);
 
 		get_wall_ui(editor, editor->selected_wall); // fill this wall from ui;
 	}

@@ -434,6 +434,7 @@ t_wall				*get_connected_wall(t_list *list, t_wall *wall);
 void				sort_walls(t_list *list);
 void				set_wall_ui(t_editor *editor, t_wall *wall);
 void				get_wall_ui(t_editor *editor, t_wall *wall);
+void				split_wall(t_editor *editor, t_sector *sector, t_wall *wall);
 
 // Sector
 t_sector			*sector_new(void);

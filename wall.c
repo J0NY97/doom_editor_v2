@@ -348,3 +348,23 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 		wall->texture_scale = scale;
 	}
 }
+
+void	split_wall(t_editor *editor, t_sector *sector, t_wall *wall)
+{
+	t_point	*p1;
+	t_point	*p2;
+	t_point	*p3;
+	t_wall	*new_wall;
+
+	p1 = wall->p1;
+	p2 = wall->p2;
+	p3 = add_point(editor);
+	p3->pos = get_wall_middle(wall);
+
+	wall->p1 = p3;
+
+	new_wall = add_wall(editor);
+	new_wall->p1 = p1;
+	new_wall->p2 = p3;
+	add_to_list(&sector->walls, new_wall, sizeof(t_wall));
+}
