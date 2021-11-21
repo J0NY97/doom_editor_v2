@@ -10,10 +10,6 @@ void	calculate_hover(t_editor *editor)
 	editor->mouse_pos.x = (editor->win_main->mouse_pos.x / (editor->gap_size * editor->zoom)) + editor->offset.x;
 	editor->mouse_pos.y = (editor->win_main->mouse_pos.y / (editor->gap_size * editor->zoom)) + editor->offset.y;
 
-	/*
-	editor->move_amount.x = (editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x);
-	editor->move_amount.y = (editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y);
-	*/
 	editor->move_amount.x = editor->mouse_pos.x - editor->last_mouse_pos.x;
 	editor->move_amount.y = editor->mouse_pos.y - editor->last_mouse_pos.y;
 }
@@ -46,8 +42,7 @@ void	draw_hover(t_editor *editor)
 			convert_back, 0xffffff00);
 }
 
-// TODO: WTF is this name, please rename;
-t_wall	*check_if_sector_has_same_kind_of_wall(t_sector *sector, t_wall *wall)
+t_wall	*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2)
 {
 	t_list	*curr;
 	t_wall	*curr_wall;
@@ -56,37 +51,37 @@ t_wall	*check_if_sector_has_same_kind_of_wall(t_sector *sector, t_wall *wall)
 	while (curr)
 	{
 		curr_wall = curr->content;
-		if ((compare_veci(curr_wall->p1->pos.v, wall->p1->pos.v, 2)
-			&& compare_veci(curr_wall->p2->pos.v, wall->p2->pos.v, 2))
-			|| (compare_veci(curr_wall->p1->pos.v, wall->p2->pos.v, 2)
-			&& compare_veci(curr_wall->p2->pos.v, wall->p1->pos.v, 2)))
+		if ((compare_veci(curr_wall->p1->pos.v, p1.v, 2)
+			&& compare_veci(curr_wall->p2->pos.v, p2.v, 2))
+			|| (compare_veci(curr_wall->p1->pos.v, p2.v, 2)
+			&& compare_veci(curr_wall->p2->pos.v, p1.v, 2)))
 			return (curr_wall);
 		curr = curr->next;
 	}
 	return (NULL);
 }
 
-int	check_if_you_can_make_wall_portal(t_editor *editor)
+bool	can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall)
 {
-	t_list		*curr;
 	t_sector	*sector;
-	t_wall		*wall;
+	t_wall		*temp_wall;
 
-	curr = editor->sectors;
-	while (curr)
+	if (!part_of_sector || !wall)
+		return (0);
+	while (sector_list)
 	{
-		sector = curr->content;
-		if (sector != editor->selected_sector)
+		sector = sector_list->content;
+		if (sector != part_of_sector)
 		{
-			wall = check_if_sector_has_same_kind_of_wall(sector, editor->selected_wall);
-			if (wall)
+			temp_wall = get_sector_wall_at_pos(sector, wall->p1->pos, wall->p2->pos);
+			if (temp_wall)
 			{
-				editor->selected_wall->neighbor = sector;
-				wall->neighbor = editor->selected_sector;
+				wall->neighbor = sector;
+				temp_wall->neighbor = part_of_sector;
 				return (1);
 			}
 		}
-		curr = curr->next;
+		sector_list = sector_list->next;
 	}
 	return (0);
 }
@@ -136,12 +131,7 @@ void	sector_events(t_editor *editor, SDL_Event e)
 		&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 	{
 		if (!editor->selected_sector)
-		{
-			editor->selected_sector = sector_new();
-			editor->selected_sector->id = get_next_sector_id(editor->sectors);
-			++editor->sector_amount;
-			add_to_list(&editor->sectors, editor->selected_sector, sizeof(t_sector));
-		}
+			editor->selected_sector = add_sector(editor);
 		if (editor->selected_sector)
 		{
 			if (!editor->first_point_set)
@@ -164,7 +154,6 @@ void	sector_events(t_editor *editor, SDL_Event e)
 			{
 				t_wall	*wall;
 				wall = add_wall(editor);
-				wall->wall_texture = 7;
 				wall->p1 = get_point_from_sector_around_radius(editor->selected_sector, editor->first_point, 0.0f);
 				if (!wall->p1)
 				{
@@ -198,6 +187,20 @@ void	sector_events(t_editor *editor, SDL_Event e)
 	}
 }
 
+void	point_events(t_editor *editor)
+{
+	t_point	*point;
+
+	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
+	{
+		point = get_point_from_sector_around_radius(editor->selected_sector, editor->mouse_pos, 1.0f);
+		if (point)
+			editor->selected_point = point;
+	}
+	else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT) // MOVE POINT
+		editor->selected_point->pos = vec2i_add(editor->selected_point->pos, editor->move_amount);
+}
+
 void	sector_edit_events(t_editor *editor)
 {
 	t_sector	*sector;
@@ -205,7 +208,9 @@ void	sector_edit_events(t_editor *editor)
 
 	ft_strnclr(temp_str, 20);
 
-	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+	// Select sector;
+	if (editor->select_button->state == UI_STATE_CLICK
+		&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor))
 	{
 		// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
@@ -229,47 +234,12 @@ void	sector_edit_events(t_editor *editor)
 			ft_printf("sector inputs updated\n");
 		}
 	}
-	else if (editor->selected_sector // MOVE SECTOR
+	else if (editor->selected_sector // MOVE SECTOR ( only if nothing else is selected (point/wall) )
 		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
 		&& !editor->selected_point
 		&& !editor->selected_wall)
 	{
-		// NOTE: we only need to move the p1 because we sort the list of walls in the sector rendering;
-		t_list	*wall_list;
-		t_wall	*wall;
-
-		wall_list = editor->selected_sector->walls;
-		while (wall_list)
-		{
-			wall = wall_list->content;
-			wall->p1->pos = vec2i_add(wall->p1->pos, editor->move_amount);
-		//	wall->p2->pos = vec2i_add(wall->p2->pos, editor->move_amount);
-			wall_list = wall_list->next;
-		}
-	}
-
-	if (editor->selected_sector)
-	{
-		// Point
-		if (editor->point_button->state == UI_STATE_CLICK)
-		{
-			t_point	*point;
-			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
-			{
-				point = get_point_from_sector_around_radius(editor->selected_sector, editor->mouse_pos, 1.0f);
-				if (point)
-					editor->selected_point = point;
-			}
-			else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT) // MOVE POINT
-				editor->selected_point->pos = vec2i_add(editor->selected_point->pos, editor->move_amount);
-		}
-		else
-			editor->selected_point = NULL;
-	}
-	else
-	{
-		editor->selected_wall = NULL;
-		editor->selected_point = NULL;
+		move_sector(editor->selected_sector, editor->move_amount);
 	}
 
 	if (editor->selected_sector && editor->sector_edit_menu->show)
@@ -341,6 +311,9 @@ void	sector_edit_events(t_editor *editor)
 	{
 		editor->sector_edit_menu->show = 0;
 		editor->selected_sector = NULL;
+		editor->selected_wall = NULL;
+		editor->selected_sprite = NULL;
+		editor->selected_point = NULL;
 	}
 }
 
@@ -350,8 +323,10 @@ void	wall_events(t_editor *editor, SDL_Event e)
 
 	ft_strnclr(temp_str, 20);
 	// Wall
+	// Selecting wall;
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
-		&& !hover_over_open_menus(editor))
+		&& !hover_over_open_menus(editor)
+		&& editor->selected_sector)
 	{
 		t_wall	*wall;
 		// we dont want to make selected_wall NULL if we dont select a wall;
@@ -364,9 +339,8 @@ void	wall_events(t_editor *editor, SDL_Event e)
 			ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->wall_texture]);
 			ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_wall->portal_texture]);
 
-			// TODO: ui_checkbox really needs an update, i dont think this is the way to change the toggle state of the checkbox; (it is the way, but shouldnt);
-			editor->solid_checkbox->is_click = editor->selected_wall->solid;
-			editor->portal_checkbox->is_click = editor->selected_wall->neighbor != NULL;
+			ui_checkbox_toggle_accordingly(editor->solid_checkbox, editor->selected_wall->solid);
+			ui_checkbox_toggle_accordingly(editor->portal_checkbox, editor->selected_wall->neighbor);
 
 			ui_input_set_text(editor->floor_wall_angle_input, ft_b_itoa(editor->selected_wall->floor_angle, temp_str));
 			ui_input_set_text(editor->ceiling_wall_angle_input, ft_b_itoa(editor->selected_wall->ceiling_angle, temp_str));
@@ -410,13 +384,17 @@ void	wall_events(t_editor *editor, SDL_Event e)
 			new_wall->p2 = p3;
 			add_to_list(&editor->selected_sector->walls, new_wall, sizeof(t_wall));
 		}
-			// TODO: ui_checkbox really needs an updated, we dont want to update these everytime, we want someway to only do stuff if the toggle state has changed;
-		editor->selected_wall->solid = editor->solid_checkbox->state == UI_STATE_CLICK;
+
+		editor->selected_wall->solid = editor->solid_checkbox->is_toggle;
 		
-		// TODO : this needs rework;
-		if (editor->portal_checkbox->state == UI_STATE_CLICK)
+		/*
+		if (editor->portal_checkbox->is_toggle)
 			if (!check_if_you_can_make_wall_portal(editor))
-				editor->portal_checkbox->state = UI_STATE_DEFAULT;
+				ui_checkbox_toggle_off(editor->portal_checkbox);
+				*/
+		if (editor->portal_checkbox->is_toggle)
+			if (!can_you_make_portal_of_this_wall(editor->sectors, editor->selected_sector, editor->selected_wall))
+				ui_checkbox_toggle_off(editor->portal_checkbox);
 
 		if (ui_input_exit(editor->floor_wall_angle_input))
 		{
@@ -1279,12 +1257,17 @@ void	user_events(t_editor *editor, SDL_Event e)
 	else
 	{
 		editor->selected_sector = NULL;
+		editor->selected_wall = NULL;
+		editor->selected_sprite = NULL;
+		editor->selected_point = NULL;
 		editor->sector_edit_menu->show = 0;
 		editor->wall_button->state = UI_STATE_DEFAULT;
 	}
 
 	// Wall Events
-	if (editor->wall_button->state == UI_STATE_CLICK)
+	//if (editor->selected_sector
+	if (editor->sector_button->state == UI_STATE_CLICK
+		&& editor->wall_button->state == UI_STATE_CLICK)
 	{
 		if (editor->selected_wall)
 		{
@@ -1307,6 +1290,23 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->sprite_edit_menu->show = 0;
 	}
 
+	// Point Events
+	if (editor->sector_button->state == UI_STATE_CLICK
+		&& editor->point_button->state == UI_STATE_CLICK)
+	{
+		if (editor->selected_sector)
+		{
+			if (editor->point_button->state == UI_STATE_CLICK)
+				point_events(editor);
+			else
+				editor->selected_point = NULL;
+		}
+		else
+			editor->selected_point = NULL;
+	}
+
+
+
 	if (ui_list_radio_event(editor->texture_opening_buttons, &editor->active_texture_opening_button))
 	{
 		// change text of the menu to the correct button;
@@ -1315,6 +1315,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->active_texture_button_id = -1;
 		editor->texture_menu->show = 1;
 	}
+
 	if (editor->texture_menu->show)
 		texture_menu_events(editor, e);
 
@@ -1389,7 +1390,7 @@ void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
 		wall = walls->content;
 		if (wall->neighbor)
 		{
-			if (check_if_sector_has_same_kind_of_wall(wall->neighbor, wall))
+			if (get_sector_wall_at_pos(wall->neighbor, wall->p1->pos, wall->p2->pos))
 				wall_render(editor, wall, 0xffff0000);
 			else
 				wall->neighbor = NULL;
@@ -1470,11 +1471,11 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		sector = sectors->content;
 		sort_walls(sector->walls); // TODO do this everytime the sector has been updated, not every frame (if its slow);
 		sector_render(editor, sector, sector->color);
-		sector->center = get_sector_center(editor, sector);
+		sector->center = get_sector_center(sector);
 		converted_center = conversion(editor, sector->center);
 		ft_b_itoa(sector->id, temp);
 		draw_text(editor->drawing_surface, temp, editor->font, converted_center, 0xffffffff);
-		if (!check_sector_convexity(editor, sector))
+		if (!check_sector_convexity(sector))
 		{
 			draw_text(editor->drawing_surface, "Not Convex!", editor->font, converted_center, 0xffff0000); 
 			editor->errors += 1;
@@ -1525,16 +1526,14 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 			}
 			curr = curr->next;
 		}
+		// Error showing;
 		if (!entity->inside_sector)
 		{
 			draw_text(editor->drawing_surface, "Not Inside Sector!",
 				editor->font, conversion(editor, entity->pos), 0xffff0000); 
 			editor->errors += 1;
 		}
-		else if (entity->inside_sector)
-			draw_text(editor->drawing_surface, ft_b_itoa(entity->inside_sector->id, temp_str),
-				editor->font, conversion(editor, vec2i(entity->pos.x + 2, entity->pos.y)), 0xffb0b0b0); 
-		if (entity->inside_sector
+		else if (entity->inside_sector
 			&& (entity->z < entity->inside_sector->floor_height || entity->z > entity->inside_sector->ceiling_height))
 		{
 			draw_text(editor->drawing_surface, "Z not between Floor & Ceiling!",

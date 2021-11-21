@@ -435,14 +435,16 @@ void				sort_walls(t_list *list);
 
 // Sector
 t_sector			*sector_new(void);
+t_sector			*add_sector(t_editor *editor);
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
+void				move_sector(t_sector *sector, t_vec2i move_amount);
 t_sector			*get_sector_with_id(t_list *sectors, int id);
-t_vec2i				get_sector_center(t_editor *editor, t_sector *sector);
+t_vec2i				get_sector_center(t_sector *sector);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
 int					remove_sector(t_editor *editor, t_sector *sector);
 int					get_next_sector_id(t_list *list);
 t_sector			*get_sector_by_id_from_list(t_list *list, int id);
-int					check_sector_convexity(t_editor *editor, t_sector *sector);
+int					check_sector_convexity(t_sector *sector);
 int					check_point_in_sector(t_sector *sector, t_vec2i p);
 
 // Entity

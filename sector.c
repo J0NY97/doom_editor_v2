@@ -17,9 +17,36 @@ t_sector	*sector_new(void)
 	return (sector);
 }
 
+t_sector	*add_sector(t_editor *editor)
+{
+	t_sector	*sector;
+
+	sector = sector_new();
+	sector->id = get_next_sector_id(editor->sectors);
+	++editor->sector_amount;
+	add_to_list(&editor->sectors, sector, sizeof(t_sector));
+	return (sector);
+}
+
 void	sector_render(t_editor *editor, t_sector *sector, Uint32 color)
 {
 	draw_walls(editor, sector->walls, color);
+}
+
+void	move_sector(t_sector *sector, t_vec2i move_amount)
+{
+	// NOTE: we only need to move the p1 because we sort the list of walls in the sector rendering;
+	t_list	*wall_list;
+	t_wall	*wall;
+
+	wall_list = sector->walls;
+	while (wall_list)
+	{
+		wall = wall_list->content;
+		wall->p1->pos = vec2i_add(wall->p1->pos, move_amount);
+	//	wall->p2->pos = vec2i_add(wall->p2->pos, editor->move_amount); // if we move both points of walls we move every point twice;
+		wall_list = wall_list->next;
+	}
 }
 
 t_sector	*get_sector_with_id(t_list *sectors, int id)
@@ -33,7 +60,7 @@ t_sector	*get_sector_with_id(t_list *sectors, int id)
 	return (NULL);
 }
 
-t_vec2i	get_sector_center(t_editor *editor, t_sector *sector)
+t_vec2i	get_sector_center(t_sector *sector)
 {
 	int		i;
 	float	x;
@@ -125,7 +152,7 @@ int	get_next_sector_id(t_list *list)
  * http://www.sunshine2k.de/coding/java/Polygon/Convex/polygon.htm
  * https://github.com/Epicurius
 */
-int	check_sector_convexity(t_editor *editor, t_sector *sector)
+int	check_sector_convexity(t_sector *sector)
 {
 	t_vec2i	p;
 	t_vec2i	v;

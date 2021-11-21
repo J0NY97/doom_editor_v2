@@ -181,12 +181,11 @@ void	get_sectors(t_editor *editor, char **lines, int *i)
 		if (lines[*i][0] == '-')
 			break ;
 		args = ft_strsplit(lines[*i], '\t');
-		sector = sector_new();
+		sector = add_sector(editor);
 		sector->id = ft_atoi(args[0]);
 		get_sector_walls(editor->walls, args[1], args[2], sector);
 		sector->gravity = ft_atoi(args[3]);
 		sector->lighting = ft_atoi(args[4]);
-		add_to_list(&editor->sectors, sector, sizeof(t_sector));
 		ft_arraydel(args);
 	}
 	get_all_actual_sectors(editor);

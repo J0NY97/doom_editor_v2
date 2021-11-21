@@ -57,6 +57,7 @@ t_wall	*add_wall(t_editor *editor)
 	t_wall	*wall;	
 
 	wall = wall_new();
+	wall->wall_texture = 7;
 	add_to_list(&editor->walls, wall, sizeof(t_wall));
 	++editor->wall_amount;
 	return (wall);
