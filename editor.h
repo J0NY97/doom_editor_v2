@@ -225,8 +225,8 @@ typedef struct s_editor
 	t_sector		*hovered_sector;
 
 	t_ui_window		*win_save;
-	t_ui_element	*story_button;
-	t_ui_element	*endless_button;
+	t_ui_element	*story_checkbox;
+	t_ui_element	*endless_checkbox;
 	t_ui_element	*confirm_save_button;
 	t_ui_element	*name_input;
 

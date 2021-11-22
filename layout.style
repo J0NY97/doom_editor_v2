@@ -1125,10 +1125,10 @@ endless_label
 	xywh : 10, 50, 50, 20;
 	title : Endless:;
 };
-endless_button
+endless_checkbox
 {
 	xywh : 10, 70, 20, 20;
-	title : :;
+	title : ;
 	bg_image_default : tick_box_off.png;
 	bg_image_hover : tick_box_hover.png;
 	bg_image_click : tick_box_on.png;
@@ -1139,10 +1139,10 @@ story_label
 	xywh : 70, 50, 50, 20;
 	title : Story:;
 };
-story_button
+story_checkbox
 {
 	xywh : 70, 70, 20, 20;
-	title : :;
+	title : ;
 	bg_image_default : tick_box_off.png;
 	bg_image_hover : tick_box_hover.png;
 	bg_image_click : tick_box_on.png;

@@ -283,11 +283,8 @@ Window win_save
 	};
 	Label endless_label {};
 	Label story_label {};
-	Radio map_type_radio
-	{
-		Button endless_button {};
-		Button story_button {};
-	};
+	Checkbox endless_checkbox {};
+	Checkbox story_checkbox {};
 	Button confirm_save_button {};
 };
 

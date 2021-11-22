@@ -281,22 +281,15 @@ void	wall_events(t_editor *editor, SDL_Event e)
 
 void	entity_events(t_editor *editor, SDL_Event e)
 {
-	char	temp_str[20];
-
-	ft_strnclr(temp_str, 20);
-
 	// If the dropdown menu is open, lets ignore all other inputs;
+	editor->entity_yaw_input->event = 1;
+	editor->entity_yaw_slider->event = 1;
+	editor->entity_z_input->event = 1;
 	if (ui_dropdown_is_open(editor->entity_dropdown))
 	{
 		editor->entity_yaw_input->event = 0;
 		editor->entity_yaw_slider->event = 0;
 		editor->entity_z_input->event = 0;
-	}
-	else
-	{
-		editor->entity_yaw_input->event = 1;
-		editor->entity_yaw_slider->event = 1;
-		editor->entity_z_input->event = 1;
 	}
 
 	if (editor->draw_button->state == UI_STATE_CLICK)
@@ -323,7 +316,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 				set_entity_ui(editor, editor->selected_entity);
 			}
 		}
-		else if (editor->selected_entity
+		else if (editor->selected_entity // MOVE ENTITY;
 			&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
 			editor->selected_entity->pos = vec2i_add(editor->selected_entity->pos, editor->move_amount);
 
@@ -348,6 +341,13 @@ void	event_events(t_editor *editor, SDL_Event e)
 
 	ft_strnclr(target_id_text, 20);
 
+	// Ignore all ui inputs if we have dropdowns open;
+	ui_menu_get_menu(editor->event_menu)->event_children = 1;
+	editor->event_scrollbar->event = 1;
+	editor->event_sector_input->event = 1;
+	editor->event_min_input->event = 1;
+	editor->event_max_input->event = 1;
+	editor->event_speed_input->event = 1;
 	if (ui_dropdown_is_open(editor->event_action_dropdown)
 		|| ui_dropdown_is_open(editor->event_type_dropdown)
 		|| ui_dropdown_is_open(editor->event_id_dropdown))
@@ -359,16 +359,7 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_max_input->event = 0;
 		editor->event_speed_input->event = 0;
 	}
-	else
-	{
-		ui_menu_get_menu(editor->event_menu)->event_children = 1;
-		editor->event_scrollbar->event = 1;
-		editor->event_sector_input->event = 1;
-		editor->event_min_input->event = 1;
-		editor->event_max_input->event = 1;
-		editor->event_speed_input->event = 1;
-	}
-
+	
 	// Lets see if we have gotten a new active event_elem;
 	if (ui_list_radio_event(editor->event_element_buttons, &editor->active_event_elem))
 	{
@@ -687,22 +678,19 @@ void	update_info_label(t_editor *editor)
 void	save_window_events(t_editor *editor, SDL_Event e)
 {
 	if (editor->save_button->state == UI_STATE_CLICK)
-		ui_window_flag_set(editor->win_save, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
-
-	if (editor->story_button->state == UI_STATE_CLICK)
-		editor->map_type = 1;
-	else
+		ui_window_flag_set(editor->win_save, UI_WINDOW_SHOW | UI_WINDOW_RAISE);
+	if (editor->endless_checkbox->was_click)
 		editor->map_type = 0;
-
+	else if (editor->story_checkbox->was_click)
+		editor->map_type = 1;
+	ui_checkbox_toggle_accordingly(editor->endless_checkbox, editor->map_type == 0);
+	ui_checkbox_toggle_accordingly(editor->story_checkbox, editor->map_type == 1);
 	if (!editor->win_save->show)
 		return ;
 	if (ui_button(editor->confirm_save_button))
 	{
-		int	len;
-
-		len = ft_strlen(ui_input_get_text(editor->name_input));
-		if (len < 1)
-			ft_printf("[%s] Map name len is less than 1 (it\'s : %d), won\'t slide.\n", __FUNCTION__, len);
+		if (ft_strlen(ui_input_get_text(editor->name_input)) < 1)
+			ft_printf("[%s] Map name len is less than 1, won\'t slide.\n", __FUNCTION__);
 		else
 		{
 			char	*actual_full_path;
@@ -721,10 +709,10 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 
 void	edit_window_events(t_editor *editor, SDL_Event e)
 {
+	if (editor->edit_button->state == UI_STATE_CLICK)
+		ui_window_flag_set(editor->win_edit, UI_WINDOW_SHOW | UI_WINDOW_RAISE);
 	if (!editor->win_edit->show)
 		return ;
-	if (editor->edit_button->state == UI_STATE_CLICK)
-		ui_window_flag_set(editor->win_edit, UI_WINDOW_SHOW);// | UI_WINDOW_RAISE);
 	if (ui_input_exit(editor->map_scale_input))
 		editor->map_scale = ft_atof(ui_input_get_text(editor->map_scale_input));
 }
@@ -1649,8 +1637,8 @@ void	editor_init(t_editor *editor)
 
 	// Save Window
 	editor->win_save = ui_list_get_window_by_id(editor->layout.windows, "win_save");
-	editor->endless_button = ui_list_get_element_by_id(editor->layout.elements, "endless_button");
-	editor->story_button = ui_list_get_element_by_id(editor->layout.elements, "story_button");
+	editor->endless_checkbox = ui_list_get_element_by_id(editor->layout.elements, "endless_checkbox");
+	editor->story_checkbox = ui_list_get_element_by_id(editor->layout.elements, "story_checkbox");
 	editor->name_input = ui_list_get_element_by_id(editor->layout.elements, "name_input");
 	editor->confirm_save_button = ui_list_get_element_by_id(editor->layout.elements, "confirm_save_button");
 
