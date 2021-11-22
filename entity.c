@@ -16,6 +16,16 @@ void	entity_free(t_entity *entity)
 	entity = NULL;
 }
 
+t_entity	*add_entity(t_editor *editor)
+{
+	t_entity	*entity;
+
+	entity = entity_new();
+	++editor->entity_amount;
+	add_to_list(&editor->entities, entity, sizeof(t_entity));
+	return (entity);
+}
+
 int	remove_entity(t_editor *editor, t_entity *entity)
 {
 	if (!entity)
@@ -72,6 +82,61 @@ void	entity_yaw_render(t_editor *editor, t_entity *entity)
 	ui_surface_line_draw(editor->drawing_surface, p1, p2, 0xffaaab5d);
 	ui_surface_line_draw(editor->drawing_surface, p2, p3, 0xffaaab5d);
 	ui_surface_line_draw(editor->drawing_surface, p2, p4, 0xffaaab5d);
+}
+
+void	set_entity_ui(t_editor *editor, t_entity *entity)
+{
+	char	temp_str[20];
+
+	ft_strnclr(temp_str, 20);
+	ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(entity->yaw, temp_str));
+	ui_slider_value_set(editor->entity_yaw_slider, entity->yaw);
+	ui_input_set_text(editor->entity_z_input, ft_b_itoa(entity->z, temp_str));
+	ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_texture_surfaces[entity->type]);
+	// TODO: ui_dropdown_activate(elem with type text);
+}
+
+void	get_entity_ui(t_editor *editor, t_entity *entity)
+{
+	char	temp_str[20];
+	int		temp_value;
+
+	ft_strnclr(temp_str, 20);
+	if (ui_input_exit(editor->entity_yaw_input))
+	{
+		temp_value = ft_atoi(ui_input_get_text(editor->entity_yaw_input));
+		temp_value = ft_clamp(temp_value, 0, 360);
+		entity->yaw = temp_value;
+		ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(temp_value, temp_str));
+		ui_slider_value_set(editor->entity_yaw_slider, temp_value);
+	}
+	if (ui_slider_updated(editor->entity_yaw_slider))
+	{
+		temp_value = ui_slider_get_slider(editor->entity_yaw_slider)->value;
+		entity->yaw = temp_value;
+		ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(temp_value, temp_str));
+	}
+
+	if (ui_input_exit(editor->entity_z_input))
+	{
+		temp_value = ft_atoi(ui_input_get_text(editor->entity_z_input));
+		entity->z = temp_value;
+	}
+	
+	if (ui_dropdown_exit(editor->entity_dropdown)
+		&& ui_dropdown_active(editor->entity_dropdown))
+	{
+		int	i = 0;
+		while (++i <= ENTITY_AMOUNT) // i know that we are starting at 1, unset entity type is 0;
+		{
+			if (ft_strequ(g_entity_data[i - 1].name, ui_dropdown_active_text(editor->entity_dropdown)))
+			{
+				entity->type = i;
+				break ;
+			}
+		}
+		ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_texture_surfaces[entity->type]);
+	}
 }
 
 t_entity	*get_entity_from_list_at_pos(t_list *list, t_vec2i v)

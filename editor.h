@@ -440,7 +440,10 @@ void				split_wall(t_editor *editor, t_sector *sector, t_wall *wall);
 t_sector			*sector_new(void);
 t_sector			*add_sector(t_editor *editor);
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
+void				add_wall_to_sector_at_pos(t_editor *editor, t_sector *sector, t_vec2i p1, t_vec2i p2);
 void				move_sector(t_sector *sector, t_vec2i move_amount);
+void				set_sector_ui(t_editor *editor, t_sector *sector);
+void				get_sector_ui(t_editor *editor, t_sector *sector);
 t_sector			*get_sector_with_id(t_list *sectors, int id);
 t_vec2i				get_sector_center(t_sector *sector);
 t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
@@ -455,9 +458,12 @@ bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_
 
 // Entity
 t_entity			*entity_new(void);
+t_entity			*add_entity(t_editor *editor);
 int					remove_entity(t_editor *editor, t_entity *entity);
 void				entity_render(t_editor *editor, t_entity *entity);
 void				entity_yaw_render(t_editor *editor, t_entity *entity);
+void				set_entity_ui(t_editor *editor, t_entity *entity);
+void				get_entity_ui(t_editor *editor, t_entity *entity);
 t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
 
 // Event

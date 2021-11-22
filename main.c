@@ -120,12 +120,11 @@ void	sector_cleanup(t_editor *editor)
 	ft_printf("[%s] Cleanup crew done!\n", __FUNCTION__);
 }
 
+/*
+ * NOTE: Basically sector_drawing_events, not sure yet if we want to rename it that;
+*/
 void	sector_events(t_editor *editor, SDL_Event e)
 {
-	char	temp_str[20];
-
-	ft_strnclr(temp_str, 20);
-
 	if (editor->draw_button->state == UI_STATE_CLICK
 		&& !hover_over_open_menus(editor)
 		&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
@@ -152,24 +151,10 @@ void	sector_events(t_editor *editor, SDL_Event e)
 
 			if (editor->first_point_set && editor->second_point_set)
 			{
-				t_wall	*wall;
-				wall = add_wall(editor);
-				wall->p1 = get_point_from_sector_around_radius(editor->selected_sector, editor->first_point, 0.0f);
-				if (!wall->p1)
-				{
-					wall->p1 = add_point(editor);
-					wall->p1->pos = editor->first_point;
-				}
-				wall->p2 = get_point_from_sector_around_radius(editor->selected_sector, editor->second_point, 0.0f);
-				if (!wall->p2)
-				{
-					wall->p2 = add_point(editor);
-					wall->p2->pos = editor->second_point;
-				}
+				// NOTE: add_wall_to_sector_at_pos, doesnt check if we have anything in the 2 points given;
+				add_wall_to_sector_at_pos(editor, editor->selected_sector, editor->first_point, editor->second_point);
 				editor->first_point_set = 0;
 				editor->second_point_set = 0;
-				++editor->selected_sector->wall_amount;
-				add_to_list(&editor->selected_sector->walls, wall, sizeof(t_wall));
 				if (!editor->selected_sector->first_point_set)
 				{
 					editor->selected_sector->first_point = editor->first_point;
@@ -204,9 +189,6 @@ void	point_events(t_editor *editor)
 void	sector_edit_events(t_editor *editor)
 {
 	t_sector	*sector;
-	char	temp_str[20];
-
-	ft_strnclr(temp_str, 20);
 
 	// Select sector;
 	if (editor->select_button->state == UI_STATE_CLICK
@@ -215,97 +197,26 @@ void	sector_edit_events(t_editor *editor)
 	{
 		// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
 		sector = get_sector_from_list_around_radius(editor->sectors, editor->mouse_pos, 1);
-		if (sector) // this is the place where everything happens when you select new sector;
+		if (sector) // if new sector selected;
 		{
 			editor->selected_sector = sector;
 			editor->selected_wall = NULL;
 			editor->selected_point = NULL;
 			editor->active_texture_button = NULL; // unselect currently selected texture;
 
-			// update sector ui;
-			ui_input_set_text(editor->floor_height_input, ft_b_itoa(editor->selected_sector->floor_height, temp_str));
-			ui_input_set_text(editor->ceiling_height_input, ft_b_itoa(editor->selected_sector->ceiling_height, temp_str));
-			ui_input_set_text(editor->gravity_input, ft_b_itoa(editor->selected_sector->gravity, temp_str));
-			ui_input_set_text(editor->lighting_input, ft_b_itoa(editor->selected_sector->lighting, temp_str));
-			ui_input_set_text(editor->floor_texture_scale_input, ft_b_ftoa(editor->selected_sector->floor_scale, 2, temp_str));
-			ui_input_set_text(editor->ceiling_texture_scale_input, ft_b_ftoa(editor->selected_sector->ceiling_scale, 2, temp_str));
-			ui_element_image_set(editor->ceiling_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_sector->ceiling_texture]);
-			ui_element_image_set(editor->floor_texture_image, UI_STATE_AMOUNT, editor->wall_textures[editor->selected_sector->floor_texture]);
-			ft_printf("sector inputs updated\n");
+			set_sector_ui(editor, editor->selected_sector);
 		}
 	}
 	else if (editor->selected_sector // MOVE SECTOR ( only if nothing else is selected (point/wall) )
 		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
-		&& !editor->selected_point
-		&& !editor->selected_wall)
-	{
+		&& !editor->selected_point && !editor->selected_wall)
 		move_sector(editor->selected_sector, editor->move_amount);
-	}
 
+	// Update sector from ui;
 	if (editor->selected_sector && editor->sector_edit_menu->show)
-	{
-		int	f_height;
-		int	c_height;
-		int gravity;
-		int lighting;
+		get_sector_ui(editor, editor->selected_sector);
 
-		if (ui_input_exit(editor->floor_height_input))
-		{
-			f_height = ft_atoi(ui_input_get_text(editor->floor_height_input));
-			f_height = ft_min(f_height, editor->selected_sector->ceiling_height);
-			ft_b_itoa(f_height, temp_str);
-			ui_input_set_text(editor->floor_height_input, temp_str);
-			editor->selected_sector->floor_height = f_height;
-		}
-		if (ui_input_exit(editor->ceiling_height_input))
-		{
-			c_height = ft_atoi(ui_input_get_text(editor->ceiling_height_input));
-			c_height = ft_max(editor->selected_sector->floor_height, c_height);
-			ft_b_itoa(c_height, temp_str);
-			ui_input_set_text(editor->ceiling_height_input, temp_str);
-			editor->selected_sector->ceiling_height = c_height;
-		}
-
-		if (ui_input_exit(editor->gravity_input))
-		{
-			gravity = ft_atoi(ui_input_get_text(editor->gravity_input));
-			gravity = ft_clamp(gravity, 0, 100);
-			ft_b_itoa(gravity, temp_str);
-			ui_input_set_text(editor->gravity_input, temp_str);
-			editor->selected_sector->gravity = gravity;
-		}
-
-		if (ui_input_exit(editor->lighting_input))
-		{
-			lighting = ft_atoi(ui_input_get_text(editor->lighting_input));
-			lighting = ft_clamp(lighting, 0, 100);
-			ft_b_itoa(lighting, temp_str);
-			ui_input_set_text(editor->lighting_input, temp_str);
-			editor->selected_sector->lighting = lighting;
-		}
-
-		float f_scale;
-		float c_scale;
-
-		if (ui_input_exit(editor->floor_texture_scale_input))
-		{
-			f_scale = ft_atof(ui_input_get_text(editor->floor_texture_scale_input));
-			f_scale = ft_fclamp(f_scale, 0.1f, 100.0f);
-			ft_b_ftoa(f_scale, 2, temp_str);
-			ui_input_set_text(editor->floor_texture_scale_input, temp_str);
-			editor->selected_sector->floor_scale = f_scale;
-		}
-		if (ui_input_exit(editor->ceiling_texture_scale_input))
-		{
-			c_scale = ft_atof(ui_input_get_text(editor->ceiling_texture_scale_input));
-			c_scale = ft_fclamp(c_scale, 0.1f, 100.0f);
-			ft_b_ftoa(c_scale, 2, temp_str);
-			ui_input_set_text(editor->ceiling_texture_scale_input, temp_str);
-			editor->selected_sector->ceiling_scale = c_scale;
-		}
-	}
-
-	// Sector Edit Ok Button
+	// Sector Edit Ok Button // unselect wall / point;
 	if (editor->sector_edit_ok_button->state == UI_STATE_CLICK)
 	{
 		editor->selected_wall = NULL;
@@ -325,10 +236,6 @@ void	sector_edit_events(t_editor *editor)
 
 void	wall_events(t_editor *editor, SDL_Event e)
 {
-	char	temp_str[20];
-
-	ft_strnclr(temp_str, 20);
-	// Wall
 	// Selecting wall;
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor)
@@ -360,6 +267,7 @@ void	wall_events(t_editor *editor, SDL_Event e)
 	{
 		editor->menu_wall_edit->show = 0;
 		editor->selected_wall = NULL;
+		editor->selected_sprite = NULL;
 	}
 
 	if (editor->selected_wall)
@@ -396,10 +304,9 @@ void	entity_events(t_editor *editor, SDL_Event e)
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 			&& !hover_over_open_menus(editor))
 		{
-			t_entity	*entity = entity_new();
+			t_entity	*entity = add_entity(editor);
 			entity->pos = editor->mouse_pos;
-			++editor->entity_amount;
-			add_to_list(&editor->entities, entity, sizeof(t_entity));
+			//add_entity(editor)->pos = editor->mouse_pos; // change to this if you have to;
 		}
 	}
 	else if (editor->select_button->state == UI_STATE_CLICK)
@@ -409,60 +316,20 @@ void	entity_events(t_editor *editor, SDL_Event e)
 		{
 			t_entity *entity = get_entity_from_list_around_radius(editor->entities, editor->mouse_pos, 1.0f);
 			// we dont want to overwrite the currently selected entity if we dont actually find a new one;
-			if (entity)
+			if (entity) // if new entity selected;
 			{
 				editor->selected_entity = entity;
 
-				// when selecting new entity this happens;
-				ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(editor->selected_entity->yaw, temp_str));
-				ui_slider_value_set(editor->entity_yaw_slider, editor->selected_entity->yaw);
-				ui_input_set_text(editor->entity_z_input, ft_b_itoa(editor->selected_entity->z, temp_str));
-
-				ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_texture_surfaces[editor->selected_entity->type]);
+				set_entity_ui(editor, editor->selected_entity);
 			}
 		}
 		else if (editor->selected_entity
 			&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
 			editor->selected_entity->pos = vec2i_add(editor->selected_entity->pos, editor->move_amount);
 
+		// Fill entity with values from ui;
 		if (editor->selected_entity)
-		{
-			if (ui_input_exit(editor->entity_yaw_input))
-			{
-				int	angle = ft_atoi(ui_input_get_text(editor->entity_yaw_input));
-				angle = ft_clamp(angle, 0, 360);
-				editor->selected_entity->yaw = angle;
-				ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(angle, temp_str));
-				ui_slider_value_set(editor->entity_yaw_slider, angle);
-			}
-			if (ui_slider_updated(editor->entity_yaw_slider))
-			{
-				int	angle = ui_slider_get_slider(editor->entity_yaw_slider)->value;
-				editor->selected_entity->yaw = angle;
-				ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(angle, temp_str));
-			}
-
-			if (ui_input_exit(editor->entity_z_input))
-			{
-				int	z_value = ft_atoi(ui_input_get_text(editor->entity_z_input));
-				editor->selected_entity->z = z_value;
-			}
-			
-			if (ui_dropdown_exit(editor->entity_dropdown)
-				&& ui_dropdown_active(editor->entity_dropdown))
-			{
-				int	i = 0;
-				while (++i <= ENTITY_AMOUNT) // i know that we are starting at 1, unset is 0;
-				{
-					if (ft_strequ(g_entity_data[i - 1].name, ui_dropdown_active_text(editor->entity_dropdown)))
-					{
-						editor->selected_entity->type = i;
-						break ;
-					}
-				}
-				ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_texture_surfaces[editor->selected_entity->type]);
-			}
-		}
+			get_entity_ui(editor, editor->selected_entity);
 
 		if (!editor->selected_entity
 			|| editor->close_entity_edit_button->state == UI_STATE_CLICK)

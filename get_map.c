@@ -247,7 +247,7 @@ void	get_entity(t_editor *editor, char **lines, int *i)
 		if (lines[*i][0] == '-')
 			break ;
 		args = ft_strsplit(lines[*i], '\t');
-		entity = entity_new();
+		entity = add_entity(editor);
 		while (++ggg < ENTITY_AMOUNT)
 			if (ft_strequ(g_entity_data[ggg].name, args[1]))
 				entity->type = ggg;
@@ -255,7 +255,6 @@ void	get_entity(t_editor *editor, char **lines, int *i)
 		entity->pos.y = ft_atoi(args[3]);
 		entity->z = ft_atoi(args[4]);
 		entity->yaw = ft_atoi(args[5]);
-		add_to_list(&editor->entities, entity, sizeof(t_entity));
 		ft_arraydel(args);
 	}
 	ft_printf("Success.\n");
