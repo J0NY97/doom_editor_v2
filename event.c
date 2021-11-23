@@ -15,6 +15,43 @@ void	event_free(t_event *event)
 	free(event);
 }
 
+t_event	*add_event(t_editor *editor)
+{
+	t_event	*event;
+
+	event = event_new();
+	event->elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
+	event->id = get_next_event_id(editor->events);
+	event->elem->event = event;
+
+	t_vec2	new_pos;
+	new_pos = vec2(event->elem->menu->pos.x, ((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y + 10);
+	ui_element_pos_set2(event->elem->menu, new_pos);
+	
+	add_to_list(&editor->event_elements, event->elem, sizeof(t_event_elem));
+	add_to_list(&editor->event_element_buttons, event->elem->button, sizeof(t_ui_element));
+	add_to_list(&editor->events, event, sizeof(t_event));
+
+	++editor->event_amount;
+
+	ft_printf("New event added (%d)\n", editor->event_amount);
+	return (event);
+}
+
+void	remove_event(t_editor *editor, t_event *event)
+{
+	ft_printf("[%s] Removing event.\n", __FUNCTION__);
+	ui_element_remove_from_list(event->elem->button, &editor->event_element_buttons);
+	remove_event_elem_from_list(event->elem, &editor->event_elements);
+	remove_event_from_list(event, &editor->events);
+	ft_printf("If you see ui_element_remove_child_parent, dont get scared, those are coming from the ui_element_free.\n");
+	event_elem_free(event->elem);
+	event_free(event);
+	--editor->event_amount;
+	//<---- HERE!!! TODO: realign all the elements on event_id_menu;
+	ft_printf("Removing event. (total : %d)\n", editor->event_amount);
+}
+
 void	remove_event_from_list(t_event *event, t_list **list)
 {
 	t_list	*curr;
@@ -23,10 +60,7 @@ void	remove_event_from_list(t_event *event, t_list **list)
 	while (curr)
 	{
 		if (event == curr->content)
-		{
 			ft_lstdelone_nonfree(list, curr);
-			event_free(event);
-		}
 		curr = curr->next;
 	}
 }
@@ -55,10 +89,7 @@ void	remove_event_elem_from_list(t_event_elem *elem, t_list **list)
 	while (curr)
 	{
 		if (curr->content == elem)
-		{
-			event_elem_free(elem);	
 			ft_lstdelone_nonfree(list, curr);
-		}
 		curr = curr->next;
 	}
 }

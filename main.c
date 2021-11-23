@@ -415,26 +415,12 @@ void	event_events(t_editor *editor, SDL_Event e)
 	// If add button is clicked;
 	if (editor->add_event_button->state == UI_STATE_CLICK)
 	{
-		t_event_elem	*event_elem;
-		if (editor->selected_event_elem == NULL)
+		if (editor->selected_event_elem == NULL) // add new element;
 		{
-			ft_printf("Trying to make new event\n");
-			event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
-			event_elem->event = event_new();
-			event_elem->event->id = get_next_event_id(editor->events);
-
-			t_vec2	new_pos;
-			new_pos = vec2(event_elem->menu->pos.x, ((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y + 10);
-			ui_element_pos_set2(event_elem->menu, new_pos);
-			
-			add_to_list(&editor->event_elements, event_elem, sizeof(t_event_elem));
-			add_to_list(&editor->event_element_buttons, event_elem->button, sizeof(t_ui_element));
-			add_to_list(&editor->events, event_elem->event, sizeof(t_event));
-			ft_printf("New event added (%d)\n", editor->event_amount);
-			editor->selected_event_elem = event_elem;
-			editor->active_event_elem = event_elem->button;
-			editor->selected_event = event_elem->event;
-		}
+			editor->selected_event = add_event(editor);
+			editor->selected_event_elem = editor->selected_event->elem;
+			editor->active_event_elem = editor->selected_event->elem->button;
+		} // else update, currently selected, element from the ui;
 		update_event(editor, editor->selected_event_elem->event);
 		update_event_elem(editor->selected_event_elem);
 
@@ -446,15 +432,10 @@ void	event_events(t_editor *editor, SDL_Event e)
 	{
 		if (editor->selected_event && editor->selected_event_elem)
 		{
-			remove_event_from_list(editor->selected_event, &editor->events);
-			ui_element_remove_from_list(editor->selected_event_elem->button, &editor->event_element_buttons);
-			remove_event_elem_from_list(editor->selected_event_elem, &editor->event_elements);
+			remove_event(editor, editor->selected_event);
 			editor->selected_event_elem = NULL;
 			editor->active_event_elem = NULL;
 			editor->selected_event = NULL;
-			--editor->event_amount;
-			//<---- HERE!!! TODO: realign all the elements on event_id_menu;
-			ft_printf("Removing event. (total : %d)\n", editor->event_amount);
 		}
 	}
 
@@ -462,16 +443,18 @@ void	event_events(t_editor *editor, SDL_Event e)
 	if (editor->event_id_dropdown->show
 		&& ui_dropdown_open(editor->event_id_dropdown))
 	{
+		char	**texts;
+
 		if (ui_dropdown_active(editor->event_action_dropdown) == editor->event_action_sector)
 		{
-			char	**texts = gen_sector_id_texts(editor->sectors);
+			texts = gen_sector_id_texts(editor->sectors);
 			t_ui_recipe *recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
 			create_buttons_to_list_from_texts_remove_extra(ui_dropdown_get_menu_element(editor->event_id_dropdown), texts, recipe);
 			ft_arraydel(texts);
 		}
 		else
 		{
-			char	**texts = gen_sprite_id_texts(editor->sprites);
+			texts = gen_sprite_id_texts(editor->sprites);
 			t_ui_recipe *recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
 			create_buttons_to_list_from_texts_remove_extra(ui_dropdown_get_menu_element(editor->event_id_dropdown), texts, recipe);
 			ft_arraydel(texts);
@@ -586,8 +569,10 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 	}
 
 	// TODO: figure out when to update this;
-	final_str = ft_sprintf("points : %d\nwalls : %d\nsectors : %d\nentities : %d, sprites : %d\n",
-			editor->point_amount, editor->wall_amount, editor->sector_amount, editor->entity_amount, editor->sprite_amount);
+	final_str = ft_sprintf("points : %d\nwalls : %d\nsectors : %d\n"
+			"entities : %d\nsprites : %d\nevents : %d\n",
+			editor->point_amount, editor->wall_amount, editor->sector_amount,
+			editor->entity_amount, editor->sprite_amount, editor->event_amount);
 	ui_label_set_text(editor->misc_info_label, final_str);
 	ft_strdel(&final_str);
 

@@ -668,7 +668,7 @@ mouse_hover_info
 
 misc_info_label
 {
-	xywh : 10, 100, 50, 20;
+	xywh : 10, 80, 50, 20;
 	title : Misc:;
 };
 misc_info

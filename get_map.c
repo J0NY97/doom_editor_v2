@@ -272,7 +272,7 @@ void	get_events(t_editor *editor, char **lines, int *i)
 		if (lines[*i][0] == '-')
 			break ;
 		args = ft_strsplit(lines[*i], '\t');
-		event = event_new();
+		event = add_event(editor);
 		event->id = ft_atoi(args[0]);
 		for (int d = 0; d < EVENT_TYPE_AMOUNT - 1; d++)
 		{
@@ -302,14 +302,9 @@ void	get_events(t_editor *editor, char **lines, int *i)
 		event->min = ft_atoi(args[5]);
 		event->max = ft_atoi(args[6]);
 		event->speed = ft_atoi(args[7]);
-		add_to_list(&editor->events, event, sizeof(t_event));
 		ft_arraydel(args);
 
-		t_event_elem *event_elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
-		event_elem->event = event;
-		update_event_elem(event_elem);
-		add_to_list(&editor->event_elements, event_elem, sizeof(t_event_elem));
-		add_to_list(&editor->event_element_buttons, event_elem->button, sizeof(t_ui_element));
+		update_event_elem(event->elem);
 	}
 	ft_printf("Success.\n");
 }

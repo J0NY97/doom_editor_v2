@@ -393,6 +393,7 @@ struct s_entity
  * int		min, max, speed;		other info for some of the event types;
  * int		pointer_type;			either TYPE_SECTOR or TYPE_SPRITE;
  * void		*pointer;				either t_sector or t_sprite depending on do you have type as shoot/click or sector;
+ * t_event_elem	*elem;				t_event_elem, this event is attached to; ( DONT FREE )
 */
 struct s_event	
 {
@@ -406,6 +407,8 @@ struct s_event
 
 	int				pointer_type;
 	void			*pointer;
+
+	t_event_elem	*elem;
 };
 
 // Point
@@ -469,6 +472,8 @@ t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, floa
 // Event
 t_event_elem		*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent);
 void				event_elem_free(t_event_elem *elem);
+t_event				*add_event(t_editor *editor);
+void				remove_event(t_editor *editor, t_event *event);
 void				remove_event_elem_from_list(t_event_elem *elem, t_list **list);
 void				event_elem_update(t_editor *editor, t_event_elem *event_elem);
 t_event				*event_new(void);
