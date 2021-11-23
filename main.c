@@ -360,9 +360,11 @@ void	event_events(t_editor *editor, SDL_Event e)
 		editor->event_speed_input->event = 0;
 	}
 	
+	// Selecting event;
 	// Lets see if we have gotten a new active event_elem;
 	if (ui_list_radio_event(editor->event_element_buttons, &editor->active_event_elem))
 	{
+		// Figure out which event this button is attached to;
 		t_list	*curr;
 		curr = editor->event_elements;
 		while (curr)
@@ -375,41 +377,9 @@ void	event_events(t_editor *editor, SDL_Event e)
 			}
 			curr = curr->next;
 		}
-
-		ft_printf("a new event button clicked. lets updated some dropdowns.\n");
-
-		ui_dropdown_activate(editor->event_type_dropdown,
-			ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_type_dropdown)->children,
-				g_event_type[editor->selected_event_elem->event->type]));
-		ui_dropdown_activate(editor->event_action_dropdown,
-			ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_action_dropdown)->children,
-				g_event_action[editor->selected_event_elem->event->action]));
-
-		if (editor->selected_event->pointer)
-		{
-			if (editor->selected_event->pointer_type == TYPE_SECTOR)
-				ft_b_itoa(((t_sector *)editor->selected_event->pointer)->id, target_id_text);
-			else
-				ft_b_itoa(((t_sprite *)editor->selected_event->pointer)->id, target_id_text);
-		}
-		// Activate ID button;
-		t_ui_element	*id_button = ui_list_get_button_with_text(
-				ui_dropdown_get_menu_element(editor->event_id_dropdown)->children, target_id_text);
-		if (!id_button)
-		{
-			if (editor->selected_event->pointer_type == TYPE_SECTOR
-				|| editor->selected_event->pointer_type == SECTOR)
-			{
-				char	**texts = gen_sector_id_texts(editor->sectors);
-				t_ui_recipe *recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
-				create_buttons_to_list_from_texts_remove_extra(ui_dropdown_get_menu_element(editor->event_id_dropdown), texts, recipe);
-				ft_arraydel(texts);
-			}
-			id_button = ui_list_get_button_with_text(
-					ui_dropdown_get_menu_element(editor->event_id_dropdown)->children, target_id_text);
-		}
-
-		ui_dropdown_activate(editor->event_id_dropdown, id_button);
+		// Update event ui with values from that event;
+		if (editor->selected_event)
+			set_event_ui(editor, editor->selected_event);
 	}
 
 	// If add button is clicked;
@@ -440,6 +410,8 @@ void	event_events(t_editor *editor, SDL_Event e)
 	}
 
 	// Update ID Dropdown;
+	// when id dropdown opens we add buttons for each sprite/sector id,
+	// 	depending on which action type is selected;
 	if (editor->event_id_dropdown->show
 		&& ui_dropdown_open(editor->event_id_dropdown))
 	{
@@ -557,6 +529,89 @@ void	spawn_events(t_editor *editor, SDL_Event e)
 	}
 }
 
+void	update_amount_info(t_editor *editor)
+{
+	char	*final;
+
+	final = ft_sprintf("points : %d\nwalls : %d\nsectors : %d\n"
+			"entities : %d\nsprites : %d\nevents : %d\n",
+			editor->point_amount, editor->wall_amount, editor->sector_amount,
+			editor->entity_amount, editor->sprite_amount, editor->event_amount);
+	ui_label_set_text(editor->misc_info_label, final);
+	ft_strdel(&final);
+}
+
+int	update_sector_info(t_editor *editor, t_sector *sector)
+{
+	char		*final;
+
+	if (sector)
+	{
+		final = ft_sprintf("iD : %d\npos : %d, %d\nWalls : %d\n",
+				sector->id, sector->center.x, sector->center.y,
+				sector->wall_amount);
+		ui_label_set_text(editor->sector_info_label, final);
+		ft_strdel(&final);
+		return (1);
+	}
+	else
+		ui_label_set_text(editor->sector_info_label, "NONE");
+	return (0);
+}
+
+int	update_point_info(t_editor *editor, t_point *point)
+{
+	char	*final;
+
+	if (point)
+	{
+		final = ft_sprintf("iD : %d\npos : %d, %d\n",
+				point->id, point->pos.x, point->pos.y);
+		ui_label_set_text(editor->sub_info_label, final);
+		ft_strdel(&final);
+		return (1);
+	}
+	else
+		ui_label_set_text(editor->sub_info_label, "NONE");
+	return (0);
+}
+
+int	update_sprite_info(t_editor *editor, t_sprite *sprite)
+{
+	char		*final;
+
+	if (sprite)
+	{
+		sprite = editor->selected_sprite;
+		final = ft_sprintf("iD : %d\npos : %d, %d\n",
+				sprite->id, sprite->pos.x, sprite->pos.y);
+		ui_label_set_text(editor->sprite_info_label, final);
+		ft_strdel(&final);
+		return (1);
+	}
+	else
+		ui_label_set_text(editor->sprite_info_label, "NONE");
+	return (0);
+}
+
+int	update_wall_info(t_editor *editor, t_wall *wall)
+{
+	char	*final;
+	
+	if (wall)
+	{
+		final = ft_sprintf("iD : %d\np1 : %d, %d\np2 : %d, %d\ndist : %.2f\n",
+				wall->id, wall->p1->pos.x, wall->p1->pos.y, wall->p2->pos.x,
+				wall->p2->pos.y, distance(wall->p1->pos.v, wall->p2->pos.v, 2));
+		ui_label_set_text(editor->sub_info_label, final);
+		ft_strdel(&final);
+		return (1);
+	}
+	else
+		ui_label_set_text(editor->sub_info_label, "NONE");
+	return (0);
+}
+
 void	info_menu_events(t_editor *editor, SDL_Event e)
 {
 	char	*final_str;
@@ -568,52 +623,12 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 		ft_strdel(&final_str);
 	}
 
-	// TODO: figure out when to update this;
-	final_str = ft_sprintf("points : %d\nwalls : %d\nsectors : %d\n"
-			"entities : %d\nsprites : %d\nevents : %d\n",
-			editor->point_amount, editor->wall_amount, editor->sector_amount,
-			editor->entity_amount, editor->sprite_amount, editor->event_amount);
-	ui_label_set_text(editor->misc_info_label, final_str);
-	ft_strdel(&final_str);
-
-	if (editor->selected_sector)
-	{
-		t_sector *sector = editor->selected_sector;
-		final_str = ft_sprintf("iD : %d\npos : %d, %d\nWalls : %d\n", sector->id, sector->center.x, sector->center.y, sector->wall_amount);
-		ui_label_set_text(editor->sector_info_label, final_str);
-		ft_strdel(&final_str);
-
-		if (editor->selected_point)
-		{
-			t_point *point = editor->selected_point;
-			final_str = ft_sprintf("iD : %d\npos : %d, %d\n", point->id, point->pos.x, point->pos.y);
-			ui_label_set_text(editor->sub_info_label, final_str);
-			ft_strdel(&final_str);
-		}
-		else if (editor->selected_wall)
-		{
-			t_wall *wall = editor->selected_wall;
-			final_str = ft_sprintf("iD : %d\np1 : %d, %d\np2 : %d, %d\ndist : %.2f\n", wall->id, wall->p1->pos.x, wall->p1->pos.y, wall->p2->pos.x, wall->p2->pos.y, distance(wall->p1->pos.v, wall->p2->pos.v, 2));
-			ui_label_set_text(editor->sub_info_label, final_str);
-			ft_strdel(&final_str);
-			if (editor->selected_sprite)
-			{
-				t_sprite *sprite = editor->selected_sprite;
-				final_str = ft_sprintf("iD : %d\npos : %d, %d\n", sprite->id, sprite->pos.x, sprite->pos.y);
-				ui_label_set_text(editor->sprite_info_label, final_str);
-				ft_strdel(&final_str);
-			}
-			else
-				ui_label_set_text(editor->sprite_info_label, "NONE");
-		}
-		else
-			ui_label_set_text(editor->sub_info_label, "NONE");
-	}
-	else
-	{
-		ui_label_set_text(editor->sector_info_label, "NONE");
-		ui_label_set_text(editor->sub_info_label, "NONE");
-	}
+	update_amount_info(editor);
+	update_sector_info(editor, editor->selected_sector);
+	// Only one of point or walls should be changing the info text;
+	if (!update_point_info(editor, editor->selected_point))
+		if (update_wall_info(editor, editor->selected_wall))
+	update_sprite_info(editor, editor->selected_sprite);
 }
 
 void	sector_hover_info_events(t_editor *editor, SDL_Event e)

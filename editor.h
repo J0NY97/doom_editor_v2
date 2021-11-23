@@ -483,6 +483,7 @@ int					get_next_event_id(t_list *list);
 void				update_event(t_editor *editor, t_event *event);
 void				update_event_elem(t_event_elem *elem);
 void				update_id_dropdown(t_editor *editor, int action);
+void				set_event_ui(t_editor *editor, t_event *event);
 
 // Sprite
 t_sprite			*sprite_new(void);

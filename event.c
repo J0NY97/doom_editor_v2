@@ -52,6 +52,45 @@ void	remove_event(t_editor *editor, t_event *event)
 	ft_printf("Removing event. (total : %d)\n", editor->event_amount);
 }
 
+void	set_event_ui(t_editor *editor, t_event *event)
+{
+	char	target_id_text[20];
+
+	ft_strnclr(target_id_text, 20);
+
+	ui_dropdown_activate(editor->event_type_dropdown,
+		ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_type_dropdown)->children,
+			g_event_type[event->type]));
+	ui_dropdown_activate(editor->event_action_dropdown,
+		ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_action_dropdown)->children,
+			g_event_action[event->action]));
+
+	if (event->pointer)
+	{
+		if (event->pointer_type == TYPE_SECTOR)
+			ft_b_itoa(((t_sector *)event->pointer)->id, target_id_text);
+		else
+			ft_b_itoa(((t_sprite *)event->pointer)->id, target_id_text);
+	}
+	// Activate ID button;
+	t_ui_element	*id_button = ui_list_get_button_with_text(
+			ui_dropdown_get_menu_element(editor->event_id_dropdown)->children, target_id_text);
+	if (!id_button)
+	{
+		if (event->pointer_type == TYPE_SECTOR
+			|| event->pointer_type == SECTOR)
+		{
+			char	**texts = gen_sector_id_texts(editor->sectors);
+			t_ui_recipe *recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button"); // TODO: save this recipe in the editor;
+			create_buttons_to_list_from_texts_remove_extra(ui_dropdown_get_menu_element(editor->event_id_dropdown), texts, recipe);
+			ft_arraydel(texts);
+		}
+		id_button = ui_list_get_button_with_text(
+				ui_dropdown_get_menu_element(editor->event_id_dropdown)->children, target_id_text);
+	}
+	ui_dropdown_activate(editor->event_id_dropdown, id_button);
+}
+
 void	remove_event_from_list(t_event *event, t_list **list)
 {
 	t_list	*curr;
