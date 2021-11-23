@@ -422,7 +422,6 @@ void				remove_all_lonely_points(t_editor *editor);
 
 // Wall
 t_wall				*wall_new(void);
-void				remove_sprite(t_editor *editor, t_sprite *sprite);
 void				remove_sprite_from_wall(t_sprite *sprite, t_wall *wall);
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
@@ -493,6 +492,8 @@ int					get_next_sprite_id(t_list *list);
 t_sprite			*get_sprite_from_list_at_pos(t_list *list, t_vec2i pos);
 t_sprite			*get_sprite_by_id_from_list(t_list *list, int id);
 char				**gen_sprite_id_texts(t_list *sprites);
+t_sprite			*add_sprite(t_editor *editor);
+void				remove_sprite(t_editor *editor, t_sprite *sprite);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);

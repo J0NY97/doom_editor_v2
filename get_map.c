@@ -93,7 +93,7 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 		parent_wall = get_wall_with_id(editor->walls, wall_id);
 		if (parent_wall)
 		{
-			sprite = sprite_new();
+			sprite = add_sprite(editor);
 			sprite->id = ft_atoi(args[0]);
 			sprite->parent = parent_wall;
 			sprite->pos.x = ft_atoi(args[2]);
@@ -105,9 +105,7 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 				if (ft_strequ(g_sprite_type[ggg], args[6]))
 					sprite->type = ggg;
 			add_to_list(&parent_wall->sprites, sprite, sizeof(t_sprite));
-			add_to_list(&editor->sprites, sprite, sizeof(t_sprite));
 			++parent_wall->sprite_amount;
-			++editor->sprite_amount;
 		}
 		else
 			ft_printf("[%s] No wall with id %d found, ignoring.\n", __FUNCTION__, wall_id);

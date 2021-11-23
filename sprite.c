@@ -26,6 +26,21 @@ void	sprite_print(t_sprite *sprite)
 	ft_printf("\ttype : %d\n", sprite->type);
 }
 
+t_sprite	*add_sprite(t_editor *editor)
+{
+	t_sprite	*sprite;
+
+	sprite = sprite_new();
+	sprite->pos = vec4i(0, 0, 64, 64);
+	sprite->texture = 0;
+	sprite->id = get_next_sprite_id(editor->sprites);
+	sprite->scale = 1.0f;
+	add_to_list(&editor->sprites, sprite, sizeof(t_sprite));
+	++editor->sprite_amount;
+	ft_printf("New Sprite Added (%d)\n", editor->sprite_amount);
+	return (sprite);
+}
+
 /*
  * Removes all traces of this sprite;
 */

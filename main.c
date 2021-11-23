@@ -808,19 +808,12 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 	{
 		if (!editor->selected_sprite) // unselects if you have one selected.
 		{
-			editor->selected_sprite = sprite_new();
-			editor->selected_sprite->parent = editor->selected_wall;
-			editor->selected_sprite->pos = vec4i(0, 0, 64, 64);
-			editor->selected_sprite->texture = 0;
+			editor->selected_sprite = add_sprite(editor);
 			if (editor->active_texture_button_id > -1)
 				editor->selected_sprite->texture = editor->active_texture_button_id;
-			editor->selected_sprite->id = get_next_sprite_id(editor->sprites);
-			editor->selected_sprite->scale = 1.0f;
+			editor->selected_sprite->parent = editor->selected_wall;
 			add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
-			add_to_list(&editor->sprites, editor->selected_sprite, sizeof(t_sprite));
 			++editor->selected_wall->sprite_amount;
-			++editor->sprite_amount;
-			ft_printf("New Sprite Added (%d)\n", editor->selected_wall->sprite_amount);
 		}
 		else
 			editor->selected_sprite = NULL;
@@ -832,7 +825,6 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 			remove_sprite(editor, editor->selected_sprite);
 			editor->selected_sprite = NULL;
 			--editor->selected_wall->sprite_amount;
-			--editor->sprite_amount;
 			ft_printf("Sprite Removed (total : %d)\n", editor->selected_wall->sprite_amount);
 		}
 	}
@@ -871,12 +863,16 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 	// Editing Sprite
 	if (editor->selected_sprite)
 	{
+		t_vec2i	mouse_diff;
+
+		mouse_diff = vec2i(editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x,
+				editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y);
 		// Moving
 		if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT // moving With mouse
 			&& ui_element_is_hover(editor->sprite_edit_menu))
 		{
-			editor->selected_sprite->pos.x = editor->selected_sprite->pos.x + editor->move_amount.x;
-			editor->selected_sprite->pos.y = editor->selected_sprite->pos.y + editor->move_amount.y;
+			editor->selected_sprite->pos.x += mouse_diff.x;
+			editor->selected_sprite->pos.y += mouse_diff.y;
 			ui_input_set_text(editor->sprite_x_input, ft_b_itoa(editor->selected_sprite->pos.x, temp_str));
 			ui_input_set_text(editor->sprite_y_input, ft_b_itoa(editor->selected_sprite->pos.y, temp_str));
 		}
@@ -933,7 +929,7 @@ void	texture_menu_events(t_editor *editor, SDL_Event e)
 		if (selected_texture_elem
 			&& editor->active_texture_button_id > -1)
 		{
-			// Set selected whatever
+			// Set selected whatever // TODO this needs to go;
 			if (editor->active_texture_opening_button == editor->wall_texture_button)
 			{
 				if (editor->selected_wall)
@@ -978,10 +974,6 @@ void	texture_menu_events(t_editor *editor, SDL_Event e)
 
 void	user_events(t_editor *editor, SDL_Event e)
 {
-	char	temp_str[20];
-
-	ft_strnclr(temp_str, 20);
-
 	calculate_hover(editor);
 
 	// Info Label events
@@ -1013,12 +1005,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 	if (editor->remove_button->state == UI_STATE_CLICK)
 	{
 		int	was_removed = 0;
-		/* Use this once they go through the parent and remove itself from their list too! (crash otherwise);
-		if (editor->selected_point)
-			was_removed = remove_point(editor, editor->selected_point);
-		else if (editor->selected_wall)
-			was_removed = remove_wall(editor, editor->selected_wall);
-		else*/ if (editor->selected_sector)
+		if (editor->selected_sector)
 		{
 			was_removed = remove_sector(editor, editor->selected_sector);
 			editor->selected_sector = NULL;
@@ -1059,6 +1046,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 		editor->selected_point = NULL;
 		editor->sector_edit_menu->show = 0;
 		editor->wall_button->state = UI_STATE_DEFAULT;
+		editor->point_button->state = UI_STATE_DEFAULT;
 	}
 
 	// Wall Events
@@ -1101,6 +1089,8 @@ void	user_events(t_editor *editor, SDL_Event e)
 		else
 			editor->selected_point = NULL;
 	}
+	else
+		editor->selected_point = NULL;
 
 
 
@@ -1158,7 +1148,6 @@ void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
 	w_amount = surface->w / (gap_size * zoom);
 	h_amount = surface->h / (gap_size * zoom);
 	i = 0;
-//	SDL_FillRect(surface, NULL, 0xff000000); // fill the surface first;
 	while (i < w_amount || i < h_amount)
 	{
 		if (i < w_amount)
@@ -1222,39 +1211,6 @@ void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Ui
 		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
 }
 
-/*
- * NOTE: this doesnt work on texture that update every frame;
- * NOTE: im not 100% sure this works;
- * !! IMPORTANT !!! ^
-*/
-void	draw_text_on_texture(SDL_Texture *texture, char *text, TTF_Font *font, t_vec2i pos, Uint32 color)
-{
-	SDL_Surface	*text_surface;
-	t_rgba		rgba;
-	int			t_w;
-	int			t_h;
-	SDL_Rect	rect;
-
-	if (font)
-	{
-		rgba = hex_to_rgba(color);
-		TTF_SetFontHinting(font, TTF_HINTING_MONO);
-		text_surface = TTF_RenderText_Blended(font, text, (SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
-		// TODO : if this is a function that will stay for a longer time, consider chekcing the format to be the same as the one that the ttf outputs on the surface;
-		SDL_QueryTexture(texture, NULL, NULL, &t_w, &t_h);
-		rect.x = ft_clamp(pos.x - (text_surface->w / 2), 0, t_w);
-		rect.y = ft_clamp(pos.y - (text_surface->h / 2), 0, t_h);
-		rect.w = ft_clamp(text_surface->w, 0, t_w - rect.x);
-		rect.h = ft_clamp(text_surface->h, 0, t_h - rect.y);
-		SDL_UpdateTexture(texture, &rect, text_surface->pixels, text_surface->pitch);
-		SDL_FreeSurface(text_surface);
-	}
-	else
-		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
-}
-
-
-
 void	draw_sectors(t_editor *editor, t_list *sectors)
 {
 	t_sector	*sector;
@@ -1303,9 +1259,7 @@ void	draw_entities(t_editor *editor, t_list *entities)
 void	draw_entities_yaw(t_editor *editor, t_list *entities)
 {
 	t_entity	*entity;
-	char		temp_str[20];
 
-	ft_strnclr(temp_str, 20);
 	while (entities)
 	{
 		entity = entities->content;
@@ -1337,7 +1291,6 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 				editor->font, conversion(editor, entity->pos), 0xffff0000); 
 			editor->errors += 1;
 		}
-
 		entities = entities->next;
 	}
 }
