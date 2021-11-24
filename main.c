@@ -10,6 +10,11 @@ void	calculate_hover(t_editor *editor)
 	editor->mouse_pos.x = (editor->win_main->mouse_pos.x / (editor->gap_size * editor->zoom)) + editor->offset.x;
 	editor->mouse_pos.y = (editor->win_main->mouse_pos.y / (editor->gap_size * editor->zoom)) + editor->offset.y;
 
+	editor->mouse_pos_screen.x = (editor->mouse_pos.x - editor->offset.x)
+			* (editor->gap_size * editor->zoom);
+	editor->mouse_pos_screen.y = (editor->mouse_pos.y - editor->offset.y)
+			* (editor->gap_size * editor->zoom);
+
 	editor->move_amount.x = editor->mouse_pos.x - editor->last_mouse_pos.x;
 	editor->move_amount.y = editor->mouse_pos.y - editor->last_mouse_pos.y;
 }
@@ -19,46 +24,24 @@ void	calculate_hover(t_editor *editor)
 */
 void	draw_hover(t_editor *editor)
 {
-	t_vec2i	convert_back;
-
-	convert_back.x = (editor->mouse_pos.x - editor->offset.x) * (editor->gap_size * editor->zoom);
-	convert_back.y = (editor->mouse_pos.y - editor->offset.y) * (editor->gap_size * editor->zoom);
-	ui_surface_circle_draw_filled(editor->drawing_surface, convert_back, 3, 0xffffffff);
+	ui_surface_circle_draw_filled(editor->drawing_surface,
+		editor->mouse_pos_screen, 3, 0xffffffff);
 
 	// Crosshair
 	ui_surface_line_draw(editor->drawing_surface,
-		vec2i(convert_back.x, 0),
-		vec2i(convert_back.x, editor->drawing_surface->h),
+		vec2i(editor->mouse_pos_screen.x, 0),
+		vec2i(editor->mouse_pos_screen.x, editor->drawing_surface->h),
 		0x70b0b0b0);
 	ui_surface_line_draw(editor->drawing_surface,
-		vec2i(0, convert_back.y),
-		vec2i(editor->drawing_surface->w, convert_back.y),
+		vec2i(0, editor->mouse_pos_screen.y),
+		vec2i(editor->drawing_surface->w, editor->mouse_pos_screen.y),
 		0x70b0b0b0);
 
 	// Draw from first point to where you're hovering;
 	if (editor->first_point_set)
 		ui_surface_line_draw(editor->drawing_surface,
 			conversion(editor, editor->first_point),
-			convert_back, 0xffffff00);
-}
-
-t_wall	*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2)
-{
-	t_list	*curr;
-	t_wall	*curr_wall;
-
-	curr = sector->walls;
-	while (curr)
-	{
-		curr_wall = curr->content;
-		if ((compare_veci(curr_wall->p1->pos.v, p1.v, 2)
-			&& compare_veci(curr_wall->p2->pos.v, p2.v, 2))
-			|| (compare_veci(curr_wall->p1->pos.v, p2.v, 2)
-			&& compare_veci(curr_wall->p2->pos.v, p1.v, 2)))
-			return (curr_wall);
-		curr = curr->next;
-	}
-	return (NULL);
+			editor->mouse_pos_screen, 0xffffff00);
 }
 
 bool	can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall)
@@ -845,18 +828,7 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 		if (sprite) // new sprite found, update ui;
 		{
 			editor->selected_sprite = sprite;
-
-			// TODO: update ui;
-
-			ui_input_set_text(editor->sprite_scale_input, ft_b_ftoa(sprite->scale, 2, temp_str));
-			if (editor->selected_sprite->type == STATIC)
-				ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_static);
-			else if (editor->selected_sprite->type == LOOP)
-				ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_loop);
-			else if (editor->selected_sprite->type == ACTION)
-				ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_action);
-			ui_input_set_text(editor->sprite_x_input, ft_b_itoa(sprite->pos.x, temp_str));
-			ui_input_set_text(editor->sprite_y_input, ft_b_itoa(sprite->pos.y, temp_str));
+			set_sprite_ui(editor, editor->selected_sprite);
 		}
 	}
 
@@ -876,24 +848,7 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 			ui_input_set_text(editor->sprite_x_input, ft_b_itoa(editor->selected_sprite->pos.x, temp_str));
 			ui_input_set_text(editor->sprite_y_input, ft_b_itoa(editor->selected_sprite->pos.y, temp_str));
 		}
-		if (ui_input_exit(editor->sprite_x_input)) // moving with inputs
-			editor->selected_sprite->pos.x = ft_atoi(ui_input_get_text(editor->sprite_x_input));
-		if (ui_input_exit(editor->sprite_y_input))
-			editor->selected_sprite->pos.y = ft_atoi(ui_input_get_text(editor->sprite_y_input));
-
-		// Scale
-		if (ui_input_exit(editor->sprite_scale_input))
-			editor->selected_sprite->scale = ft_atof(ui_input_get_text(editor->sprite_scale_input));
-
-		if (ui_dropdown_exit(editor->sprite_type_dropdown))
-		{
-			if (editor->sprite_type_loop->state == UI_STATE_CLICK)
-				editor->selected_sprite->type = LOOP;
-			else if (editor->sprite_type_action->state == UI_STATE_CLICK)
-				editor->selected_sprite->type = ACTION;
-			else
-				editor->selected_sprite->type = STATIC;
-		}
+		get_sprite_ui(editor, editor->selected_sprite);
 	}
 }
 

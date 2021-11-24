@@ -82,7 +82,8 @@ typedef struct s_texture_elem
 /*
  * SDL_Texture		*drawing_texture;		the texture surface will be texturified on and the rendered on screen;
  * SDL_Surface		*drawing_surface;		the surface on where the grid and all the sectors are drawn on;
- * t_vec2i			mouse_pos;				taking into consideration the grid gap_size, every point is default 10 pix x*y;
+ * t_vec2i			mouse_pos;				(on grid) taking into consideration the grid gap_size, every point is default 10 pix x*y;
+ * t_vec2i			mouse_pos_screen;		from mouse_pos converted back to screen pos; (not same as the win->mouse_pos);
  * t_vec2i			offset;					when moving the grid this will change, im not sure how i did it last time;
  * TTF_Font			*font;					default font for everything so taht we dont waste fps by closing and opening it;
  *
@@ -242,6 +243,7 @@ typedef struct s_editor
 	float			zoom;
 	t_vec2i			mouse_pos;
 	t_vec2i			last_mouse_pos;
+	t_vec2i			mouse_pos_screen;
 	t_vec2i			move_amount;
 	t_vec2i			offset;
 	SDL_Surface		*grid_surface;
@@ -494,6 +496,8 @@ t_sprite			*get_sprite_by_id_from_list(t_list *list, int id);
 char				**gen_sprite_id_texts(t_list *sprites);
 t_sprite			*add_sprite(t_editor *editor);
 void				remove_sprite(t_editor *editor, t_sprite *sprite);
+void				set_sprite_ui(t_editor *editor, t_sprite *sprite);
+void				get_sprite_ui(t_editor *editor, t_sprite *sprite);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);

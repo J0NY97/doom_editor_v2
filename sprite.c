@@ -58,6 +58,45 @@ void	remove_sprite(t_editor *editor, t_sprite *sprite)
 	--editor->sprite_amount;
 }
 
+void	set_sprite_ui(t_editor *editor, t_sprite *sprite)
+{
+	char	temp_str[20];
+
+	if (!sprite || !editor)
+		return ;
+	ft_strnclr(temp_str, 20);
+	ui_input_set_text(editor->sprite_scale_input, ft_b_ftoa(sprite->scale, 2, temp_str));
+	if (sprite->type == STATIC)
+		ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_static);
+	else if (sprite->type == LOOP)
+		ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_loop);
+	else if (sprite->type == ACTION)
+		ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_action);
+	ui_input_set_text(editor->sprite_x_input, ft_b_itoa(sprite->pos.x, temp_str));
+	ui_input_set_text(editor->sprite_y_input, ft_b_itoa(sprite->pos.y, temp_str));
+}
+
+void	get_sprite_ui(t_editor *editor, t_sprite *sprite)
+{
+	if (!sprite || !editor)
+		return ;
+	if (ui_input_exit(editor->sprite_x_input))
+		sprite->pos.x = ft_atoi(ui_input_get_text(editor->sprite_x_input));
+	if (ui_input_exit(editor->sprite_y_input))
+		sprite->pos.y = ft_atoi(ui_input_get_text(editor->sprite_y_input));
+	if (ui_input_exit(editor->sprite_scale_input))
+		sprite->scale = ft_atof(ui_input_get_text(editor->sprite_scale_input));
+	if (ui_dropdown_exit(editor->sprite_type_dropdown))
+	{
+		if (editor->sprite_type_loop->state == UI_STATE_CLICK)
+			sprite->type = LOOP;
+		else if (editor->sprite_type_action->state == UI_STATE_CLICK)
+			sprite->type = ACTION;
+		else
+			sprite->type = STATIC;
+	}
+}
+
 int	get_next_sprite_id(t_list *list)
 {
 	t_sprite	*sprite;

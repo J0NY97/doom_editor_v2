@@ -218,6 +218,27 @@ t_sector	*get_sector_by_id_from_list(t_list *list, int id)
 	return (NULL);
 }
 
+t_wall	*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2)
+{
+	t_list	*curr;
+	t_wall	*curr_wall;
+
+	curr = sector->walls;
+	while (curr)
+	{
+		curr_wall = curr->content;
+		if ((compare_veci(curr_wall->p1->pos.v, p1.v, 2)
+			&& compare_veci(curr_wall->p2->pos.v, p2.v, 2))
+			|| (compare_veci(curr_wall->p1->pos.v, p2.v, 2)
+			&& compare_veci(curr_wall->p2->pos.v, p1.v, 2)))
+			return (curr_wall);
+		curr = curr->next;
+	}
+	return (NULL);
+}
+
+
+
 /*
  * Removes all traces of this sector;
 */
