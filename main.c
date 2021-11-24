@@ -126,12 +126,10 @@ void	sector_events(t_editor *editor)
 				editor->second_point_set = 1;
 				editor->second_point = editor->mouse_pos;
 			}
-
 			// We dont want you to be able to draw a 0 length wall;
 			if (editor->first_point_set
 				&& compare_veci(editor->first_point.v, editor->second_point.v, 2))
 				editor->second_point_set = 0;
-
 			if (editor->first_point_set && editor->second_point_set)
 			{
 				// NOTE: add_wall_to_sector_at_pos, doesnt check if we have anything in the 2 points given;
@@ -1161,16 +1159,34 @@ void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Ui
 	if (font)
 	{
 		rgba = hex_to_rgba(color);
-
 		TTF_SetFontHinting(font, TTF_HINTING_MONO);
-		text_surface = TTF_RenderText_Blended(font, text, (SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
+		text_surface = TTF_RenderText_Blended(font, text,
+				(SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
 		SDL_BlitSurface(text_surface, NULL, surface, 
-			&(SDL_Rect){pos.x - (text_surface->w / 2), pos.y - (text_surface->h / 2),
+			&(SDL_Rect){pos.x - (text_surface->w / 2),
+			pos.y - (text_surface->h / 2),
 			text_surface->w, text_surface->h});
 		SDL_FreeSurface(text_surface);
 	}
 	else
 		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
+}
+
+void	sector_check_errors(t_editor *editor, t_sector *sector)
+{
+	if (!check_sector_convexity(sector))
+	{
+		draw_text(editor->drawing_surface, "Not Convex!",
+			editor->font, converted_center, 0xffff0000); 
+		editor->errors += 1;
+	}
+	if (sector->ceiling_height - sector->floor_height < 0)
+	{
+		draw_text(editor->drawing_surface,
+			"Floor & Ceiling Height Doesn\'t Make Sense!",
+			editor->font, converted_center, 0xffffff00); 
+		editor->errors += 1;
+	}
 }
 
 void	draw_sectors(t_editor *editor, t_list *sectors)
@@ -1189,19 +1205,10 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		sector->center = get_sector_center(sector);
 		converted_center = conversion(editor, sector->center);
 		ft_b_itoa(sector->id, temp);
-		draw_text(editor->drawing_surface, temp, editor->font, converted_center, 0xffffffff);
-		if (!check_sector_convexity(sector))
-		{
-			draw_text(editor->drawing_surface, "Not Convex!", editor->font, converted_center, 0xffff0000); 
-			editor->errors += 1;
-		}
-		if (sector->ceiling_height - sector->floor_height < 0)
-		{
-			draw_text(editor->drawing_surface, "Floor & Ceiling Height Doesn\'t Make Sense!", editor->font, converted_center, 0xffffff00); 
-			editor->errors += 1;
-		}
-		// Get hovered
-		if (vec2_in_vec4(editor->mouse_pos,
+		draw_text(editor->drawing_surface,
+			temp, editor->font, converted_center, 0xffffffff);
+		sector_check_error(editor, sector);
+		if (vec2_in_vec4(editor->mouse_pos, // Get hovered
 			vec4i(sector->center.x - 1, sector->center.y - 1, 3, 3)))
 			hovered_this_frame = sector;
 		sectors = sectors->next;
@@ -1326,7 +1333,8 @@ void	update_error_label(t_editor *editor)
 	if (editor->errors > 0)
 	{
 		char	*temp;
-		temp = ft_sprintf("Consider fixing the %d error(s) before saving!", editor->errors);
+		temp = ft_sprintf("Consider fixing the %d error(s) before saving!",
+				editor->errors);
 		ui_label_set_text(editor->error_label, temp);
 		ft_strdel(&temp);
 		editor->error_label->show = 1;
