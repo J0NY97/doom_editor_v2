@@ -1628,7 +1628,7 @@ void	fps_func(t_fps *fps)
 int	main(int ac, char **av)
 {
 	t_editor	editor;
-	int			run;
+	t_fps		fps;
 	SDL_Event	e;
 
 	ui_sdl_init();
@@ -1638,25 +1638,15 @@ int	main(int ac, char **av)
 		get_map(&editor, editor.map_full_path);
 	else
 		ft_printf("[%s] No map given.\n", __FUNCTION__);
-
-	t_fps	fps;
 	memset(&fps, 0, sizeof(t_fps));
-	run = 1;
-	while (run)
+	while (!editor.win_main->wants_to_close)
 	{
 		fps_func(&fps);
 		update_title_fps(editor.win_main->win, &fps);
-		if (editor.win_main->wants_to_close)
-			run = 0;
 		while (SDL_PollEvent(&e))
 		{
 			ui_layout_event(&editor.layout, e);
 			user_events(&editor, e);
-			if (e.key.keysym.scancode == SDL_SCANCODE_P)
-			{
-				ft_printf("(MOUSE)");
-				print_veci(editor.win_main->mouse_pos.v, 2);
-			}
 		}
 		user_render(&editor);
 		ui_layout_render(&editor.layout);
