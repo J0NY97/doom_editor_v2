@@ -6,15 +6,14 @@
 void	calculate_hover(t_editor *editor)
 {
 	editor->last_mouse_pos = editor->mouse_pos;
-
-	editor->mouse_pos.x = (editor->win_main->mouse_pos.x / (editor->gap_size * editor->zoom)) + editor->offset.x;
-	editor->mouse_pos.y = (editor->win_main->mouse_pos.y / (editor->gap_size * editor->zoom)) + editor->offset.y;
-
+	editor->mouse_pos.x = (editor->win_main->mouse_pos.x
+			/ (editor->gap_size * editor->zoom)) + editor->offset.x;
+	editor->mouse_pos.y = (editor->win_main->mouse_pos.y
+			/ (editor->gap_size * editor->zoom)) + editor->offset.y;
 	editor->mouse_pos_screen.x = (editor->mouse_pos.x - editor->offset.x)
 			* (editor->gap_size * editor->zoom);
 	editor->mouse_pos_screen.y = (editor->mouse_pos.y - editor->offset.y)
 			* (editor->gap_size * editor->zoom);
-
 	editor->move_amount.x = editor->mouse_pos.x - editor->last_mouse_pos.x;
 	editor->move_amount.y = editor->mouse_pos.y - editor->last_mouse_pos.y;
 }
@@ -26,8 +25,6 @@ void	draw_hover(t_editor *editor)
 {
 	ui_surface_circle_draw_filled(editor->drawing_surface,
 		editor->mouse_pos_screen, 3, 0xffffffff);
-
-	// Crosshair
 	ui_surface_line_draw(editor->drawing_surface,
 		vec2i(editor->mouse_pos_screen.x, 0),
 		vec2i(editor->mouse_pos_screen.x, editor->drawing_surface->h),
@@ -36,15 +33,14 @@ void	draw_hover(t_editor *editor)
 		vec2i(0, editor->mouse_pos_screen.y),
 		vec2i(editor->drawing_surface->w, editor->mouse_pos_screen.y),
 		0x70b0b0b0);
-
-	// Draw from first point to where you're hovering;
 	if (editor->first_point_set)
 		ui_surface_line_draw(editor->drawing_surface,
 			conversion(editor, editor->first_point),
 			editor->mouse_pos_screen, 0xffffff00);
 }
 
-bool	can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall)
+bool	can_you_make_portal_of_this_wall(
+		t_list *sector_list, t_sector *part_of_sector, t_wall *wall)
 {
 	t_sector	*sector;
 	t_wall		*temp_wall;
@@ -56,7 +52,8 @@ bool	can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sec
 		sector = sector_list->content;
 		if (sector != part_of_sector)
 		{
-			temp_wall = get_sector_wall_at_pos(sector, wall->p1->pos, wall->p2->pos);
+			temp_wall = get_sector_wall_at_pos(sector,
+					wall->p1->pos, wall->p2->pos);
 			if (temp_wall)
 			{
 				wall->neighbor = sector;
@@ -90,7 +87,9 @@ void	wall_cleanup(t_editor *editor)
 /*
  * 1. Remove all the points not a part of a sector;
  * 2. Remove all walls with either points NULL;
- * 2.5. Remove all neighbors not connected; (if a wall has neighbor but it's corresponding neighbor/sector doesn't have same wall as neighbor, or at all);
+ * 2.5. Remove all neighbors not connected;
+ * 		(if a wall has neighbor but it's corresponding neighbor/sector doesn't
+ * 		have same wall as neighbor, or at all);
  * 3. Remove all sectors with no walls;
 */
 void	sector_cleanup(t_editor *editor)
@@ -104,9 +103,10 @@ void	sector_cleanup(t_editor *editor)
 }
 
 /*
- * NOTE: Basically sector_drawing_events, not sure yet if we want to rename it that;
+ * NOTE: Basically sector_drawing_events,
+ * 		not sure yet if we want to rename it that;
 */
-void	sector_events(t_editor *editor, SDL_Event e)
+void	sector_events(t_editor *editor)
 {
 	if (editor->draw_button->state == UI_STATE_CLICK
 		&& !hover_over_open_menus(editor)
@@ -161,51 +161,54 @@ void	point_events(t_editor *editor)
 
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 	{
-		point = get_point_from_sector_around_radius(editor->selected_sector, editor->mouse_pos, 1.0f);
+		point = get_point_from_sector_around_radius(
+				editor->selected_sector, editor->mouse_pos, 1.0f);
 		if (point)
 			editor->selected_point = point;
 	}
-	else if (editor->selected_point && editor->win_main->mouse_down == SDL_BUTTON_RIGHT) // MOVE POINT
-		editor->selected_point->pos = vec2i_add(editor->selected_point->pos, editor->move_amount);
+	else if (editor->selected_point
+		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+		editor->selected_point->pos
+				= vec2i_add(editor->selected_point->pos, editor->move_amount);
+}
+
+void	select_sector(t_editor *editor)
+{
+	t_sector	*sector;
+
+	// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
+	sector = get_sector_from_list_around_radius(
+			editor->sectors, editor->mouse_pos, 1);
+	if (sector) // if new sector selected;
+	{
+		editor->selected_sector = sector;
+		editor->selected_wall = NULL;
+		editor->selected_point = NULL;
+		editor->active_texture_button = NULL; // unselect currently selected texture;
+		set_sector_ui(editor, editor->selected_sector);
+	}
 }
 
 void	sector_edit_events(t_editor *editor)
 {
-	t_sector	*sector;
-
 	// Select sector;
 	if (editor->select_button->state == UI_STATE_CLICK
 		&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor))
-	{
-		// We dont want to overwrite the currently selected sector with NULL if we dont find sector on mouseclick pos;
-		sector = get_sector_from_list_around_radius(editor->sectors, editor->mouse_pos, 1);
-		if (sector) // if new sector selected;
-		{
-			editor->selected_sector = sector;
-			editor->selected_wall = NULL;
-			editor->selected_point = NULL;
-			editor->active_texture_button = NULL; // unselect currently selected texture;
-
-			set_sector_ui(editor, editor->selected_sector);
-		}
-	}
+		select_sector(editor);
 	else if (editor->selected_sector // MOVE SECTOR ( only if nothing else is selected (point/wall) )
 		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
 		&& !editor->selected_point && !editor->selected_wall)
 		move_sector(editor->selected_sector, editor->move_amount);
-
 	// Update sector from ui;
 	if (editor->selected_sector && editor->sector_edit_menu->show)
 		get_sector_ui(editor, editor->selected_sector);
-
 	// Sector Edit Ok Button // unselect wall / point;
 	if (editor->sector_edit_ok_button->state == UI_STATE_CLICK)
 	{
 		editor->selected_wall = NULL;
 		editor->selected_point = NULL;
 	}
-
 	// Close Sector Menu Button
 	if (editor->close_sector_edit_button->state == UI_STATE_CLICK)
 	{
@@ -217,7 +220,7 @@ void	sector_edit_events(t_editor *editor)
 	}
 }
 
-void	wall_events(t_editor *editor, SDL_Event e)
+void	wall_events(t_editor *editor)
 {
 	// Selecting wall;
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
@@ -226,13 +229,13 @@ void	wall_events(t_editor *editor, SDL_Event e)
 	{
 		t_wall	*wall;
 		// we dont want to make selected_wall NULL if we dont select a wall;
-		wall = get_wall_from_list_around_radius(editor->selected_sector->walls, editor->mouse_pos, 1.0f);
+		wall = get_wall_from_list_around_radius(
+				editor->selected_sector->walls, editor->mouse_pos, 1.0f);
 		if (wall) // this is where we go when new wall selected;
 		{
 			editor->selected_wall = wall;
 			editor->active_texture_button = NULL; // unselect currently selected texture;
 			editor->selected_sprite = NULL;
-
 			set_wall_ui(editor, wall); // fill the ui from this wall;
 		}
 	}
@@ -240,11 +243,7 @@ void	wall_events(t_editor *editor, SDL_Event e)
 		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
 		&& !(editor->wall_render->show == 1
 		&& ui_element_is_hover(editor->sprite_edit_menu))) // only move wall if we are hovering over the sprite_edit_menu;
-	{
-		editor->selected_wall->p1->pos = vec2i_add(editor->selected_wall->p1->pos, editor->move_amount);
-		editor->selected_wall->p2->pos = vec2i_add(editor->selected_wall->p2->pos, editor->move_amount);
-	}
-
+		move_wall(editor->selected_wall, editor->move_amount);
 	// Close Wall Menu Button
 	if (editor->close_wall_edit_button->state == UI_STATE_CLICK)
 	{
@@ -252,17 +251,15 @@ void	wall_events(t_editor *editor, SDL_Event e)
 		editor->selected_wall = NULL;
 		editor->selected_sprite = NULL;
 	}
-
 	if (editor->selected_wall)
 	{
 		if (editor->split_wall_button->state == UI_STATE_CLICK)
 			split_wall(editor, editor->selected_sector, editor->selected_wall);
-
 		get_wall_ui(editor, editor->selected_wall); // fill this wall from ui;
 	}
 }
 
-void	entity_events(t_editor *editor, SDL_Event e)
+void	entity_events(t_editor *editor)
 {
 	// If the dropdown menu is open, lets ignore all other inputs;
 	editor->entity_yaw_input->event = 1;
@@ -318,7 +315,7 @@ void	entity_events(t_editor *editor, SDL_Event e)
 	}
 }
 
-void	event_events(t_editor *editor, SDL_Event e)
+void	event_events(t_editor *editor)
 {
 	char	target_id_text[20];
 
@@ -482,7 +479,7 @@ char	**gen_sprite_id_texts(t_list *sprites)
 	return (arr);
 }
 
-void	spawn_events(t_editor *editor, SDL_Event e)
+void	spawn_events(t_editor *editor)
 {
 	char	temp_str[20];
 
@@ -614,7 +611,7 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 	update_sprite_info(editor, editor->selected_sprite);
 }
 
-void	sector_hover_info_events(t_editor *editor, SDL_Event e)
+void	sector_hover_info_events(t_editor *editor)
 {
 	char		*temp;
 	t_sector	*sector;
@@ -658,7 +655,7 @@ void	update_info_label(t_editor *editor)
 	}
 }
 
-void	save_window_events(t_editor *editor, SDL_Event e)
+void	save_window_events(t_editor *editor)
 {
 	if (editor->save_button->state == UI_STATE_CLICK)
 		ui_window_flag_set(editor->win_save, UI_WINDOW_SHOW | UI_WINDOW_RAISE);
@@ -690,7 +687,7 @@ void	save_window_events(t_editor *editor, SDL_Event e)
 	}
 }
 
-void	edit_window_events(t_editor *editor, SDL_Event e)
+void	edit_window_events(t_editor *editor)
 {
 	if (editor->edit_button->state == UI_STATE_CLICK)
 		ui_window_flag_set(editor->win_edit, UI_WINDOW_SHOW | UI_WINDOW_RAISE);
@@ -773,7 +770,7 @@ void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall
 	SDL_FreeSurface(surface);
 }
 
-void	sprite_events(t_editor *editor, SDL_Event e)
+void	sprite_events(t_editor *editor)
 {
 	char	temp_str[20];
 
@@ -852,7 +849,7 @@ void	sprite_events(t_editor *editor, SDL_Event e)
 	}
 }
 
-void	texture_menu_events(t_editor *editor, SDL_Event e)
+void	texture_menu_events(t_editor *editor)
 {
 	t_texture_elem	*selected_texture_elem;
 
@@ -989,7 +986,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 		}
 		else
 		{
-			sector_events(editor, e);
+			sector_events(editor);
 			editor->sector_edit_menu->show = 0;
 		}
 	}
@@ -1012,7 +1009,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 		if (editor->selected_wall)
 		{
 			editor->menu_wall_edit->show = 1;
-			sprite_events(editor, e);
+			sprite_events(editor);
 		}
 		else
 		{
@@ -1020,7 +1017,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 			editor->menu_wall_edit->show = 0;
 			editor->sprite_edit_menu->show = 0;
 		}
-		wall_events(editor, e);
+		wall_events(editor);
 	}
 	else
 	{
@@ -1059,10 +1056,10 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 
 	if (editor->texture_menu->show)
-		texture_menu_events(editor, e);
+		texture_menu_events(editor);
 
 	if (editor->entity_button->state == UI_STATE_CLICK)
-		entity_events(editor, e);
+		entity_events(editor);
 	else
 	{
 		editor->selected_entity = NULL;
@@ -1072,7 +1069,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 	if (editor->event_button->state == UI_STATE_CLICK)
 	{
 		editor->event_edit_menu->show = 1;
-		event_events(editor, e);
+		event_events(editor);
 	}
 	else
 	{
@@ -1083,15 +1080,15 @@ void	user_events(t_editor *editor, SDL_Event e)
 	if (editor->spawn_button->state == UI_STATE_CLICK)
 	{
 		editor->spawn_edit_menu->show = 1;
-		spawn_events(editor, e);
+		spawn_events(editor);
 	}
 	else
 		editor->spawn_edit_menu->show = 0;
 
 	info_menu_events(editor, e);
-	sector_hover_info_events(editor, e);
-	save_window_events(editor, e);
-	edit_window_events(editor, e);
+	sector_hover_info_events(editor);
+	save_window_events(editor);
+	edit_window_events(editor);
 }
 
 void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
@@ -1598,7 +1595,9 @@ int	main(int ac, char **av)
 	t_editor	editor;
 	int			run;
 	SDL_Event	e;
-
+void    *ptr;
+    int and = 123;
+    ptr = &and;
 	ui_sdl_init();
 	editor_init(&editor);
 	draw_init(&editor);
