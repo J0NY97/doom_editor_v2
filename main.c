@@ -1098,7 +1098,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 	edit_window_events(editor);
 }
 
-void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
+void	draw_grid_lines(SDL_Surface *surface, float gap_size, float zoom)
 {
 	int			w_amount;
 	int			h_amount;
@@ -1110,9 +1110,11 @@ void	draw_grid(SDL_Surface *surface, float gap_size, float zoom)
 	while (i < w_amount || i < h_amount)
 	{
 		if (i < w_amount)
-			ui_surface_line_draw(surface, vec2i(i * (gap_size * zoom), 0), vec2i(i * (gap_size * zoom), surface->h), 0xff353535);
+			ui_surface_line_draw(surface, vec2i(i * (gap_size * zoom), 0),
+				vec2i(i * (gap_size * zoom), surface->h), 0xff353535);
 		if (i < h_amount)
-			ui_surface_line_draw(surface, vec2i(0, i * (gap_size * zoom)), vec2i(surface->w, i * (gap_size * zoom)), 0xff353535);
+			ui_surface_line_draw(surface, vec2i(0, i * (gap_size * zoom)),
+				vec2i(surface->w, i * (gap_size * zoom)), 0xff353535);
 		i++;
 	}
 }
@@ -1135,7 +1137,8 @@ void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
 		wall = walls->content;
 		if (wall->neighbor)
 		{
-			if (get_sector_wall_at_pos(wall->neighbor, wall->p1->pos, wall->p2->pos))
+			if (get_sector_wall_at_pos(wall->neighbor,
+					wall->p1->pos, wall->p2->pos))
 				wall_render(editor, wall, 0xffff0000);
 			else
 				wall->neighbor = NULL;
@@ -1215,6 +1218,41 @@ void	draw_entities(t_editor *editor, t_list *entities)
 	}
 }
 
+void	entity_inside_which_sector(t_list *sectors, t_entity *entity)
+{
+	t_list	*curr;
+
+	curr = sectors;
+	entity->inside_sector = NULL;
+	while (curr)
+	{
+		if (check_point_in_sector(curr->content, entity->pos) == 1)
+		{
+			entity->inside_sector = curr->content;
+			break ;
+		}
+		curr = curr->next;
+	}
+}
+
+void	entity_check_errors(t_editor *editor, t_entity *entity)
+{
+	if (!entity->inside_sector)
+	{
+		draw_text(editor->drawing_surface, "Not Inside Sector!",
+			editor->font, conversion(editor, entity->pos), 0xffff0000); 
+		editor->errors += 1;
+	}
+	else if (entity->inside_sector
+		&& (entity->z < entity->inside_sector->floor_height
+			|| entity->z > entity->inside_sector->ceiling_height))
+	{
+		draw_text(editor->drawing_surface, "Z not between Floor & Ceiling!",
+			editor->font, conversion(editor, entity->pos), 0xffff0000); 
+		editor->errors += 1;
+	}
+}
+
 void	draw_entities_yaw(t_editor *editor, t_list *entities)
 {
 	t_entity	*entity;
@@ -1223,33 +1261,8 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 	{
 		entity = entities->content;
 		entity_yaw_render(editor, entities->content);
-
-		// Check if entity inside a sector;
-		t_list *curr = editor->sectors;
-		entity->inside_sector = NULL;
-		while (curr)
-		{
-			if (check_point_in_sector(curr->content, entity->pos) == 1)
-			{
-				entity->inside_sector = curr->content;
-				break ;
-			}
-			curr = curr->next;
-		}
-		// Error showing;
-		if (!entity->inside_sector)
-		{
-			draw_text(editor->drawing_surface, "Not Inside Sector!",
-				editor->font, conversion(editor, entity->pos), 0xffff0000); 
-			editor->errors += 1;
-		}
-		else if (entity->inside_sector
-			&& (entity->z < entity->inside_sector->floor_height || entity->z > entity->inside_sector->ceiling_height))
-		{
-			draw_text(editor->drawing_surface, "Z not between Floor & Ceiling!",
-				editor->font, conversion(editor, entity->pos), 0xffff0000); 
-			editor->errors += 1;
-		}
+		entity_inside_which_sector(editor->sectors, entity);
+		entity_check_errors(editor, entity);
 		entities = entities->next;
 	}
 }
@@ -1297,35 +1310,19 @@ void	draw_spawn(t_editor *editor)
 		editor->spawn.z = editor->spawn.inside_sector->floor_height;
 }
 
-void	user_render(t_editor *editor)
+void	draw_grid(t_editor *editor)
 {
-	editor->errors = 0;
-	// Grid stuff
 	if (editor->update_grid)
 	{
-		draw_grid(editor->grid_surface, editor->gap_size, editor->zoom);
+		draw_grid_lines(editor->grid_surface, editor->gap_size, editor->zoom);
 		editor->update_grid = 0;
 		ft_printf("[%s] We are updating grid surface.\n", __FUNCTION__);
 	}
 	SDL_BlitSurface(editor->grid_surface, NULL, editor->drawing_surface, NULL);
+}
 
-	draw_sectors(editor, editor->sectors);
-	draw_hover(editor);
-	draw_selected(editor);
-
-	draw_entities_yaw(editor, editor->entities);
-	draw_spawn(editor);
-
-	SDL_UpdateTexture(editor->drawing_texture, NULL, editor->drawing_surface->pixels, editor->drawing_surface->pitch);
-	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
-	SDL_RenderCopy(editor->win_main->renderer, editor->drawing_texture, NULL, NULL);
-
-	// NOTE: this is the only thing drawn on the texture;
-	draw_entities(editor, editor->entities);
-
-	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
-	SDL_FillRect(editor->drawing_surface, NULL, 0);
-
+void	update_error_label(t_editor *editor)
+{
 	if (editor->errors > 0)
 	{
 		char	*temp;
@@ -1336,6 +1333,26 @@ void	user_render(t_editor *editor)
 	}
 	else
 		editor->error_label->show = 0;
+}
+
+void	user_render(t_editor *editor)
+{
+	editor->errors = 0;
+	draw_grid(editor);
+	draw_sectors(editor, editor->sectors);
+	draw_hover(editor);
+	draw_selected(editor);
+	draw_entities_yaw(editor, editor->entities);
+	draw_spawn(editor);
+	SDL_UpdateTexture(editor->drawing_texture, NULL,
+		editor->drawing_surface->pixels, editor->drawing_surface->pitch);
+	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
+	SDL_RenderCopy(editor->win_main->renderer,
+		editor->drawing_texture, NULL, NULL);
+	draw_entities(editor, editor->entities);
+	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
+	SDL_FillRect(editor->drawing_surface, NULL, 0);
+	update_error_label(editor);
 }
 
 void	editor_init(t_editor *editor)
@@ -1569,11 +1586,14 @@ void	editor_init(t_editor *editor)
 void	draw_init(t_editor *editor)
 {
 	editor->drawing_surface = ui_surface_new(1920, 1030);
-	editor->drawing_texture = SDL_CreateTextureFromSurface(editor->win_main->renderer, editor->drawing_surface);
+	editor->drawing_texture
+			= SDL_CreateTextureFromSurface(editor->win_main->renderer,
+				editor->drawing_surface);
 	editor->gap_size = 10.0f;
 	editor->zoom = 1.0f;
 	editor->offset = vec2i(0, 0);
-	editor->grid_surface = ui_surface_new(editor->drawing_surface->w, editor->drawing_surface->h);
+	editor->grid_surface = ui_surface_new(
+			editor->drawing_surface->w, editor->drawing_surface->h);
 	editor->update_grid = 1;
 }
 
@@ -1628,7 +1648,6 @@ int	main(int ac, char **av)
 			{
 				ft_printf("(MOUSE)");
 				print_veci(editor.win_main->mouse_pos.v, 2);
-				send_info_message(&editor, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
 			}
 		}
 		user_render(&editor);
