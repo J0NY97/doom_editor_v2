@@ -220,25 +220,29 @@ void	sector_edit_events(t_editor *editor)
 	}
 }
 
+void	select_wall(t_editor *editor)
+{
+	t_wall	*wall;
+
+	// we dont want to make selected_wall NULL if we dont select a wall;
+	wall = get_wall_from_list_around_radius(
+			editor->selected_sector->walls, editor->mouse_pos, 1.0f);
+	if (wall) // this is where we go when new wall selected;
+	{
+		editor->selected_wall = wall;
+		editor->active_texture_button = NULL; // unselect currently selected texture;
+		editor->selected_sprite = NULL;
+		set_wall_ui(editor, wall); // fill the ui from this wall;
+	}
+}
+
 void	wall_events(t_editor *editor)
 {
 	// Selecting wall;
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor)
 		&& editor->selected_sector)
-	{
-		t_wall	*wall;
-		// we dont want to make selected_wall NULL if we dont select a wall;
-		wall = get_wall_from_list_around_radius(
-				editor->selected_sector->walls, editor->mouse_pos, 1.0f);
-		if (wall) // this is where we go when new wall selected;
-		{
-			editor->selected_wall = wall;
-			editor->active_texture_button = NULL; // unselect currently selected texture;
-			editor->selected_sprite = NULL;
-			set_wall_ui(editor, wall); // fill the ui from this wall;
-		}
-	}
+		select_wall(editor);
 	else if (editor->selected_wall // MOVE WALL
 		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
 		&& !(editor->wall_render->show == 1
@@ -259,6 +263,20 @@ void	wall_events(t_editor *editor)
 	}
 }
 
+void	select_entity(t_editor *editor)
+{
+	t_entity	*entity;
+
+	entity = get_entity_from_list_around_radius(
+			editor->entities, editor->mouse_pos, 1.0f);
+	// we dont want to overwrite the currently selected entity if we dont actually find a new one;
+	if (entity) // if new entity selected;
+	{
+		editor->selected_entity = entity;
+		set_entity_ui(editor, editor->selected_entity);
+	}
+}
+
 void	entity_events(t_editor *editor)
 {
 	// If the dropdown menu is open, lets ignore all other inputs;
@@ -271,39 +289,24 @@ void	entity_events(t_editor *editor)
 		editor->entity_yaw_slider->event = 0;
 		editor->entity_z_input->event = 0;
 	}
-
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 			&& !hover_over_open_menus(editor))
-		{
-			t_entity	*entity = add_entity(editor);
-			entity->pos = editor->mouse_pos;
-			//add_entity(editor)->pos = editor->mouse_pos; // change to this if you have to;
-		}
+			add_entity(editor)->pos = editor->mouse_pos;
 	}
 	else if (editor->select_button->state == UI_STATE_CLICK)
 	{
 		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 			&& !ui_element_is_hover(editor->entity_edit_menu))
-		{
-			t_entity *entity = get_entity_from_list_around_radius(editor->entities, editor->mouse_pos, 1.0f);
-			// we dont want to overwrite the currently selected entity if we dont actually find a new one;
-			if (entity) // if new entity selected;
-			{
-				editor->selected_entity = entity;
-
-				set_entity_ui(editor, editor->selected_entity);
-			}
-		}
+			select_entity(editor);
 		else if (editor->selected_entity // MOVE ENTITY;
 			&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
-			editor->selected_entity->pos = vec2i_add(editor->selected_entity->pos, editor->move_amount);
-
+			editor->selected_entity->pos = vec2i_add(
+					editor->selected_entity->pos, editor->move_amount);
 		// Fill entity with values from ui;
 		if (editor->selected_entity)
 			get_entity_ui(editor, editor->selected_entity);
-
 		if (!editor->selected_entity
 			|| editor->close_entity_edit_button->state == UI_STATE_CLICK)
 		{
@@ -943,7 +946,7 @@ void	user_events(t_editor *editor, SDL_Event e)
 	}
 
 	// Removing all the selected whatevers.
-	if (ui_button(editor->draw_button))
+	if (editor->draw_button->was_click)
 	{
 		editor->selected_sector = NULL;
 		editor->selected_entity = NULL;
@@ -1059,7 +1062,11 @@ void	user_events(t_editor *editor, SDL_Event e)
 		texture_menu_events(editor);
 
 	if (editor->entity_button->state == UI_STATE_CLICK)
+	{
 		entity_events(editor);
+		if (!editor->selected_entity)
+			editor->entity_edit_menu->show = 0;
+	}
 	else
 	{
 		editor->selected_entity = NULL;
