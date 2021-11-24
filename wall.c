@@ -49,6 +49,14 @@ int	remove_wall(t_editor *editor, t_wall *wall)
 	return (1);
 }
 
+void	move_wall(t_wall *wall, t_vec2i move_amount)
+{
+	if (!wall)
+		return ;
+	wall->p1->pos = vec2i_add(wall->p1->pos, move_amount);
+	wall->p2->pos = vec2i_add(wall->p2->pos, move_amount);
+}
+
 /*
  * Add wall to editor->walls and returns itself;
 */

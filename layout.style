@@ -1,8 +1,3 @@
-//resource_dir : C:/Users/Jony/source/repos/map_editor_v2/resources/;
-//resource_dir : this/is/path;
-//resource_dir : C:/Users/Jony/source/repos/map_editor_v2/ui_images/;
-//resource_dir : C:/Users/Jony/source/repos/map_editor_v2/temp_resources/;
-
 Label
 {
 	text_color : 0xff000000;
