@@ -347,6 +347,8 @@ struct s_wall
 };
 
 /*
+ * t_vec2i	center;				the center of sector in grid coordinates;
+ * t_vec2i	screen_center;		the center of sector in screen coordinates converted from grid coordinates;
  * float	floor_scale;		texture scale for floor;
  * float	ceiling_scale;		texture scale for ceiling;
  * int		floor_texture;		texture id for floor;
@@ -357,6 +359,7 @@ struct s_sector
 	int				id;
 	Uint32			color;
 	t_vec2i			center;
+	t_vec2i			screen_center;
 	t_vec2i			first_point;
 	bool			first_point_set;
 	int				wall_amount;

@@ -485,11 +485,9 @@ void	spawn_events(t_editor *editor)
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
-
 	// Update ui same frame the button is pressed;
 	if (editor->spawn_button->was_click)
 		ui_input_set_text(editor->spawn_yaw_input, ft_b_itoa(editor->spawn.yaw, temp_str));
-
 	if (editor->draw_button->state == UI_STATE_CLICK)
 	{
 		if (!hover_over_open_menus(editor))
@@ -501,7 +499,6 @@ void	spawn_events(t_editor *editor)
 		if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
 			editor->spawn.pos = vec2i_add(editor->spawn.pos, editor->move_amount);
 	}
-
 	// Yaw input
 	if (ui_input_exit(editor->spawn_yaw_input))
 	{
@@ -599,11 +596,11 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 
 	if (e.type == SDL_MOUSEMOTION)
 	{
-		final_str = ft_sprintf("%d, %d", editor->mouse_pos.x, editor->mouse_pos.y);
+		final_str = ft_sprintf("%d, %d",
+				editor->mouse_pos.x, editor->mouse_pos.y);
 		ui_label_set_text(editor->mouse_info_label, final_str);
 		ft_strdel(&final_str);
 	}
-
 	update_amount_info(editor);
 	update_sector_info(editor, editor->selected_sector);
 	// Only one of point or walls should be changing the info text;
@@ -624,12 +621,17 @@ void	sector_hover_info_events(t_editor *editor)
 	}
 	sector = editor->hovered_sector;
 	editor->sector_hover_info_menu->show = 1;
-	temp = ft_sprintf("Sector Info\n\nID: %d\n%27cFloor-%7cCeiling-\nHeight : %14d %16d\nTexture : %12d %16d\nTexture Scale : %2.2f %12.2f\n",
-			sector->id, ' ', ' ', sector->floor_height, sector->ceiling_height, sector->floor_texture, sector->ceiling_texture, sector->floor_scale, sector->ceiling_scale);
+	temp = ft_sprintf("Sector Info\n\nID: %d\n%27cFloor-%7cCeiling-\n"
+			"Height : %14d %16d\nTexture : %12d %16d\n"
+			"Texture Scale : %2.2f %12.2f\n",
+			sector->id, ' ', ' ', sector->floor_height, sector->ceiling_height,
+			sector->floor_texture, sector->ceiling_texture,
+			sector->floor_scale, sector->ceiling_scale);
 	ui_label_set_text(editor->sector_hover_info_label, temp);
 	ft_strdel(&temp);
 	ui_element_pos_set2(editor->sector_hover_info_menu,
-		vec2(editor->win_main->mouse_pos.x + 10, editor->win_main->mouse_pos.y + 10));
+		vec2(editor->win_main->mouse_pos.x + 10,
+			editor->win_main->mouse_pos.y + 10));
 }
 
 void	send_info_message(t_editor *editor, char *text)
@@ -646,13 +648,35 @@ void	update_info_label(t_editor *editor)
 	t_rgba	new_col;
 
 	if (editor->info_label->show
-		&& SDL_GetTicks() - editor->info_label_start_timer >= editor->info_label_timer)
+		&& SDL_GetTicks() - editor->info_label_start_timer
+		>= editor->info_label_timer)
 	{
 		new_col = hex_to_rgba(ui_label_get_color(editor->info_label));
 		new_col.a -= 2;
 		ui_label_color_set(editor->info_label, rgba_to_hex(new_col));
 		if (new_col.a <= 0)
 			editor->info_label->show = 0;
+	}
+}
+
+void	save_button_events(t_editor *editor)
+{
+	char	*actual_full_path;
+
+	if (ft_strlen(ui_input_get_text(editor->name_input)) < 1)
+		ft_printf("[%s] Map name len is less than 1.\n", __FUNCTION__);
+	else
+	{
+		if (editor->map_type == 1)
+			actual_full_path = ft_strjoiner(MAP_PATH,
+					ui_input_get_text(editor->name_input), ".dnds", NULL);
+		else
+			actual_full_path = ft_strjoiner(MAP_PATH,
+					ui_input_get_text(editor->name_input), ".dnde", NULL);
+		set_map(editor, actual_full_path);
+		ft_strdel(&actual_full_path);
+		ui_window_flag_set(editor->win_save, UI_WINDOW_HIDE);
+		send_info_message(editor, "Map Saved Successfully!");
 	}
 }
 
@@ -664,28 +688,14 @@ void	save_window_events(t_editor *editor)
 		editor->map_type = 0;
 	else if (editor->story_checkbox->was_click)
 		editor->map_type = 1;
-	ui_checkbox_toggle_accordingly(editor->endless_checkbox, editor->map_type == 0);
-	ui_checkbox_toggle_accordingly(editor->story_checkbox, editor->map_type == 1);
+	ui_checkbox_toggle_accordingly(editor->endless_checkbox,
+		editor->map_type == 0);
+	ui_checkbox_toggle_accordingly(editor->story_checkbox,
+		editor->map_type == 1);
 	if (!editor->win_save->show)
 		return ;
 	if (ui_button(editor->confirm_save_button))
-	{
-		if (ft_strlen(ui_input_get_text(editor->name_input)) < 1)
-			ft_printf("[%s] Map name len is less than 1, won\'t slide.\n", __FUNCTION__);
-		else
-		{
-			char	*actual_full_path;
-
-			if (editor->map_type == 1)
-				actual_full_path = ft_strjoiner(MAP_PATH, ui_input_get_text(editor->name_input), ".dnds", NULL);
-			else
-				actual_full_path = ft_strjoiner(MAP_PATH, ui_input_get_text(editor->name_input), ".dnde", NULL);
-			set_map(editor, actual_full_path);
-			ft_strdel(&actual_full_path);
-			ui_window_flag_set(editor->win_save, UI_WINDOW_HIDE);
-			send_info_message(editor, "Map Saved Successfully!");
-		}
-	}
+		save_button_events(editor);
 }
 
 void	edit_window_events(t_editor *editor)
@@ -698,21 +708,27 @@ void	edit_window_events(t_editor *editor)
 		editor->map_scale = ft_atof(ui_input_get_text(editor->map_scale_input));
 }
 
-void	render_wall_on_sprite_menu(t_editor *editor, t_sector *sector, t_wall *wall)
+void	render_wall_on_sprite_menu(
+		t_editor *editor, t_sector *sector, t_wall *wall)
 {
 	// Clear the wall render from last frame, since we dont draw over the whole texture;
-	ui_texture_fill(editor->win_main->renderer, editor->wall_render->texture, 0xff000000);
+	ui_texture_fill(editor->win_main->renderer,
+		editor->wall_render->texture, 0xff000000);
 
 	SDL_Surface	*surface;
 	t_vec2		dist;
 	float		aspect;
+	int			size;
+	float		amount_x;
+	float		amount_y;
 
 	dist.x = distance(wall->p1->pos.v, wall->p2->pos.v, 2);
 	dist.y = (sector->ceiling_height - sector->floor_height);
-	int		size = 64;
-	float	amount_x = dist.x / wall->texture_scale;
-	float	amount_y = dist.y / wall->texture_scale;
-	aspect = get_ratio_f(vec2(dist.x * size, dist.y * size), vec2(editor->wall_render->pos.w, editor->wall_render->pos.h));
+	size = 64;
+	amount_x = dist.x / wall->texture_scale;
+	amount_y = dist.y / wall->texture_scale;
+	aspect = get_ratio_f(vec2(dist.x * size, dist.y * size),
+			vec2(editor->wall_render->pos.w, editor->wall_render->pos.h));
 
 	float scale = (size * wall->texture_scale) * aspect;
 	surface = ui_surface_new(dist.x * size * aspect, dist.y * size * aspect);
@@ -1177,14 +1193,14 @@ void	sector_check_errors(t_editor *editor, t_sector *sector)
 	if (!check_sector_convexity(sector))
 	{
 		draw_text(editor->drawing_surface, "Not Convex!",
-			editor->font, converted_center, 0xffff0000); 
+			editor->font, sector->screen_center, 0xffff0000); 
 		editor->errors += 1;
 	}
 	if (sector->ceiling_height - sector->floor_height < 0)
 	{
 		draw_text(editor->drawing_surface,
 			"Floor & Ceiling Height Doesn\'t Make Sense!",
-			editor->font, converted_center, 0xffffff00); 
+			editor->font, sector->screen_center, 0xffffff00); 
 		editor->errors += 1;
 	}
 }
@@ -1193,7 +1209,6 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 {
 	t_sector	*sector;
 	char		temp[20];
-	t_vec2i		converted_center;
 	t_sector	*hovered_this_frame;
 
 	hovered_this_frame = NULL;
@@ -1203,12 +1218,12 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		sort_walls(sector->walls); // TODO do this everytime the sector has been updated, not every frame (if its slow);
 		sector_render(editor, sector, sector->color);
 		sector->center = get_sector_center(sector);
-		converted_center = conversion(editor, sector->center);
+		sector->screen_center = conversion(editor, sector->center);
 		ft_b_itoa(sector->id, temp);
 		draw_text(editor->drawing_surface,
-			temp, editor->font, converted_center, 0xffffffff);
-		sector_check_error(editor, sector);
-		if (vec2_in_vec4(editor->mouse_pos, // Get hovered
+			temp, editor->font, sector->screen_center, 0xffffffff);
+		sector_check_errors(editor, sector);
+		if (vec2_in_vec4(editor->mouse_pos,
 			vec4i(sector->center.x - 1, sector->center.y - 1, 3, 3)))
 			hovered_this_frame = sector;
 		sectors = sectors->next;
@@ -1293,10 +1308,11 @@ void	draw_selected(t_editor *editor)
 
 void	draw_spawn(t_editor *editor)
 {
+	t_list	*curr;
+
 	ui_surface_circle_draw_filled(editor->drawing_surface,
 		conversion(editor, editor->spawn.pos), 10, 0xff00ff00);
-
-	t_list		*curr = editor->sectors;
+	curr = editor->sectors;
 	editor->spawn.inside_sector = NULL;
 	while (curr)
 	{
@@ -1330,9 +1346,10 @@ void	draw_grid(t_editor *editor)
 
 void	update_error_label(t_editor *editor)
 {
+	char	*temp;
+
 	if (editor->errors > 0)
 	{
-		char	*temp;
 		temp = ft_sprintf("Consider fixing the %d error(s) before saving!",
 				editor->errors);
 		ui_label_set_text(editor->error_label, temp);
