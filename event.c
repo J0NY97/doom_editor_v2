@@ -214,7 +214,7 @@ void	update_event(t_editor *editor, t_event *event)
 	// Action
 	active_text = ui_button_get_text(ui_dropdown_active(editor->event_action_dropdown));
 	i = -1;
-	while (++i < EVENT_TYPE_AMOUNT)
+	while (++i < EVENT_ACTION_AMOUNT)
 		if (ft_strequ(active_text, g_event_action[i]))
 			event->action = i;
 	// Target
@@ -265,8 +265,8 @@ void	update_event_elem(t_event_elem *elem)
 
 	ft_printf("[%s] Updating event_elem. ", __FUNCTION__);
 	ui_label_set_text(elem->id, ft_b_itoa(elem->event->id, temp));
-	ui_label_set_text(elem->type, g_event_type[elem->event->type]);
-	ui_label_set_text(elem->action, g_event_action[elem->event->action]);
+	ui_label_set_text(elem->type, (char *)g_event_type[elem->event->type]);
+	ui_label_set_text(elem->action, (char *)g_event_action[elem->event->action]);
 	if (elem->event->pointer)
 	{
 		if (elem->event->pointer_type == TYPE_SECTOR)

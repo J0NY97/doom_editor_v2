@@ -1595,9 +1595,7 @@ int	main(int ac, char **av)
 	t_editor	editor;
 	int			run;
 	SDL_Event	e;
-void    *ptr;
-    int and = 123;
-    ptr = &and;
+
 	ui_sdl_init();
 	editor_init(&editor);
 	draw_init(&editor);

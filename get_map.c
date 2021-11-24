@@ -310,7 +310,6 @@ void	get_events(t_editor *editor, char **lines, int *i)
 void	helper_pelper(t_editor *editor, char **lines, int *i, void	(*f)(t_editor *, char **))
 {
 	char		**args;
-	t_event		*event;
 
 	ft_printf("Getting Events. ");
 	while (lines[*i])

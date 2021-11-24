@@ -171,8 +171,6 @@ char	*set_sectors(t_editor *editor)
 	char		*walls;
 	t_list		*curr;
 	t_sector	*sector;
-	t_list		*curr_wall;
-	t_wall		*wall;
 	int			id;
 
 	id = -1;
