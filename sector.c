@@ -358,3 +358,37 @@ int	check_point_in_sector(t_sector *sector, t_vec2i p)
 	}
 	return (1);
 }
+
+void	entity_inside_which_sector(t_list *sectors, t_entity *entity)
+{
+	t_list	*curr;
+
+	curr = sectors;
+	entity->inside_sector = NULL;
+	while (curr)
+	{
+		if (check_point_in_sector(curr->content, entity->pos) == 1)
+		{
+			entity->inside_sector = curr->content;
+			break ;
+		}
+		curr = curr->next;
+	}
+}
+
+void	sector_check_errors(t_editor *editor, t_sector *sector)
+{
+	if (!check_sector_convexity(sector))
+	{
+		draw_text(editor->drawing_surface, "Not Convex!",
+			editor->font, sector->screen_center, 0xffff0000); 
+		editor->errors += 1;
+	}
+	if (sector->ceiling_height - sector->floor_height < 0)
+	{
+		draw_text(editor->drawing_surface,
+			"Floor & Ceiling Height Doesn\'t Make Sense!",
+			editor->font, sector->screen_center, 0xffffff00); 
+		editor->errors += 1;
+	}
+}

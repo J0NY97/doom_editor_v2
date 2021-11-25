@@ -419,6 +419,9 @@ struct s_event
 // Event
 void				user_events(t_editor *editor, SDL_Event e);
 
+// Draw
+void				user_render(t_editor *editor);
+
 // Point
 void				point_render(t_editor *editor, t_point *point, Uint32 color);
 t_point				*get_point_with_id(t_list *list, int id);
@@ -464,6 +467,8 @@ t_sector			*get_sector_by_id_from_list(t_list *list, int id);
 int					check_sector_convexity(t_sector *sector);
 int					check_point_in_sector(t_sector *sector, t_vec2i p);
 t_wall				*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2);
+void				entity_inside_which_sector(t_list *sectors, t_entity *entity);
+void				sector_check_errors(t_editor *editor, t_sector *sector);
 
 // Kind of wall, and kind of not wall
 bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
@@ -477,6 +482,7 @@ void				entity_yaw_render(t_editor *editor, t_entity *entity);
 void				set_entity_ui(t_editor *editor, t_entity *entity);
 void				get_entity_ui(t_editor *editor, t_entity *entity);
 t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
+void				entity_check_errors(t_editor *editor, t_entity *entity);
 
 // Event
 t_event_elem		*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent);
