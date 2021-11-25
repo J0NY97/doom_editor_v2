@@ -416,6 +416,9 @@ struct s_event
 	t_event_elem	*elem;
 };
 
+// Event
+void				user_events(t_editor *editor, SDL_Event e);
+
 // Point
 void				point_render(t_editor *editor, t_point *point, Uint32 color);
 t_point				*get_point_with_id(t_list *list, int id);
@@ -521,6 +524,7 @@ char				**gen_sector_id_texts(t_list *sectors);
 void				create_buttons_to_list_from_texts_remove_extra(t_ui_element *parent, char **texts, t_ui_recipe *recipe);
 void				draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 void				draw_text_on_texture(SDL_Texture *texture, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
+void				send_info_message(t_editor *editor, char *text);
 
 // Bxpm
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);
