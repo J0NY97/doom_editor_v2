@@ -374,3 +374,54 @@ void	split_wall(t_editor *editor, t_sector *sector, t_wall *wall)
 	new_wall->p2 = p3;
 	add_to_list(&sector->walls, new_wall, sizeof(t_wall));
 }
+
+void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
+{
+	t_wall	*wall;
+
+	while (walls)
+	{
+		wall = walls->content;
+		if (wall->neighbor)
+		{
+			if (get_sector_wall_at_pos(wall->neighbor,
+					wall->p1->pos, wall->p2->pos))
+				wall_render(editor, wall, 0xffff0000);
+			else
+				wall->neighbor = NULL;
+		}
+		else
+			wall_render(editor, wall, color);
+		point_render(editor, wall->p1, color);
+		walls = walls->next;
+	}
+}
+
+bool	can_you_make_portal_of_this_wall(
+		t_list *sector_list, t_sector *part_of_sector, t_wall *wall)
+{
+	t_sector	*sector;
+	t_wall		*temp_wall;
+
+	if (!part_of_sector || !wall)
+		return (0);
+	while (sector_list)
+	{
+		sector = sector_list->content;
+		if (sector != part_of_sector)
+		{
+			temp_wall = get_sector_wall_at_pos(sector,
+					wall->p1->pos, wall->p2->pos);
+			if (temp_wall)
+			{
+				wall->neighbor = sector;
+				temp_wall->neighbor = part_of_sector;
+				return (1);
+			}
+		}
+		sector_list = sector_list->next;
+	}
+	return (0);
+}
+
+

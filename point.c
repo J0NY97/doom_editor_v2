@@ -197,3 +197,12 @@ void	remove_all_lonely_points(t_editor *editor)
 		curr = next;
 	}
 }
+
+void	draw_points(t_editor *editor, t_list *points, Uint32 color)
+{
+	while (points)
+	{
+		point_render(editor, points->content, color);
+		points = points->next;
+	}
+}

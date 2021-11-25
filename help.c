@@ -39,3 +39,29 @@ float	get_aspect(float w, float h)
 {
 	return (w / h);
 }
+
+/*
+ * Font should already be opened before this function call;
+*/
+void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color)
+{
+	SDL_Surface	*text_surface;
+	t_rgba		rgba;
+
+	if (font)
+	{
+		rgba = hex_to_rgba(color);
+		TTF_SetFontHinting(font, TTF_HINTING_MONO);
+		text_surface = TTF_RenderText_Blended(font, text,
+				(SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
+		SDL_BlitSurface(text_surface, NULL, surface, 
+			&(SDL_Rect){pos.x - (text_surface->w / 2),
+			pos.y - (text_surface->h / 2),
+			text_surface->w, text_surface->h});
+		SDL_FreeSurface(text_surface);
+	}
+	else
+		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
+}
+
+

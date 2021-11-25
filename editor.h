@@ -449,6 +449,7 @@ void				set_wall_ui(t_editor *editor, t_wall *wall);
 void				get_wall_ui(t_editor *editor, t_wall *wall);
 void				split_wall(t_editor *editor, t_sector *sector, t_wall *wall);
 void				move_wall(t_wall *wall, t_vec2i move_amount);
+bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
 
 // Sector
 t_sector			*sector_new(void);

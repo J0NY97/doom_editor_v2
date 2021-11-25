@@ -1,32 +1,5 @@
 #include "editor.h"
 
-bool	can_you_make_portal_of_this_wall(
-		t_list *sector_list, t_sector *part_of_sector, t_wall *wall)
-{
-	t_sector	*sector;
-	t_wall		*temp_wall;
-
-	if (!part_of_sector || !wall)
-		return (0);
-	while (sector_list)
-	{
-		sector = sector_list->content;
-		if (sector != part_of_sector)
-		{
-			temp_wall = get_sector_wall_at_pos(sector,
-					wall->p1->pos, wall->p2->pos);
-			if (temp_wall)
-			{
-				wall->neighbor = sector;
-				temp_wall->neighbor = part_of_sector;
-				return (1);
-			}
-		}
-		sector_list = sector_list->next;
-	}
-	return (0);
-}
-
 /*
  * create buttons to 'parent->children' with the texts from 'texts',
  *	all buttons have 'recipe' recipe;
@@ -103,61 +76,6 @@ void	send_info_message(t_editor *editor, char *text)
 	ui_label_color_set(editor->info_label, 0xffffffff);
 	ui_label_set_text(editor->info_label, text);
 	editor->info_label->show = 1;
-}
-
-void	draw_points(t_editor *editor, t_list *points, Uint32 color)
-{
-	while (points)
-	{
-		point_render(editor, points->content, color);
-		points = points->next;
-	}
-}
-
-void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
-{
-	t_wall	*wall;
-
-	while (walls)
-	{
-		wall = walls->content;
-		if (wall->neighbor)
-		{
-			if (get_sector_wall_at_pos(wall->neighbor,
-					wall->p1->pos, wall->p2->pos))
-				wall_render(editor, wall, 0xffff0000);
-			else
-				wall->neighbor = NULL;
-		}
-		else
-			wall_render(editor, wall, color);
-		point_render(editor, wall->p1, color);
-		walls = walls->next;
-	}
-}
-
-/*
- * Font should already be opened before this function call;
-*/
-void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color)
-{
-	SDL_Surface	*text_surface;
-	t_rgba		rgba;
-
-	if (font)
-	{
-		rgba = hex_to_rgba(color);
-		TTF_SetFontHinting(font, TTF_HINTING_MONO);
-		text_surface = TTF_RenderText_Blended(font, text,
-				(SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
-		SDL_BlitSurface(text_surface, NULL, surface, 
-			&(SDL_Rect){pos.x - (text_surface->w / 2),
-			pos.y - (text_surface->h / 2),
-			text_surface->w, text_surface->h});
-		SDL_FreeSurface(text_surface);
-	}
-	else
-		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
 }
 
 void	editor_init(t_editor *editor)
