@@ -267,28 +267,22 @@ void	draw_sprites_on_surface(t_editor *editor, SDL_Surface *surface, t_list *spr
 	t_sprite	*sprite;
 	t_vec4i		xywh;
 	SDL_Surface	*texture; // DONT FREE;
-	int			size;
+	int			size; // this is a unit of measurement; (...no s**t (hard to explain));
 
 	size = 64;
 	while (sprites)
 	{
 		sprite = sprites->content;
 		texture = editor->wall_textures[sprite->texture_id];
-		xywh = vec4i(0, 0, texture->w, texture->h);
 		if (sprite->type == STATIC)
-		{
-			sprite->pos.w = (size * sprite->scale) * aspect;
-			sprite->pos.h = (float)texture->h * ((float)sprite->pos.w / (float)texture->w);
-		}
+			xywh = vec4i(0, 0, texture->w, texture->h);
 		else
-		{
-			xywh.w = 64;
-			xywh.h = 64;
-			sprite->pos.w = (size * sprite->scale) * aspect;
-			sprite->pos.h = (float)texture->h * ((float)sprite->pos.w / (float)xywh.w);
-		}
+			xywh = vec4i(0, 0, 64, 64);
+		sprite->pos.w = (size * sprite->scale) * aspect;
+		sprite->pos.h = (float)xywh.h * ((float)sprite->pos.w / (float)xywh.w);
 		SDL_BlitScaled(texture, &(SDL_Rect){xywh.x, xywh.y, xywh.w, xywh.h},
-			surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, sprite->pos.w, sprite->pos.h});
+			surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y,
+				sprite->pos.w, sprite->pos.h});
 		sprites = sprites->next;
 	}
 }
@@ -300,8 +294,10 @@ void	draw_selected_sprite(t_editor *editor, SDL_Surface *surface)
 
 	if (editor->selected_sprite)
 	{
-		p1 = vec2i(editor->selected_sprite->pos.x, editor->selected_sprite->pos.y);
-		p2 = vec2i(p1.x + editor->selected_sprite->pos.w, p1.y + editor->selected_sprite->pos.h);
+		p1 = vec2i(editor->selected_sprite->pos.x,
+				editor->selected_sprite->pos.y);
+		p2 = vec2i(p1.x + editor->selected_sprite->pos.w,
+				p1.y + editor->selected_sprite->pos.h);
 		ui_surface_rect_draw(surface, p1, p2, 0xff0000ff);
 	}
 }
@@ -323,7 +319,8 @@ void	visualize_wall(
 	aspect = get_ratio_f(vec2(wall->width * size, wall->height * size),
 			vec2(editor->wall_render->pos.w, editor->wall_render->pos.h));
 	scale = (size * wall->texture_scale) * aspect;
-	surface = ui_surface_new(wall->width * size * aspect, wall->height * size * aspect);
+	surface = ui_surface_new(wall->width * size * aspect,
+			wall->height * size * aspect);
 	wall->texture = editor->wall_textures[wall->wall_texture];
 
 	// Wall Render
@@ -343,26 +340,62 @@ void	visualize_wall(
 	SDL_FreeSurface(surface);
 }
 
-void	sprite_events(t_editor *editor)
+void	select_sprite(t_editor *editor)
 {
+	t_vec2i		actual_mouse_pos;
+	t_sprite	*sprite;
+
+	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+		&& ui_element_is_hover(editor->wall_render))
+	{
+		veci_sub(actual_mouse_pos.v, editor->win_main->mouse_pos.v,
+			editor->wall_render->screen_pos.v, 2);
+		sprite = get_sprite_from_list_at_pos(editor->selected_wall->sprites,
+				actual_mouse_pos);
+		if (sprite)
+		{
+			editor->selected_sprite = sprite;
+			set_sprite_ui(editor, editor->selected_sprite);
+		}
+	}
+}
+
+void	edit_sprite(t_editor *editor)
+{
+	t_vec2i	mouse_diff;
 	char	temp_str[20];
 
-	if (!editor->selected_wall || !editor->selected_sector)
+	if (!editor->selected_sprite)
 		return ;
 	ft_strnclr(temp_str, 20);
-	editor->sprite_edit_menu->show = 1;
+	veci_sub(mouse_diff.v,
+		editor->win_main->mouse_pos.v, editor->win_main->mouse_pos_prev.v, 2);
+	// Moving
+	if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT
+		&& ui_element_is_hover(editor->sprite_edit_menu))
+	{
+		editor->selected_sprite->pos.x += mouse_diff.x;
+		editor->selected_sprite->pos.y += mouse_diff.y;
+		ui_input_set_text(editor->sprite_x_input,
+			ft_b_itoa(editor->selected_sprite->pos.x, temp_str));
+		ui_input_set_text(editor->sprite_y_input,
+			ft_b_itoa(editor->selected_sprite->pos.y, temp_str));
+	}
+	// Update sprite from ui;
+	get_sprite_ui(editor, editor->selected_sprite);
+}
+
+void	sprite_events(t_editor *editor)
+{
+	if (!editor->selected_wall || !editor->selected_sector)
+		return ;
+
 	if (editor->sprite_add_button->state == UI_STATE_CLICK)
 	{
-		if (!editor->selected_sprite) // unselects if you have one selected.
-		{
-			editor->selected_sprite = add_sprite(editor);
-			if (editor->active_texture_button_id > -1)
-				editor->selected_sprite->texture_id = editor->active_texture_button_id;
-			editor->selected_sprite->parent = editor->selected_wall;
-			add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
-			++editor->selected_wall->sprite_amount;
-		}
-		else
+		if (!editor->selected_sprite)
+			editor->selected_sprite
+					= add_sprite_to_wall(editor, editor->selected_wall);
+		else // unselects if you have one selected.
 			editor->selected_sprite = NULL;
 	}
 	else if (editor->sprite_remove_button->state == UI_STATE_CLICK)
@@ -376,44 +409,11 @@ void	sprite_events(t_editor *editor)
 		}
 	}
 
-	// Wall Render
-	visualize_wall(editor, editor->selected_wall);
-
 	// Selecting Sprite
-	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
-		&& ui_element_is_hover(editor->wall_render))
-	{
-		t_vec2i		actual_mouse_pos;
-		t_sprite	*sprite;
-
-		actual_mouse_pos = vec2i(editor->win_main->mouse_pos.x - editor->wall_render->screen_pos.x,
-				editor->win_main->mouse_pos.y - editor->wall_render->screen_pos.y);
-		sprite = get_sprite_from_list_at_pos(editor->selected_wall->sprites, actual_mouse_pos);
-		if (sprite) // new sprite found, update ui;
-		{
-			editor->selected_sprite = sprite;
-			set_sprite_ui(editor, editor->selected_sprite);
-		}
-	}
+	select_sprite(editor);
 
 	// Editing Sprite
-	if (editor->selected_sprite)
-	{
-		t_vec2i	mouse_diff;
-
-		mouse_diff = vec2i(editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x,
-				editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y);
-		// Moving
-		if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT // moving With mouse
-			&& ui_element_is_hover(editor->sprite_edit_menu))
-		{
-			editor->selected_sprite->pos.x += mouse_diff.x;
-			editor->selected_sprite->pos.y += mouse_diff.y;
-			ui_input_set_text(editor->sprite_x_input, ft_b_itoa(editor->selected_sprite->pos.x, temp_str));
-			ui_input_set_text(editor->sprite_y_input, ft_b_itoa(editor->selected_sprite->pos.y, temp_str));
-		}
-		get_sprite_ui(editor, editor->selected_sprite);
-	}
+	edit_sprite(editor);
 }
 
 void	select_wall(t_editor *editor)
@@ -467,7 +467,9 @@ void	wall_events(t_editor *editor)
 		if (editor->selected_wall)
 		{
 			editor->menu_wall_edit->show = 1;
+			editor->sprite_edit_menu->show = 1;
 			sprite_events(editor);
+			visualize_wall(editor, editor->selected_wall);
 		}
 		else
 		{

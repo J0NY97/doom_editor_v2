@@ -430,4 +430,15 @@ bool	can_you_make_portal_of_this_wall(
 	return (0);
 }
 
+t_sprite	*add_sprite_to_wall(t_editor *editor, t_wall *wall)
+{
+	t_sprite	*sprite;
 
+	sprite = add_sprite(editor);
+	if (editor->active_texture_button_id > -1)
+		sprite->texture_id = editor->active_texture_button_id;
+	sprite->parent = wall;
+	add_to_list(&wall->sprites, sprite, sizeof(t_sprite));
+	++wall->sprite_amount;
+	return (sprite);
+}
