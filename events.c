@@ -405,7 +405,8 @@ void	sprite_events(t_editor *editor)
 			remove_sprite(editor, editor->selected_sprite);
 			editor->selected_sprite = NULL;
 			--editor->selected_wall->sprite_amount;
-			ft_printf("Sprite Removed (total : %d)\n", editor->selected_wall->sprite_amount);
+			ft_printf("Sprite Removed (total : %d)\n",
+				editor->selected_wall->sprite_amount);
 		}
 	}
 
@@ -529,10 +530,12 @@ void	texture_menu_events(t_editor *editor)
 	t_texture_elem	*selected_texture_elem;
 
 	// Texture opening button events;
-	if (ui_list_radio_event(editor->texture_opening_buttons, &editor->active_texture_opening_button))
+	if (ui_list_radio_event(editor->texture_opening_buttons,
+		&editor->active_texture_opening_button))
 	{
 		// change text of the menu to the correct button;
-		ui_label_set_text(editor->texture_menu_label, ui_button_get_text(editor->active_texture_opening_button));
+		ui_label_set_text(editor->texture_menu_label,
+			ui_button_get_text(editor->active_texture_opening_button));
 		editor->active_texture_button = NULL;
 		editor->active_texture_button_id = -1;
 		editor->texture_menu->show = 1;
@@ -626,6 +629,13 @@ void	select_entity(t_editor *editor)
 	}
 }
 
+void	entity_draw_events(t_editor *editor)
+{
+	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+		&& !hover_over_open_menus(editor))
+		add_entity(editor)->pos = editor->mouse_pos;
+}
+
 void	entity_select_events(t_editor *editor)
 {
 	// If the dropdown menu is open, lets ignore all other inputs;
@@ -638,32 +648,21 @@ void	entity_select_events(t_editor *editor)
 		editor->entity_yaw_slider->event = 0;
 		editor->entity_z_input->event = 0;
 	}
-	if (editor->draw_button->state == UI_STATE_CLICK)
+	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
+		&& !ui_element_is_hover(editor->entity_edit_menu))
+		select_entity(editor);
+	else if (editor->selected_entity // MOVE ENTITY;
+		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+		editor->selected_entity->pos = vec2i_add(
+				editor->selected_entity->pos, editor->move_amount);
+	// Fill entity with values from ui;
+	if (editor->selected_entity)
+		get_entity_ui(editor, editor->selected_entity);
+	if (!editor->selected_entity
+		|| editor->close_entity_edit_button->state == UI_STATE_CLICK)
 	{
-		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
-			&& !hover_over_open_menus(editor))
-			add_entity(editor)->pos = editor->mouse_pos;
-	}
-	else if (editor->select_button->state == UI_STATE_CLICK)
-	{
-		if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
-			&& !ui_element_is_hover(editor->entity_edit_menu))
-			select_entity(editor);
-		else if (editor->selected_entity // MOVE ENTITY;
-			&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
-			editor->selected_entity->pos = vec2i_add(
-					editor->selected_entity->pos, editor->move_amount);
-		// Fill entity with values from ui;
-		if (editor->selected_entity)
-			get_entity_ui(editor, editor->selected_entity);
-		if (!editor->selected_entity
-			|| editor->close_entity_edit_button->state == UI_STATE_CLICK)
-		{
-			editor->entity_edit_menu->show = 0;
-			editor->selected_entity = NULL;
-		}
-		else
-			editor->entity_edit_menu->show = 1;
+		editor->entity_edit_menu->show = 0;
+		editor->selected_entity = NULL;
 	}
 }
 
@@ -671,9 +670,14 @@ void	entity_events(t_editor *editor)
 {
 	if (editor->entity_button->state == UI_STATE_CLICK)
 	{
-		entity_select_events(editor);
-		if (!editor->selected_entity)
+		if (editor->selected_entity)
+			editor->entity_edit_menu->show = 1;
+		else
 			editor->entity_edit_menu->show = 0;
+		if (editor->draw_button->state == UI_STATE_CLICK)
+			entity_draw_events(editor);
+		else if (editor->select_button->state == UI_STATE_CLICK)
+			entity_select_events(editor);
 	}
 	else
 	{
