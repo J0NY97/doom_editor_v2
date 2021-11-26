@@ -278,10 +278,10 @@ void	editor_init(t_editor *editor)
 	editor->event_type_audio = ui_list_get_element_by_id(editor->layout.elements, "event_type_audio");
 	editor->event_type_spawn = ui_list_get_element_by_id(editor->layout.elements, "event_type_spawn");
 	// actions
-	editor->event_action_click = ui_list_get_element_by_id(editor->layout.elements, "event_action_click");
-	editor->event_action_shoot = ui_list_get_element_by_id(editor->layout.elements, "event_action_shoot");
-	editor->event_action_sector = ui_list_get_element_by_id(editor->layout.elements, "event_action_sector");
-	editor->event_action_null = ui_list_get_element_by_id(editor->layout.elements, "event_action_null");
+	editor->event_action_click_button = ui_list_get_element_by_id(editor->layout.elements, "event_action_click");
+	editor->event_action_shoot_button = ui_list_get_element_by_id(editor->layout.elements, "event_action_shoot");
+	editor->event_action_sector_button = ui_list_get_element_by_id(editor->layout.elements, "event_action_sector");
+	editor->event_action_null_button = ui_list_get_element_by_id(editor->layout.elements, "event_action_null");
 
 	// Spawn Edit
 	editor->spawn_edit_menu = ui_list_get_element_by_id(editor->layout.elements, "spawn_edit_menu");

@@ -686,12 +686,103 @@ void	entity_events(t_editor *editor)
 	}
 }
 
+void	event_removing_events(t_editor *editor)
+{
+	if (editor->remove_event_button->state == UI_STATE_CLICK)
+	{
+		if (editor->selected_event && editor->selected_event_elem)
+		{
+			remove_event(editor, editor->selected_event);
+			editor->selected_event_elem = NULL;
+			editor->active_event_elem = NULL;
+			editor->selected_event = NULL;
+		}
+	}
+}
+
+void	event_adding_events(t_editor *editor)
+{
+	if (editor->add_event_button->state == UI_STATE_CLICK)
+	{
+		if (editor->selected_event_elem == NULL) // add new element;
+		{
+			editor->selected_event = add_event(editor);
+			editor->selected_event_elem = editor->selected_event->elem;
+			editor->active_event_elem = editor->selected_event->elem->button;
+		} // else update, currently selected, element from the ui;
+		update_event(editor, editor->selected_event_elem->event);
+		update_event_elem(editor->selected_event_elem);
+		editor->selected_event_elem = NULL;
+		editor->active_event_elem = NULL;
+		editor->selected_event = NULL;
+	}
+}
+
+void	event_id_dropdown_update(t_editor *editor)
+{
+	char		**texts;
+	t_ui_recipe	*recipe;
+
+	// Update ID Dropdown;
+	// when id dropdown opens we add buttons for each sprite/sector id,
+	// 	depending on which action type is selected;
+	if (editor->event_id_dropdown->show
+		&& ui_dropdown_open(editor->event_id_dropdown))
+	{
+		if (ui_dropdown_active(editor->event_action_dropdown)
+			== editor->event_action_sector_button)
+		{
+			texts = gen_sector_id_texts(editor->sectors);
+			recipe = ui_list_get_recipe_by_id(
+					editor->layout.recipes, "event_id_button");
+			create_buttons_to_list_from_texts_remove_extra(
+				ui_dropdown_get_menu_element(editor->event_id_dropdown),
+				texts, recipe);
+			ft_arraydel(texts);
+		}
+		else
+		{
+			texts = gen_sprite_id_texts(editor->sprites);
+			recipe = ui_list_get_recipe_by_id(
+					editor->layout.recipes, "event_id_button");
+			create_buttons_to_list_from_texts_remove_extra(
+				ui_dropdown_get_menu_element(editor->event_id_dropdown),
+				texts, recipe);
+			ft_arraydel(texts);
+		}
+	}
+}
+
+void	event_select(t_editor *editor)
+{
+	t_list	*curr;
+
+	// Selecting event;
+	// Lets see if we have gotten a new active event_elem;
+	if (ui_list_radio_event(editor->event_element_buttons,
+		&editor->active_event_elem))
+	{
+		// Figure out which event this button is attached to;
+		curr = editor->event_elements;
+		while (curr)
+		{
+			if (((t_event_elem *)curr->content)->button
+				== editor->active_event_elem)
+			{
+				editor->selected_event_elem = curr->content;
+				editor->selected_event = editor->selected_event_elem->event;
+				break;
+			}
+			curr = curr->next;
+		}
+		// Update event ui with values from that event;
+		if (editor->selected_event)
+			set_event_ui(editor, editor->selected_event);
+	}
+}
+
 void	event_select_events(t_editor *editor)
 {
-	char	target_id_text[20];
-
-	ft_strnclr(target_id_text, 20);
-
 	// Ignore all ui inputs if we have dropdowns open;
 	ui_menu_get_menu(editor->event_menu)->event_children = 1;
 	editor->event_scrollbar->event = 1;
@@ -710,79 +801,10 @@ void	event_select_events(t_editor *editor)
 		editor->event_max_input->event = 0;
 		editor->event_speed_input->event = 0;
 	}
-	
-	// Selecting event;
-	// Lets see if we have gotten a new active event_elem;
-	if (ui_list_radio_event(editor->event_element_buttons, &editor->active_event_elem))
-	{
-		// Figure out which event this button is attached to;
-		t_list	*curr;
-		curr = editor->event_elements;
-		while (curr)
-		{
-			if (((t_event_elem *)curr->content)->button == editor->active_event_elem)
-			{
-				editor->selected_event_elem = curr->content;
-				editor->selected_event = editor->selected_event_elem->event;
-				break;
-			}
-			curr = curr->next;
-		}
-		// Update event ui with values from that event;
-		if (editor->selected_event)
-			set_event_ui(editor, editor->selected_event);
-	}
-
-	// If add button is clicked;
-	if (editor->add_event_button->state == UI_STATE_CLICK)
-	{
-		if (editor->selected_event_elem == NULL) // add new element;
-		{
-			editor->selected_event = add_event(editor);
-			editor->selected_event_elem = editor->selected_event->elem;
-			editor->active_event_elem = editor->selected_event->elem->button;
-		} // else update, currently selected, element from the ui;
-		update_event(editor, editor->selected_event_elem->event);
-		update_event_elem(editor->selected_event_elem);
-
-		editor->selected_event_elem = NULL;
-		editor->active_event_elem = NULL;
-		editor->selected_event = NULL;
-	} // Else if remove button is clicked;
-	else if (editor->remove_event_button->state == UI_STATE_CLICK)
-	{
-		if (editor->selected_event && editor->selected_event_elem)
-		{
-			remove_event(editor, editor->selected_event);
-			editor->selected_event_elem = NULL;
-			editor->active_event_elem = NULL;
-			editor->selected_event = NULL;
-		}
-	}
-
-	// Update ID Dropdown;
-	// when id dropdown opens we add buttons for each sprite/sector id,
-	// 	depending on which action type is selected;
-	if (editor->event_id_dropdown->show
-		&& ui_dropdown_open(editor->event_id_dropdown))
-	{
-		char	**texts;
-
-		if (ui_dropdown_active(editor->event_action_dropdown) == editor->event_action_sector)
-		{
-			texts = gen_sector_id_texts(editor->sectors);
-			t_ui_recipe *recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
-			create_buttons_to_list_from_texts_remove_extra(ui_dropdown_get_menu_element(editor->event_id_dropdown), texts, recipe);
-			ft_arraydel(texts);
-		}
-		else
-		{
-			texts = gen_sprite_id_texts(editor->sprites);
-			t_ui_recipe *recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button");
-			create_buttons_to_list_from_texts_remove_extra(ui_dropdown_get_menu_element(editor->event_id_dropdown), texts, recipe);
-			ft_arraydel(texts);
-		}
-	}
+	event_select(editor);
+	event_adding_events(editor);
+	event_removing_events(editor);
+	event_id_dropdown_update(editor);
 }
 
 void	event_events(t_editor *editor)

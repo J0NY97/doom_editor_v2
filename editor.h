@@ -202,10 +202,10 @@ typedef struct s_editor
 	t_ui_element	*event_type_audio;
 	t_ui_element	*event_type_spawn;
 	// actions
-	t_ui_element	*event_action_click;
-	t_ui_element	*event_action_shoot;
-	t_ui_element	*event_action_sector;
-	t_ui_element	*event_action_null;
+	t_ui_element	*event_action_click_button;
+	t_ui_element	*event_action_shoot_button;
+	t_ui_element	*event_action_sector_button;
+	t_ui_element	*event_action_null_button;
 
 	// Spawn Elems
 	t_ui_element	*spawn_edit_menu;
