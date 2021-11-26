@@ -41,6 +41,7 @@ void	add_wall_to_sector_at_pos(t_editor *editor, t_sector *sector, t_vec2i p1, t
 	t_wall	*wall;
 
 	wall = add_wall(editor);
+	wall->parent_sector = sector;
 	wall->p1 = get_point_from_sector_around_radius(sector, p1, 0.0f);
 	if (!wall->p1)
 	{

@@ -307,22 +307,26 @@ struct s_point
 };
 
 /*
- * t_vec4i	pos;			the position on the wall ingame;
- * int		texture;		the id of the texture used;
- * int		state;			loop, static, or action; (not sure yet what these are);
+ * t_vec4i		pos;			the position on the wall ingame;
+ * int			texture_id;		the id of the texture used;
+ * int			state;			loop, static, or action; (not sure yet what these are);
+ * SDL_Surface	*texture;		the pointer of a texture;
 */
 struct s_sprite
 {
 	t_wall			*parent;
 	int				id;
 	t_vec4i			pos;
-	int				texture;
+	int				texture_id;
 	float			scale;
 	int				type;
+
+	SDL_Surface		*texture;
 };
 /*
  * t_vec2i		middle;		a small line coming out from the middle of the wall that will be used to select a wall if there are 2 on top of eachother; the line should also be drawn inwards of the sector;
  * int			neighbor_id;	this is only used when getting the map, because we need to have gotten all the sectors before actually setting the actual sector of each wall;
+ * SDL_Surface	*texture;		the pointer of the texture youre using for this wall; (either portal- or wall texture);
 */
 struct s_wall
 {
@@ -330,11 +334,17 @@ struct s_wall
 	t_point			*p1;
 	t_point			*p2;
 
+	int				width;
+	int				height;
+
 	int				wall_texture;
 	int				portal_texture;
 
+	SDL_Surface		*texture;
+
 	int				solid;
 
+	t_sector		*parent_sector;
 	t_sector		*neighbor;
 	int				neighbor_id;
 

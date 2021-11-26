@@ -243,47 +243,37 @@ void	sector_events(t_editor *editor)
 	}
 }
 
-void	render_wall_on_sprite_menu(
-		t_editor *editor, t_sector *sector, t_wall *wall)
+void	draw_wall_on_surface(SDL_Surface *surface, t_wall *wall, float scale)
 {
-	// Clear the wall render from last frame, since we dont draw over the whole texture;
-	ui_texture_fill(editor->win_main->renderer,
-		editor->wall_render->texture, 0xff000000);
+	int		amount_x;
+	int		amount_y;
+	int		ii;
+	int		jj;
 
-	SDL_Surface	*surface;
-	t_vec2		dist;
-	float		aspect;
-	int			size;
-	float		amount_x;
-	float		amount_y;
-
-	dist.x = distance(wall->p1->pos.v, wall->p2->pos.v, 2);
-	dist.y = (sector->ceiling_height - sector->floor_height);
-	size = 64;
-	amount_x = dist.x / wall->texture_scale;
-	amount_y = dist.y / wall->texture_scale;
-	aspect = get_ratio_f(vec2(dist.x * size, dist.y * size),
-			vec2(editor->wall_render->pos.w, editor->wall_render->pos.h));
-
-	float scale = (size * wall->texture_scale) * aspect;
-	surface = ui_surface_new(dist.x * size * aspect, dist.y * size * aspect);
-
-	SDL_Surface	*texture = editor->wall_textures[wall->wall_texture]; // DONT FREE!
-
-	for (int j = 0; j <= amount_y; j++)
-		for (int i = 0; i <= amount_x; i++)
-			SDL_BlitScaled(texture, NULL, surface, &(SDL_Rect){i * scale, j * scale, scale, scale});
-
-	// Render the sprites;
-	t_sprite	*sprite;
-	t_list		*curr;
-	t_vec4i		xywh;
-
-	curr = wall->sprites;
-	while (curr)
+	amount_x = ceil(wall->width / wall->texture_scale);
+	amount_y = ceil(wall->height / wall->texture_scale);
+	jj = -1;
+	while (++jj <= amount_y)
 	{
-		sprite = curr->content;
-		texture = editor->wall_textures[sprite->texture];
+		ii = -1;
+		while (++ii <= amount_x)
+			SDL_BlitScaled(wall->texture, NULL, surface,
+				&(SDL_Rect){ii * scale, jj * scale, scale, scale});
+	}
+}
+
+void	draw_sprites_on_surface(t_editor *editor, SDL_Surface *surface, t_list *sprites, float aspect)
+{
+	t_sprite	*sprite;
+	t_vec4i		xywh;
+	SDL_Surface	*texture; // DONT FREE;
+	int			size;
+
+	size = 64;
+	while (sprites)
+	{
+		sprite = sprites->content;
+		texture = editor->wall_textures[sprite->texture_id];
 		xywh = vec4i(0, 0, texture->w, texture->h);
 		if (sprite->type == STATIC)
 		{
@@ -299,26 +289,57 @@ void	render_wall_on_sprite_menu(
 		}
 		SDL_BlitScaled(texture, &(SDL_Rect){xywh.x, xywh.y, xywh.w, xywh.h},
 			surface, &(SDL_Rect){sprite->pos.x, sprite->pos.y, sprite->pos.w, sprite->pos.h});
-		curr = curr->next;
+		sprites = sprites->next;
 	}
-	// Draw rect around selected sprite;
+}
+
+void	draw_selected_sprite(t_editor *editor, SDL_Surface *surface)
+{
 	t_vec2i	p1;
 	t_vec2i	p2;
+
 	if (editor->selected_sprite)
 	{
 		p1 = vec2i(editor->selected_sprite->pos.x, editor->selected_sprite->pos.y);
 		p2 = vec2i(p1.x + editor->selected_sprite->pos.w, p1.y + editor->selected_sprite->pos.h);
 		ui_surface_rect_draw(surface, p1, p2, 0xff0000ff);
 	}
+}
 
-	// Draw lines on the surface borders for debugging purposes;
+void	visualize_wall(
+		t_editor *editor, t_wall *wall)
+{
+	SDL_Surface	*surface;
+	float		aspect;
+	float		scale;
+	int			size;
+
+	// Clear the wall render from last frame;
+	SDL_SetRenderTarget(editor->win_main->renderer,
+		editor->wall_render->texture);
+	SDL_RenderClear(editor->win_main->renderer);
+
+	size = 64;
+	aspect = get_ratio_f(vec2(wall->width * size, wall->height * size),
+			vec2(editor->wall_render->pos.w, editor->wall_render->pos.h));
+	scale = (size * wall->texture_scale) * aspect;
+	surface = ui_surface_new(wall->width * size * aspect, wall->height * size * aspect);
+	wall->texture = editor->wall_textures[wall->wall_texture];
+
+	// Wall Render
+	draw_wall_on_surface(surface, wall, scale);
+
+	// Render the sprites;
+	draw_sprites_on_surface(editor, surface, wall->sprites, aspect);
+
+	// Draw rect around selected sprite;
+	draw_selected_sprite(editor, surface);
+
 	ui_surface_draw_border(surface, 1, 0xff00ff00);
-
-	SDL_UpdateTexture(editor->wall_render->texture,
-		&(SDL_Rect){0, 0, ft_min(surface->w, editor->wall_render->current_texture_size.x),
+	SDL_UpdateTexture(editor->wall_render->texture, &(SDL_Rect){0, 0,
+		ft_min(surface->w, editor->wall_render->current_texture_size.x),
 			ft_min(surface->h, editor->wall_render->current_texture_size.y)},
 		surface->pixels, surface->pitch);
-
 	SDL_FreeSurface(surface);
 }
 
@@ -327,22 +348,16 @@ void	sprite_events(t_editor *editor)
 	char	temp_str[20];
 
 	if (!editor->selected_wall || !editor->selected_sector)
-	{
-		ft_printf("[%s] We need both selected wall and sector for this function, and currently we dont have both so no function running for you.\n", __FUNCTION__);
 		return ;
-	}
-
 	ft_strnclr(temp_str, 20);
-
 	editor->sprite_edit_menu->show = 1;
-
 	if (editor->sprite_add_button->state == UI_STATE_CLICK)
 	{
 		if (!editor->selected_sprite) // unselects if you have one selected.
 		{
 			editor->selected_sprite = add_sprite(editor);
 			if (editor->active_texture_button_id > -1)
-				editor->selected_sprite->texture = editor->active_texture_button_id;
+				editor->selected_sprite->texture_id = editor->active_texture_button_id;
 			editor->selected_sprite->parent = editor->selected_wall;
 			add_to_list(&editor->selected_wall->sprites, editor->selected_sprite, sizeof(t_sprite));
 			++editor->selected_wall->sprite_amount;
@@ -362,7 +377,7 @@ void	sprite_events(t_editor *editor)
 	}
 
 	// Wall Render
-	render_wall_on_sprite_menu(editor, editor->selected_sector, editor->selected_wall);
+	visualize_wall(editor, editor->selected_wall);
 
 	// Selecting Sprite
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
@@ -588,7 +603,7 @@ void	texture_menu_events(t_editor *editor)
 			else if (editor->active_texture_opening_button == editor->sprite_texture_button)
 			{
 				if (editor->selected_sprite)
-					editor->selected_sprite->texture = selected_texture_elem->id;
+					editor->selected_sprite->texture_id = selected_texture_elem->id;
 				ui_element_image_set(editor->sprite_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
 			}
 		}

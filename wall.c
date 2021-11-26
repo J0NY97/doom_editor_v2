@@ -382,6 +382,12 @@ void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
 	while (walls)
 	{
 		wall = walls->content;
+		wall->width = distance(wall->p1->pos.v, wall->p2->pos.v, 2);
+		if (!wall->parent_sector)
+			ft_printf("[%s] Error: wall doesnt belong to any sector.\n", __FUNCTION__);
+		else
+			wall->height = wall->parent_sector->ceiling_height
+					- wall->parent_sector->floor_height;
 		if (wall->neighbor)
 		{
 			if (get_sector_wall_at_pos(wall->neighbor,

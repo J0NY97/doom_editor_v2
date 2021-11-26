@@ -21,7 +21,7 @@ void	sprite_print(t_sprite *sprite)
 	ft_printf("[%s]\n", __FUNCTION__);
 	ft_printf("\tpos : ");
 	print_veci(sprite->pos.v, 2);
-	ft_printf("\ttexture : %d\n", sprite->texture);
+	ft_printf("\ttexture_id : %d\n", sprite->texture_id);
 	ft_printf("\tscale : %.2f\n", sprite->scale);
 	ft_printf("\ttype : %d\n", sprite->type);
 }
@@ -32,7 +32,7 @@ t_sprite	*add_sprite(t_editor *editor)
 
 	sprite = sprite_new();
 	sprite->pos = vec4i(0, 0, 64, 64);
-	sprite->texture = 0;
+	sprite->texture_id = 0;
 	sprite->id = get_next_sprite_id(editor->sprites);
 	sprite->scale = 1.0f;
 	add_to_list(&editor->sprites, sprite, sizeof(t_sprite));

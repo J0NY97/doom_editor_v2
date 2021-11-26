@@ -98,7 +98,7 @@ void	get_sprites(t_editor *editor, char **lines, int *i)
 			sprite->parent = parent_wall;
 			sprite->pos.x = ft_atoi(args[2]);
 			sprite->pos.x = ft_atoi(args[3]);
-			sprite->texture = ft_atoi(args[4]);
+			sprite->texture_id = ft_atoi(args[4]);
 			if (ft_atoi(args[5]) != 0)
 				sprite->scale = 100 / ft_atoi(args[5]);
 			while (++ggg < SPRITE_TYPE_AMOUNT)
@@ -135,6 +135,7 @@ void	get_sector_walls(t_list *list, char *id_str, char *neighbor_str, t_sector *
 		wall = get_wall_with_id(list, id);
 		if (wall)
 		{
+			wall->parent_sector = sector;
 			wall->neighbor_id = ft_atoi(neigh_ids[i]);
 			++sector->wall_amount;
 			add_to_list(&sector->walls, wall, sizeof(t_wall));

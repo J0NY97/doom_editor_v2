@@ -102,7 +102,7 @@ char	*get_wall_sprites(t_wall *wall, int *id)
 		*id += 1;
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\t%s\n",
 				*id, wall->id, sprite->pos.x, sprite->pos.y,
-				sprite->texture, (int)(sprite->scale * 100), g_sprite_type[sprite->type]);
+				sprite->texture_id, (int)(sprite->scale * 100), g_sprite_type[sprite->type]);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
