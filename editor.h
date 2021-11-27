@@ -13,8 +13,8 @@
 
 # include "temp.h" // not needed when we are using the real enum.h;
 
-# define MAP_PATH "C:/Users/Jony/source/repos/map_editor_v2/maps/"
-# define EDITOR_PATH "C:/Users/Jony/source/repos/map_editor_v2/"
+# define MAP_PATH "C:/Users/Jony/source/repos/doom_nukem/map_editor_v2/maps/"
+# define EDITOR_PATH "C:/Users/Jony/source/repos/doom_nukem/map_editor_v2/"
 
 typedef struct	s_spawn		t_spawn;
 typedef struct	s_point		t_point;
@@ -533,6 +533,7 @@ void				set_map(t_editor *editor, char *name);
 void				get_map(t_editor *editor, char *map);
 
 // Help
+t_vec2				get_next_pos(t_vec2 inside, t_vec4 size, int gap, int i);
 Uint32				random_blue_color(void);
 t_vec2i				conversion(t_editor *editor, t_vec2i v);
 void				remove_from_list(t_list **list, void *pointer);

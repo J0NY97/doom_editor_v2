@@ -166,9 +166,12 @@ void	editor_init(t_editor *editor)
 
 	// Texture Menu
 	editor->texture_menu = ui_layout_get_element(&editor->layout, "texture_menu");
+	ui_element_print(editor->texture_menu);
 	editor->texture_menu->show = 0;
 	editor->texture_menu_close_button = ui_layout_get_element(&editor->layout, "texture_menu_close_button");
 	editor->texture_menu_label = ui_layout_get_element(&editor->layout, "texture_menu_label");
+
+	// Create buttons from all 'wall_textures' and place them on the 'texture_menu';
 	t_ui_recipe	*texture_menu_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button_menu");
 	t_ui_recipe	*texture_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button");
 	t_ui_recipe	*texture_image_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_image");
@@ -182,15 +185,10 @@ void	editor_init(t_editor *editor)
 		ui_element_set_parent(texture_elem->menu, editor->texture_menu, UI_TYPE_ELEMENT);
 		ui_element_edit(texture_elem->menu, texture_menu_button_recipe);
 		ui_element_set_id(texture_elem->menu, "texture_button_menu");
-		((t_ui_menu *)texture_elem->menu->element)->event_children = 1;
-		((t_ui_menu *)texture_elem->menu->element)->render_children = 1;
 
-		int	x = 10;
-		int y = 35;
-		int	amount_x = editor->texture_menu->pos.w / (texture_elem->menu->pos.w + 5 + x);
 		ui_element_pos_set2(texture_elem->menu,
-			vec2(x + (i % (amount_x + 1)) * (texture_elem->menu->pos.w + 5),
-				y + (i / (amount_x + 1)) * (texture_elem->menu->pos.h + 5)));
+			get_next_pos(vec2(editor->texture_menu->pos.w, editor->texture_menu->pos.h),
+				texture_menu_button_recipe->pos, 5, i));
 
 		texture_elem->image = ft_memalloc(sizeof(t_ui_element));
 		ui_menu_new(editor->win_main, texture_elem->image);

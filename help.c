@@ -1,5 +1,29 @@
 #include "editor.h"
 
+/*
+ * Description: Aligns element with position of 'size' inside 'inside'
+ * 				with 'gap' amount of pixels inbetween each element;
+ *
+ * NOTE: this function ignores y/h;
+ * 		aka it assumes you have infinite height on 'inside';
+ *
+ * inside == inside which w and h the output vec2 should fit in;
+ * inside.x == width;
+ * inside.y == height;
+ *
+ * size == of the element you want to fit inside 'inside';
+*/
+t_vec2	get_next_pos(t_vec2 inside, t_vec4 size, int gap, int i)
+{
+	int	amount_x;
+
+	amount_x = (inside.x - size.x) / (size.w + gap);
+	while ((int)amount_x * (size.w + gap) < inside.x - size.x)
+		gap++;
+	return (vec2(size.x + (i % (int)(amount_x) * (size.w + gap)),
+		size.y + (i / (int)(amount_x) * (size.h + gap))));
+}
+
 Uint32	random_blue_color(void)
 {
 	Uint32	color;
