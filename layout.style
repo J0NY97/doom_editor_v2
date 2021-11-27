@@ -1160,6 +1160,7 @@ info_label
 	text_pos : 0, 0, 1920, 1080;
 	text_size : 128;
 	z : 9999999999;
+	show : 0;
 };
 
 sector_hover_info_menu

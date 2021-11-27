@@ -57,7 +57,7 @@ type:wall	p1	p2	wtx	ptx	scale	solid
 23	20	23	7	0	10.00	1
 -
 type:wsprite	wall	x	y	texture	scale	type
-0	3	0	0	6	0	STATIC
+0	3	0	0	6	100	STATIC
 -
 type:sector	walls	neighbors	g	l
 0	0 4 1 2 3 	-1 -1 -1 1 3 	20	0

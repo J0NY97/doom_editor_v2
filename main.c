@@ -184,24 +184,22 @@ void	editor_init(t_editor *editor)
 		ui_menu_new(editor->win_main, texture_elem->menu);
 		ui_element_set_parent(texture_elem->menu, editor->texture_menu, UI_TYPE_ELEMENT);
 		ui_element_edit(texture_elem->menu, texture_menu_button_recipe);
-		ui_element_set_id(texture_elem->menu, "texture_button_menu");
 
 		ui_element_pos_set2(texture_elem->menu,
-			get_next_pos(vec2(editor->texture_menu->pos.w, editor->texture_menu->pos.h),
+			align_fill(vec2(editor->texture_menu->pos.w,
+					editor->texture_menu->pos.h),
 				texture_menu_button_recipe->pos, 5, i));
 
 		texture_elem->image = ft_memalloc(sizeof(t_ui_element));
 		ui_menu_new(editor->win_main, texture_elem->image);
 		ui_element_set_parent(texture_elem->image, texture_elem->menu, UI_TYPE_ELEMENT);
 		ui_element_edit(texture_elem->image, texture_image_recipe);
-		ui_element_set_id(texture_elem->image, "texture_image");
-		ui_element_image_set(texture_elem->image, UI_STATE_AMOUNT, editor->wall_textures[i]);
+		ui_element_image_set(texture_elem->image, UI_STATE_DEFAULT, editor->wall_textures[i]);
 
 		texture_elem->button = ft_memalloc(sizeof(t_ui_element));
 		ui_button_new(editor->win_main, texture_elem->button);
 		ui_element_set_parent(texture_elem->button, texture_elem->menu, UI_TYPE_ELEMENT);
 		ui_element_edit(texture_elem->button, texture_button_recipe);
-		ui_element_set_id(texture_elem->button, "texture_button");
 
 		texture_elem->id = i;
 
@@ -248,7 +246,6 @@ void	editor_init(t_editor *editor)
 
 	// Global Info (used for telling user you have saved map for example)
 	editor->info_label = ui_layout_get_element(&editor->layout, "info_label");
-	editor->info_label->show = 0;
 
 	// Sector Hover Info
 	editor->sector_hover_info_menu = ui_layout_get_element(&editor->layout, "sector_hover_info_menu");
@@ -269,8 +266,6 @@ void	editor_init(t_editor *editor)
 	editor->event_speed_input = ui_layout_get_element(&editor->layout, "event_speed_input");
 	editor->event_menu = ui_layout_get_element(&editor->layout, "event_menu");
 
-	ui_element_print(editor->event_sector_input);
-	ui_element_print(editor->event_min_input);
 	// types
 	editor->event_type_floor = ui_layout_get_element(&editor->layout, "event_type_floor");
 	editor->event_type_ceiling = ui_layout_get_element(&editor->layout, "event_type_ceiling");

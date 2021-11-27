@@ -533,7 +533,7 @@ void				set_map(t_editor *editor, char *name);
 void				get_map(t_editor *editor, char *map);
 
 // Help
-t_vec2				get_next_pos(t_vec2 inside, t_vec4 size, int gap, int i);
+t_vec2				align_fill(t_vec2 inside, t_vec4 size, int gap, int i);
 Uint32				random_blue_color(void);
 t_vec2i				conversion(t_editor *editor, t_vec2i v);
 void				remove_from_list(t_list **list, void *pointer);

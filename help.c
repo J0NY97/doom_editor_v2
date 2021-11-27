@@ -13,7 +13,7 @@
  *
  * size == of the element you want to fit inside 'inside';
 */
-t_vec2	get_next_pos(t_vec2 inside, t_vec4 size, int gap, int i)
+t_vec2	align_fill(t_vec2 inside, t_vec4 size, int gap, int i)
 {
 	int	amount_x;
 

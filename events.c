@@ -141,9 +141,9 @@ void	sector_draw_events(t_editor *editor)
 		&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor))
 	{
-		if (!editor->selected_sector)
+		if (!editor->selected_sector) // creating new sector;
 			editor->selected_sector = add_sector(editor);
-		if (editor->selected_sector)
+		if (editor->selected_sector) // adding new walls to sector;
 		{
 			if (!editor->first_point_set)
 			{
@@ -156,7 +156,7 @@ void	sector_draw_events(t_editor *editor)
 				editor->second_point = editor->mouse_pos;
 			}
 			// We dont want you to be able to draw a 0 length wall;
-			if (editor->first_point_set
+			if (editor->first_point_set && editor->second_point_set
 				&& compare_veci(editor->first_point.v, editor->second_point.v, 2))
 				editor->second_point_set = 0;
 			if (editor->first_point_set && editor->second_point_set)
