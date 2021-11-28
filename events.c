@@ -540,15 +540,16 @@ void	texture_menu_events(t_editor *editor)
 		editor->active_texture_button_id = -1;
 		editor->texture_menu->show = 1;
 	}
-
+	if (!editor->active_texture_opening_button)
+		editor->texture_menu->show = 0;
 	if (!editor->texture_menu->show)
 		return ;
-
 	if (editor->texture_menu_close_button->state == UI_STATE_CLICK)
 	{
 		editor->texture_menu->show = 0;
 		editor->active_texture_opening_button->state = UI_STATE_DEFAULT;
 		editor->active_texture_opening_button = NULL;
+		return ;
 	}
 
 	selected_texture_elem = NULL;
@@ -587,7 +588,8 @@ void	texture_menu_events(t_editor *editor)
 			if (t_something)
 			{
 				t_something->id = selected_texture_elem->id;
-				ui_element_image_set(t_something->image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
+				ui_element_image_set(t_something->image, UI_STATE_DEFAULT,
+					editor->wall_textures[selected_texture_elem->id]);
 			}
 		}
 	}
