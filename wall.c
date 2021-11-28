@@ -303,6 +303,9 @@ void	set_wall_ui(t_editor *editor, t_wall *wall)
 
 	ft_strnclr(temp_str, 20);
 
+	editor->wall_texture_something->id = &wall->wall_texture;
+	editor->portal_texture_something->id = &wall->portal_texture;
+
 	ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->wall_texture]);
 	ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->portal_texture]);
 

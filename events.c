@@ -572,44 +572,22 @@ void	texture_menu_events(t_editor *editor)
 		if (selected_texture_elem
 			&& editor->active_texture_button_id > -1)
 		{
-			// Set selected whatever // TODO this needs to go;
-			if (editor->active_texture_opening_button == editor->wall_texture_button)
+			// Lets see which one of teh buttons was clicked and update that texture id;
+			t_texture_something	*t_something = NULL;
+			curr = editor->texture_somethings;
+			while (curr)
 			{
-				if (editor->selected_wall)
+				if (((t_texture_something *)curr->content)->button == editor->active_texture_opening_button)
 				{
-					editor->selected_wall->wall_texture = selected_texture_elem->id;
-					ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
+					t_something = curr->content;
+					break ;
 				}
+				curr = curr->next;
 			}
-			else if (editor->active_texture_opening_button == editor->portal_texture_button)
+			if (t_something)
 			{
-				if (editor->selected_wall)
-				{
-					editor->selected_wall->portal_texture = selected_texture_elem->id;
-					ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
-				}
-			}
-			else if (editor->active_texture_opening_button == editor->floor_texture_button)
-			{
-				if (editor->selected_sector)
-				{
-					editor->selected_sector->floor_texture = selected_texture_elem->id;
-					ui_element_image_set(editor->floor_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
-				}
-			}
-			else if (editor->active_texture_opening_button == editor->ceiling_texture_button)
-			{
-				if (editor->selected_sector)
-				{
-					editor->selected_sector->ceiling_texture = selected_texture_elem->id;
-					ui_element_image_set(editor->ceiling_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
-				}
-			}
-			else if (editor->active_texture_opening_button == editor->sprite_texture_button)
-			{
-				if (editor->selected_sprite)
-					editor->selected_sprite->texture_id = selected_texture_elem->id;
-				ui_element_image_set(editor->sprite_texture_image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
+				*t_something->id = selected_texture_elem->id;
+				ui_element_image_set(t_something->image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
 			}
 		}
 	}

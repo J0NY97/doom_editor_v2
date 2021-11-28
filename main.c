@@ -115,8 +115,6 @@ void	editor_init(t_editor *editor)
 	editor->ceiling_texture_button = ui_layout_get_element(&editor->layout, "ceiling_texture_button");
 	editor->floor_texture_image = ui_layout_get_element(&editor->layout, "floor_texture_image");
 	editor->ceiling_texture_image = ui_layout_get_element(&editor->layout, "ceiling_texture_image");
-	add_to_list(&editor->texture_opening_buttons, editor->floor_texture_button, UI_TYPE_ELEMENT);
-	add_to_list(&editor->texture_opening_buttons, editor->ceiling_texture_button, UI_TYPE_ELEMENT);
 	// Inputs;
 	editor->floor_height_input = ui_layout_get_element(&editor->layout, "floor_height_input");
 	editor->ceiling_height_input = ui_layout_get_element(&editor->layout, "ceiling_height_input");
@@ -138,8 +136,6 @@ void	editor_init(t_editor *editor)
 	editor->wall_texture_image = ui_layout_get_element(&editor->layout, "wall_texture_image");
 	editor->portal_texture_button = ui_layout_get_element(&editor->layout, "portal_texture_button");
 	editor->portal_texture_image = ui_layout_get_element(&editor->layout, "portal_texture_image");
-	add_to_list(&editor->texture_opening_buttons, editor->wall_texture_button, UI_TYPE_ELEMENT);
-	add_to_list(&editor->texture_opening_buttons, editor->portal_texture_button, UI_TYPE_ELEMENT);
 	editor->floor_wall_angle_input = ui_layout_get_element(&editor->layout, "floor_wall_angle_input");
 	editor->ceiling_wall_angle_input = ui_layout_get_element(&editor->layout, "ceiling_wall_angle_input");
 	editor->wall_texture_scale_input = ui_layout_get_element(&editor->layout, "wall_texture_scale_input");
@@ -154,7 +150,6 @@ void	editor_init(t_editor *editor)
 	editor->sprite_type_loop = ui_layout_get_element(&editor->layout, "sprite_type_loop");
 	editor->sprite_type_action = ui_layout_get_element(&editor->layout, "sprite_type_action");
 	editor->sprite_texture_button = ui_layout_get_element(&editor->layout, "sprite_texture_button");
-	add_to_list(&editor->texture_opening_buttons, editor->sprite_texture_button, UI_TYPE_ELEMENT);
 	editor->sprite_texture_image = ui_layout_get_element(&editor->layout, "sprite_texture_image");
 	editor->sprite_x_input = ui_layout_get_element(&editor->layout, "sprite_x_input");
 	editor->sprite_y_input = ui_layout_get_element(&editor->layout, "sprite_y_input");
@@ -209,6 +204,38 @@ void	editor_init(t_editor *editor)
 
 		ft_printf("[%s] Texture elem #%d made.\n", __FUNCTION__, i);
 	}
+
+	// Sprite texture
+	editor->sprite_texture_something = ft_memalloc(sizeof(t_texture_something));
+	editor->sprite_texture_something->button = editor->sprite_texture_button;
+	editor->sprite_texture_something->image = editor->sprite_texture_image;
+	add_to_list(&editor->texture_somethings, editor->sprite_texture_something, sizeof(t_texture_something));
+	// Wall texture
+	editor->wall_texture_something = ft_memalloc(sizeof(t_texture_something));
+	editor->wall_texture_something->button = editor->wall_texture_button;
+	editor->wall_texture_something->image = editor->wall_texture_image;
+	add_to_list(&editor->texture_somethings, editor->wall_texture_something, sizeof(t_texture_something));
+	// Portal texture
+	editor->portal_texture_something = ft_memalloc(sizeof(t_texture_something));
+	editor->portal_texture_something->button = editor->portal_texture_button;
+	editor->portal_texture_something->image = editor->portal_texture_image;
+	add_to_list(&editor->texture_somethings, editor->portal_texture_something, sizeof(t_texture_something));
+	// floor texture
+	editor->floor_texture_something = ft_memalloc(sizeof(t_texture_something));
+	editor->floor_texture_something->button = editor->floor_texture_button;
+	editor->floor_texture_something->image = editor->floor_texture_image;
+	add_to_list(&editor->texture_somethings, editor->floor_texture_something, sizeof(t_texture_something));
+	// ceiling texture
+	editor->ceiling_texture_something = ft_memalloc(sizeof(t_texture_something));
+	editor->ceiling_texture_something->button = editor->ceiling_texture_button;
+	editor->ceiling_texture_something->image = editor->ceiling_texture_image;
+	add_to_list(&editor->texture_somethings, editor->ceiling_texture_something, sizeof(t_texture_something));
+
+	add_to_list(&editor->texture_opening_buttons, editor->sprite_texture_button, UI_TYPE_ELEMENT);
+	add_to_list(&editor->texture_opening_buttons, editor->wall_texture_button, UI_TYPE_ELEMENT);
+	add_to_list(&editor->texture_opening_buttons, editor->portal_texture_button, UI_TYPE_ELEMENT);
+	add_to_list(&editor->texture_opening_buttons, editor->floor_texture_button, UI_TYPE_ELEMENT);
+	add_to_list(&editor->texture_opening_buttons, editor->ceiling_texture_button, UI_TYPE_ELEMENT);
 
 	// Entity Edit
 	editor->entity_edit_menu = ui_layout_get_element(&editor->layout, "entity_edit_menu");

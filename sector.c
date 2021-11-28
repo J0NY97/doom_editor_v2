@@ -82,6 +82,8 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
+	editor->floor_texture_something->id = &sector->floor_texture;
+	editor->ceiling_texture_something->id = &sector->ceiling_texture;
 	ui_checkbox_toggle_accordingly(editor->sector_skybox_checkbox, sector->skybox);
 	ui_input_set_text(editor->floor_height_input, ft_b_itoa(sector->floor_height, temp_str));
 	ui_input_set_text(editor->ceiling_height_input, ft_b_itoa(sector->ceiling_height, temp_str));

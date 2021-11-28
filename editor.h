@@ -80,6 +80,17 @@ typedef struct s_texture_elem
 }					t_texture_elem;
 
 /*
+ * t_ui_element		*button;	when clicked, opens the texture_menu;
+ * t_ui_element		*image;		the menu on which the image of the selected texture will be blat;
+*/
+typedef struct s_texture_something
+{
+	t_ui_element	*button;
+	t_ui_element	*image;
+	int				*id;
+}					t_texture_something;
+
+/*
  * SDL_Texture		*drawing_texture;		the texture surface will be texturified on and the rendered on screen;
  * SDL_Surface		*drawing_surface;		the surface on where the grid and all the sectors are drawn on;
  * t_vec2i			mouse_pos;				(on grid) taking into consideration the grid gap_size, every point is default 10 pix x*y;
@@ -90,6 +101,10 @@ typedef struct s_texture_elem
  * t_list			*texture_elems;			list of texture_elems; t_texture_elem;
  * t_list			*texture_buttons;		from texture_elem the button, so that we can use radio_event on it; t_ui_element;
  * t_ui_element		*active_texture_button;	the currently active texture button;
+ *
+ * t_list			*texture_somethings;		list of t_texture_somethings;
+ * t_list			*texture_opening_buttons;	list of t_ui_element buttons, when clicked opens the texture_menu;
+ * t_ui_element	*active_texture_opening_button; which buttons is currently active; of the texture_opening_buttons;
  *
  * int				map_type;				0 = endless, 1 = story;
 */
@@ -115,6 +130,8 @@ typedef struct s_editor
 
 	t_ui_element	*error_label;
 
+	t_texture_something	*floor_texture_something;
+	t_texture_something	*ceiling_texture_something;
 	t_ui_element	*sector_edit_menu;
 	t_ui_element	*close_sector_edit_button;
 	t_ui_element	*sector_edit_ok_button;
@@ -130,6 +147,8 @@ typedef struct s_editor
 	t_ui_element	*floor_texture_scale_input;
 	t_ui_element	*ceiling_texture_scale_input;
 
+	t_texture_something	*wall_texture_something;
+	t_texture_something	*portal_texture_something;
 	t_ui_element	*menu_wall_edit;
 	t_ui_element	*close_wall_edit_button;
 	t_ui_element	*split_wall_button;
@@ -143,6 +162,7 @@ typedef struct s_editor
 	t_ui_element	*ceiling_wall_angle_input;
 	t_ui_element	*wall_texture_scale_input;
 
+	t_list			*texture_somethings;
 	t_list			*texture_opening_buttons;
 	t_ui_element	*active_texture_opening_button;
 
@@ -155,6 +175,7 @@ typedef struct s_editor
 	int				active_texture_button_id;
 
 	// Sprites
+	t_texture_something	*sprite_texture_something;
 	t_ui_element	*sprite_edit_menu;
 	t_ui_element	*sprite_add_button;
 	t_ui_element	*sprite_confirm_button;
