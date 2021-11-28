@@ -82,6 +82,7 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
+	ui_checkbox_toggle_accordingly(editor->sector_skybox_checkbox, sector->skybox);
 	ui_input_set_text(editor->floor_height_input, ft_b_itoa(sector->floor_height, temp_str));
 	ui_input_set_text(editor->ceiling_height_input, ft_b_itoa(sector->ceiling_height, temp_str));
 	ui_input_set_text(editor->gravity_input, ft_b_itoa(sector->gravity, temp_str));
@@ -105,6 +106,8 @@ void	get_sector_ui(t_editor *editor, t_sector *sector)
 	int 	lighting;
 	float	f_scale;
 	float	c_scale;
+
+	sector->skybox = editor->sector_skybox_checkbox->is_toggle;
 
 	if (ui_input_exit(editor->floor_height_input))
 	{

@@ -118,6 +118,7 @@ typedef struct s_editor
 	t_ui_element	*sector_edit_menu;
 	t_ui_element	*close_sector_edit_button;
 	t_ui_element	*sector_edit_ok_button;
+	t_ui_element	*sector_skybox_checkbox;
 	t_ui_element	*floor_texture_button;
 	t_ui_element	*floor_texture_image;
 	t_ui_element	*ceiling_texture_button;
@@ -383,6 +384,8 @@ struct s_sector
 	int 			lighting;
 	float			floor_scale;
 	float			ceiling_scale;
+
+	bool			skybox;
 };
 
 /*

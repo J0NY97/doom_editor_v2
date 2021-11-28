@@ -68,6 +68,7 @@ char	*set_walls(t_editor *editor)
 	t_list	*curr;
 	t_wall	*wall;
 	int		id;
+	int		texture_id;
 
 	id = -1;
 	final = ft_sprintf("type:wall\tp1\tp2\twtx\tptx\tscale\tsolid\n");
@@ -76,9 +77,12 @@ char	*set_walls(t_editor *editor)
 	{
 		wall = curr->content;
 		wall->id = ++id;
+		texture_id = wall->wall_texture;
+		if (wall->parent_sector->skybox)
+			texture_id = -1;
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.2f\t%d\n",
 				wall->id, wall->p1->id, wall->p2->id,
-				wall->wall_texture, wall->portal_texture,
+				texture_id, wall->portal_texture,
 				wall->texture_scale, wall->solid);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
@@ -232,6 +236,8 @@ char	*set_fandc(t_editor *editor)
 	char		*slopes;
 	t_list		*curr;
 	t_sector	*sector;
+	int			f_texture_id;
+	int			c_texture_id;
 
 	final = ft_sprintf("type:f&c\tfh\tch\tftx\tctx\tfs\tcs\tsl\n");
 	curr = editor->sectors;
@@ -239,10 +245,17 @@ char	*set_fandc(t_editor *editor)
 	{
 		sector = curr->content;
 		slopes = get_sector_wall_slopes(sector);
+		f_texture_id = sector->floor_texture;
+		c_texture_id = sector->ceiling_texture;
+		if (sector->skybox)
+		{
+			f_texture_id = -1;
+			c_texture_id = -1;
+		}
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.2f\t%.2f\t%s\n",
 				sector->id,
 				sector->floor_height, sector->ceiling_height,
-				sector->floor_texture, sector->ceiling_texture,
+				f_texture_id, c_texture_id,
 				sector->floor_scale, sector->ceiling_scale,
 				slopes);
 		ft_strdel(&slopes);

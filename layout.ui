@@ -68,6 +68,10 @@ Window win_main
 			Button wall_button {};
 		};
 		Button sector_edit_ok_button {};
+		Label sector_skybox_label
+		{
+			Checkbox sector_skybox_checkbox {};
+		};
 		Label floor_height_label
 		{
 			Input floor_height_input {};

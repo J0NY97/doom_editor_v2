@@ -110,6 +110,7 @@ void	editor_init(t_editor *editor)
 	editor->sector_edit_menu = ui_layout_get_element(&editor->layout, "sector_edit_menu");
 	editor->close_sector_edit_button = ui_layout_get_element(&editor->layout, "close_sector_edit_button");
 	editor->sector_edit_ok_button = ui_layout_get_element(&editor->layout, "sector_edit_ok_button");
+	editor->sector_skybox_checkbox = ui_layout_get_element(&editor->layout, "sector_skybox_checkbox");
 	editor->floor_texture_button = ui_layout_get_element(&editor->layout, "floor_texture_button");
 	editor->ceiling_texture_button = ui_layout_get_element(&editor->layout, "ceiling_texture_button");
 	editor->floor_texture_image = ui_layout_get_element(&editor->layout, "floor_texture_image");

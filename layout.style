@@ -20,6 +20,15 @@ Dropdown
 	bg_image_hover : dropdown_hover.png;
 };
 
+Checkbox
+{
+	bg_image_default : tick_box_off.png;
+	bg_image_hover : tick_box_hover.png;
+	bg_image_click : tick_box_on.png;
+	w : 25;
+	h : 25;
+};
+
 win_main
 {
 	xywh : 0, 25, 1920, 1030;
@@ -246,6 +255,17 @@ sector_edit_ok_button : confirm_button_prefab
 {
 	xywh : 70, 30, 50, 25;
 	title : OK;
+};
+
+sector_skybox_label
+{
+	xywh : 150, 30, 50, 20;
+	title : Skybox:;
+};
+sector_skybox_checkbox
+{
+	x : 50;
+	y : 0;
 };
 
 floor_height_label
