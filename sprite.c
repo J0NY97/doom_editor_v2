@@ -58,6 +58,9 @@ void	remove_sprite(t_editor *editor, t_sprite *sprite)
 	--editor->sprite_amount;
 }
 
+/*
+ * When you select a sprite, update ui;
+*/
 void	set_sprite_ui(t_editor *editor, t_sprite *sprite)
 {
 	char	temp_str[20];
@@ -65,7 +68,8 @@ void	set_sprite_ui(t_editor *editor, t_sprite *sprite)
 	if (!sprite || !editor)
 		return ;
 	ft_strnclr(temp_str, 20);
-	editor->sprite_texture_something->id = &sprite->texture_id;
+	editor->sprite_texture_something->id = sprite->texture_id;
+	ui_element_image_set(editor->sprite_texture_image, UI_STATE_AMOUNT, editor->wall_textures[sprite->texture_id]);
 	ui_input_set_text(editor->sprite_scale_input, ft_b_ftoa(sprite->scale, 2, temp_str));
 	if (sprite->type == STATIC)
 		ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_static);
@@ -81,6 +85,7 @@ void	get_sprite_ui(t_editor *editor, t_sprite *sprite)
 {
 	if (!sprite || !editor)
 		return ;
+	sprite->texture_id = editor->sprite_texture_something->id;
 	if (ui_input_exit(editor->sprite_x_input))
 		sprite->pos.x = ft_atoi(ui_input_get_text(editor->sprite_x_input));
 	if (ui_input_exit(editor->sprite_y_input))

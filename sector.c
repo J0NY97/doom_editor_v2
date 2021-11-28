@@ -76,14 +76,15 @@ void	move_sector(t_sector *sector, t_vec2i move_amount)
 
 /*
  * From t_sector update the ui values;
+ * happens when you select new sector;
 */
 void	set_sector_ui(t_editor *editor, t_sector *sector)
 {
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
-	editor->floor_texture_something->id = &sector->floor_texture;
-	editor->ceiling_texture_something->id = &sector->ceiling_texture;
+	editor->floor_texture_something->id = sector->floor_texture;
+	editor->ceiling_texture_something->id = sector->ceiling_texture;
 	ui_checkbox_toggle_accordingly(editor->sector_skybox_checkbox, sector->skybox);
 	ui_input_set_text(editor->floor_height_input, ft_b_itoa(sector->floor_height, temp_str));
 	ui_input_set_text(editor->ceiling_height_input, ft_b_itoa(sector->ceiling_height, temp_str));
@@ -97,6 +98,7 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 
 /*
  * From ui update the t_sector values;
+ * when you edit sector;
 */
 void	get_sector_ui(t_editor *editor, t_sector *sector)
 {
@@ -110,6 +112,9 @@ void	get_sector_ui(t_editor *editor, t_sector *sector)
 	float	c_scale;
 
 	sector->skybox = editor->sector_skybox_checkbox->is_toggle;
+
+	sector->floor_texture = editor->floor_texture_something->id;
+	sector->ceiling_texture = editor->ceiling_texture_something->id;
 
 	if (ui_input_exit(editor->floor_height_input))
 	{

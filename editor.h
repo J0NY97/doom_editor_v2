@@ -87,7 +87,7 @@ typedef struct s_texture_something
 {
 	t_ui_element	*button;
 	t_ui_element	*image;
-	int				*id;
+	int				id;
 }					t_texture_something;
 
 /*

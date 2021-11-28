@@ -297,14 +297,17 @@ void	remove_all_lonely_walls(t_editor *editor)
 	}
 }
 
+/*
+ * When you select new wall update ui;
+*/
 void	set_wall_ui(t_editor *editor, t_wall *wall)
 {
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
 
-	editor->wall_texture_something->id = &wall->wall_texture;
-	editor->portal_texture_something->id = &wall->portal_texture;
+	editor->wall_texture_something->id = wall->wall_texture;
+	editor->portal_texture_something->id = wall->portal_texture;
 
 	ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->wall_texture]);
 	ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->portal_texture]);
@@ -317,6 +320,9 @@ void	set_wall_ui(t_editor *editor, t_wall *wall)
 	ui_input_set_text(editor->wall_texture_scale_input, ft_b_ftoa(wall->texture_scale, 2, temp_str));
 }
 
+/*
+ * Update ui when you edit wall;
+*/
 void	get_wall_ui(t_editor *editor, t_wall *wall)
 {
 	int		angle;
@@ -326,6 +332,9 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 	ft_strnclr(temp_str, 20);
 
 	editor->selected_wall->solid = editor->solid_checkbox->is_toggle;
+
+	wall->wall_texture = editor->wall_texture_something->id;
+	wall->portal_texture = editor->portal_texture_something->id;
 
 	if (editor->portal_checkbox->is_toggle)
 		if (!can_you_make_portal_of_this_wall(editor->sectors, editor->selected_sector, wall)) // selected_sector here is the sector this wall is a part of ( replace if at some point we store the sector in the wall );

@@ -586,7 +586,7 @@ void	texture_menu_events(t_editor *editor)
 			}
 			if (t_something)
 			{
-				*t_something->id = selected_texture_elem->id;
+				t_something->id = selected_texture_elem->id;
 				ui_element_image_set(t_something->image, UI_STATE_AMOUNT, editor->wall_textures[selected_texture_elem->id]);
 			}
 		}
