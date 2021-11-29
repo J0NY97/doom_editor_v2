@@ -65,6 +65,11 @@ void	get_walls(t_editor *editor, char **lines, int *i)
 		wall->p1 = get_point_with_id(editor->points, ft_atoi(args[1]));
 		wall->p2 = get_point_with_id(editor->points, ft_atoi(args[2]));
 		wall->wall_texture = ft_atoi(args[3]);
+		if (wall->wall_texture < 0)
+		{
+			wall->skybox = wall->wall_texture;
+			wall->wall_texture = 0;
+		}
 		wall->portal_texture = ft_atoi(args[4]);
 		wall->texture_scale = ft_atof(args[5]);
 		wall->solid = ft_atoi(args[6]);
@@ -212,6 +217,12 @@ void	get_fc(t_editor *editor, char **lines, int *i)
 		sector->ceiling_height = ft_atoi(args[2]);
 		sector->floor_texture = ft_atoi(args[3]);
 		sector->ceiling_texture = ft_atoi(args[4]);
+		if (sector->floor_texture < 0) // Skybox
+		{
+			sector->skybox = sector->floor_texture;
+			sector->floor_texture = 0;
+			sector->ceiling_texture = 0;
+		}
 		sector->floor_scale = ft_atof(args[5]);
 		sector->ceiling_scale = ft_atof(args[6]);
 		slopes = ft_strsplit(args[7], ' ');

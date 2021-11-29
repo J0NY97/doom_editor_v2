@@ -257,15 +257,34 @@ sector_edit_ok_button : confirm_button_prefab
 	title : OK;
 };
 
-sector_skybox_label
+sector_skybox_dropdown
 {
-	xywh : 150, 30, 50, 20;
-	title : Skybox:;
+	xywh : 150, 30, 75, 20;
+	title : Skybox;
 };
-sector_skybox_checkbox
+sector_skybox_menu
 {
-	x : 50;
-	y : 0;
+	w : 65;
+};
+sector_skybox_none : drop_button_prefab
+{
+	title : No Skybox;
+	w : 65;
+};
+sector_skybox_one : drop_button_prefab
+{
+	title : -1 Skybox;
+	w : 65;
+};
+sector_skybox_two : drop_button_prefab
+{
+	title : -2 Skybox;
+	w : 65;
+};
+sector_skybox_three : drop_button_prefab
+{
+	title : -3 Skybox;
+	w : 65;
 };
 
 floor_height_label
@@ -526,7 +545,6 @@ ceiling_wall_angle_label
 	xywh : 120, 175, 50, 20;
 	title : Ceiling Angle:;
 };
-
 ceiling_wall_angle_input
 {
 	xywh : 0, 20, 100, 20;
@@ -540,7 +558,6 @@ wall_texture_scale_label
 	xywh : 10, 225, 50, 20;
 	title : Texture Scale:;
 };
-
 wall_texture_scale_input
 {
 	xywh : 0, 20, 100, 20;
@@ -548,6 +565,37 @@ wall_texture_scale_input
 	type : numbers;
 	title : 1;
 };
+
+wall_skybox_dropdown
+{
+	xywh : 120, 30, 100, 20;
+	title : Skybox;
+};
+wall_skybox_menu
+{
+	w : 90;
+};
+wall_skybox_none : drop_button_prefab
+{
+	w : 90;
+	title : No Skybox;
+};
+wall_skybox_one : drop_button_prefab
+{
+	w : 90;
+	title : -1 Skybox;
+};
+wall_skybox_two : drop_button_prefab
+{
+	w : 90;
+	title : -2 Skybox;
+};
+wall_skybox_three : drop_button_prefab
+{
+	w : 90;
+	title : -3 Skybox;
+};
+
 
 ///////////////////
 // Sprite Edit Menu

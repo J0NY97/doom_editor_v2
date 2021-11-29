@@ -78,8 +78,10 @@ char	*set_walls(t_editor *editor)
 		wall = curr->content;
 		wall->id = ++id;
 		texture_id = wall->wall_texture;
-		if (wall->parent_sector->skybox)
-			texture_id = -1;
+		if (wall->parent_sector->skybox != 0)
+			texture_id = wall->parent_sector->skybox;
+		if (wall->skybox != 0)
+			texture_id = wall->skybox;
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.2f\t%d\n",
 				wall->id, wall->p1->id, wall->p2->id,
 				texture_id, wall->portal_texture,
@@ -247,10 +249,10 @@ char	*set_fandc(t_editor *editor)
 		slopes = get_sector_wall_slopes(sector);
 		f_texture_id = sector->floor_texture;
 		c_texture_id = sector->ceiling_texture;
-		if (sector->skybox)
+		if (sector->skybox != 0)
 		{
-			f_texture_id = -1;
-			c_texture_id = -1;
+			f_texture_id = sector->skybox;
+			c_texture_id = sector->skybox;
 		}
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.2f\t%.2f\t%s\n",
 				sector->id,

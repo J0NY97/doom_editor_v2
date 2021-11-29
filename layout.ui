@@ -68,9 +68,15 @@ Window win_main
 			Button wall_button {};
 		};
 		Button sector_edit_ok_button {};
-		Label sector_skybox_label
+		Dropdown sector_skybox_dropdown
 		{
-			Checkbox sector_skybox_checkbox {};
+			Menu sector_skybox_menu
+			{
+				Button sector_skybox_none {};
+				Button sector_skybox_one {};
+				Button sector_skybox_two {};
+				Button sector_skybox_three {};
+			};
 		};
 		Label floor_height_label
 		{
@@ -148,6 +154,17 @@ Window win_main
 			{
 				Input wall_texture_scale_input {};
 			};
+			Dropdown wall_skybox_dropdown
+			{
+				Menu wall_skybox_menu
+				{
+					Button wall_skybox_none {};
+					Button wall_skybox_one {};
+					Button wall_skybox_two {};
+					Button wall_skybox_three {};
+				};
+			};
+
 			Menu sprite_edit_menu
 			{
 				Menu sprite_label_menu

@@ -306,6 +306,15 @@ void	set_wall_ui(t_editor *editor, t_wall *wall)
 
 	ft_strnclr(temp_str, 20);
 
+	if (wall->skybox == -1)
+		ui_dropdown_activate(editor->wall_skybox_dropdown, editor->wall_skybox_one);
+	else if (wall->skybox == -2)
+		ui_dropdown_activate(editor->wall_skybox_dropdown, editor->wall_skybox_two);
+	else if (wall->skybox == -3)
+		ui_dropdown_activate(editor->wall_skybox_dropdown, editor->wall_skybox_three);
+	else
+		ui_dropdown_activate(editor->wall_skybox_dropdown, editor->wall_skybox_none);
+
 	editor->wall_texture_something->id = wall->wall_texture;
 	editor->portal_texture_something->id = wall->portal_texture;
 
@@ -332,6 +341,21 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 	ft_strnclr(temp_str, 20);
 
 	editor->selected_wall->solid = editor->solid_checkbox->is_toggle;
+
+	if (ui_dropdown_exit(editor->wall_skybox_dropdown))
+	{
+		t_ui_element	*skybox_active;
+
+		skybox_active = ui_dropdown_active(editor->wall_skybox_dropdown);
+		if (skybox_active == editor->wall_skybox_none)
+			wall->skybox = 0;
+		if (skybox_active == editor->wall_skybox_one)
+			wall->skybox = -1;
+		if (skybox_active == editor->wall_skybox_two)
+			wall->skybox = -2;
+		if (skybox_active == editor->wall_skybox_three)
+			wall->skybox = -3;
+	}
 
 	wall->wall_texture = editor->wall_texture_something->id;
 	wall->portal_texture = editor->portal_texture_something->id;

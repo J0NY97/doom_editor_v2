@@ -135,7 +135,11 @@ typedef struct s_editor
 	t_ui_element	*sector_edit_menu;
 	t_ui_element	*close_sector_edit_button;
 	t_ui_element	*sector_edit_ok_button;
-	t_ui_element	*sector_skybox_checkbox;
+	t_ui_element	*sector_skybox_dropdown;
+	t_ui_element	*sector_skybox_none;
+	t_ui_element	*sector_skybox_one;
+	t_ui_element	*sector_skybox_two;
+	t_ui_element	*sector_skybox_three;
 	t_ui_element	*floor_texture_button;
 	t_ui_element	*floor_texture_image;
 	t_ui_element	*ceiling_texture_button;
@@ -152,6 +156,11 @@ typedef struct s_editor
 	t_ui_element	*menu_wall_edit;
 	t_ui_element	*close_wall_edit_button;
 	t_ui_element	*split_wall_button;
+	t_ui_element	*wall_skybox_dropdown;
+	t_ui_element	*wall_skybox_none;
+	t_ui_element	*wall_skybox_one;
+	t_ui_element	*wall_skybox_two;
+	t_ui_element	*wall_skybox_three;
 	t_ui_element	*portal_checkbox;
 	t_ui_element	*solid_checkbox;
 	t_ui_element	*wall_texture_button;
@@ -376,6 +385,8 @@ struct s_wall
 
 	t_list			*sprites;
 	int				sprite_amount;
+
+	int				skybox;
 };
 
 /*
@@ -406,7 +417,7 @@ struct s_sector
 	float			floor_scale;
 	float			ceiling_scale;
 
-	bool			skybox;
+	int				skybox;
 };
 
 /*

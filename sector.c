@@ -83,9 +83,16 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 	char	temp_str[20];
 
 	ft_strnclr(temp_str, 20);
+	if (sector->skybox == -1)
+		ui_dropdown_activate(editor->sector_skybox_dropdown, editor->sector_skybox_one);
+	else if (sector->skybox == -2)
+		ui_dropdown_activate(editor->sector_skybox_dropdown, editor->sector_skybox_two);
+	else if (sector->skybox == -3)
+		ui_dropdown_activate(editor->sector_skybox_dropdown, editor->sector_skybox_three);
+	else
+		ui_dropdown_activate(editor->sector_skybox_dropdown, editor->sector_skybox_none);
 	editor->floor_texture_something->id = sector->floor_texture;
 	editor->ceiling_texture_something->id = sector->ceiling_texture;
-	ui_checkbox_toggle_accordingly(editor->sector_skybox_checkbox, sector->skybox);
 	ui_input_set_text(editor->floor_height_input, ft_b_itoa(sector->floor_height, temp_str));
 	ui_input_set_text(editor->ceiling_height_input, ft_b_itoa(sector->ceiling_height, temp_str));
 	ui_input_set_text(editor->gravity_input, ft_b_itoa(sector->gravity, temp_str));
@@ -111,10 +118,23 @@ void	get_sector_ui(t_editor *editor, t_sector *sector)
 	float	f_scale;
 	float	c_scale;
 
-	sector->skybox = editor->sector_skybox_checkbox->is_toggle;
-
 	sector->floor_texture = editor->floor_texture_something->id;
 	sector->ceiling_texture = editor->ceiling_texture_something->id;
+
+	if (ui_dropdown_exit(editor->sector_skybox_dropdown))
+	{
+		t_ui_element	*skybox_active;
+
+		skybox_active = ui_dropdown_active(editor->sector_skybox_dropdown);
+		if (skybox_active == editor->sector_skybox_none)
+			sector->skybox = 0;
+		if (skybox_active == editor->sector_skybox_one)
+			sector->skybox = -1;
+		if (skybox_active == editor->sector_skybox_two)
+			sector->skybox = -2;
+		if (skybox_active == editor->sector_skybox_three)
+			sector->skybox = -3;
+	}
 
 	if (ui_input_exit(editor->floor_height_input))
 	{
