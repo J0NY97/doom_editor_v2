@@ -809,7 +809,7 @@ void	spawn_events(t_editor *editor)
 		editor->spawn_edit_menu->show = 1;
 	else
 		editor->spawn_edit_menu->show = 0;
-	if (!editor->spawn_edit_menu)
+	if (!editor->spawn_edit_menu->show)
 		return ;
 	// Update ui same frame the button is pressed;
 	if (editor->spawn_button->was_click)

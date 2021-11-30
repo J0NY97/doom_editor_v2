@@ -18,22 +18,22 @@ void	event_free(t_event *event)
 t_event	*add_event(t_editor *editor)
 {
 	t_event	*event;
+	t_vec2	new_pos;
 
 	event = event_new();
-	event->elem = event_element_new(editor->win_main, &editor->layout, editor->event_menu);
+	event->elem = event_element_new(editor->win_main,
+			&editor->layout, editor->event_menu);
 	event->id = get_next_event_id(editor->events);
 	event->elem->event = event;
-
-	t_vec2	new_pos;
-	new_pos = vec2(event->elem->menu->pos.x, ((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y + 10);
-	ui_element_pos_set2(event->elem->menu, new_pos);
-	
+	new_pos = vec2(event->elem->menu.pos.x,
+			((t_ui_scrollbar *)editor->event_scrollbar->element)->bot_most.y
+			+ 10);
+	ui_element_pos_set2(&event->elem->menu, new_pos);
 	add_to_list(&editor->event_elements, event->elem, sizeof(t_event_elem));
-	add_to_list(&editor->event_element_buttons, event->elem->button, sizeof(t_ui_element));
+	add_to_list(&editor->event_element_buttons,
+		event->elem->button, sizeof(t_ui_element));
 	add_to_list(&editor->events, event, sizeof(t_event));
-
 	++editor->event_amount;
-
 	ft_printf("New event added (%d)\n", editor->event_amount);
 	return (event);
 }
@@ -52,16 +52,41 @@ void	remove_event(t_editor *editor, t_event *event)
 	ft_printf("Removing event. (total : %d)\n", editor->event_amount);
 }
 
+void	activate_id_button(t_editor *editor, int type, char *target_id_text)
+{
+	t_ui_element	*id_button;
+	t_ui_recipe		*recipe;
+	char			**texts;
+
+	id_button = ui_dropdown_get_button_with_text(
+			editor->event_id_dropdown, target_id_text);
+	if (!id_button)
+	{
+		if (type == TYPE_SECTOR)
+			texts = gen_sector_id_texts(editor->sectors);
+		else
+			return ;
+		recipe = ui_layout_get_recipe(&editor->layout, "event_id_button");
+		create_buttons_to_list_from_texts_remove_extra(
+			ui_dropdown_get_menu_element(editor->event_id_dropdown),
+			texts, recipe);
+		ft_arraydel(texts);
+		id_button = ui_dropdown_get_button_with_text(
+				editor->event_id_dropdown, target_id_text);
+	}
+	ui_dropdown_activate(editor->event_id_dropdown, id_button);
+}
+
 void	set_event_ui(t_editor *editor, t_event *event)
 {
 	char	target_id_text[20];
 
 	ui_dropdown_activate(editor->event_type_dropdown,
-		ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_type_dropdown)->children,
-			g_event_type[event->type]));
+		ui_dropdown_get_button_with_text(editor->event_type_dropdown,
+			(char *)g_event_type[event->type]));
 	ui_dropdown_activate(editor->event_action_dropdown,
-		ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_action_dropdown)->children,
-			g_event_action[event->action]));
+		ui_dropdown_get_button_with_text(editor->event_action_dropdown,
+			(char *)g_event_action[event->action]));
 
 	if (event->pointer)
 	{
@@ -69,24 +94,8 @@ void	set_event_ui(t_editor *editor, t_event *event)
 			ft_b_itoa(((t_sector *)event->pointer)->id, target_id_text);
 		else
 			ft_b_itoa(((t_sprite *)event->pointer)->id, target_id_text);
+		activate_id_button(editor, event->pointer_type, target_id_text);
 	}
-	// Activate ID button;
-	t_ui_element	*id_button = ui_list_get_button_with_text(
-			ui_dropdown_get_menu_element(editor->event_id_dropdown)->children, target_id_text);
-	if (!id_button)
-	{
-		if (event->pointer_type == TYPE_SECTOR
-			|| event->pointer_type == SECTOR)
-		{
-			char	**texts = gen_sector_id_texts(editor->sectors);
-			t_ui_recipe *recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "event_id_button"); // TODO: save this recipe in the editor;
-			create_buttons_to_list_from_texts_remove_extra(ui_dropdown_get_menu_element(editor->event_id_dropdown), texts, recipe);
-			ft_arraydel(texts);
-		}
-		id_button = ui_list_get_button_with_text(
-				ui_dropdown_get_menu_element(editor->event_id_dropdown)->children, target_id_text);
-	}
-	ui_dropdown_activate(editor->event_id_dropdown, id_button);
 }
 
 void	remove_event_from_list(t_event *event, t_list **list)
@@ -104,17 +113,18 @@ void	remove_event_from_list(t_event *event, t_list **list)
 
 void	event_elem_free(t_event_elem *elem)
 {
-	ui_element_free(elem->menu);
+	ui_element_free(&elem->menu);
 	ui_element_free(elem->button);
-	ui_element_free(elem->id);
-	ui_element_free(elem->type);
-	ui_element_free(elem->action);
-	ui_element_free(elem->target_id);
-	ui_element_free(elem->sector);
-	ui_element_free(elem->min);
-	ui_element_free(elem->max);
-	ui_element_free(elem->speed);
+	ui_element_free(&elem->id);
+	ui_element_free(&elem->type);
+	ui_element_free(&elem->action);
+	ui_element_free(&elem->target_id);
+	ui_element_free(&elem->sector);
+	ui_element_free(&elem->min);
+	ui_element_free(&elem->max);
+	ui_element_free(&elem->speed);
 	elem->event = NULL; // This is just a pointer;
+	free(elem->button);
 	free(elem);
 }
 
@@ -131,66 +141,41 @@ void	remove_event_elem_from_list(t_event_elem *elem, t_list **list)
 	}
 }
 
-t_event_elem	*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent)
+t_ui_element	*event_elem_parent_and_recipe(
+		t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id)
+{
+	g_acceptable[ui_type].maker(parent->win, elem);
+	ui_element_set_parent(elem, parent, UI_TYPE_ELEMENT);
+	ui_element_edit(elem, ui_layout_get_recipe(parent->win->layout, recipe_id));
+}
+
+t_event_elem	*event_element_new(
+		t_ui_window *win, t_ui_layout *layout, t_ui_element *parent)
 {
 	t_event_elem	*event_elem;
 
 	event_elem = ft_memalloc(sizeof(t_event_elem));
-
-	event_elem->menu = ft_memalloc(sizeof(t_ui_element));
-	ui_menu_new(win, event_elem->menu);
-	ui_element_set_parent(event_elem->menu, parent, UI_TYPE_ELEMENT);
-	((t_ui_menu *)event_elem->menu->element)->event_children = 1;
-	((t_ui_menu *)event_elem->menu->element)->render_children = 1;
-	ui_element_edit(event_elem->menu, ui_list_get_recipe_by_id(layout->recipes, "event_menu_prefab"));
-
-	event_elem->id = ft_memalloc(sizeof(t_ui_element));
-	ui_label_new(win, event_elem->id);
-	ui_element_set_parent(event_elem->id, event_elem->menu, UI_TYPE_ELEMENT);
-	ui_element_edit(event_elem->id, ui_list_get_recipe_by_id(layout->recipes, "event_id_prefab"));
-
-	event_elem->type = ft_memalloc(sizeof(t_ui_element));
-	ui_label_new(win, event_elem->type);
-	ui_element_set_parent(event_elem->type, event_elem->menu, UI_TYPE_ELEMENT);
-	ui_element_edit(event_elem->type, ui_list_get_recipe_by_id(layout->recipes, "event_type_prefab"));
-
-	event_elem->action = ft_memalloc(sizeof(t_ui_element));
-	ui_label_new(win, event_elem->action);
-	ui_element_set_parent(event_elem->action, event_elem->menu, UI_TYPE_ELEMENT);
-	ui_element_edit(event_elem->action, ui_list_get_recipe_by_id(layout->recipes, "event_action_prefab"));
-
-	event_elem->target_id = ft_memalloc(sizeof(t_ui_element));
-	ui_label_new(win, event_elem->target_id);
-	ui_element_set_parent(event_elem->target_id, event_elem->menu, UI_TYPE_ELEMENT);
-	ui_element_edit(event_elem->target_id, ui_list_get_recipe_by_id(layout->recipes, "event_target_id_prefab"));
-
-	event_elem->sector = ft_memalloc(sizeof(t_ui_element));
-	ui_label_new(win, event_elem->sector);
-	ui_element_set_parent(event_elem->sector, event_elem->menu, UI_TYPE_ELEMENT);
-	ui_element_edit(event_elem->sector, ui_list_get_recipe_by_id(layout->recipes, "event_sector_prefab"));
-
-	event_elem->min = ft_memalloc(sizeof(t_ui_element));
-	ui_label_new(win, event_elem->min);
-	ui_element_set_parent(event_elem->min, event_elem->menu, UI_TYPE_ELEMENT);
-	ui_element_edit(event_elem->min, ui_list_get_recipe_by_id(layout->recipes, "event_min_prefab"));
-
-	event_elem->max = ft_memalloc(sizeof(t_ui_element));
-	ui_label_new(win, event_elem->max);
-	ui_element_set_parent(event_elem->max, event_elem->menu, UI_TYPE_ELEMENT);
-	ui_element_edit(event_elem->max, ui_list_get_recipe_by_id(layout->recipes, "event_max_prefab"));
-
-	event_elem->speed = ft_memalloc(sizeof(t_ui_element));
-	ui_label_new(win, event_elem->speed);
-	ui_element_set_parent(event_elem->speed, event_elem->menu, UI_TYPE_ELEMENT);
-	ui_element_edit(event_elem->speed, ui_list_get_recipe_by_id(layout->recipes, "event_speed_prefab"));
-
+	event_elem_parent_and_recipe(&event_elem->menu,
+		UI_TYPE_MENU, parent, "event_menu_prefab");
+	event_elem_parent_and_recipe(&event_elem->id,
+			UI_TYPE_LABEL, &event_elem->menu, "event_id_prefab");
+	event_elem_parent_and_recipe(&event_elem->type,
+			UI_TYPE_LABEL, &event_elem->menu, "event_type_prefab");
+	event_elem_parent_and_recipe(&event_elem->action,
+			UI_TYPE_LABEL, &event_elem->menu, "event_action_prefab");
+	event_elem_parent_and_recipe(&event_elem->target_id,
+			UI_TYPE_LABEL, &event_elem->menu, "event_target_id_prefab");
+	event_elem_parent_and_recipe(&event_elem->sector,
+			UI_TYPE_LABEL, &event_elem->menu, "event_sector_prefab");
+	event_elem_parent_and_recipe(&event_elem->min,
+			UI_TYPE_LABEL, &event_elem->menu, "event_min_prefab");
+	event_elem_parent_and_recipe(&event_elem->max,
+			UI_TYPE_LABEL, &event_elem->menu, "event_max_prefab");
+	event_elem_parent_and_recipe(&event_elem->speed,
+			UI_TYPE_LABEL, &event_elem->menu, "event_speed_prefab");
 	event_elem->button = ft_memalloc(sizeof(t_ui_element));
-	ui_button_new(win, event_elem->button);
-	ui_element_set_parent(event_elem->button, event_elem->menu, UI_TYPE_ELEMENT);
-	ui_element_edit(event_elem->button, ui_list_get_recipe_by_id(layout->recipes, "event_button_prefab"));
-
-	ft_printf("[%s] Event elem created.\n", __FUNCTION__);
-	
+	event_elem_parent_and_recipe(event_elem->button,
+			UI_TYPE_BUTTON, &event_elem->menu, "event_button_prefab");
 	return (event_elem);
 }
 
@@ -262,20 +247,20 @@ void	update_event_elem(t_event_elem *elem)
 	char	temp[29];
 
 	ft_printf("[%s] Updating event_elem. ", __FUNCTION__);
-	ui_label_set_text(elem->id, ft_b_itoa(elem->event->id, temp));
-	ui_label_set_text(elem->type, (char *)g_event_type[elem->event->type]);
-	ui_label_set_text(elem->action, (char *)g_event_action[elem->event->action]);
+	ui_label_set_text(&elem->id, ft_b_itoa(elem->event->id, temp));
+	ui_label_set_text(&elem->type, (char *)g_event_type[elem->event->type]);
+	ui_label_set_text(&elem->action, (char *)g_event_action[elem->event->action]);
 	if (elem->event->pointer)
 	{
 		if (elem->event->pointer_type == TYPE_SECTOR)
-			ui_label_set_text(elem->target_id, ft_b_itoa(((t_sector *)elem->event->pointer)->id, temp));
+			ui_label_set_text(&elem->target_id, ft_b_itoa(((t_sector *)elem->event->pointer)->id, temp));
 		else
-			ui_label_set_text(elem->target_id, ft_b_itoa(((t_sprite *)elem->event->pointer)->id, temp));
+			ui_label_set_text(&elem->target_id, ft_b_itoa(((t_sprite *)elem->event->pointer)->id, temp));
 	}
-	ui_label_set_text(elem->sector, ft_sprintf("%s", elem->event->sector));
-	ui_label_set_text(elem->min, ft_b_itoa(elem->event->min, temp));
-	ui_label_set_text(elem->max, ft_b_itoa(elem->event->max, temp));
-	ui_label_set_text(elem->speed, ft_b_itoa(elem->event->speed, temp));
+	ui_label_set_text(&elem->sector, ft_sprintf("%s", elem->event->sector));
+	ui_label_set_text(&elem->min, ft_b_itoa(elem->event->min, temp));
+	ui_label_set_text(&elem->max, ft_b_itoa(elem->event->max, temp));
+	ui_label_set_text(&elem->speed, ft_b_itoa(elem->event->speed, temp));
 	ft_printf("Success.\n");
 }
 

@@ -46,7 +46,12 @@ void	entity_render(t_editor *editor, t_entity *entity)
 	eee = vec2i(20, 20);
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
 	if (editor->entity_textures[entity->type])
-		SDL_RenderCopy(editor->win_main->renderer, editor->entity_textures[entity->type], NULL, &(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2), eee.x, eee.y});
+	{
+		SDL_RenderCopy(editor->win_main->renderer,
+			editor->entity_textures[entity->type], NULL,
+			&(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2),
+				eee.x, eee.y});
+	}
 	else
 		ft_printf("Entity texture doesnt exist\n");
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
@@ -78,52 +83,53 @@ void	set_entity_ui(t_editor *editor, t_entity *entity)
 {
 	char	temp_str[20];
 
-	ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(entity->yaw, temp_str));
+	ui_input_set_text(editor->entity_yaw_input,
+		ft_b_itoa(entity->yaw, temp_str));
 	ui_slider_value_set(editor->entity_yaw_slider, entity->yaw);
 	ui_input_set_text(editor->entity_z_input, ft_b_itoa(entity->z, temp_str));
-	ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_texture_surfaces[entity->type]);
-	// TODO: ui_dropdown_activate(elem with type text);
+	ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT,
+		editor->entity_texture_surfaces[entity->type]);
+	ui_dropdown_activate(editor->entity_dropdown,
+		ui_dropdown_get_button_with_text(editor->entity_dropdown,
+			g_entity_data[entity->type - 1].name));
+}
+
+int	get_entity_type(char *text)
+{
+	int		i;
+
+	i = 0;
+	while (++i <= ENTITY_AMOUNT) // i know we are starting at 1, not set entity type is 0;
+	{
+		if (ft_strequ(g_entity_data[i - 1].name, text))
+			return (i);
+	}
+	return (0);
 }
 
 void	get_entity_ui(t_editor *editor, t_entity *entity)
 {
 	char	temp_str[20];
-	int		temp_value;
 
 	if (ui_input_exit(editor->entity_yaw_input))
-	{
-		temp_value = ft_atoi(ui_input_get_text(editor->entity_yaw_input));
-		temp_value = ft_clamp(temp_value, 0, 360);
-		entity->yaw = temp_value;
-		ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(temp_value, temp_str));
-		ui_slider_value_set(editor->entity_yaw_slider, temp_value);
-	}
+		entity->yaw = ft_clamp(ft_atoi(
+				ui_input_get_text(editor->entity_yaw_input)), 0, 360);
+	else if (ui_slider_updated(editor->entity_yaw_slider))
+		entity->yaw = ui_slider_value_get(editor->entity_yaw_slider);
+	if (ui_input_exit(editor->entity_yaw_input))
+		ui_slider_value_set(editor->entity_yaw_slider, entity->yaw);
 	if (ui_slider_updated(editor->entity_yaw_slider))
-	{
-		temp_value = ui_slider_get_slider(editor->entity_yaw_slider)->value;
-		entity->yaw = temp_value;
-		ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(temp_value, temp_str));
-	}
-
+		ui_input_set_text(editor->entity_yaw_input,
+			ft_b_itoa(entity->yaw, temp_str));
 	if (ui_input_exit(editor->entity_z_input))
-	{
-		temp_value = ft_atoi(ui_input_get_text(editor->entity_z_input));
-		entity->z = temp_value;
-	}
-	
+		entity->z = ft_atoi(ui_input_get_text(editor->entity_z_input));
 	if (ui_dropdown_exit(editor->entity_dropdown)
 		&& ui_dropdown_active(editor->entity_dropdown))
 	{
-		int	i = 0;
-		while (++i <= ENTITY_AMOUNT) // i know that we are starting at 1, unset entity type is 0;
-		{
-			if (ft_strequ(g_entity_data[i - 1].name, ui_dropdown_active_text(editor->entity_dropdown)))
-			{
-				entity->type = i;
-				break ;
-			}
-		}
-		ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_texture_surfaces[entity->type]);
+		entity->type = get_entity_type(
+				ui_dropdown_active_text(editor->entity_dropdown));
+		ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT,
+			editor->entity_texture_surfaces[entity->type]);
 	}
 }
 

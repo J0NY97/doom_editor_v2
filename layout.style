@@ -871,6 +871,7 @@ entity_yaw_input
 {
 	xywh : 0, 20, 100, 20;
 	title : 0;
+	type : numbers;
 };
 entity_yaw_slider
 {
@@ -938,6 +939,7 @@ event_menu_prefab
 	flag : render_on_parent;
 	text_color : 0xffffffff;
 	text_pos : 2, 2, 200, 60;
+	flag : event_children render_children;
 };
 event_button_prefab
 {

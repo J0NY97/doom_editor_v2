@@ -52,6 +52,7 @@ struct s_spawn
 */
 typedef struct s_event_elem
 {
+	/*
 	t_ui_element	*menu;
 	t_ui_element	*button;
 	t_ui_element	*id;
@@ -62,6 +63,17 @@ typedef struct s_event_elem
 	t_ui_element	*min;
 	t_ui_element	*max;
 	t_ui_element	*speed;
+	*/
+	t_ui_element	menu;
+	t_ui_element	*button;
+	t_ui_element	id;
+	t_ui_element	type;
+	t_ui_element	action;
+	t_ui_element	target_id;
+	t_ui_element	sector;
+	t_ui_element	min;
+	t_ui_element	max;
+	t_ui_element	speed;
 
 	t_event			*event;
 }					t_event_elem;
@@ -529,6 +541,7 @@ void				entity_yaw_render(t_editor *editor, t_entity *entity);
 void				set_entity_ui(t_editor *editor, t_entity *entity);
 void				get_entity_ui(t_editor *editor, t_entity *entity);
 t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
+int					get_entity_type(char *text);
 void				entity_check_errors(t_editor *editor, t_entity *entity);
 void				print_entity(t_entity *entity);
 void				print_entities(t_list *entities);
