@@ -82,7 +82,6 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 {
 	char	temp_str[20];
 
-	ft_strnclr(temp_str, 20);
 	if (sector->skybox == -1)
 		ui_dropdown_activate(editor->sector_skybox_dropdown, editor->sector_skybox_one);
 	else if (sector->skybox == -2)

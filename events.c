@@ -367,7 +367,6 @@ void	edit_sprite(t_editor *editor)
 
 	if (!editor->selected_sprite)
 		return ;
-	ft_strnclr(temp_str, 20);
 	veci_sub(mouse_diff.v,
 		editor->win_main->mouse_pos.v, editor->win_main->mouse_pos_prev.v, 2);
 	// Moving
@@ -525,10 +524,57 @@ void	point_events(t_editor *editor)
 		editor->selected_point = NULL;
 }
 
+t_texture_elem	*get_active_texture_elem(t_editor *editor)
+{
+	t_texture_elem	*new_texture_elem;
+	t_list			*curr;
+
+	if (ui_list_radio_event(editor->texture_buttons, &editor->active_texture_button))
+	{
+		curr = editor->texture_elems;
+		while (curr) // Loop through texture_elem and compare which button we have clicked;	
+		{
+			new_texture_elem = curr->content;
+			if (new_texture_elem->button == editor->active_texture_button)
+			{
+				editor->active_texture_button_id = new_texture_elem->id;
+				return (new_texture_elem);
+			}
+			curr = curr->next;
+		}
+	}
+	return (NULL);
+}
+
+void	texture_menu_select_events(t_editor *editor)
+{
+	t_list				*curr;
+	t_texture_elem		*selected_texture_elem;
+	t_texture_something	*t_something;
+
+	selected_texture_elem = get_active_texture_elem(editor);
+	if (selected_texture_elem // if texture found;
+		&& editor->active_texture_button_id > -1)
+	{
+		t_something = NULL;
+		curr = editor->texture_somethings;
+		while (curr) // Lets see which one of teh buttons was clicked and update that texture id;
+		{
+			t_something = curr->content;
+			if (t_something->button == editor->active_texture_opening_button)
+			{
+				t_something->id = selected_texture_elem->id;
+				ui_element_image_set(t_something->image, UI_STATE_DEFAULT,
+					editor->wall_textures[selected_texture_elem->id]);
+				break ;
+			}
+			curr = curr->next;
+		}
+	}
+}
+
 void	texture_menu_events(t_editor *editor)
 {
-	t_texture_elem	*selected_texture_elem;
-
 	// Texture opening button events;
 	if (ui_list_radio_event(editor->texture_opening_buttons,
 		&editor->active_texture_opening_button))
@@ -540,59 +586,18 @@ void	texture_menu_events(t_editor *editor)
 		editor->active_texture_button_id = -1;
 		editor->texture_menu->show = 1;
 	}
-	if (!editor->active_texture_opening_button)
-		editor->texture_menu->show = 0;
-	if (!editor->texture_menu->show)
-		return ;
-	if (editor->texture_menu_close_button->state == UI_STATE_CLICK)
+	if (!editor->texture_menu->show
+		|| !editor->active_texture_opening_button
+		|| editor->texture_menu_close_button->state == UI_STATE_CLICK)
 	{
 		editor->texture_menu->show = 0;
-		editor->active_texture_opening_button->state = UI_STATE_DEFAULT;
+		if (editor->active_texture_opening_button)
+			editor->active_texture_opening_button->state = UI_STATE_DEFAULT;
 		editor->active_texture_opening_button = NULL;
+		editor->active_texture_button_id = -1;
 		return ;
 	}
-
-	selected_texture_elem = NULL;
-	// If new active;
-	if (ui_list_radio_event(editor->texture_buttons, &editor->active_texture_button))
-	{
-		// Loop through texture_elem and compare which button we have clicked;	
-		t_list	*curr;
-		curr = editor->texture_elems;
-		while (curr)
-		{
-			if (((t_texture_elem *)curr->content)->button == editor->active_texture_button)
-			{
-				selected_texture_elem = curr->content;
-				editor->active_texture_button_id = selected_texture_elem->id;
-				break ;
-			}
-			curr = curr->next;
-		}
-		// If texture found;
-		if (selected_texture_elem
-			&& editor->active_texture_button_id > -1)
-		{
-			// Lets see which one of teh buttons was clicked and update that texture id;
-			t_texture_something	*t_something = NULL;
-			curr = editor->texture_somethings;
-			while (curr)
-			{
-				if (((t_texture_something *)curr->content)->button == editor->active_texture_opening_button)
-				{
-					t_something = curr->content;
-					break ;
-				}
-				curr = curr->next;
-			}
-			if (t_something)
-			{
-				t_something->id = selected_texture_elem->id;
-				ui_element_image_set(t_something->image, UI_STATE_DEFAULT,
-					editor->wall_textures[selected_texture_elem->id]);
-			}
-		}
-	}
+	texture_menu_select_events(editor);
 }
 
 void	select_entity(t_editor *editor)
@@ -808,11 +813,9 @@ void	spawn_events(t_editor *editor)
 	if (editor->spawn_button->state == UI_STATE_CLICK)
 		editor->spawn_edit_menu->show = 1;
 	else
-	{
 		editor->spawn_edit_menu->show = 0;
+	if (!editor->spawn_edit_menu)
 		return ;
-	}
-	ft_strnclr(temp_str, 20);
 	// Update ui same frame the button is pressed;
 	if (editor->spawn_button->was_click)
 		ui_input_set_text(editor->spawn_yaw_input, ft_b_itoa(editor->spawn.yaw, temp_str));

@@ -56,8 +56,6 @@ void	set_event_ui(t_editor *editor, t_event *event)
 {
 	char	target_id_text[20];
 
-	ft_strnclr(target_id_text, 20);
-
 	ui_dropdown_activate(editor->event_type_dropdown,
 		ui_list_get_button_with_text(ui_dropdown_get_menu_element(editor->event_type_dropdown)->children,
 			g_event_type[event->type]));

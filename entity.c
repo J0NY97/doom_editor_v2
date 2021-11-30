@@ -78,7 +78,6 @@ void	set_entity_ui(t_editor *editor, t_entity *entity)
 {
 	char	temp_str[20];
 
-	ft_strnclr(temp_str, 20);
 	ui_input_set_text(editor->entity_yaw_input, ft_b_itoa(entity->yaw, temp_str));
 	ui_slider_value_set(editor->entity_yaw_slider, entity->yaw);
 	ui_input_set_text(editor->entity_z_input, ft_b_itoa(entity->z, temp_str));
@@ -91,7 +90,6 @@ void	get_entity_ui(t_editor *editor, t_entity *entity)
 	char	temp_str[20];
 	int		temp_value;
 
-	ft_strnclr(temp_str, 20);
 	if (ui_input_exit(editor->entity_yaw_input))
 	{
 		temp_value = ft_atoi(ui_input_get_text(editor->entity_yaw_input));

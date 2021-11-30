@@ -67,7 +67,6 @@ void	set_sprite_ui(t_editor *editor, t_sprite *sprite)
 
 	if (!sprite || !editor)
 		return ;
-	ft_strnclr(temp_str, 20);
 	editor->sprite_texture_something->id = sprite->texture_id;
 	ui_element_image_set(editor->sprite_texture_image, UI_STATE_AMOUNT, editor->wall_textures[sprite->texture_id]);
 	ui_input_set_text(editor->sprite_scale_input, ft_b_ftoa(sprite->scale, 2, temp_str));

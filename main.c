@@ -396,8 +396,6 @@ int	main(int ac, char **av)
 		{
 			ui_layout_event(&editor.layout, e);
 			user_events(&editor, e);
-			if (e.key.keysym.scancode == SDL_SCANCODE_P)
-				print_entities(editor.entities);
 		}
 		user_render(&editor);
 		ui_layout_render(&editor.layout);
