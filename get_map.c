@@ -290,7 +290,7 @@ void	get_events(t_editor *editor, char **lines, int *i)
 		}
 		for (int d = 0; d < EVENT_ACTION_AMOUNT; d++)
 		{
-			if (ft_strequ(args[2], g_event_action[d]))
+			if (ft_strequ(args[2], g_event_action[d].name))
 			{
 				event->action = d;
 				break ;

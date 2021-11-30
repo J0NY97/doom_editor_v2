@@ -13,12 +13,18 @@ enum e_player_action
 	EVENT_ACTION_AMOUNT
 };
 
-static const char	*g_event_action[EVENT_ACTION_AMOUNT] =
+typedef struct s_event_action
 {
-	"NONE",
-	"SHOOT",
-	"CLICK",
-	"SECTOR"
+	int				id;
+	char			*name;
+}					t_event_action;
+
+static const t_event_action	g_event_action[EVENT_ACTION_AMOUNT] =
+{
+	{0, "NONE"},
+	{1, "SHOOT"},
+	{2, "CLICK"},
+	{3, "SECTOR"}
 };
 
 enum e_event_type

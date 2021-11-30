@@ -52,18 +52,6 @@ struct s_spawn
 */
 typedef struct s_event_elem
 {
-	/*
-	t_ui_element	*menu;
-	t_ui_element	*button;
-	t_ui_element	*id;
-	t_ui_element	*type;
-	t_ui_element	*action;
-	t_ui_element	*target_id;
-	t_ui_element	*sector;
-	t_ui_element	*min;
-	t_ui_element	*max;
-	t_ui_element	*speed;
-	*/
 	t_ui_element	menu;
 	t_ui_element	*button;
 	t_ui_element	id;
@@ -547,7 +535,7 @@ void				print_entity(t_entity *entity);
 void				print_entities(t_list *entities);
 
 // Event
-t_event_elem		*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent);
+t_event_elem		*event_element_new(t_ui_element *parent);
 void				event_elem_free(t_event_elem *elem);
 t_event				*add_event(t_editor *editor);
 void				remove_event(t_editor *editor, t_event *event);

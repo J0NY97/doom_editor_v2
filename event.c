@@ -21,8 +21,7 @@ t_event	*add_event(t_editor *editor)
 	t_vec2	new_pos;
 
 	event = event_new();
-	event->elem = event_element_new(editor->win_main,
-			&editor->layout, editor->event_menu);
+	event->elem = event_element_new(editor->event_menu);
 	event->id = get_next_event_id(editor->events);
 	event->elem->event = event;
 	new_pos = vec2(event->elem->menu.pos.x,
@@ -52,6 +51,12 @@ void	remove_event(t_editor *editor, t_event *event)
 	ft_printf("Removing event. (total : %d)\n", editor->event_amount);
 }
 
+/*
+ * Try to activate button with the 'target_id_text',
+ * 	if it doesnt exist we update the list,
+ * 	and try again.
+*/
+// we have problem here, if you update id drop with more sectors than sprites, and then open sprite ids with less buttons;
 void	activate_id_button(t_editor *editor, int type, char *target_id_text)
 {
 	t_ui_element	*id_button;
@@ -86,7 +91,7 @@ void	set_event_ui(t_editor *editor, t_event *event)
 			(char *)g_event_type[event->type]));
 	ui_dropdown_activate(editor->event_action_dropdown,
 		ui_dropdown_get_button_with_text(editor->event_action_dropdown,
-			(char *)g_event_action[event->action]));
+			(char *)g_event_action[event->action].name));
 
 	if (event->pointer)
 	{
@@ -149,8 +154,7 @@ t_ui_element	*event_elem_parent_and_recipe(
 	ui_element_edit(elem, ui_layout_get_recipe(parent->win->layout, recipe_id));
 }
 
-t_event_elem	*event_element_new(
-		t_ui_window *win, t_ui_layout *layout, t_ui_element *parent)
+t_event_elem	*event_element_new(t_ui_element *parent)
 {
 	t_event_elem	*event_elem;
 
@@ -198,8 +202,8 @@ void	update_event(t_editor *editor, t_event *event)
 	active_text = ui_button_get_text(ui_dropdown_active(editor->event_action_dropdown));
 	i = -1;
 	while (++i < EVENT_ACTION_AMOUNT)
-		if (ft_strequ(active_text, g_event_action[i]))
-			event->action = i;
+		if (ft_strequ(active_text, g_event_action[i].name))
+			event->action = g_event_action[i].id;
 	// Target
 	active_text = ui_button_get_text(ui_dropdown_active(editor->event_id_dropdown));
 	if (active_text)
@@ -249,7 +253,7 @@ void	update_event_elem(t_event_elem *elem)
 	ft_printf("[%s] Updating event_elem. ", __FUNCTION__);
 	ui_label_set_text(&elem->id, ft_b_itoa(elem->event->id, temp));
 	ui_label_set_text(&elem->type, (char *)g_event_type[elem->event->type]);
-	ui_label_set_text(&elem->action, (char *)g_event_action[elem->event->action]);
+	ui_label_set_text(&elem->action, (char *)g_event_action[elem->event->action].name);
 	if (elem->event->pointer)
 	{
 		if (elem->event->pointer_type == TYPE_SECTOR)
