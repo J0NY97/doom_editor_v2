@@ -44,21 +44,11 @@ void	entity_render(t_editor *editor, t_entity *entity)
 
 	www = conversion(editor, entity->pos);
 	eee = vec2i(20, 20);
-
-/*
-	SDL_SetRenderTarget(editor->win_main->renderer, editor->drawing_texture);
-	if (editor->entity_textures[entity->type])
-		SDL_RenderCopy(editor->win_main->renderer, editor->entity_textures[entity->type], NULL, &(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2), eee.x, eee.y});
-	else
-		ft_printf("Entity texture doesnt exist\n");
-*/
-
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);
 	if (editor->entity_textures[entity->type])
 		SDL_RenderCopy(editor->win_main->renderer, editor->entity_textures[entity->type], NULL, &(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2), eee.x, eee.y});
 	else
 		ft_printf("Entity texture doesnt exist\n");
-
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
 }
 
@@ -137,6 +127,26 @@ void	get_entity_ui(t_editor *editor, t_entity *entity)
 		}
 		ui_element_image_set(editor->entity_image, UI_STATE_DEFAULT, editor->entity_texture_surfaces[entity->type]);
 	}
+}
+
+void	print_entities(t_list *entities)
+{
+	while (entities)
+	{
+		print_entity(entities->content);
+		entities = entities->next;
+	}
+}
+
+void	print_entity(t_entity *entity)
+{
+	ft_printf("[ENTITY]\n");
+	ft_printf("name : %s\n", g_entity_data[entity->type].name);
+	ft_printf("pos : ");
+	print_veci(entity->pos.v, 2);
+	ft_printf("z : %d\n", entity->z);
+	ft_printf("yaw : %d\n", entity->yaw);
+	ft_printf("inside sector ? : %d\n", entity->inside_sector != NULL);
 }
 
 t_entity	*get_entity_from_list_at_pos(t_list *list, t_vec2i v)

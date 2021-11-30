@@ -530,6 +530,8 @@ void				set_entity_ui(t_editor *editor, t_entity *entity);
 void				get_entity_ui(t_editor *editor, t_entity *entity);
 t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
 void				entity_check_errors(t_editor *editor, t_entity *entity);
+void				print_entity(t_entity *entity);
+void				print_entities(t_list *entities);
 
 // Event
 t_event_elem		*event_element_new(t_ui_window *win, t_ui_layout *layout, t_ui_element *parent);

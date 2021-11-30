@@ -260,7 +260,7 @@ void	get_entity(t_editor *editor, char **lines, int *i)
 		entity = add_entity(editor);
 		while (++ggg < ENTITY_AMOUNT)
 			if (ft_strequ(g_entity_data[ggg].name, args[1]))
-				entity->type = ggg;
+				entity->type = ggg + 1;
 		entity->pos.x = ft_atoi(args[2]);
 		entity->pos.y = ft_atoi(args[3]);
 		entity->z = ft_atoi(args[4]);
