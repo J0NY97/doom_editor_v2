@@ -703,38 +703,33 @@ void	event_adding_events(t_editor *editor)
 	}
 }
 
+/*
+ * Update ID Dropdown;
+ *	when id dropdown opens we add buttons for each sprite/sector id,
+ *	depending on which action type is selected;
+*/
 void	event_id_dropdown_update(t_editor *editor)
 {
 	char		**texts;
 	t_ui_recipe	*recipe;
 
-	// Update ID Dropdown;
-	// when id dropdown opens we add buttons for each sprite/sector id,
-	// 	depending on which action type is selected;
 	if (editor->event_id_dropdown->show
 		&& ui_dropdown_open(editor->event_id_dropdown))
 	{
+		texts = NULL;
 		if (ui_dropdown_active(editor->event_action_dropdown)
 			== editor->event_action_sector_button)
-		{
 			texts = gen_sector_id_texts(editor->sectors);
-			recipe = ui_list_get_recipe_by_id(
-					editor->layout.recipes, "event_id_button");
-			create_buttons_to_list_from_texts_remove_extra(
-				ui_dropdown_get_menu_element(editor->event_id_dropdown),
-				texts, recipe);
-			ft_arraydel(texts);
-		}
 		else
-		{
 			texts = gen_sprite_id_texts(editor->sprites);
-			recipe = ui_list_get_recipe_by_id(
-					editor->layout.recipes, "event_id_button");
-			create_buttons_to_list_from_texts_remove_extra(
-				ui_dropdown_get_menu_element(editor->event_id_dropdown),
-				texts, recipe);
-			ft_arraydel(texts);
-		}
+		if (!texts)
+			return ;
+		recipe = ui_list_get_recipe_by_id(
+				editor->layout.recipes, "event_id_button");
+		create_buttons_to_list_from_texts_remove_extra(
+			ui_dropdown_get_menu_element(editor->event_id_dropdown),
+			texts, recipe);
+		ft_arraydel(texts);
 	}
 }
 
@@ -818,23 +813,22 @@ void	spawn_events(t_editor *editor)
 		return ;
 	// Update ui same frame the button is pressed;
 	if (editor->spawn_button->was_click)
-		ui_input_set_text(editor->spawn_yaw_input, ft_b_itoa(editor->spawn.yaw, temp_str));
+		ui_input_set_text(editor->spawn_yaw_input,
+			ft_b_itoa(editor->spawn.yaw, temp_str));
 	if (editor->draw_button->state == UI_STATE_CLICK)
-	{
 		if (!hover_over_open_menus(editor))
 			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 				editor->spawn.pos = editor->mouse_pos;
-	}
-	else if (editor->select_button->state == UI_STATE_CLICK)
-	{
-		if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
-			editor->spawn.pos = vec2i_add(editor->spawn.pos, editor->move_amount);
-	}
+	if (editor->select_button->state == UI_STATE_CLICK
+		|| editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+		editor->spawn.pos = vec2i_add(editor->spawn.pos, editor->move_amount);
 	// Yaw input
 	if (ui_input_exit(editor->spawn_yaw_input))
 	{
-		editor->spawn.yaw = ft_clamp(ft_atoi(ui_input_get_text(editor->spawn_yaw_input)), 0, 360);
-		ui_input_set_text(editor->spawn_yaw_input, ft_b_itoa(editor->spawn.yaw, temp_str));
+		editor->spawn.yaw = ft_clamp(
+				ft_atoi(ui_input_get_text(editor->spawn_yaw_input)), 0, 360);
+		ui_input_set_text(editor->spawn_yaw_input,
+			ft_b_itoa(editor->spawn.yaw, temp_str));
 	}
 }
 
