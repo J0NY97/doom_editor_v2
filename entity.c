@@ -57,26 +57,25 @@ void	entity_render(t_editor *editor, t_entity *entity)
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
 }
 
+/*
+ * NOTE : I know this is hard to read, it looked better before norme!
+*/
 void	entity_yaw_render(t_editor *editor, t_entity *entity)
 {
 	float	angle;
-	float	angle2;
-	float	angle3;
 	t_vec2i	p1;
 	t_vec2i	p2;
-	t_vec2i	p3;
-	t_vec2i	p4;
 
-	p1 = conversion(editor, entity->pos);
 	angle = entity->yaw * (M_PI / 180);
-	angle2 = (entity->yaw - 45) * (M_PI / 180);
-	angle3 = (entity->yaw + 45) * (M_PI / 180);
+	p1 = conversion(editor, entity->pos);
 	p2 = vec2i(cos(angle) * 20.0f + p1.x, sin(angle) * 20.0f + p1.y);
-	p3 = vec2i(cos(angle2) * -10.0f + p2.x, sin(angle2) * -10.0f + p2.y);
-	p4 = vec2i(cos(angle3) * -10.0f + p2.x, sin(angle3) * -10.0f + p2.y);
 	ui_surface_line_draw(editor->drawing_surface, p1, p2, 0xffaaab5d);
-	ui_surface_line_draw(editor->drawing_surface, p2, p3, 0xffaaab5d);
-	ui_surface_line_draw(editor->drawing_surface, p2, p4, 0xffaaab5d);
+	angle = (entity->yaw - 45) * (M_PI / 180);
+	p1 = vec2i(cos(angle) * -10.0f + p2.x, sin(angle) * -10.0f + p2.y);
+	ui_surface_line_draw(editor->drawing_surface, p2, p1, 0xffaaab5d);
+	angle = (entity->yaw + 45) * (M_PI / 180);
+	p1 = vec2i(cos(angle) * -10.0f + p2.x, sin(angle) * -10.0f + p2.y);
+	ui_surface_line_draw(editor->drawing_surface, p2, p1, 0xffaaab5d);
 }
 
 void	set_entity_ui(t_editor *editor, t_entity *entity)
@@ -94,12 +93,15 @@ void	set_entity_ui(t_editor *editor, t_entity *entity)
 			g_entity_data[entity->type - 1].name));
 }
 
+/*
+ * I know we are starting at 1, not set entity type is 0;
+*/
 int	get_entity_type(char *text)
 {
 	int		i;
 
 	i = 0;
-	while (++i <= ENTITY_AMOUNT) // i know we are starting at 1, not set entity type is 0;
+	while (++i <= ENTITY_AMOUNT)
 	{
 		if (ft_strequ(g_entity_data[i - 1].name, text))
 			return (i);
@@ -169,7 +171,8 @@ t_entity	*get_entity_from_list_at_pos(t_list *list, t_vec2i v)
 	return (NULL);
 }
 
-t_entity	*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius)
+t_entity	*get_entity_from_list_around_radius(
+		t_list *points, t_vec2i pos, float allowed_radius)
 {
 	t_entity	*temp;
 	float		x;
