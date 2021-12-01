@@ -80,7 +80,7 @@ void	move_sector(t_sector *sector, t_vec2i move_amount)
 	}
 }
 
-void	activate_correct_skybox_button(t_editor *editor, t_sector *sector)
+void	activate_correct_sector_skybox_button(t_editor *editor, t_sector *sector)
 {
 	if (sector->skybox == -1)
 		ui_dropdown_activate(editor->sector_skybox_dropdown,
@@ -104,7 +104,7 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 {
 	char	temp_str[20];
 
-	activate_correct_skybox_button(editor, sector);
+	activate_correct_sector_skybox_button(editor, sector);
 	editor->floor_texture_something->id = sector->floor_texture;
 	editor->ceiling_texture_something->id = sector->ceiling_texture;
 	ui_input_set_text(editor->floor_height_input,

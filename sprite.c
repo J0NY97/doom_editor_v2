@@ -68,16 +68,23 @@ void	set_sprite_ui(t_editor *editor, t_sprite *sprite)
 	if (!sprite || !editor)
 		return ;
 	editor->sprite_texture_something->id = sprite->texture_id;
-	ui_element_image_set(editor->sprite_texture_image, UI_STATE_AMOUNT, editor->wall_textures[sprite->texture_id]);
-	ui_input_set_text(editor->sprite_scale_input, ft_b_ftoa(sprite->scale, 2, temp_str));
+	ui_element_image_set(editor->sprite_texture_image, UI_STATE_AMOUNT,
+		editor->wall_textures[sprite->texture_id]);
+	ui_input_set_text(editor->sprite_scale_input,
+		ft_b_ftoa(sprite->scale, 2, temp_str));
 	if (sprite->type == STATIC)
-		ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_static);
+		ui_dropdown_activate(editor->sprite_type_dropdown,
+			editor->sprite_type_static);
 	else if (sprite->type == LOOP)
-		ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_loop);
+		ui_dropdown_activate(editor->sprite_type_dropdown,
+			editor->sprite_type_loop);
 	else if (sprite->type == ACTION)
-		ui_dropdown_activate(editor->sprite_type_dropdown, editor->sprite_type_action);
-	ui_input_set_text(editor->sprite_x_input, ft_b_itoa(sprite->pos.x, temp_str));
-	ui_input_set_text(editor->sprite_y_input, ft_b_itoa(sprite->pos.y, temp_str));
+		ui_dropdown_activate(editor->sprite_type_dropdown,
+			editor->sprite_type_action);
+	ui_input_set_text(editor->sprite_x_input,
+		ft_b_itoa(sprite->pos.x, temp_str));
+	ui_input_set_text(editor->sprite_y_input,
+		ft_b_itoa(sprite->pos.y, temp_str));
 }
 
 void	get_sprite_ui(t_editor *editor, t_sprite *sprite)

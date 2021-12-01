@@ -85,12 +85,21 @@ t_list	*get_next_wall_node(t_list *list, t_wall *wall)
 	return (NULL);
 }
 
+void	pointer_swap(void *p1, void *p2)
+{
+	void	*temp;
+
+	temp = p1;
+	p1 = p2;
+	p2 = temp;
+}
+
 void	sort_walls(t_list *list)
 {
 	t_list	*curr;
 	t_wall	*w1;
 	t_wall	*w2;
-	t_point	*point;
+	t_list	*correct;
 
 	curr = list;
 	while (curr && curr->next)
@@ -100,14 +109,10 @@ void	sort_walls(t_list *list)
 		if (w1->p1 != w2->p2) // if the second point in wall isnt the first point in 2nd wall, they are in wrong order;
 		{
 			if (w1->p1 == w2->p1) // but if the they are just flipped, just flip them back;
-			{
-				point = w2->p1;
-				w2->p1 = w2->p2;
-				w2->p2 = point;
-			}
+				pointer_swap(w2->p1, w2->p2);
 			else // the wall is in the wrong place, so lets move stuff around;
 			{
-				t_list *correct = get_next_wall_node(list, w1);
+				correct = get_next_wall_node(list, w1);
 				curr->next->content = correct->content;
 				correct->content = w2;
 			}
@@ -297,6 +302,22 @@ void	remove_all_lonely_walls(t_editor *editor)
 	}
 }
 
+void	activate_correct_wall_skybox_button(t_editor *editor, t_wall *wall)
+{
+	if (wall->skybox == -1)
+		ui_dropdown_activate(editor->wall_skybox_dropdown,
+			editor->wall_skybox_one);
+	else if (wall->skybox == -2)
+		ui_dropdown_activate(editor->wall_skybox_dropdown,
+			editor->wall_skybox_two);
+	else if (wall->skybox == -3)
+		ui_dropdown_activate(editor->wall_skybox_dropdown,
+			editor->wall_skybox_three);
+	else
+		ui_dropdown_activate(editor->wall_skybox_dropdown,
+			editor->wall_skybox_none);
+}
+
 /*
  * When you select new wall update ui;
 */
@@ -304,27 +325,21 @@ void	set_wall_ui(t_editor *editor, t_wall *wall)
 {
 	char	temp_str[20];
 
-	if (wall->skybox == -1)
-		ui_dropdown_activate(editor->wall_skybox_dropdown, editor->wall_skybox_one);
-	else if (wall->skybox == -2)
-		ui_dropdown_activate(editor->wall_skybox_dropdown, editor->wall_skybox_two);
-	else if (wall->skybox == -3)
-		ui_dropdown_activate(editor->wall_skybox_dropdown, editor->wall_skybox_three);
-	else
-		ui_dropdown_activate(editor->wall_skybox_dropdown, editor->wall_skybox_none);
-
+	activate_correct_wall_skybox_button(editor, wall);
 	editor->wall_texture_something->id = wall->wall_texture;
 	editor->portal_texture_something->id = wall->portal_texture;
-
-	ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->wall_texture]);
-	ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT, editor->wall_textures[wall->portal_texture]);
-
+	ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT,
+		editor->wall_textures[wall->wall_texture]);
+	ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT,
+		editor->wall_textures[wall->portal_texture]);
 	ui_checkbox_toggle_accordingly(editor->solid_checkbox, wall->solid);
 	ui_checkbox_toggle_accordingly(editor->portal_checkbox, wall->neighbor);
-
-	ui_input_set_text(editor->floor_wall_angle_input, ft_b_itoa(wall->floor_angle, temp_str));
-	ui_input_set_text(editor->ceiling_wall_angle_input, ft_b_itoa(wall->ceiling_angle, temp_str));
-	ui_input_set_text(editor->wall_texture_scale_input, ft_b_ftoa(wall->texture_scale, 2, temp_str));
+	ui_input_set_text(editor->floor_wall_angle_input,
+		ft_b_itoa(wall->floor_angle, temp_str));
+	ui_input_set_text(editor->ceiling_wall_angle_input,
+		ft_b_itoa(wall->ceiling_angle, temp_str));
+	ui_input_set_text(editor->wall_texture_scale_input,
+		ft_b_ftoa(wall->texture_scale, 2, temp_str));
 }
 
 /*
