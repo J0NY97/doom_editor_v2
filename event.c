@@ -56,7 +56,7 @@ void	remove_event(t_editor *editor, t_event *event)
  * 	if it doesnt exist we update the list,
  * 	and try again.
 */
-// we have problem here, if you update id drop with more sectors than sprites, and then open sprite ids with less buttons;
+// TODO: we have problem here, if you update id drop with more sectors than sprites, and then open sprite ids with less buttons;
 void	activate_id_button(t_editor *editor, int type, char *target_id_text)
 {
 	t_ui_element	*id_button;
@@ -92,7 +92,6 @@ void	set_event_ui(t_editor *editor, t_event *event)
 	ui_dropdown_activate(editor->event_action_dropdown,
 		ui_dropdown_get_button_with_text(editor->event_action_dropdown,
 			(char *)g_event_action[event->action].name));
-
 	if (event->pointer)
 	{
 		if (event->pointer_type == TYPE_SECTOR)
@@ -101,7 +100,6 @@ void	set_event_ui(t_editor *editor, t_event *event)
 			ft_b_itoa(((t_sprite *)event->pointer)->id, temp_str);
 		activate_id_button(editor, event->pointer_type, temp_str);
 	}
-
 	if (event->sector)
 		ui_input_set_text(editor->event_sector_input, event->sector);
 	ui_input_set_text(editor->event_min_input, ft_b_itoa(event->min, temp_str));

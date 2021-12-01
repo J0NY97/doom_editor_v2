@@ -39,14 +39,14 @@ void	grid_events(t_editor *editor, SDL_Event e)
 	// Reset Grid Pos
 	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
 		editor->offset = vec2i(0, 0);
-
 	// Moving Grid
 	if (editor->win_main->mouse_down == SDL_BUTTON_MIDDLE)
 	{
-		editor->offset.x -= (editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x);
-		editor->offset.y -= (editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y);
+		editor->offset.x -= (editor->win_main->mouse_pos.x
+				- editor->win_main->mouse_pos_prev.x);
+		editor->offset.y -= (editor->win_main->mouse_pos.y
+				- editor->win_main->mouse_pos_prev.y);
 	}
-
 	// Removing all the selected whatevers.
 	if (editor->draw_button->was_click)
 	{
@@ -97,9 +97,11 @@ void	sector_cleanup(t_editor *editor)
 
 void	remove_button_events(t_editor *editor)
 {
+	int	was_removed;
+
+	was_removed = 0;
 	if (editor->remove_button->state == UI_STATE_CLICK)
 	{
-		int	was_removed = 0;
 		if (editor->selected_sector)
 		{
 			was_removed = remove_sector(editor, editor->selected_sector);
@@ -262,7 +264,8 @@ void	draw_wall_on_surface(SDL_Surface *surface, t_wall *wall, float scale)
 	}
 }
 
-void	draw_sprites_on_surface(t_editor *editor, SDL_Surface *surface, t_list *sprites, float aspect)
+void	draw_sprites_on_surface(
+		t_editor *editor, SDL_Surface *surface, t_list *sprites, float aspect)
 {
 	t_sprite	*sprite;
 	t_vec4i		xywh;

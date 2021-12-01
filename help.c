@@ -87,5 +87,3 @@ void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Ui
 	else
 		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
 }
-
-
