@@ -212,6 +212,10 @@ void	remove_sprite_from_wall(t_sprite *sprite, t_wall *wall)
 	}
 }
 
+/*
+ * which == 0 floor;
+ * 		== 1 ceiling;
+*/
 void	remove_wall_list_angles(t_list *list, int which)
 {
 	t_wall	*wall;
@@ -344,18 +348,17 @@ void	set_wall_ui(t_editor *editor, t_wall *wall)
 
 /*
  * Update ui when you edit wall;
+ *
+ * TODO : split this function into multiple functions ( adds convolution imo)
 */
 void	get_wall_ui(t_editor *editor, t_wall *wall)
 {
-	int		angle;
-	float	scale;
-	char	temp_str[20];
+	t_ui_element	*skybox_active;
+	int				angle;
+	char			temp_str[20];
 
-	editor->selected_wall->solid = editor->solid_checkbox->is_toggle;
 	if (ui_dropdown_exit(editor->wall_skybox_dropdown))
 	{
-		t_ui_element	*skybox_active;
-
 		skybox_active = ui_dropdown_active(editor->wall_skybox_dropdown);
 		if (skybox_active == editor->wall_skybox_none)
 			wall->skybox = 0;
@@ -367,39 +370,42 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 			wall->skybox = -3;
 	}
 
+	wall->solid = editor->solid_checkbox->is_toggle;
 	wall->wall_texture = editor->wall_texture_something->id;
 	wall->portal_texture = editor->portal_texture_something->id;
 
 	if (editor->portal_checkbox->is_toggle)
-		if (!can_you_make_portal_of_this_wall(editor->sectors, editor->selected_sector, wall)) // selected_sector here is the sector this wall is a part of ( replace if at some point we store the sector in the wall );
+		if (!can_you_make_portal_of_this_wall(editor->sectors, wall->parent_sector, wall))
 			ui_checkbox_toggle_off(editor->portal_checkbox);
 
 	if (ui_input_exit(editor->floor_wall_angle_input))
 	{
-		angle = ft_clamp(ft_atoi(ui_input_get_text(editor->floor_wall_angle_input)), -45, 45);
-		if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
-			remove_wall_list_angles(editor->selected_sector->walls, 0); // 0 is floor;
-		ft_b_itoa(angle, temp_str);
-		ui_input_set_text(editor->floor_wall_angle_input, temp_str);
+		angle = ft_clamp(ft_atoi(ui_input_get_text(
+				editor->floor_wall_angle_input)), -45, 45);
+		if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in sector;
+			remove_wall_list_angles(wall->parent_sector->walls, 0); // 0 is floor;
 		wall->floor_angle = angle;
+		ft_b_itoa(wall->floor_angle, temp_str);
+		ui_input_set_text(editor->floor_wall_angle_input, temp_str);
 	}
 
 	if (ui_input_exit(editor->ceiling_wall_angle_input))
 	{
-		angle = ft_clamp(ft_atoi(ui_input_get_text(editor->ceiling_wall_angle_input)), -45, 45);
-		if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in the sector;
-			remove_wall_list_angles(editor->selected_sector->walls, 1); // 1 is ceiling;
-		ft_b_itoa(angle, temp_str);
-		ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
+		angle = ft_clamp(ft_atoi(ui_input_get_text(
+				editor->ceiling_wall_angle_input)), -45, 45);
+		if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in sector;
+			remove_wall_list_angles(wall->parent_sector->walls, 1); // 1 is ceiling;
 		wall->ceiling_angle = angle;
+		ft_b_itoa(wall->ceiling_angle, temp_str);
+		ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
 	}
 
 	if (ui_input_exit(editor->wall_texture_scale_input))
 	{
-		scale = ft_fclamp(ft_atof(ui_input_get_text(editor->wall_texture_scale_input)), -10.0f, 10.0f);
-		ft_b_ftoa(scale, 2, temp_str);
+		wall->texture_scale = ft_fclamp(ft_atof(ui_input_get_text(
+				editor->wall_texture_scale_input)), -10.0f, 10.0f);
+		ft_b_ftoa(wall->texture_scale, 2, temp_str);
 		ui_input_set_text(editor->wall_texture_scale_input, temp_str);
-		wall->texture_scale = scale;
 	}
 }
 
@@ -407,18 +413,12 @@ void	split_wall(t_editor *editor, t_sector *sector, t_wall *wall)
 {
 	t_point	*p1;
 	t_point	*p3;
-	t_wall	*new_wall;
 
 	p1 = wall->p1;
 	p3 = add_point(editor);
 	p3->pos = get_wall_middle(wall);
-
 	wall->p1 = p3;
-
-	new_wall = add_wall(editor);
-	new_wall->p1 = p1;
-	new_wall->p2 = p3;
-	add_to_list(&sector->walls, new_wall, sizeof(t_wall));
+	add_wall_to_sector_at_pos(editor, sector, p1->pos, p3->pos);
 }
 
 void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
