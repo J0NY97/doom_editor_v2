@@ -128,13 +128,13 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 /*
  * From ui update the t_sector values;
  * when you edit sector;
+ *
+ * TODO: As short as it can be, at some point split this into multiple functions ( not yet, convolution otherwise );
 */
 void	get_sector_ui(t_editor *editor, t_sector *sector)
 {
 	t_ui_element	*skybox_active;
 	char			temp_str[20];
-	int				temp_int;
-	float			temp_flo;
 
 	sector->floor_texture = editor->floor_texture_something->id;
 	sector->ceiling_texture = editor->ceiling_texture_something->id;
@@ -154,52 +154,46 @@ void	get_sector_ui(t_editor *editor, t_sector *sector)
 
 	if (ui_input_exit(editor->floor_height_input))
 	{
-		temp_int = ft_atoi(ui_input_get_text(editor->floor_height_input));
-		temp_int = ft_min(temp_int, sector->ceiling_height);
-		ft_b_itoa(temp_int, temp_str);
+		sector->floor_height = ft_min(ft_atoi(ui_input_get_text(
+				editor->floor_height_input)), sector->ceiling_height);
+		ft_b_itoa(sector->floor_height, temp_str);
 		ui_input_set_text(editor->floor_height_input, temp_str);
-		sector->floor_height = temp_int;
 	}
 	if (ui_input_exit(editor->ceiling_height_input))
 	{
-		temp_int = ft_atoi(ui_input_get_text(editor->ceiling_height_input));
-		temp_int = ft_max(sector->floor_height, temp_int);
-		ft_b_itoa(temp_int, temp_str);
+		sector->ceiling_height = ft_max(ft_atoi(ui_input_get_text(
+				editor->ceiling_height_input)), sector->floor_height);
+		ft_b_itoa(sector->ceiling_height, temp_str);
 		ui_input_set_text(editor->ceiling_height_input, temp_str);
-		sector->ceiling_height = temp_int;
 	}
 	if (ui_input_exit(editor->gravity_input))
 	{
-		temp_int = ft_atoi(ui_input_get_text(editor->gravity_input));
-		temp_int = ft_clamp(temp_int, 0, 100);
-		ft_b_itoa(temp_int, temp_str);
+		sector->gravity = ft_clamp(ft_atoi(ui_input_get_text(
+				editor->gravity_input)), 0, 100);
+		ft_b_itoa(sector->gravity, temp_str);
 		ui_input_set_text(editor->gravity_input, temp_str);
-		sector->gravity = temp_int;
 	}
 	if (ui_input_exit(editor->lighting_input))
 	{
-		temp_int = ft_atoi(ui_input_get_text(editor->lighting_input));
-		temp_int = ft_clamp(temp_int, 0, 100);
-		ft_b_itoa(temp_int, temp_str);
+		sector->lighting = ft_clamp(ft_atoi(ui_input_get_text(
+				editor->lighting_input)), 0, 100);
+		ft_b_itoa(sector->lighting, temp_str);
 		ui_input_set_text(editor->lighting_input, temp_str);
-		sector->lighting = temp_int;
 	}
 
 	if (ui_input_exit(editor->floor_texture_scale_input))
 	{
-		temp_flo = ft_atof(ui_input_get_text(editor->floor_texture_scale_input));
-		temp_flo = ft_fclamp(temp_flo, 0.1f, 100.0f);
-		ft_b_ftoa(temp_flo, 2, temp_str);
+		sector->floor_scale = ft_fclamp(ft_atof(ui_input_get_text(
+				editor->floor_texture_scale_input)), 0.1f, 100.0f);
+		ft_b_ftoa(sector->floor_scale, 2, temp_str);
 		ui_input_set_text(editor->floor_texture_scale_input, temp_str);
-		sector->floor_scale = temp_flo;
 	}
 	if (ui_input_exit(editor->ceiling_texture_scale_input))
 	{
-		temp_flo = ft_atof(ui_input_get_text(editor->ceiling_texture_scale_input));
-		temp_flo = ft_fclamp(temp_flo, 0.1f, 100.0f);
-		ft_b_ftoa(temp_flo, 2, temp_str);
+		sector->ceiling_scale = ft_fclamp(ft_atof(ui_input_get_text(
+				editor->ceiling_texture_scale_input)), 0.1f, 100.0f);
+		ft_b_ftoa(sector->ceiling_scale, 2, temp_str);
 		ui_input_set_text(editor->ceiling_texture_scale_input, temp_str);
-		sector->ceiling_scale = temp_flo;
 	}
 }
 
@@ -238,7 +232,8 @@ t_vec2i	get_sector_center(t_sector *sector)
 	return (vec2i(x / i, y / i));
 }
 
-t_sector	*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius)
+t_sector	*get_sector_from_list_around_radius(
+		t_list *list, t_vec2i pos, int allowed_radius)
 {
 	t_sector	*sec;
 
@@ -246,7 +241,8 @@ t_sector	*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allo
 	{
 		sec = list->content;
 		if (vec2_in_vec4(pos,
-			vec4i(sec->center.x - allowed_radius, sec->center.y - allowed_radius,
+			vec4i(sec->center.x - allowed_radius,
+				sec->center.y - allowed_radius,
 				allowed_radius * 2, allowed_radius * 2)))
 			return (sec);
 		list = list->next;
@@ -323,42 +319,40 @@ int	get_next_sector_id(t_list *list)
 }
 
 /*
+ * 'pc' is the one we are comparing;
+*/
+int	get_point_side(t_vec2i p1, t_vec2i p2, t_vec2i pc)
+{
+	return ((p2.x - p1.x) * (pc.y - p1.y) - (p2.y - p1.y) * (pc.x - p1.x));
+}
+
+/*
  * Yoinked from here:
  * http://www.sunshine2k.de/coding/java/Polygon/Convex/polygon.htm
  * https://github.com/Epicurius
 */
 int	check_sector_convexity(t_sector *sector)
 {
-	t_vec2i	p;
-	t_vec2i	v;
-	t_vec2i	u;
+	int		i;
 	int		res;
+	int		newres;
 	t_wall	*w1;
 	t_wall	*w2;
 	t_list	*curr;
 
-	if (sector->wall_amount < 2)
-		return (-1);
-	res = 0;
+	i = 0;
 	curr = sector->walls;
-	int i = 0;
 	while (curr)
 	{
 		w1 = curr->content;
 		w2 = get_connected_wall(sector->walls, w1);
 		if (!w2)
-		{
-			curr = curr->next;
-			continue ;
-		}
-		p = w1->p2->pos; 
-		v = w1->p1->pos; // This is the one we're comparing;
-		u = w2->p2->pos;
+			return (-1);
 		if (i == 0)
-			res = (u.x - p.x) * (v.y - p.y) - (u.y - p.y) * (v.x - p.x);
+			res = get_point_side(w1->p2->pos, w2->p2->pos, w1->p1->pos);
 		else
 		{
-			int newres = (u.x - p.x) * (v.y - p.y) - (u.y - p.y) * (v.x - p.x);
+			newres = get_point_side(w1->p2->pos, w2->p2->pos, w1->p1->pos);
 			if ((newres > 0 && res < 0) || (newres < 0 && res > 0))
 				return (0);
 			res = newres;
@@ -374,28 +368,22 @@ int	check_sector_convexity(t_sector *sector)
 */
 int	check_point_in_sector(t_sector *sector, t_vec2i p)
 {
-	t_vec2i	p0;
-	t_vec2i	p1;
+	int		i;
 	int		res;
 	int		newres;
 	t_wall	*wall;
 	t_list	*curr;
 
-	if (sector->wall_amount < 2)
-		return (-1);
-	res = 0;
+	i = 0;
 	curr = sector->walls;
-	int i = 0;
 	while (curr)
 	{
 		wall = curr->content;
-		p0 = wall->p1->pos;
-		p1 = wall->p2->pos;
 		if (i == 0)
-			res = (p.y - p0.y) * (p1.x - p0.x) - (p.x - p0.x) * (p1.y - p0.y);
+			res = get_point_side(wall->p1->pos, wall->p2->pos, p);
 		else
 		{
-			newres = (p.y - p0.y) * (p1.x - p0.x) - (p.x - p0.x) * (p1.y - p0.y);
+			newres = get_point_side(wall->p1->pos, wall->p2->pos, p);
 			if (newres == 0 || res == 0 || (newres > 0 && res < 0) || (newres < 0 && res > 0))
 				return (0);
 			res = newres;
