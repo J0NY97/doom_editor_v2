@@ -2,7 +2,8 @@
 
 void	point_render(t_editor *editor, t_point *point, Uint32 color)
 {
-	ui_surface_circle_draw_filled(editor->drawing_surface, conversion(editor, point->pos), 3, color);
+	ui_surface_circle_draw_filled(editor->drawing_surface,
+		conversion(editor, point->pos), 3, color);
 }
 
 /*
@@ -20,7 +21,8 @@ t_point	*add_point(t_editor *editor)
 }
 
 /*
- * Removes point from all sectors, walls, and from anything else that are using this point;
+ * Removes point from all sectors, walls,
+ * 	and from anything else that are using this point;
 */
 int	remove_point(t_editor *editor, t_point *point)
 {
@@ -170,7 +172,8 @@ int	point_in_sector(t_sector *sector, t_point *point)
 }
 
 /*
- *  Check if the point is in any of the list of sectors; (must be list of t_sector);
+ *  Check if the point is in any of the list of sectors;
+ *  	(must be list of t_sector);
 */
 int	point_in_any_sector(t_list *sectors, t_point *point)
 {
