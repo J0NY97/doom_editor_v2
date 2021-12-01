@@ -42,6 +42,7 @@ void	realign_event_buttons(t_editor *editor)
 	t_list			*curr;
 	t_vec2			new_pos;
 	t_event_elem	*event_elem;
+	int				new_val;
 	int				i;
 
 	curr = editor->event_elements;
@@ -58,6 +59,9 @@ void	realign_event_buttons(t_editor *editor)
 		i++;
 		curr = curr->prev;
 	}
+	new_val = ft_max(((t_ui_scrollbar *)editor->event_scrollbar->element)->value
+			- (int)event_elem->menu.pos.h - 10, 0);
+	ui_scroll_value_set(editor->event_scrollbar, val);
 	((t_ui_scrollbar *)editor->event_scrollbar->element)->update = 1;
 }
 
