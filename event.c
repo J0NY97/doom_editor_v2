@@ -37,6 +37,30 @@ t_event	*add_event(t_editor *editor)
 	return (event);
 }
 
+void	realign_event_buttons(t_editor *editor)
+{
+	t_list			*curr;
+	t_vec2			new_pos;
+	t_event_elem	*event_elem;
+	int				i;
+
+	curr = editor->event_elements;
+	i = 0;
+	while (curr && curr->next)
+		curr = curr->next;
+	while (curr)
+	{
+		event_elem = curr->content;
+		new_pos = vec2(event_elem->menu.pos.x,
+				((t_ui_scrollbar *)editor->event_scrollbar->element)->top_most.y
+				+ (event_elem->menu.pos.h * i) + (i * 10));
+		ui_element_pos_set2(&event_elem->menu, new_pos);
+		i++;
+		curr = curr->prev;
+	}
+	((t_ui_scrollbar *)editor->event_scrollbar->element)->update = 1;
+}
+
 void	remove_event(t_editor *editor, t_event *event)
 {
 	ft_printf("[%s] Removing event.\n", __FUNCTION__);
@@ -47,7 +71,7 @@ void	remove_event(t_editor *editor, t_event *event)
 	event_elem_free(event->elem);
 	event_free(event);
 	--editor->event_amount;
-	//<---- HERE!!! TODO: realign all the elements on event_id_menu;
+	realign_event_buttons(editor);
 	ft_printf("Removing event. (total : %d)\n", editor->event_amount);
 }
 
