@@ -84,7 +84,7 @@ void	activate_id_button(t_editor *editor, int type, char *target_id_text)
 
 void	set_event_ui(t_editor *editor, t_event *event)
 {
-	char	target_id_text[20];
+	char	temp_str[20];
 
 	ui_dropdown_activate(editor->event_type_dropdown,
 		ui_dropdown_get_button_with_text(editor->event_type_dropdown,
@@ -96,11 +96,18 @@ void	set_event_ui(t_editor *editor, t_event *event)
 	if (event->pointer)
 	{
 		if (event->pointer_type == TYPE_SECTOR)
-			ft_b_itoa(((t_sector *)event->pointer)->id, target_id_text);
+			ft_b_itoa(((t_sector *)event->pointer)->id, temp_str);
 		else
-			ft_b_itoa(((t_sprite *)event->pointer)->id, target_id_text);
-		activate_id_button(editor, event->pointer_type, target_id_text);
+			ft_b_itoa(((t_sprite *)event->pointer)->id, temp_str);
+		activate_id_button(editor, event->pointer_type, temp_str);
 	}
+
+	if (event->sector)
+		ui_input_set_text(editor->event_sector_input, event->sector);
+	ui_input_set_text(editor->event_min_input, ft_b_itoa(event->min, temp_str));
+	ui_input_set_text(editor->event_max_input, ft_b_itoa(event->max, temp_str));
+	ui_input_set_text(editor->event_speed_input,
+		ft_b_itoa(event->speed, temp_str));
 }
 
 void	remove_event_from_list(t_event *event, t_list **list)
@@ -185,6 +192,10 @@ t_event_elem	*event_element_new(t_ui_element *parent)
 
 /*
  * Update the selected event with the selected info on the event edit menu;
+ * NOTE: this is the first input getter function we made,
+ * 		but this is basically 'get_event_ui';
+ *
+ * 	TODO: Split this into 2 functions, really nothing you can shorten here;
 */
 void	update_event(t_editor *editor, t_event *event)
 {
@@ -193,19 +204,19 @@ void	update_event(t_editor *editor, t_event *event)
 
 	ft_printf("[%s] Updating event. ", __FUNCTION__);
 	// Type
-	active_text = ui_button_get_text(ui_dropdown_active(editor->event_type_dropdown));
+	active_text = ui_dropdown_active_text(editor->event_type_dropdown);
 	i = -1;
 	while (++i < EVENT_TYPE_AMOUNT)
 		if (ft_strequ(active_text, g_event_type[i]))
 			event->type = i;
 	// Action
-	active_text = ui_button_get_text(ui_dropdown_active(editor->event_action_dropdown));
+	active_text = ui_dropdown_active_text(editor->event_action_dropdown);
 	i = -1;
 	while (++i < EVENT_ACTION_AMOUNT)
 		if (ft_strequ(active_text, g_event_action[i].name))
 			event->action = g_event_action[i].id;
 	// Target
-	active_text = ui_button_get_text(ui_dropdown_active(editor->event_id_dropdown));
+	active_text = ui_dropdown_active_text(editor->event_id_dropdown);
 	if (active_text)
 	{
 		if (event->action == SECTOR)
@@ -253,13 +264,15 @@ void	update_event_elem(t_event_elem *elem)
 	ft_printf("[%s] Updating event_elem. ", __FUNCTION__);
 	ui_label_set_text(&elem->id, ft_b_itoa(elem->event->id, temp));
 	ui_label_set_text(&elem->type, (char *)g_event_type[elem->event->type]);
-	ui_label_set_text(&elem->action, (char *)g_event_action[elem->event->action].name);
+	ui_label_set_text(&elem->action, g_event_action[elem->event->action].name);
 	if (elem->event->pointer)
 	{
 		if (elem->event->pointer_type == TYPE_SECTOR)
-			ui_label_set_text(&elem->target_id, ft_b_itoa(((t_sector *)elem->event->pointer)->id, temp));
+			ui_label_set_text(&elem->target_id,
+				ft_b_itoa(((t_sector *)elem->event->pointer)->id, temp));
 		else
-			ui_label_set_text(&elem->target_id, ft_b_itoa(((t_sprite *)elem->event->pointer)->id, temp));
+			ui_label_set_text(&elem->target_id,
+				ft_b_itoa(((t_sprite *)elem->event->pointer)->id, temp));
 	}
 	ui_label_set_text(&elem->sector, ft_sprintf("%s", elem->event->sector));
 	ui_label_set_text(&elem->min, ft_b_itoa(elem->event->min, temp));
