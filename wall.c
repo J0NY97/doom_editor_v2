@@ -374,6 +374,8 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 	wall->wall_texture = editor->wall_texture_something->id;
 	wall->portal_texture = editor->portal_texture_something->id;
 
+	if (!editor->portal_checkbox->is_toggle)
+		wall->neighbor = NULL;
 	if (editor->portal_checkbox->is_toggle)
 		if (!can_you_make_portal_of_this_wall(editor->sectors, wall->parent_sector, wall))
 			ui_checkbox_toggle_off(editor->portal_checkbox);
