@@ -111,22 +111,20 @@ void	get_sprite_ui(t_editor *editor, t_sprite *sprite)
 
 int	get_next_sprite_id(t_list *list)
 {
-	t_sprite	*sprite;
-	int			total;
-	int			should_be_total;
+	t_sprite	*event;
 	int			i;
+	char		ids[1024];
 
-	total = 0;
-	i = 0;
+	i = -1;
+	memset(ids, 0, sizeof(char) * 1024);
 	while (list)
 	{
-		sprite = list->content;
-		total += sprite->id;
-		i++;
+		event = list->content;
+		ids[event->id] = 1;
 		list = list->next;
 	}
-	should_be_total = i * (i + 1) / 2;
-	return (should_be_total - total);
+	while (ids[++i]);
+	return (i);
 }
 
 t_sprite	*get_sprite_from_list_at_pos(t_list *list, t_vec2i pos)

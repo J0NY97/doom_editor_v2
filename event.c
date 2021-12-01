@@ -44,27 +44,27 @@ t_event	*add_event(t_editor *editor)
 void	realign_event_buttons(t_editor *editor)
 {
 	t_list			*curr;
-	t_vec2			new_pos;
 	t_event_elem	*event_elem;
 	int				new_val;
+	int				h;
 	int				i;
 
 	curr = editor->event_elements;
 	i = 0;
+	h = 60;
 	while (curr && curr->next)
 		curr = curr->next;
 	while (curr)
 	{
 		event_elem = curr->content;
-		new_pos = vec2(event_elem->menu.pos.x,
+		ui_element_pos_set2(&event_elem->menu, vec2(event_elem->menu.pos.x,
 				((t_ui_scrollbar *)editor->event_scrollbar->element)->top_most.y
-				+ (event_elem->menu.pos.h * i) + (i * 10));
-		ui_element_pos_set2(&event_elem->menu, new_pos);
+				+ (event_elem->menu.pos.h * i) + (i * 10)));
 		i++;
 		curr = curr->prev;
 	}
 	new_val = ft_max(((t_ui_scrollbar *)editor->event_scrollbar->element)->value
-			- (int)event_elem->menu.pos.h - 10, 0);
+			- h - 10, 0);
 	ui_scroll_value_set(editor->event_scrollbar, new_val);
 	((t_ui_scrollbar *)editor->event_scrollbar->element)->update = 1;
 }
@@ -328,24 +328,3 @@ int	get_next_event_id(t_list *list)
 	while (ids[++i]);
 	return (i);
 }
-	/*
-int	get_next_event_id(t_list *list)
-{
-	t_event		*event;
-	int			total;
-	int			should_be_total;
-	int			i;
-
-	total = 0;
-	i = 0;
-	while (list)
-	{
-		event = list->content;
-		total += event->id;
-		i++;
-		list = list->next;
-	}
-	should_be_total = i * (i + 1) / 2;
-	return (should_be_total - total);
-}
-*/

@@ -300,22 +300,20 @@ int	remove_sector(t_editor *editor, t_sector *sector)
 
 int	get_next_sector_id(t_list *list)
 {
-	t_sector	*sector;
-	int			total;
-	int			should_be_total;
+	t_sector	*event;
 	int			i;
+	char		ids[1024];
 
-	total = 0;
-	i = 0;
+	i = -1;
+	memset(ids, 0, sizeof(char) * 1024);
 	while (list)
 	{
-		sector = list->content;
-		total += sector->id;
-		i++;
+		event = list->content;
+		ids[event->id] = 1;
 		list = list->next;
 	}
-	should_be_total = i * (i + 1) / 2;
-	return (should_be_total - total);
+	while (ids[++i]);
+	return (i);
 }
 
 /*
