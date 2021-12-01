@@ -83,15 +83,8 @@ void	send_info_message(t_editor *editor, char *text)
 	editor->info_label->show = 1;
 }
 
-void	editor_init(t_editor *editor)
+void	selection_menu_init(t_editor *editor)
 {
-	memset(editor, 0, sizeof(t_editor));
-	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
-
-	// Main Window
-	editor->win_main = ui_layout_get_window(&editor->layout, "win_main");
-
-	// Selection Menu
 	editor->menu_toolbox_top = ui_layout_get_element(&editor->layout, "menu_toolbox_top");
 	editor->menu_selection = ui_layout_get_element(&editor->layout, "menu_select_buttons");
 	editor->selection_dropdown_menu = ui_layout_get_element(&editor->layout, "type_drop_menu");
@@ -106,7 +99,10 @@ void	editor_init(t_editor *editor)
 	editor->event_button = ui_layout_get_element(&editor->layout, "event_button");
 	editor->save_button = ui_layout_get_element(&editor->layout, "save_button");
 	editor->edit_button = ui_layout_get_element(&editor->layout, "edit_button");
+}
 
+void	sector_edit_init(t_editor *editor)
+{
 	editor->sector_edit_menu = ui_layout_get_element(&editor->layout, "sector_edit_menu");
 	editor->close_sector_edit_button = ui_layout_get_element(&editor->layout, "close_sector_edit_button");
 	editor->sector_edit_ok_button = ui_layout_get_element(&editor->layout, "sector_edit_ok_button");
@@ -119,18 +115,16 @@ void	editor_init(t_editor *editor)
 	editor->ceiling_texture_button = ui_layout_get_element(&editor->layout, "ceiling_texture_button");
 	editor->floor_texture_image = ui_layout_get_element(&editor->layout, "floor_texture_image");
 	editor->ceiling_texture_image = ui_layout_get_element(&editor->layout, "ceiling_texture_image");
-	// Inputs;
 	editor->floor_height_input = ui_layout_get_element(&editor->layout, "floor_height_input");
 	editor->ceiling_height_input = ui_layout_get_element(&editor->layout, "ceiling_height_input");
 	editor->gravity_input = ui_layout_get_element(&editor->layout, "gravity_input");
 	editor->lighting_input = ui_layout_get_element(&editor->layout, "lighting_input");
 	editor->floor_texture_scale_input = ui_layout_get_element(&editor->layout, "floor_texture_scale_input");
 	editor->ceiling_texture_scale_input = ui_layout_get_element(&editor->layout, "ceiling_texture_scale_input");
+}
 
-	// Error
-	editor->error_label = ui_layout_get_element(&editor->layout, "error_label");
-
-	// Wall
+void	wall_edit_init(t_editor *editor)
+{
 	editor->menu_wall_edit = ui_layout_get_element(&editor->layout, "menu_wall_edit");
 	editor->close_wall_edit_button = ui_layout_get_element(&editor->layout, "close_wall_edit_button");
 	editor->solid_checkbox = ui_layout_get_element(&editor->layout, "solidity_checkbox");
@@ -148,8 +142,10 @@ void	editor_init(t_editor *editor)
 	editor->floor_wall_angle_input = ui_layout_get_element(&editor->layout, "floor_wall_angle_input");
 	editor->ceiling_wall_angle_input = ui_layout_get_element(&editor->layout, "ceiling_wall_angle_input");
 	editor->wall_texture_scale_input = ui_layout_get_element(&editor->layout, "wall_texture_scale_input");
+}
 
-	// Sprite
+void	sprite_edit_init(t_editor *editor)
+{
 	editor->sprite_edit_menu = ui_layout_get_element(&editor->layout, "sprite_edit_menu");
 	editor->sprite_add_button = ui_layout_get_element(&editor->layout, "sprite_add_button");
 	editor->sprite_remove_button = ui_layout_get_element(&editor->layout, "sprite_remove_button");
@@ -163,19 +159,14 @@ void	editor_init(t_editor *editor)
 	editor->sprite_x_input = ui_layout_get_element(&editor->layout, "sprite_x_input");
 	editor->sprite_y_input = ui_layout_get_element(&editor->layout, "sprite_y_input");
 	editor->wall_render = ui_layout_get_element(&editor->layout, "wall_render");
-	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
-	{
-		ft_printf("Load Image (%d) : %s\n", i, g_map_textures[i].path);
-		editor->wall_textures[i] = load_bxpm_to_surface(g_map_textures[i].path);
-	}
+}
 
-	// Texture Menu
+void	texture_menu_init(t_editor *editor)
+{
 	editor->texture_menu = ui_layout_get_element(&editor->layout, "texture_menu");
-	ui_element_print(editor->texture_menu);
 	editor->texture_menu->show = 0;
 	editor->texture_menu_close_button = ui_layout_get_element(&editor->layout, "texture_menu_close_button");
 	editor->texture_menu_label = ui_layout_get_element(&editor->layout, "texture_menu_label");
-
 	// Create buttons from all 'wall_textures' and place them on the 'texture_menu';
 	t_ui_recipe	*texture_menu_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button_menu");
 	t_ui_recipe	*texture_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button");
@@ -245,8 +236,10 @@ void	editor_init(t_editor *editor)
 	add_to_list(&editor->texture_opening_buttons, editor->portal_texture_button, UI_TYPE_ELEMENT);
 	add_to_list(&editor->texture_opening_buttons, editor->floor_texture_button, UI_TYPE_ELEMENT);
 	add_to_list(&editor->texture_opening_buttons, editor->ceiling_texture_button, UI_TYPE_ELEMENT);
+}
 
-	// Entity Edit
+void	entity_menu_init(t_editor *editor)
+{
 	editor->entity_edit_menu = ui_layout_get_element(&editor->layout, "entity_edit_menu");
 	editor->close_entity_edit_button = ui_layout_get_element(&editor->layout, "close_entity_edit_button");
 	editor->entity_texture_surfaces[0] = ui_surface_image_new("ui_images/damage.png");
@@ -270,7 +263,10 @@ void	editor_init(t_editor *editor)
 	editor->entity_z_input = ui_layout_get_element(&editor->layout, "entity_z_input");
 	editor->entity_yaw_input = ui_layout_get_element(&editor->layout, "entity_yaw_input");
 	editor->entity_yaw_slider = ui_layout_get_element(&editor->layout, "entity_yaw_slider");
+}
 
+void	info_menu_init(t_editor *editor)
+{
 	editor->sector_info_label = ui_layout_get_element(&editor->layout, "selected_sector_info");
 	ui_label_get_label(editor->sector_info_label)->max_w = editor->sector_info_label->pos.w;
 	editor->mouse_info_label = ui_layout_get_element(&editor->layout, "mouse_hover_info");
@@ -280,15 +276,10 @@ void	editor_init(t_editor *editor)
 	ui_label_get_label(editor->sprite_info_label)->max_w = editor->sprite_info_label->pos.w;
 	editor->misc_info_label = ui_layout_get_element(&editor->layout, "misc_info");
 	ui_label_get_label(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
+}
 
-	// Global Info (used for telling user you have saved map for example)
-	editor->info_label = ui_layout_get_element(&editor->layout, "info_label");
-
-	// Sector Hover Info
-	editor->sector_hover_info_menu = ui_layout_get_element(&editor->layout, "sector_hover_info_menu");
-	editor->sector_hover_info_label = ui_layout_get_element(&editor->layout, "sector_hover_info_label");
-
-	// Event edit
+void	event_menu_init(t_editor *editor)
+{
 	editor->event_scrollbar = ui_layout_get_element(&editor->layout, "event_scrollbar");
 	editor->event_edit_menu = ui_layout_get_element(&editor->layout, "event_edit_menu");
 	editor->add_event_button = ui_layout_get_element(&editor->layout, "add_event_button");
@@ -316,27 +307,78 @@ void	editor_init(t_editor *editor)
 	editor->event_action_shoot_button = ui_layout_get_element(&editor->layout, "event_action_shoot");
 	editor->event_action_sector_button = ui_layout_get_element(&editor->layout, "event_action_sector");
 	editor->event_action_null_button = ui_layout_get_element(&editor->layout, "event_action_null");
+}
 
-	// Spawn Edit
-	editor->spawn_edit_menu = ui_layout_get_element(&editor->layout, "spawn_edit_menu");
-	editor->spawn_yaw_input = ui_layout_get_element(&editor->layout, "spawn_yaw_input");
-
-	// Save Window
+void	save_window_init(t_editor *editor)
+{
 	editor->win_save = ui_layout_get_window(&editor->layout, "win_save");
 	editor->endless_checkbox = ui_layout_get_element(&editor->layout, "endless_checkbox");
 	editor->story_checkbox = ui_layout_get_element(&editor->layout, "story_checkbox");
 	editor->name_input = ui_layout_get_element(&editor->layout, "name_input");
 	editor->confirm_save_button = ui_layout_get_element(&editor->layout, "confirm_save_button");
+}
 
-	// Edit Window
+void	edit_window_init(t_editor *editor)
+{
 	editor->win_edit = ui_layout_get_window(&editor->layout, "win_edit");
 	editor->map_scale_input = ui_layout_get_element(&editor->layout, "map_scale_input");
 	editor->map_scale = 1.0f;
+}
 
+void	load_map_textures(t_editor *editor)
+{
+	int	i;
+
+	i = -1;
+	while (++i < MAP_TEXTURE_AMOUNT)
+	{
+		ft_printf("Load Image (%d) : %s\n", i, g_map_textures[i].path);
+		editor->wall_textures[i] = load_bxpm_to_surface(g_map_textures[i].path);
+	}
+}
+
+void	editor_init(t_editor *editor)
+{
+	// Editor Init
+	memset(editor, 0, sizeof(t_editor));
+	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
 	editor->font = TTF_OpenFont(UI_PATH"fonts/DroidSans.ttf", 20);
-
 	editor->map_type = 0; // endless = 0, story = 1;
 	editor->map_name = ft_strdup("map_name.dnd");
+	// Main Window
+	editor->win_main = ui_layout_get_window(&editor->layout, "win_main");
+	// Selection Menu
+	selection_menu_init(editor);
+	// Sector Edit
+	sector_edit_init(editor);
+	// Error
+	editor->error_label = ui_layout_get_element(&editor->layout, "error_label");
+	// Wall
+	wall_edit_init(editor);
+	// Sprite
+	sprite_edit_init(editor);
+	// Loading Textures
+	load_map_textures(editor);
+	// Texture Menu
+	texture_menu_init(editor);
+	// Entity Edit
+	entity_menu_init(editor);
+	// Info Menu
+	info_menu_init(editor);
+	// Global Info (used for telling user you have saved map for example)
+	editor->info_label = ui_layout_get_element(&editor->layout, "info_label");
+	// Sector Hover Info
+	editor->sector_hover_info_menu = ui_layout_get_element(&editor->layout, "sector_hover_info_menu");
+	editor->sector_hover_info_label = ui_layout_get_element(&editor->layout, "sector_hover_info_label");
+	// Event edit
+	event_menu_init(editor);
+	// Spawn Edit
+	editor->spawn_edit_menu = ui_layout_get_element(&editor->layout, "spawn_edit_menu");
+	editor->spawn_yaw_input = ui_layout_get_element(&editor->layout, "spawn_yaw_input");
+	// Save Window
+	save_window_init(editor);
+	// Edit Window
+	edit_window_init(editor);
 	ft_printf("[%s] %s\n", __FUNCTION__, SDL_GetError());
 }
 
