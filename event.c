@@ -34,6 +34,10 @@ t_event	*add_event(t_editor *editor)
 	add_to_list(&editor->events, event, sizeof(t_event));
 	++editor->event_amount;
 	ft_printf("New event added (%d)\n", editor->event_amount);
+	ui_scrollbar_event(editor->event_scrollbar, (SDL_Event){});
+	ui_scrollbar_render(editor->event_scrollbar);
+	ui_scroll_value_set(editor->event_scrollbar,
+		((t_ui_scrollbar *)editor->event_scrollbar->element)->max);
 	return (event);
 }
 
@@ -61,7 +65,7 @@ void	realign_event_buttons(t_editor *editor)
 	}
 	new_val = ft_max(((t_ui_scrollbar *)editor->event_scrollbar->element)->value
 			- (int)event_elem->menu.pos.h - 10, 0);
-	ui_scroll_value_set(editor->event_scrollbar, val);
+	ui_scroll_value_set(editor->event_scrollbar, new_val);
 	((t_ui_scrollbar *)editor->event_scrollbar->element)->update = 1;
 }
 
@@ -309,7 +313,25 @@ void	update_event_elem(t_event_elem *elem)
 
 int	get_next_event_id(t_list *list)
 {
-	t_event	*event;
+	t_event		*event;
+	int			i;
+	char		ids[1024];
+
+	i = -1;
+	memset(ids, 0, sizeof(char) * 1024);
+	while (list)
+	{
+		event = list->content;
+		ids[event->id] = 1;
+		list = list->next;
+	}
+	while (ids[++i]);
+	return (i);
+}
+	/*
+int	get_next_event_id(t_list *list)
+{
+	t_event		*event;
 	int			total;
 	int			should_be_total;
 	int			i;
@@ -326,3 +348,4 @@ int	get_next_event_id(t_list *list)
 	should_be_total = i * (i + 1) / 2;
 	return (should_be_total - total);
 }
+*/
