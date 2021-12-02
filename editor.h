@@ -16,13 +16,13 @@
 # define MAP_PATH "C:/Users/Jony/source/repos/doom_nukem/map_editor_v2/maps/"
 # define EDITOR_PATH "C:/Users/Jony/source/repos/doom_nukem/map_editor_v2/"
 
-typedef struct	s_spawn		t_spawn;
-typedef struct	s_point		t_point;
-typedef struct	s_wall		t_wall;
-typedef struct	s_sprite	t_sprite;
-typedef struct	s_sector	t_sector;
-typedef struct	s_entity	t_entity;
-typedef struct	s_event		t_event;
+typedef struct s_spawn		t_spawn;
+typedef struct s_point		t_point;
+typedef struct s_wall		t_wall;
+typedef struct s_sprite		t_sprite;
+typedef struct s_sector		t_sector;
+typedef struct s_entity		t_entity;
+typedef struct s_event		t_event;
 
 enum e_types_of_stuff
 {
@@ -54,7 +54,7 @@ struct s_spawn
 };
 
 /*
- * t_event			*event;					pointer to the event in editor->events; easier to figure out if stuff has been removed and when saving and getting the events;
+ * t_event	*event;		pointer to the event in editor->events;
 */
 typedef struct s_event_elem
 {
@@ -73,9 +73,9 @@ typedef struct s_event_elem
 }					t_event_elem;
 
 /*
- * t_ui_element		*button;			button of the texture elem; t_ui_button
- * t_ui_element		*image;				image of the texture elem; t_ui_menu
- * int				id;					corresponds to the editor->textures array;
+ * t_ui_element		*button;		button of the texture elem; t_ui_button
+ * t_ui_element		*image;			image of the texture elem; t_ui_menu
+ * int				id;				corresponds to the editor->textures array;
 */
 typedef struct s_texture_elem
 {
@@ -86,8 +86,8 @@ typedef struct s_texture_elem
 }					t_texture_elem;
 
 /*
- * t_ui_element		*button;	when clicked, opens the texture_menu;
- * t_ui_element		*image;		the menu on which the image of the selected texture will be blat;
+ * t_ui_element	*button;	when clicked, opens the texture_menu;
+ * t_ui_element	*image;		menu on which image of selected texture will be blat;
 */
 typedef struct s_texture_something
 {
@@ -112,7 +112,7 @@ typedef struct s_texture_something
  * t_list			*texture_opening_buttons;	list of t_ui_element buttons, when clicked opens the texture_menu;
  * t_ui_element	*active_texture_opening_button; which buttons is currently active; of the texture_opening_buttons;
  *
- * int				map_type;				0 = endless, 1 = story;
+ * int				map_type;				one of enum e_map_types;
 */
 typedef struct s_editor
 {

@@ -25,15 +25,14 @@ void	create_buttons_to_list_from_texts_remove_extra(
 	prev_butt = parent->children;
 	while (texts[++i])
 	{
-		if (prev_butt && prev_butt->content) // we have button;
+		if (prev_butt && prev_butt->content)
 		{
 			ui_button_set_text(prev_butt->content, texts[i]);
 			prev_butt = prev_butt->next;
 		}
-		else // create new button to list end and add ui_element as content;
+		else
 			new_id_button(parent, texts[i], recipe);
 	}
-	// Finally remove all the extra buttons;
 	while (prev_butt)
 	{
 		ui_element_free(prev_butt->content);

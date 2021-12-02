@@ -94,6 +94,11 @@ void	pointer_swap(void *p1, void *p2)
 	p2 = temp;
 }
 
+/*
+ * if the 2nd point in wall isnt the 1st point in 2nd wall, they in wrong order;
+ * 		if the they are just flipped, just flip them back;
+ * 		else the wall is in the wrong place, so lets move stuff around;
+*/
 void	sort_walls(t_list *list)
 {
 	t_list	*curr;
@@ -106,18 +111,18 @@ void	sort_walls(t_list *list)
 	{
 		w1 = curr->content;
 		w2 = curr->next->content;
-		if (w1->p1 != w2->p2) // if the second point in wall isnt the first point in 2nd wall, they are in wrong order;
+		if (w1->p1 != w2->p2)
 		{
-			if (w1->p1 == w2->p1) // but if the they are just flipped, just flip them back;
+			if (w1->p1 == w2->p1)
 				pointer_swap(w2->p1, w2->p2);
-			else // the wall is in the wrong place, so lets move stuff around;
+			else
 			{
 				correct = get_next_wall_node(list, w1);
 				curr->next->content = correct->content;
 				correct->content = w2;
 			}
 		}
-		curr = curr->next;	
+		curr = curr->next;
 	}
 }
 
@@ -369,43 +374,39 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 		if (skybox_active == editor->wall_skybox_three)
 			wall->skybox = -3;
 	}
-
 	wall->solid = editor->solid_checkbox->is_toggle;
 	wall->wall_texture = editor->wall_texture_something.id;
 	wall->portal_texture = editor->portal_texture_something.id;
-
 	if (!editor->portal_checkbox->is_toggle)
 		wall->neighbor = NULL;
 	if (editor->portal_checkbox->is_toggle)
-		if (!can_you_make_portal_of_this_wall(editor->sectors, wall->parent_sector, wall))
+		if (!can_you_make_portal_of_this_wall(editor->sectors,
+				wall->parent_sector, wall))
 			ui_checkbox_toggle_off(editor->portal_checkbox);
-
 	if (ui_input_exit(editor->floor_wall_angle_input))
 	{
 		angle = ft_clamp(ft_atoi(ui_input_get_text(
-				editor->floor_wall_angle_input)), -45, 45);
-		if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in sector;
-			remove_wall_list_angles(wall->parent_sector->walls, 0); // 0 is floor;
+						editor->floor_wall_angle_input)), -45, 45);
+		if (angle != 0)
+			remove_wall_list_angles(wall->parent_sector->walls, 0);
 		wall->floor_angle = angle;
 		ft_b_itoa(wall->floor_angle, temp_str);
 		ui_input_set_text(editor->floor_wall_angle_input, temp_str);
 	}
-
 	if (ui_input_exit(editor->ceiling_wall_angle_input))
 	{
 		angle = ft_clamp(ft_atoi(ui_input_get_text(
-				editor->ceiling_wall_angle_input)), -45, 45);
-		if (angle != 0) // if angle isnt 0 it means we should remove the angle from all the other walls in sector;
-			remove_wall_list_angles(wall->parent_sector->walls, 1); // 1 is ceiling;
+						editor->ceiling_wall_angle_input)), -45, 45);
+		if (angle != 0)
+			remove_wall_list_angles(wall->parent_sector->walls, 1);
 		wall->ceiling_angle = angle;
 		ft_b_itoa(wall->ceiling_angle, temp_str);
 		ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
 	}
-
 	if (ui_input_exit(editor->wall_texture_scale_input))
 	{
 		wall->texture_scale = ft_fclamp(ft_atof(ui_input_get_text(
-				editor->wall_texture_scale_input)), -10.0f, 10.0f);
+						editor->wall_texture_scale_input)), -10.0f, 10.0f);
 		ft_b_ftoa(wall->texture_scale, 2, temp_str);
 		ui_input_set_text(editor->wall_texture_scale_input, temp_str);
 	}
@@ -432,10 +433,10 @@ void	draw_walls(t_editor *editor, t_list *walls, Uint32 color)
 		wall = walls->content;
 		wall->width = distance(wall->p1->pos.v, wall->p2->pos.v, 2);
 		if (!wall->parent_sector)
-			ft_printf("[%s] Error: wall doesnt belong to any sector.\n", __FUNCTION__);
+			ft_printf("[%s] Error: No parent_sector.\n", __FUNCTION__);
 		else
 			wall->height = wall->parent_sector->ceiling_height
-					- wall->parent_sector->floor_height;
+				- wall->parent_sector->floor_height;
 		if (wall->neighbor)
 		{
 			if (get_sector_wall_at_pos(wall->neighbor,

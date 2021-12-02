@@ -123,7 +123,8 @@ int	get_next_sprite_id(t_list *list)
 		ids[event->id] = 1;
 		list = list->next;
 	}
-	while (ids[++i]);
+	while (ids[++i])
+		;
 	return (i);
 }
 
@@ -149,7 +150,7 @@ t_sprite	*get_sprite_by_id_from_list(t_list *list, int id)
 	{
 		if (((t_sprite *)list->content)->id == id)
 			return (list->content);
-		list = list->next;	
+		list = list->next;
 	}
 	return (NULL);
 }

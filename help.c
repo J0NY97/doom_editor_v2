@@ -20,8 +20,8 @@ t_vec2	align_fill(t_vec2 inside, t_vec4 size, int gap, int i)
 	amount_x = (inside.x - size.x) / (size.w + gap);
 	while ((int)amount_x * (size.w + gap) < inside.x - size.x)
 		gap++;
-	return (vec2(size.x + (i % (int)(amount_x) * (size.w + gap)),
-		size.y + (i / (int)(amount_x) * (size.h + gap))));
+	return (vec2(size.x + (i % (int)amount_x * (size.w + gap)),
+			size.y + (i / (int)amount_x * (size.h + gap))));
 }
 
 Uint32	random_blue_color(void)
@@ -44,7 +44,8 @@ t_vec2i	conversion(t_editor *editor, t_vec2i v)
 }
 
 /*
- * NOTE: selection_drop_menu closes when you click something so thats why we have to see if it was last frame clicked;
+ * NOTE: selection_drop_menu closes when you click something,
+ * 		so thats why we have to see if it was last frame clicked;
 */
 int	hover_over_open_menus(t_editor *editor)
 {
@@ -67,7 +68,9 @@ float	get_aspect(float w, float h)
 /*
  * Font should already be opened before this function call;
 */
-void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color)
+void	draw_text(
+		SDL_Surface *surface, char *text,
+		TTF_Font *font, t_vec2i pos, Uint32 color)
 {
 	SDL_Surface	*text_surface;
 	t_rgba		rgba;
@@ -78,14 +81,14 @@ void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Ui
 		TTF_SetFontHinting(font, TTF_HINTING_MONO);
 		text_surface = TTF_RenderText_Blended(font, text,
 				(SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
-		SDL_BlitSurface(text_surface, NULL, surface, 
+		SDL_BlitSurface(text_surface, NULL, surface,
 			&(SDL_Rect){pos.x - (text_surface->w / 2),
 			pos.y - (text_surface->h / 2),
 			text_surface->w, text_surface->h});
 		SDL_FreeSurface(text_surface);
 	}
 	else
-		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
+		ft_printf("[%s] Error : \"%s\" no font.\n", __FUNCTION__, text);
 }
 
 t_ui_element	*set_elem_parent_and_recipe(

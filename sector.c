@@ -80,7 +80,8 @@ void	move_sector(t_sector *sector, t_vec2i move_amount)
 	}
 }
 
-void	activate_correct_sector_skybox_button(t_editor *editor, t_sector *sector)
+void	activate_correct_sector_skybox_button(
+		t_editor *editor, t_sector *sector)
 {
 	if (sector->skybox == -1)
 		ui_dropdown_activate(editor->sector_skybox_dropdown,
@@ -129,7 +130,8 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
  * From ui update the t_sector values;
  * when you edit sector;
  *
- * TODO: As short as it can be, at some point split this into multiple functions ( not yet, convolution otherwise );
+ * TODO: As short as it can be, at some point split this into multiple
+ * 		functions ( not yet, convolution otherwise );
 */
 void	get_sector_ui(t_editor *editor, t_sector *sector)
 {
@@ -138,7 +140,6 @@ void	get_sector_ui(t_editor *editor, t_sector *sector)
 
 	sector->floor_texture = editor->floor_texture_something.id;
 	sector->ceiling_texture = editor->ceiling_texture_something.id;
-
 	if (ui_dropdown_exit(editor->sector_skybox_dropdown))
 	{
 		skybox_active = ui_dropdown_active(editor->sector_skybox_dropdown);
@@ -151,47 +152,45 @@ void	get_sector_ui(t_editor *editor, t_sector *sector)
 		else
 			sector->skybox = 0;
 	}
-
 	if (ui_input_exit(editor->floor_height_input))
 	{
 		sector->floor_height = ft_min(ft_atoi(ui_input_get_text(
-				editor->floor_height_input)), sector->ceiling_height);
+						editor->floor_height_input)), sector->ceiling_height);
 		ft_b_itoa(sector->floor_height, temp_str);
 		ui_input_set_text(editor->floor_height_input, temp_str);
 	}
 	if (ui_input_exit(editor->ceiling_height_input))
 	{
 		sector->ceiling_height = ft_max(ft_atoi(ui_input_get_text(
-				editor->ceiling_height_input)), sector->floor_height);
+						editor->ceiling_height_input)), sector->floor_height);
 		ft_b_itoa(sector->ceiling_height, temp_str);
 		ui_input_set_text(editor->ceiling_height_input, temp_str);
 	}
 	if (ui_input_exit(editor->gravity_input))
 	{
 		sector->gravity = ft_clamp(ft_atoi(ui_input_get_text(
-				editor->gravity_input)), 0, 100);
+						editor->gravity_input)), 0, 100);
 		ft_b_itoa(sector->gravity, temp_str);
 		ui_input_set_text(editor->gravity_input, temp_str);
 	}
 	if (ui_input_exit(editor->lighting_input))
 	{
 		sector->lighting = ft_clamp(ft_atoi(ui_input_get_text(
-				editor->lighting_input)), 0, 100);
+						editor->lighting_input)), 0, 100);
 		ft_b_itoa(sector->lighting, temp_str);
 		ui_input_set_text(editor->lighting_input, temp_str);
 	}
-
 	if (ui_input_exit(editor->floor_texture_scale_input))
 	{
 		sector->floor_scale = ft_fclamp(ft_atof(ui_input_get_text(
-				editor->floor_texture_scale_input)), 0.1f, 100.0f);
+						editor->floor_texture_scale_input)), 0.1f, 100.0f);
 		ft_b_ftoa(sector->floor_scale, 2, temp_str);
 		ui_input_set_text(editor->floor_texture_scale_input, temp_str);
 	}
 	if (ui_input_exit(editor->ceiling_texture_scale_input))
 	{
 		sector->ceiling_scale = ft_fclamp(ft_atof(ui_input_get_text(
-				editor->ceiling_texture_scale_input)), 0.1f, 100.0f);
+						editor->ceiling_texture_scale_input)), 0.1f, 100.0f);
 		ft_b_ftoa(sector->ceiling_scale, 2, temp_str);
 		ui_input_set_text(editor->ceiling_texture_scale_input, temp_str);
 	}
@@ -241,9 +240,9 @@ t_sector	*get_sector_from_list_around_radius(
 	{
 		sec = list->content;
 		if (vec2_in_vec4(pos,
-			vec4i(sec->center.x - allowed_radius,
-				sec->center.y - allowed_radius,
-				allowed_radius * 2, allowed_radius * 2)))
+				vec4i(sec->center.x - allowed_radius,
+					sec->center.y - allowed_radius,
+					allowed_radius * 2, allowed_radius * 2)))
 			return (sec);
 		list = list->next;
 	}
@@ -271,16 +270,14 @@ t_wall	*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2)
 	{
 		curr_wall = curr->content;
 		if ((compare_veci(curr_wall->p1->pos.v, p1.v, 2)
-			&& compare_veci(curr_wall->p2->pos.v, p2.v, 2))
+				&& compare_veci(curr_wall->p2->pos.v, p2.v, 2))
 			|| (compare_veci(curr_wall->p1->pos.v, p2.v, 2)
-			&& compare_veci(curr_wall->p2->pos.v, p1.v, 2)))
+				&& compare_veci(curr_wall->p2->pos.v, p1.v, 2)))
 			return (curr_wall);
 		curr = curr->next;
 	}
 	return (NULL);
 }
-
-
 
 /*
  * Removes all traces of this sector;
@@ -312,7 +309,8 @@ int	get_next_sector_id(t_list *list)
 		ids[event->id] = 1;
 		list = list->next;
 	}
-	while (ids[++i]);
+	while (ids[++i])
+		;
 	return (i);
 }
 
@@ -382,7 +380,8 @@ int	check_point_in_sector(t_sector *sector, t_vec2i p)
 		else
 		{
 			newres = get_point_side(wall->p1->pos, wall->p2->pos, p);
-			if (newres == 0 || res == 0 || (newres > 0 && res < 0) || (newres < 0 && res > 0))
+			if (newres == 0 || res == 0
+				|| (newres > 0 && res < 0) || (newres < 0 && res > 0))
 				return (0);
 			res = newres;
 		}
@@ -414,14 +413,14 @@ void	sector_check_errors(t_editor *editor, t_sector *sector)
 	if (!check_sector_convexity(sector))
 	{
 		draw_text(editor->drawing_surface, "Not Convex!",
-			editor->font, sector->screen_center, 0xffff0000); 
+			editor->font, sector->screen_center, 0xffff0000);
 		editor->errors += 1;
 	}
 	if (sector->ceiling_height - sector->floor_height < 0)
 	{
 		draw_text(editor->drawing_surface,
 			"Floor & Ceiling Height Doesn\'t Make Sense!",
-			editor->font, sector->screen_center, 0xffffff00); 
+			editor->font, sector->screen_center, 0xffffff00);
 		editor->errors += 1;
 	}
 }

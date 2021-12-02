@@ -230,12 +230,11 @@ void	load_entity_textures(t_editor *editor)
 	i = -1;
 	editor->entity_texture_surfaces[0]
 		= ui_surface_image_new("ui_images/damage.png");
-	editor->entity_textures[0]
-		= ui_texture_create_from_path(
+	editor->entity_textures[0] = ui_texture_create_from_path(
 			editor->win_main->renderer, "ui_images/damage.png");
 	while (++i < ENTITY_AMOUNT)
 	{
-		ft_printf("Load Entity Image : %s ", g_entity_data[i].path);
+		ft_printf("Loading Entity Image : %s\n", g_entity_data[i].path);
 		surface = ui_surface_image_new(g_entity_data[i].path);
 		editor->entity_texture_surfaces[i + 1] = ui_surface_new(10, 10);
 		pos.x = g_entity_data[i].tc[0];
@@ -248,7 +247,6 @@ void	load_entity_textures(t_editor *editor)
 			= SDL_CreateTextureFromSurface(editor->win_main->renderer,
 				editor->entity_texture_surfaces[i + 1]);
 		SDL_FreeSurface(surface);
-		ft_printf("- success.\n");
 	}
 }
 
