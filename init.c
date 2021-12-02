@@ -222,90 +222,157 @@ void	texture_menu_init(t_editor *editor)
 		editor->ceiling_texture_button, editor->ceiling_texture_image);
 }
 
-void	entity_menu_init(t_editor *editor)
+void	load_entity_textures(t_editor *editor)
 {
-	editor->entity_edit_menu = ui_layout_get_element(&editor->layout, "entity_edit_menu");
-	editor->close_entity_edit_button = ui_layout_get_element(&editor->layout, "close_entity_edit_button");
-	editor->entity_texture_surfaces[0] = ui_surface_image_new("ui_images/damage.png");
-	editor->entity_textures[0] = ui_texture_create_from_path(editor->win_main->renderer, "ui_images/damage.png");
-	for (int i = 1; i <= ENTITY_AMOUNT; i++)
+	int		i;
+	t_vec4i	pos;
+
+	i = -1;
+	editor->entity_texture_surfaces[0]
+			= ui_surface_image_new("ui_images/damage.png");
+	editor->entity_textures[0]
+			= ui_texture_create_from_path(
+				editor->win_main->renderer, "ui_images/damage.png");
+	while (++i < ENTITY_AMOUNT)
 	{
-		t_vec4i	pos;
-		ft_printf("Load Entity Image : %s\n", g_entity_data[i - 1].path);
-		SDL_Surface	*surface = ui_surface_image_new(g_entity_data[i - 1].path);
-		editor->entity_texture_surfaces[i] = ui_surface_new(10, 10);
-		pos.x = g_entity_data[i - 1].tc[0];
-		pos.y = g_entity_data[i - 1].tc[1];
-		pos.w = g_entity_data[i - 1].tc[2];
-		pos.h = g_entity_data[i - 1].tc[3];
-		SDL_BlitScaled(surface, &(SDL_Rect){pos.x, pos.y, pos.w, pos.h}, editor->entity_texture_surfaces[i], NULL);
-		editor->entity_textures[i] = SDL_CreateTextureFromSurface(editor->win_main->renderer, editor->entity_texture_surfaces[i]);
+		ft_printf("Load Entity Image : %s\n", g_entity_data[i].path);
+		SDL_Surface	*surface = ui_surface_image_new(g_entity_data[i].path);
+		editor->entity_texture_surfaces[i + 1] = ui_surface_new(10, 10);
+		pos.x = g_entity_data[i].tc[0];
+		pos.y = g_entity_data[i].tc[1];
+		pos.w = g_entity_data[i].tc[2];
+		pos.h = g_entity_data[i].tc[3];
+		SDL_BlitScaled(surface, &(SDL_Rect){pos.x, pos.y, pos.w, pos.h},
+			editor->entity_texture_surfaces[i + 1], NULL);
+		editor->entity_textures[i + 1]
+				= SDL_CreateTextureFromSurface(editor->win_main->renderer,
+					editor->entity_texture_surfaces[i + 1]);
 		SDL_FreeSurface(surface);
 	}
-	editor->entity_dropdown = ui_layout_get_element(&editor->layout, "entity_dropdown");
-	editor->entity_image = ui_layout_get_element(&editor->layout, "entity_image");
-	editor->entity_z_input = ui_layout_get_element(&editor->layout, "entity_z_input");
-	editor->entity_yaw_input = ui_layout_get_element(&editor->layout, "entity_yaw_input");
-	editor->entity_yaw_slider = ui_layout_get_element(&editor->layout, "entity_yaw_slider");
 }
 
-void	info_menu_init(t_editor *editor)
+void	entity_menu_init(t_editor *editor)
 {
-	editor->sector_info_label = ui_layout_get_element(&editor->layout, "selected_sector_info");
-	ui_label_get_label(editor->sector_info_label)->max_w = editor->sector_info_label->pos.w;
-	editor->mouse_info_label = ui_layout_get_element(&editor->layout, "mouse_hover_info");
-	editor->sub_info_label = ui_layout_get_element(&editor->layout, "selected_sub_info");
-	ui_label_get_label(editor->sub_info_label)->max_w = editor->sub_info_label->pos.w;
-	editor->sprite_info_label = ui_layout_get_element(&editor->layout, "selected_sprite_info");
-	ui_label_get_label(editor->sprite_info_label)->max_w = editor->sprite_info_label->pos.w;
-	editor->misc_info_label = ui_layout_get_element(&editor->layout, "misc_info");
-	ui_label_get_label(editor->misc_info_label)->max_w = editor->misc_info_label->pos.w;
+	editor->entity_edit_menu
+			= ui_layout_get_element(&editor->layout, "entity_edit_menu");
+	editor->close_entity_edit_button = ui_layout_get_element(
+			&editor->layout, "close_entity_edit_button");
+	load_entity_textures(editor);
+	editor->entity_dropdown
+			= ui_layout_get_element(&editor->layout, "entity_dropdown");
+	editor->entity_image
+			= ui_layout_get_element(&editor->layout, "entity_image");
+	editor->entity_z_input
+			= ui_layout_get_element(&editor->layout, "entity_z_input");
+	editor->entity_yaw_input
+			= ui_layout_get_element(&editor->layout, "entity_yaw_input");
+	editor->entity_yaw_slider
+			= ui_layout_get_element(&editor->layout, "entity_yaw_slider");
+}
+
+void	info_init(t_editor *editor)
+{
+	editor->sector_info_label
+			= ui_layout_get_element(&editor->layout, "selected_sector_info");
+	editor->mouse_info_label
+			= ui_layout_get_element(&editor->layout, "mouse_hover_info");
+	editor->sub_info_label
+			= ui_layout_get_element(&editor->layout, "selected_sub_info");
+	editor->sprite_info_label
+			= ui_layout_get_element(&editor->layout, "selected_sprite_info");
+	editor->misc_info_label
+			= ui_layout_get_element(&editor->layout, "misc_info");
+	editor->info_label
+			= ui_layout_get_element(&editor->layout, "info_label");
+	editor->sector_hover_info_menu
+			= ui_layout_get_element(&editor->layout, "sector_hover_info_menu");
+	editor->sector_hover_info_label
+			= ui_layout_get_element(&editor->layout, "sector_hover_info_label");
+
+}
+
+void	event_type_init(t_editor *editor)
+{
+	editor->event_type_dropdown
+			= ui_layout_get_element(&editor->layout, "event_type_dropdown");
+	editor->event_type_floor
+			= ui_layout_get_element(&editor->layout, "event_type_floor");
+	editor->event_type_ceiling
+			= ui_layout_get_element(&editor->layout, "event_type_ceiling");
+	editor->event_type_light
+			= ui_layout_get_element(&editor->layout, "event_type_light");
+	editor->event_type_store
+			= ui_layout_get_element(&editor->layout, "event_type_store");
+	editor->event_type_hazard
+			= ui_layout_get_element(&editor->layout, "event_type_hazard");
+	editor->event_type_audio
+			= ui_layout_get_element(&editor->layout, "event_type_audio");
+	editor->event_type_spawn
+			= ui_layout_get_element(&editor->layout, "event_type_spawn");
+}
+
+void	event_action_init(t_editor *editor)
+{
+	editor->event_action_dropdown
+			= ui_layout_get_element(&editor->layout, "event_action_dropdown");
+	editor->event_action_click_button
+			= ui_layout_get_element(&editor->layout, "event_action_click");
+	editor->event_action_shoot_button
+			= ui_layout_get_element(&editor->layout, "event_action_shoot");
+	editor->event_action_sector_button
+			= ui_layout_get_element(&editor->layout, "event_action_sector");
+	editor->event_action_null_button
+			= ui_layout_get_element(&editor->layout, "event_action_null");
 }
 
 void	event_menu_init(t_editor *editor)
 {
-	editor->event_scrollbar = ui_layout_get_element(&editor->layout, "event_scrollbar");
-	editor->event_edit_menu = ui_layout_get_element(&editor->layout, "event_edit_menu");
-	editor->add_event_button = ui_layout_get_element(&editor->layout, "add_event_button");
-	editor->remove_event_button = ui_layout_get_element(&editor->layout, "remove_event_button");
-	editor->event_type_dropdown = ui_layout_get_element(&editor->layout, "event_type_dropdown");
-	editor->event_action_dropdown = ui_layout_get_element(&editor->layout, "event_action_dropdown");
-	editor->event_id_dropdown = ui_layout_get_element(&editor->layout, "event_id_dropdown");
-	editor->event_id_menu = ui_dropdown_get_menu_element(editor->event_id_dropdown);
-	editor->event_sector_input = ui_layout_get_element(&editor->layout, "event_sector_input");
-	editor->event_min_input = ui_layout_get_element(&editor->layout, "event_min_input");
-	editor->event_max_input = ui_layout_get_element(&editor->layout, "event_max_input");
-	editor->event_speed_input = ui_layout_get_element(&editor->layout, "event_speed_input");
-	editor->event_menu = ui_layout_get_element(&editor->layout, "event_menu");
-
-	// types
-	editor->event_type_floor = ui_layout_get_element(&editor->layout, "event_type_floor");
-	editor->event_type_ceiling = ui_layout_get_element(&editor->layout, "event_type_ceiling");
-	editor->event_type_light = ui_layout_get_element(&editor->layout, "event_type_light");
-	editor->event_type_store = ui_layout_get_element(&editor->layout, "event_type_store");
-	editor->event_type_hazard = ui_layout_get_element(&editor->layout, "event_type_hazard");
-	editor->event_type_audio = ui_layout_get_element(&editor->layout, "event_type_audio");
-	editor->event_type_spawn = ui_layout_get_element(&editor->layout, "event_type_spawn");
-	// actions
-	editor->event_action_click_button = ui_layout_get_element(&editor->layout, "event_action_click");
-	editor->event_action_shoot_button = ui_layout_get_element(&editor->layout, "event_action_shoot");
-	editor->event_action_sector_button = ui_layout_get_element(&editor->layout, "event_action_sector");
-	editor->event_action_null_button = ui_layout_get_element(&editor->layout, "event_action_null");
+	editor->event_scrollbar
+			= ui_layout_get_element(&editor->layout, "event_scrollbar");
+	editor->event_edit_menu
+			= ui_layout_get_element(&editor->layout, "event_edit_menu");
+	editor->add_event_button
+			= ui_layout_get_element(&editor->layout, "add_event_button");
+	editor->remove_event_button
+			= ui_layout_get_element(&editor->layout, "remove_event_button");
+	editor->event_id_dropdown
+			= ui_layout_get_element(&editor->layout, "event_id_dropdown");
+	editor->event_id_menu
+			= ui_dropdown_get_menu_element(editor->event_id_dropdown);
+	editor->event_sector_input
+			= ui_layout_get_element(&editor->layout, "event_sector_input");
+	editor->event_min_input
+			= ui_layout_get_element(&editor->layout, "event_min_input");
+	editor->event_max_input
+			= ui_layout_get_element(&editor->layout, "event_max_input");
+	editor->event_speed_input
+			= ui_layout_get_element(&editor->layout, "event_speed_input");
+	editor->event_menu
+			= ui_layout_get_element(&editor->layout, "event_menu");
+	event_type_init(editor);
+	event_action_init(editor);
 }
 
 void	save_window_init(t_editor *editor)
 {
-	editor->win_save = ui_layout_get_window(&editor->layout, "win_save");
-	editor->endless_checkbox = ui_layout_get_element(&editor->layout, "endless_checkbox");
-	editor->story_checkbox = ui_layout_get_element(&editor->layout, "story_checkbox");
-	editor->name_input = ui_layout_get_element(&editor->layout, "name_input");
-	editor->confirm_save_button = ui_layout_get_element(&editor->layout, "confirm_save_button");
+	editor->win_save
+			= ui_layout_get_window(&editor->layout, "win_save");
+	editor->endless_checkbox
+			= ui_layout_get_element(&editor->layout, "endless_checkbox");
+	editor->story_checkbox
+			= ui_layout_get_element(&editor->layout, "story_checkbox");
+	editor->name_input
+			= ui_layout_get_element(&editor->layout, "name_input");
+	editor->confirm_save_button
+			= ui_layout_get_element(&editor->layout, "confirm_save_button");
 }
 
 void	edit_window_init(t_editor *editor)
 {
-	editor->win_edit = ui_layout_get_window(&editor->layout, "win_edit");
-	editor->map_scale_input = ui_layout_get_element(&editor->layout, "map_scale_input");
+	editor->win_edit
+			= ui_layout_get_window(&editor->layout, "win_edit");
+	editor->map_scale_input
+			= ui_layout_get_element(&editor->layout, "map_scale_input");
 	editor->map_scale = 1.0f;
 }
 
@@ -321,47 +388,34 @@ void	load_map_textures(t_editor *editor)
 	}
 }
 
+void	spawn_init(t_editor *editor)
+{
+	editor->spawn_edit_menu
+			= ui_layout_get_element(&editor->layout, "spawn_edit_menu");
+	editor->spawn_yaw_input
+			= ui_layout_get_element(&editor->layout, "spawn_yaw_input");
+}
+
 void	editor_init(t_editor *editor)
 {
-	// Editor Init
 	memset(editor, 0, sizeof(t_editor));
 	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
 	editor->font = TTF_OpenFont(UI_PATH"fonts/DroidSans.ttf", 20);
 	editor->map_type = 0; // endless = 0, story = 1;
 	editor->map_name = ft_strdup("map_name.dnd");
-	// Main Window
 	editor->win_main = ui_layout_get_window(&editor->layout, "win_main");
-	// Selection Menu
 	selection_menu_init(editor);
-	// Sector Edit
 	sector_edit_init(editor);
-	// Error
 	editor->error_label = ui_layout_get_element(&editor->layout, "error_label");
-	// Wall
 	wall_edit_init(editor);
-	// Sprite
 	sprite_edit_init(editor);
-	// Loading Textures
 	load_map_textures(editor);
-	// Texture Menu
 	texture_menu_init(editor);
-	// Entity Edit
 	entity_menu_init(editor);
-	// Info Menu
-	info_menu_init(editor);
-	// Global Info (used for telling user you have saved map for example)
-	editor->info_label = ui_layout_get_element(&editor->layout, "info_label");
-	// Sector Hover Info
-	editor->sector_hover_info_menu = ui_layout_get_element(&editor->layout, "sector_hover_info_menu");
-	editor->sector_hover_info_label = ui_layout_get_element(&editor->layout, "sector_hover_info_label");
-	// Event edit
+	info_init(editor);
 	event_menu_init(editor);
-	// Spawn Edit
-	editor->spawn_edit_menu = ui_layout_get_element(&editor->layout, "spawn_edit_menu");
-	editor->spawn_yaw_input = ui_layout_get_element(&editor->layout, "spawn_yaw_input");
-	// Save Window
+	spawn_init(editor);
 	save_window_init(editor);
-	// Edit Window
 	edit_window_init(editor);
 	ft_printf("[%s] %s\n", __FUNCTION__, SDL_GetError());
 }

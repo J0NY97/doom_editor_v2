@@ -752,6 +752,7 @@ misc_info_label
 misc_info
 {
 	xywh : 0, 20, 70, 20;
+	text_pos : 0, 20, 70, 500;
 	title : [misc info];
 };
 
@@ -763,6 +764,7 @@ selected_sector_label
 selected_sector_info
 {
 	xywh : 0, 20, 70, 20;
+	text_pos : 0, 20, 70, 500;
 	title : [sector info];
 };
 
@@ -774,8 +776,8 @@ selected_sub_label
 selected_sub_info
 {
 	xywh : 0, 20, 70, 20;
+	text_pos : 0, 20, 70, 500;
 	title : [sub info];
-	max_w : 90;
 };
 
 selected_sprite_label
@@ -786,8 +788,8 @@ selected_sprite_label
 selected_sprite_info
 {
 	xywh : 0, 20, 70, 20;
+	text_pos : 0, 20, 70, 500;
 	title : [sprite info];
-	max_w : 90;
 };
 
 ///////////////////
