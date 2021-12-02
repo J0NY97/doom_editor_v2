@@ -51,7 +51,7 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 			temp, editor->font, sector->screen_center, 0xffffffff);
 		sector_check_errors(editor, sector);
 		if (vec2_in_vec4(editor->mouse_pos,
-			vec4i(sector->center.x - 1, sector->center.y - 1, 3, 3)))
+				vec4i(sector->center.x - 1, sector->center.y - 1, 3, 3)))
 			hovered_this_frame = sector;
 		sectors = sectors->next;
 	}
@@ -79,8 +79,15 @@ void	draw_hover(t_editor *editor)
 			editor->mouse_pos_screen, 0xffffff00);
 }
 
+/*
+ * Draws outline around selected_sector/wall/point/entity;
+*/
 void	draw_selected(t_editor *editor)
 {
+	t_vec2i	conv;
+	t_vec2i	p1;
+	t_vec2i	p2;
+
 	if (editor->selected_sector)
 		sector_render(editor, editor->selected_sector, 0xff00ff00);
 	if (editor->selected_point)
@@ -89,9 +96,9 @@ void	draw_selected(t_editor *editor)
 		wall_render(editor, editor->selected_wall, 0xffffff00);
 	if (editor->selected_entity)
 	{
-		t_vec2i	conv = conversion(editor, editor->selected_entity->pos);
-		t_vec2i	p1 = vec2i(conv.x - 10, conv.y - 10);
-		t_vec2i	p2 = vec2i(conv.x + 10, conv.y + 10);
+		conv = conversion(editor, editor->selected_entity->pos);
+		p1 = vec2i(conv.x - 10, conv.y - 10);
+		p2 = vec2i(conv.x + 10, conv.y + 10);
 		ui_surface_rect_draw(editor->drawing_surface, p1, p2, 0xffffff00);
 	}
 }
@@ -130,7 +137,7 @@ void	draw_spawn(t_editor *editor)
 	if (!editor->spawn.inside_sector)
 	{
 		draw_text(editor->drawing_surface, "Not Inside Sector!",
-			editor->font, conversion(editor, editor->spawn.pos), 0xffff0000); 
+			editor->font, conversion(editor, editor->spawn.pos), 0xffff0000);
 		editor->errors += 1;
 	}
 	if (editor->spawn.inside_sector)

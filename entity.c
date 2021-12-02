@@ -50,7 +50,7 @@ void	entity_render(t_editor *editor, t_entity *entity)
 		SDL_RenderCopy(editor->win_main->renderer,
 			editor->entity_textures[entity->type], NULL,
 			&(SDL_Rect){www.x - (eee.x / 2), www.y - (eee.y / 2),
-				eee.x, eee.y});
+			eee.x, eee.y});
 	}
 	else
 		ft_printf("Entity texture doesnt exist\n");
@@ -115,7 +115,7 @@ void	get_entity_ui(t_editor *editor, t_entity *entity)
 
 	if (ui_input_exit(editor->entity_yaw_input))
 		entity->yaw = ft_clamp(ft_atoi(
-				ui_input_get_text(editor->entity_yaw_input)), 0, 360);
+					ui_input_get_text(editor->entity_yaw_input)), 0, 360);
 	else if (ui_slider_updated(editor->entity_yaw_slider))
 		entity->yaw = ui_slider_value_get(editor->entity_yaw_slider);
 	if (ui_input_exit(editor->entity_yaw_input))
@@ -205,7 +205,7 @@ void	entity_check_errors(t_editor *editor, t_entity *entity)
 	if (!entity->inside_sector)
 	{
 		draw_text(editor->drawing_surface, "Not Inside Sector!",
-			editor->font, conversion(editor, entity->pos), 0xffff0000); 
+			editor->font, conversion(editor, entity->pos), 0xffff0000);
 		editor->errors += 1;
 	}
 	else if (entity->inside_sector
@@ -213,7 +213,7 @@ void	entity_check_errors(t_editor *editor, t_entity *entity)
 			|| entity->z > entity->inside_sector->ceiling_height))
 	{
 		draw_text(editor->drawing_surface, "Z not between Floor & Ceiling!",
-			editor->font, conversion(editor, entity->pos), 0xffff0000); 
+			editor->font, conversion(editor, entity->pos), 0xffff0000);
 		editor->errors += 1;
 	}
 }

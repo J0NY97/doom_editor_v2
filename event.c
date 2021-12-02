@@ -69,13 +69,17 @@ void	realign_event_buttons(t_editor *editor)
 	((t_ui_scrollbar *)editor->event_scrollbar->element)->update = 1;
 }
 
+/*
+ * ft_printf("If you see ui_element_remove_child_parent,
+ * 	dont get scared, those are coming from the ui_element_free.\n");
+*/
 void	remove_event(t_editor *editor, t_event *event)
 {
 	ft_printf("[%s] Removing event.\n", __FUNCTION__);
-	ui_element_remove_from_list(event->elem->button, &editor->event_element_buttons);
+	ui_element_remove_from_list(event->elem->button,
+		&editor->event_element_buttons);
 	remove_event_elem_from_list(event->elem, &editor->event_elements);
 	remove_event_from_list(event, &editor->events);
-	ft_printf("If you see ui_element_remove_child_parent, dont get scared, those are coming from the ui_element_free.\n");
 	event_elem_free(event->elem);
 	event_free(event);
 	--editor->event_amount;
@@ -88,7 +92,11 @@ void	remove_event(t_editor *editor, t_event *event)
  * 	if it doesnt exist we update the list,
  * 	and try again.
 */
-// TODO: we have problem here, if you update id drop with more sectors than sprites, and then open sprite ids with less buttons;
+/*
+ * TODO: we have problem here,
+ * if you update id drop with more sectors than sprites,
+ * and then open sprite ids with less buttons;
+*/
 void	activate_id_button(t_editor *editor, int type, char *target_id_text)
 {
 	t_ui_element	*id_button;
@@ -165,7 +173,7 @@ void	event_elem_free(t_event_elem *elem)
 	ui_element_free(&elem->min);
 	ui_element_free(&elem->max);
 	ui_element_free(&elem->speed);
-	elem->event = NULL; // This is just a pointer;
+	elem->event = NULL;
 	free(elem->button);
 	free(elem);
 }
@@ -191,24 +199,24 @@ t_event_elem	*event_element_new(t_ui_element *parent)
 	set_elem_parent_and_recipe(&event_elem->menu,
 		UI_TYPE_MENU, parent, "event_menu_prefab");
 	set_elem_parent_and_recipe(&event_elem->id,
-			UI_TYPE_LABEL, &event_elem->menu, "event_id_prefab");
+		UI_TYPE_LABEL, &event_elem->menu, "event_id_prefab");
 	set_elem_parent_and_recipe(&event_elem->type,
-			UI_TYPE_LABEL, &event_elem->menu, "event_type_prefab");
+		UI_TYPE_LABEL, &event_elem->menu, "event_type_prefab");
 	set_elem_parent_and_recipe(&event_elem->action,
-			UI_TYPE_LABEL, &event_elem->menu, "event_action_prefab");
+		UI_TYPE_LABEL, &event_elem->menu, "event_action_prefab");
 	set_elem_parent_and_recipe(&event_elem->target_id,
-			UI_TYPE_LABEL, &event_elem->menu, "event_target_id_prefab");
+		UI_TYPE_LABEL, &event_elem->menu, "event_target_id_prefab");
 	set_elem_parent_and_recipe(&event_elem->sector,
-			UI_TYPE_LABEL, &event_elem->menu, "event_sector_prefab");
+		UI_TYPE_LABEL, &event_elem->menu, "event_sector_prefab");
 	set_elem_parent_and_recipe(&event_elem->min,
-			UI_TYPE_LABEL, &event_elem->menu, "event_min_prefab");
+		UI_TYPE_LABEL, &event_elem->menu, "event_min_prefab");
 	set_elem_parent_and_recipe(&event_elem->max,
-			UI_TYPE_LABEL, &event_elem->menu, "event_max_prefab");
+		UI_TYPE_LABEL, &event_elem->menu, "event_max_prefab");
 	set_elem_parent_and_recipe(&event_elem->speed,
-			UI_TYPE_LABEL, &event_elem->menu, "event_speed_prefab");
+		UI_TYPE_LABEL, &event_elem->menu, "event_speed_prefab");
 	event_elem->button = ft_memalloc(sizeof(t_ui_element));
 	set_elem_parent_and_recipe(event_elem->button,
-			UI_TYPE_BUTTON, &event_elem->menu, "event_button_prefab");
+		UI_TYPE_BUTTON, &event_elem->menu, "event_button_prefab");
 	return (event_elem);
 }
 
@@ -218,6 +226,8 @@ t_event_elem	*event_element_new(t_ui_element *parent)
  * 		but this is basically 'get_event_ui';
  *
  * 	TODO: Split this into 2 functions, really nothing you can shorten here;
+ *
+ * char	*active_text; // DONT FREE!
 */
 void	update_event(t_editor *editor, t_event *event)
 {
@@ -244,12 +254,14 @@ void	update_event(t_editor *editor, t_event *event)
 		if (event->action == SECTOR)
 		{
 			event->pointer_type = TYPE_SECTOR;
-			event->pointer = get_sector_by_id_from_list(editor->sectors, ft_atoi(active_text));
+			event->pointer = get_sector_by_id_from_list(editor->sectors,
+					ft_atoi(active_text));
 		}
 		else
 		{
 			event->pointer_type = TYPE_SPRITE;
-			event->pointer = get_sprite_by_id_from_list(editor->sprites, ft_atoi(active_text));
+			event->pointer = get_sprite_by_id_from_list(editor->sprites,
+					ft_atoi(active_text));
 		}
 	}
 
@@ -317,6 +329,7 @@ int	get_next_event_id(t_list *list)
 		ids[event->id] = 1;
 		list = list->next;
 	}
-	while (ids[++i]);
+	while (ids[++i])
+		;
 	return (i);
 }
