@@ -356,11 +356,49 @@ void	set_wall_ui(t_editor *editor, t_wall *wall)
  *
  * TODO : split this function into multiple functions ( adds convolution imo)
 */
+void	get_wall_ui2(t_editor *editor, t_wall *wall)
+{
+	int				angle;
+	char			temp_str[20];
+
+	if (ui_input_exit(editor->floor_wall_angle_input))
+	{
+		angle = ft_clamp(ft_atoi(ui_input_get_text(
+						editor->floor_wall_angle_input)), -45, 45);
+		if (angle != 0)
+			remove_wall_list_angles(wall->parent_sector->walls, 0);
+		wall->floor_angle = angle;
+		ft_b_itoa(wall->floor_angle, temp_str);
+		ui_input_set_text(editor->floor_wall_angle_input, temp_str);
+	}
+	if (ui_input_exit(editor->ceiling_wall_angle_input))
+	{
+		angle = ft_clamp(ft_atoi(ui_input_get_text(
+						editor->ceiling_wall_angle_input)), -45, 45);
+		if (angle != 0)
+			remove_wall_list_angles(wall->parent_sector->walls, 1);
+		wall->ceiling_angle = angle;
+		ft_b_itoa(wall->ceiling_angle, temp_str);
+		ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
+	}
+}
+
+void	get_wall_ui3(t_editor *editor, t_wall *wall)
+{
+	char			temp_str[20];
+
+	if (ui_input_exit(editor->wall_texture_scale_input))
+	{
+		wall->texture_scale = ft_fclamp(ft_atof(ui_input_get_text(
+						editor->wall_texture_scale_input)), -10.0f, 10.0f);
+		ft_b_ftoa(wall->texture_scale, 2, temp_str);
+		ui_input_set_text(editor->wall_texture_scale_input, temp_str);
+	}
+}
+
 void	get_wall_ui(t_editor *editor, t_wall *wall)
 {
 	t_ui_element	*skybox_active;
-	int				angle;
-	char			temp_str[20];
 
 	if (ui_dropdown_exit(editor->wall_skybox_dropdown))
 	{
@@ -383,33 +421,8 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 		if (!can_you_make_portal_of_this_wall(editor->sectors,
 				wall->parent_sector, wall))
 			ui_checkbox_toggle_off(editor->portal_checkbox);
-	if (ui_input_exit(editor->floor_wall_angle_input))
-	{
-		angle = ft_clamp(ft_atoi(ui_input_get_text(
-						editor->floor_wall_angle_input)), -45, 45);
-		if (angle != 0)
-			remove_wall_list_angles(wall->parent_sector->walls, 0);
-		wall->floor_angle = angle;
-		ft_b_itoa(wall->floor_angle, temp_str);
-		ui_input_set_text(editor->floor_wall_angle_input, temp_str);
-	}
-	if (ui_input_exit(editor->ceiling_wall_angle_input))
-	{
-		angle = ft_clamp(ft_atoi(ui_input_get_text(
-						editor->ceiling_wall_angle_input)), -45, 45);
-		if (angle != 0)
-			remove_wall_list_angles(wall->parent_sector->walls, 1);
-		wall->ceiling_angle = angle;
-		ft_b_itoa(wall->ceiling_angle, temp_str);
-		ui_input_set_text(editor->ceiling_wall_angle_input, temp_str);
-	}
-	if (ui_input_exit(editor->wall_texture_scale_input))
-	{
-		wall->texture_scale = ft_fclamp(ft_atof(ui_input_get_text(
-						editor->wall_texture_scale_input)), -10.0f, 10.0f);
-		ft_b_ftoa(wall->texture_scale, 2, temp_str);
-		ui_input_set_text(editor->wall_texture_scale_input, temp_str);
-	}
+	get_wall_ui2(editor, wall);
+	get_wall_ui3(editor, wall);
 }
 
 void	split_wall(t_editor *editor, t_sector *sector, t_wall *wall)

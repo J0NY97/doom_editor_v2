@@ -1,7 +1,8 @@
 #include "editor.h"
 
 /*
- * Returns: 1 if we have given a map_name, so it knows if its worth even searching for;
+ * Returns: 1 if we have given a map_name,
+ * 	so it knows if its worth even searching for;
 */
 int	args_parser(t_editor *editor, int ac, char **av)
 {

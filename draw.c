@@ -42,7 +42,7 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 	while (sectors)
 	{
 		sector = sectors->content;
-		sort_walls(sector->walls); // TODO do this everytime the sector has been updated, not every frame (if its slow);
+		sort_walls(sector->walls);
 		sector_render(editor, sector, sector->color);
 		sector->center = get_sector_center(sector);
 		sector->screen_center = conversion(editor, sector->center);

@@ -225,29 +225,12 @@ t_event_elem	*event_element_new(t_ui_element *parent)
  * NOTE: this is the first input getter function we made,
  * 		but this is basically 'get_event_ui';
  *
- * 	TODO: Split this into 2 functions, really nothing you can shorten here;
- *
  * char	*active_text; // DONT FREE!
 */
-void	update_event(t_editor *editor, t_event *event)
+void	update_event2(t_editor *editor, t_event *event)
 {
-	int		i;
-	char	*active_text; // DONT FREE!
+	char	*active_text;
 
-	ft_printf("[%s] Updating event. ", __FUNCTION__);
-	// Type
-	active_text = ui_dropdown_active_text(editor->event_type_dropdown);
-	i = -1;
-	while (++i < EVENT_TYPE_AMOUNT)
-		if (ft_strequ(active_text, g_event_type[i]))
-			event->type = i;
-	// Action
-	active_text = ui_dropdown_active_text(editor->event_action_dropdown);
-	i = -1;
-	while (++i < EVENT_ACTION_AMOUNT)
-		if (ft_strequ(active_text, g_event_action[i].name))
-			event->action = g_event_action[i].id;
-	// Target
 	active_text = ui_dropdown_active_text(editor->event_id_dropdown);
 	if (active_text)
 	{
@@ -264,8 +247,6 @@ void	update_event(t_editor *editor, t_event *event)
 					ft_atoi(active_text));
 		}
 	}
-
-	// Sector
 	active_text = ui_input_get_text(editor->event_sector_input);
 	if (active_text)
 	{
@@ -273,19 +254,40 @@ void	update_event(t_editor *editor, t_event *event)
 			ft_strdel(&event->sector);
 		event->sector = ft_strdup(active_text);
 	}
-	// Min
+}
+
+void	update_event3(t_editor *editor, t_event *event)
+{
+	char	*active_text;
+
 	active_text = ui_input_get_text(editor->event_min_input);
 	if (active_text)
 		event->min = ft_atoi(active_text);
-	// Max
 	active_text = ui_input_get_text(editor->event_max_input);
 	if (active_text)
 		event->max = ft_atoi(active_text);
-	// Speed
 	active_text = ui_input_get_text(editor->event_speed_input);
 	if (active_text)
 		event->speed = ft_atoi(active_text);
-	ft_printf("Success.\n");
+}
+
+void	update_event(t_editor *editor, t_event *event)
+{
+	int		i;
+	char	*active_text;
+
+	active_text = ui_dropdown_active_text(editor->event_type_dropdown);
+	i = -1;
+	while (++i < EVENT_TYPE_AMOUNT)
+		if (ft_strequ(active_text, g_event_type[i]))
+			event->type = i;
+	active_text = ui_dropdown_active_text(editor->event_action_dropdown);
+	i = -1;
+	while (++i < EVENT_ACTION_AMOUNT)
+		if (ft_strequ(active_text, g_event_action[i].name))
+			event->action = g_event_action[i].id;
+	update_event2(editor, event);
+	update_event3(editor, event);
 }
 
 /*

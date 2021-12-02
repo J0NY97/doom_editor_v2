@@ -137,15 +137,46 @@ void	select_sector(t_editor *editor)
 	}
 }
 
+void	attempt_adding_wall_to_sector(t_editor *editor, t_sector *sector)
+{
+	if (editor->first_point_set && editor->second_point_set
+		&& compare_veci(editor->first_point.v, editor->second_point.v, 2))
+		editor->second_point_set = 0;
+	if (editor->first_point_set && editor->second_point_set)
+	{
+		add_wall_to_sector_at_pos(editor, editor->selected_sector,
+			editor->first_point, editor->second_point);
+		editor->first_point_set = 0;
+		editor->second_point_set = 0;
+		if (!editor->selected_sector->first_point_set)
+		{
+			editor->selected_sector->first_point = editor->first_point;
+			editor->selected_sector->first_point_set = 1;
+		}
+		if (compare_veci(editor->second_point.v,
+				editor->selected_sector->first_point.v, 2))
+			editor->selected_sector = NULL;
+		else
+		{
+			editor->first_point = editor->second_point;
+			editor->first_point_set = 1;
+		}
+	}
+}
+
+/*
+ * If we dont have selected_sector, we create one;
+ * If we have selected_sector, we add walls to it;
+*/
 void	sector_draw_events(t_editor *editor)
 {
 	if (editor->draw_button->state == UI_STATE_CLICK
 		&& editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor))
 	{
-		if (!editor->selected_sector) // creating new sector;
+		if (!editor->selected_sector)
 			editor->selected_sector = add_sector(editor);
-		if (editor->selected_sector) // adding new walls to sector;
+		if (editor->selected_sector)
 		{
 			if (!editor->first_point_set)
 			{
@@ -157,30 +188,7 @@ void	sector_draw_events(t_editor *editor)
 				editor->second_point_set = 1;
 				editor->second_point = editor->mouse_pos;
 			}
-			// We dont want you to be able to draw a 0 length wall;
-			if (editor->first_point_set && editor->second_point_set
-				&& compare_veci(editor->first_point.v, editor->second_point.v, 2))
-				editor->second_point_set = 0;
-			if (editor->first_point_set && editor->second_point_set)
-			{
-				// NOTE: add_wall_to_sector_at_pos, doesnt check if we have anything in the 2 points given;
-				add_wall_to_sector_at_pos(editor, editor->selected_sector,
-					editor->first_point, editor->second_point);
-				editor->first_point_set = 0;
-				editor->second_point_set = 0;
-				if (!editor->selected_sector->first_point_set)
-				{
-					editor->selected_sector->first_point = editor->first_point;
-					editor->selected_sector->first_point_set = 1;
-				}
-				if (compare_veci(editor->second_point.v, editor->selected_sector->first_point.v, 2))
-					editor->selected_sector = NULL;
-				else
-				{
-					editor->first_point = editor->second_point;
-					editor->first_point_set = 1;
-				}
-			}
+			attempt_adding_wall_to_sector(editor, editor->selected_sector);
 		}
 	}
 }
