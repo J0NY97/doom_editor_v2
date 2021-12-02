@@ -31,6 +31,12 @@ enum e_types_of_stuff
 	TYPE_SPRITE
 };
 
+enum e_map_types
+{
+	MAP_TYPE_ENDLESS,
+	MAP_TYPE_STORY
+};
+
 typedef struct s_fps
 {
 	float	curr;

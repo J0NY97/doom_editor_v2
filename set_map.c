@@ -5,14 +5,14 @@ char	*set_map_info(t_editor *editor)
 	char	*final;
 	char	*map_type;
 
-	if (editor->map_type == 1)
+	if (editor->map_type == MAP_TYPE_STORY)
 		map_type = ft_strdup("story");
 	else
 		map_type = ft_strdup("endless");
 	final = ft_sprintf("type:map\ttype\tscale\tvert\twall\tsect\n%d\t%s\t%d\t%d\t%d\t%d\n",
 			0,
 			map_type,
-			1,
+			editor->map_scale,
 			ft_lstlen(editor->points),
 			ft_lstlen(editor->walls),
 			ft_lstlen(editor->sectors));

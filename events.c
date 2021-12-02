@@ -970,7 +970,7 @@ void	save_button_events(t_editor *editor)
 		ft_printf("[%s] Map name len is less than 1.\n", __FUNCTION__);
 	else
 	{
-		if (editor->map_type == 1)
+		if (editor->map_type == MAP_TYPE_STORY)
 			actual_full_path = ft_strjoiner(MAP_PATH,
 					ui_input_get_text(editor->name_input), ".dnds", NULL);
 		else
@@ -988,13 +988,13 @@ void	save_window_events(t_editor *editor)
 	if (editor->save_button->state == UI_STATE_CLICK)
 		ui_window_flag_set(editor->win_save, UI_WINDOW_SHOW | UI_WINDOW_RAISE);
 	if (editor->endless_checkbox->was_click)
-		editor->map_type = 0;
+		editor->map_type = MAP_TYPE_ENDLESS;
 	else if (editor->story_checkbox->was_click)
-		editor->map_type = 1;
+		editor->map_type = MAP_TYPE_STORY;
 	ui_checkbox_toggle_accordingly(editor->endless_checkbox,
-		editor->map_type == 0);
+		editor->map_type == MAP_TYPE_ENDLESS);
 	ui_checkbox_toggle_accordingly(editor->story_checkbox,
-		editor->map_type == 1);
+		editor->map_type == MAP_TYPE_STORY);
 	if (!editor->win_save->show)
 		return ;
 	if (ui_button(editor->confirm_save_button))

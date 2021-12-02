@@ -6,9 +6,9 @@
 void	get_map_info(t_editor *editor, char **args)
 {
 	ft_printf("Getting Map Info. ");
-	editor->map_type = 0;
+	editor->map_type = MAP_TYPE_ENDLESS;
 	if (ft_strnequ(args[1], "story", 5))
-		editor->map_type = 1;
+		editor->map_type = MAP_TYPE_STORY;
 	ft_printf("Success.\n");
 }
 
