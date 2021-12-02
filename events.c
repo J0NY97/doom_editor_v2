@@ -823,7 +823,7 @@ void	spawn_events(t_editor *editor)
 			if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT)
 				editor->spawn.pos = editor->mouse_pos;
 	if (editor->select_button->state == UI_STATE_CLICK
-		|| editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
+		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT)
 		editor->spawn.pos = vec2i_add(editor->spawn.pos, editor->move_amount);
 	// Yaw input
 	if (ui_input_exit(editor->spawn_yaw_input))

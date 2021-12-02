@@ -37,7 +37,8 @@ win_main
 
 toolbox_menu_prefab
 {
-	bg_color : 0xffb0b0b0;
+	//bg_color : 0xffb0b0b0;
+	bg_color : 0xdeadbeef;
 };
 
 close_button_prefab
@@ -915,10 +916,9 @@ entity_z_input
 ///////////////////
 // Event Menu 
 ///////////////////
-event_edit_menu
+event_edit_menu : toolbox_menu_prefab
 {
 	xywh : 0, 71, 260, 500;
-	bg_color : 0xffb0b0b0;
 };
 add_event_button : confirm_button_prefab
 {
@@ -1162,10 +1162,9 @@ event_speed_input
 // Spawn Edit Menu
 ///////////////////
 
-spawn_edit_menu
+spawn_edit_menu : toolbox_menu_prefab
 {
 	xywh : 0, 71, 130, 100;
-	bg_color : 0xffb0b0b0;
 };
 
 spawn_yaw_label
