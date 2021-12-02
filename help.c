@@ -87,3 +87,11 @@ void	draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Ui
 	else
 		ft_printf("[%s] Failed drawing text \"%s\" no font.\n", __FUNCTION__, text);
 }
+
+t_ui_element	*set_elem_parent_and_recipe(
+		t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id)
+{
+	g_acceptable[ui_type].maker(parent->win, elem);
+	ui_element_set_parent(elem, parent, UI_TYPE_ELEMENT);
+	ui_element_edit(elem, ui_layout_get_recipe(parent->win->layout, recipe_id));
+}

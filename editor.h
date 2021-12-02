@@ -74,9 +74,9 @@ typedef struct s_event_elem
 typedef struct s_texture_elem
 {
 	int				id;
-	t_ui_element	*menu;
 	t_ui_element	*button;
-	t_ui_element	*image;
+	t_ui_element	menu;
+	t_ui_element	image;
 }					t_texture_elem;
 
 /*
@@ -130,8 +130,8 @@ typedef struct s_editor
 
 	t_ui_element	*error_label;
 
-	t_texture_something	*floor_texture_something;
-	t_texture_something	*ceiling_texture_something;
+	t_texture_something	floor_texture_something;
+	t_texture_something	ceiling_texture_something;
 	t_ui_element	*sector_edit_menu;
 	t_ui_element	*close_sector_edit_button;
 	t_ui_element	*sector_edit_ok_button;
@@ -151,8 +151,8 @@ typedef struct s_editor
 	t_ui_element	*floor_texture_scale_input;
 	t_ui_element	*ceiling_texture_scale_input;
 
-	t_texture_something	*wall_texture_something;
-	t_texture_something	*portal_texture_something;
+	t_texture_something	wall_texture_something;
+	t_texture_something	portal_texture_something;
 	t_ui_element	*menu_wall_edit;
 	t_ui_element	*close_wall_edit_button;
 	t_ui_element	*split_wall_button;
@@ -184,7 +184,7 @@ typedef struct s_editor
 	int				active_texture_button_id;
 
 	// Sprites
-	t_texture_something	*sprite_texture_something;
+	t_texture_something	sprite_texture_something;
 	t_ui_element	*sprite_edit_menu;
 	t_ui_element	*sprite_add_button;
 	t_ui_element	*sprite_confirm_button;
@@ -462,7 +462,6 @@ struct s_event
 };
 
 // Init
-
 void				editor_init(t_editor *editor);
 void				load_map_textures(t_editor *editor);
 void				edit_window_init(t_editor *editor);
@@ -598,6 +597,7 @@ void				create_buttons_to_list_from_texts_remove_extra(t_ui_element *parent, cha
 void				draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 void				draw_text_on_texture(SDL_Texture *texture, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 void				send_info_message(t_editor *editor, char *text);
+t_ui_element		*set_elem_parent_and_recipe(t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id);
 
 // Bxpm
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);

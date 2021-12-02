@@ -2,157 +2,224 @@
 
 void	selection_menu_init(t_editor *editor)
 {
-	editor->menu_toolbox_top = ui_layout_get_element(&editor->layout, "menu_toolbox_top");
-	editor->menu_selection = ui_layout_get_element(&editor->layout, "menu_select_buttons");
-	editor->selection_dropdown_menu = ui_layout_get_element(&editor->layout, "type_drop_menu");
-	editor->draw_button = ui_layout_get_element(&editor->layout, "draw_button");
-	editor->select_button = ui_layout_get_element(&editor->layout, "select_button");
-	editor->remove_button = ui_layout_get_element(&editor->layout, "remove_button");
-	editor->point_button = ui_layout_get_element(&editor->layout, "point_button");
-	editor->wall_button = ui_layout_get_element(&editor->layout, "wall_button");
-	editor->sector_button = ui_layout_get_element(&editor->layout, "sector_button");
-	editor->entity_button = ui_layout_get_element(&editor->layout, "entity_button");
-	editor->spawn_button = ui_layout_get_element(&editor->layout, "spawn_button");
-	editor->event_button = ui_layout_get_element(&editor->layout, "event_button");
-	editor->save_button = ui_layout_get_element(&editor->layout, "save_button");
-	editor->edit_button = ui_layout_get_element(&editor->layout, "edit_button");
+	editor->menu_toolbox_top
+			= ui_layout_get_element(&editor->layout, "menu_toolbox_top");
+	editor->menu_selection
+			= ui_layout_get_element(&editor->layout, "menu_select_buttons");
+	editor->selection_dropdown_menu
+			= ui_layout_get_element(&editor->layout, "type_drop_menu");
+	editor->draw_button
+			= ui_layout_get_element(&editor->layout, "draw_button");
+	editor->select_button
+			= ui_layout_get_element(&editor->layout, "select_button");
+	editor->remove_button
+			= ui_layout_get_element(&editor->layout, "remove_button");
+	editor->sector_button
+			= ui_layout_get_element(&editor->layout, "sector_button");
+	editor->entity_button
+			= ui_layout_get_element(&editor->layout, "entity_button");
+	editor->spawn_button
+			= ui_layout_get_element(&editor->layout, "spawn_button");
+	editor->event_button
+			= ui_layout_get_element(&editor->layout, "event_button");
+	editor->save_button
+			= ui_layout_get_element(&editor->layout, "save_button");
+	editor->edit_button
+			= ui_layout_get_element(&editor->layout, "edit_button");
+}
+
+void	sector_skybox_init(t_editor *editor)
+{
+	editor->sector_skybox_dropdown
+			= ui_layout_get_element(&editor->layout, "sector_skybox_dropdown");
+	editor->sector_skybox_none
+			= ui_layout_get_element(&editor->layout, "sector_skybox_none");
+	editor->sector_skybox_one
+			= ui_layout_get_element(&editor->layout, "sector_skybox_one");
+	editor->sector_skybox_two
+			= ui_layout_get_element(&editor->layout, "sector_skybox_two");
+	editor->sector_skybox_three
+			= ui_layout_get_element(&editor->layout, "sector_skybox_three");
+}
+
+void	sector_edit_init2(t_editor *editor)
+{
+	editor->point_button
+			= ui_layout_get_element(&editor->layout, "point_button");
+	editor->wall_button
+			= ui_layout_get_element(&editor->layout, "wall_button");
+	editor->close_sector_edit_button
+			= ui_layout_get_element(&editor->layout,
+					"close_sector_edit_button");
+	editor->sector_edit_ok_button
+			= ui_layout_get_element(&editor->layout, "sector_edit_ok_button");
 }
 
 void	sector_edit_init(t_editor *editor)
 {
-	editor->sector_edit_menu = ui_layout_get_element(&editor->layout, "sector_edit_menu");
-	editor->close_sector_edit_button = ui_layout_get_element(&editor->layout, "close_sector_edit_button");
-	editor->sector_edit_ok_button = ui_layout_get_element(&editor->layout, "sector_edit_ok_button");
-	editor->sector_skybox_dropdown = ui_layout_get_element(&editor->layout, "sector_skybox_dropdown");
-	editor->sector_skybox_none = ui_layout_get_element(&editor->layout, "sector_skybox_none");
-	editor->sector_skybox_one = ui_layout_get_element(&editor->layout, "sector_skybox_one");
-	editor->sector_skybox_two = ui_layout_get_element(&editor->layout, "sector_skybox_two");
-	editor->sector_skybox_three = ui_layout_get_element(&editor->layout, "sector_skybox_three");
-	editor->floor_texture_button = ui_layout_get_element(&editor->layout, "floor_texture_button");
-	editor->ceiling_texture_button = ui_layout_get_element(&editor->layout, "ceiling_texture_button");
-	editor->floor_texture_image = ui_layout_get_element(&editor->layout, "floor_texture_image");
-	editor->ceiling_texture_image = ui_layout_get_element(&editor->layout, "ceiling_texture_image");
-	editor->floor_height_input = ui_layout_get_element(&editor->layout, "floor_height_input");
-	editor->ceiling_height_input = ui_layout_get_element(&editor->layout, "ceiling_height_input");
-	editor->gravity_input = ui_layout_get_element(&editor->layout, "gravity_input");
-	editor->lighting_input = ui_layout_get_element(&editor->layout, "lighting_input");
-	editor->floor_texture_scale_input = ui_layout_get_element(&editor->layout, "floor_texture_scale_input");
-	editor->ceiling_texture_scale_input = ui_layout_get_element(&editor->layout, "ceiling_texture_scale_input");
+	editor->sector_edit_menu
+			= ui_layout_get_element(&editor->layout, "sector_edit_menu");
+	editor->floor_texture_button
+			= ui_layout_get_element(&editor->layout, "floor_texture_button");
+	editor->ceiling_texture_button
+			= ui_layout_get_element(&editor->layout, "ceiling_texture_button");
+	editor->floor_texture_image
+			= ui_layout_get_element(&editor->layout, "floor_texture_image");
+	editor->ceiling_texture_image
+			= ui_layout_get_element(&editor->layout, "ceiling_texture_image");
+	editor->floor_height_input
+			= ui_layout_get_element(&editor->layout, "floor_height_input");
+	editor->ceiling_height_input
+			= ui_layout_get_element(&editor->layout, "ceiling_height_input");
+	editor->gravity_input
+			= ui_layout_get_element(&editor->layout, "gravity_input");
+	editor->lighting_input
+			= ui_layout_get_element(&editor->layout, "lighting_input");
+	editor->floor_texture_scale_input = ui_layout_get_element(
+			&editor->layout, "floor_texture_scale_input");
+	editor->ceiling_texture_scale_input = ui_layout_get_element(
+			&editor->layout, "ceiling_texture_scale_input");
+	sector_edit_init2(editor);
+	sector_skybox_init(editor);
+}
+
+void	wall_skybox_init(t_editor *editor)
+{
+	editor->wall_skybox_dropdown
+			= ui_layout_get_element(&editor->layout, "wall_skybox_dropdown");
+	editor->wall_skybox_none
+			= ui_layout_get_element(&editor->layout, "wall_skybox_none");
+	editor->wall_skybox_one
+			= ui_layout_get_element(&editor->layout, "wall_skybox_one");
+	editor->wall_skybox_two
+			= ui_layout_get_element(&editor->layout, "wall_skybox_two");
+	editor->wall_skybox_three
+			= ui_layout_get_element(&editor->layout, "wall_skybox_three");
 }
 
 void	wall_edit_init(t_editor *editor)
 {
-	editor->menu_wall_edit = ui_layout_get_element(&editor->layout, "menu_wall_edit");
-	editor->close_wall_edit_button = ui_layout_get_element(&editor->layout, "close_wall_edit_button");
-	editor->solid_checkbox = ui_layout_get_element(&editor->layout, "solidity_checkbox");
-	editor->portal_checkbox = ui_layout_get_element(&editor->layout, "portal_checkbox");
-	editor->split_wall_button = ui_layout_get_element(&editor->layout, "split_wall_button");
-	editor->wall_skybox_dropdown = ui_layout_get_element(&editor->layout, "wall_skybox_dropdown");
-	editor->wall_skybox_none = ui_layout_get_element(&editor->layout, "wall_skybox_none");
-	editor->wall_skybox_one = ui_layout_get_element(&editor->layout, "wall_skybox_one");
-	editor->wall_skybox_two = ui_layout_get_element(&editor->layout, "wall_skybox_two");
-	editor->wall_skybox_three = ui_layout_get_element(&editor->layout, "wall_skybox_three");
-	editor->wall_texture_button = ui_layout_get_element(&editor->layout, "wall_texture_button");
-	editor->wall_texture_image = ui_layout_get_element(&editor->layout, "wall_texture_image");
-	editor->portal_texture_button = ui_layout_get_element(&editor->layout, "portal_texture_button");
-	editor->portal_texture_image = ui_layout_get_element(&editor->layout, "portal_texture_image");
-	editor->floor_wall_angle_input = ui_layout_get_element(&editor->layout, "floor_wall_angle_input");
-	editor->ceiling_wall_angle_input = ui_layout_get_element(&editor->layout, "ceiling_wall_angle_input");
-	editor->wall_texture_scale_input = ui_layout_get_element(&editor->layout, "wall_texture_scale_input");
+	editor->menu_wall_edit
+			= ui_layout_get_element(&editor->layout, "menu_wall_edit");
+	editor->close_wall_edit_button
+			= ui_layout_get_element(&editor->layout, "close_wall_edit_button");
+	editor->solid_checkbox
+			= ui_layout_get_element(&editor->layout, "solidity_checkbox");
+	editor->portal_checkbox
+			= ui_layout_get_element(&editor->layout, "portal_checkbox");
+	editor->split_wall_button
+			= ui_layout_get_element(&editor->layout, "split_wall_button");
+	editor->wall_texture_button
+			= ui_layout_get_element(&editor->layout, "wall_texture_button");
+	editor->wall_texture_image
+			= ui_layout_get_element(&editor->layout, "wall_texture_image");
+	editor->portal_texture_button
+			= ui_layout_get_element(&editor->layout, "portal_texture_button");
+	editor->portal_texture_image
+			= ui_layout_get_element(&editor->layout, "portal_texture_image");
+	editor->floor_wall_angle_input
+			= ui_layout_get_element(&editor->layout, "floor_wall_angle_input");
+	editor->ceiling_wall_angle_input = ui_layout_get_element(
+			&editor->layout, "ceiling_wall_angle_input");
+	editor->wall_texture_scale_input = ui_layout_get_element(
+			&editor->layout, "wall_texture_scale_input");
+	wall_skybox_init(editor);
+}
+
+void	wall_render_init(t_editor *editor)
+{
+	editor->wall_render
+			= ui_layout_get_element(&editor->layout, "wall_render");
 }
 
 void	sprite_edit_init(t_editor *editor)
 {
-	editor->sprite_edit_menu = ui_layout_get_element(&editor->layout, "sprite_edit_menu");
-	editor->sprite_add_button = ui_layout_get_element(&editor->layout, "sprite_add_button");
-	editor->sprite_remove_button = ui_layout_get_element(&editor->layout, "sprite_remove_button");
-	editor->sprite_scale_input = ui_layout_get_element(&editor->layout, "sprite_scale_input");
-	editor->sprite_type_dropdown = ui_layout_get_element(&editor->layout, "sprite_type_dropdown");
-	editor->sprite_type_static = ui_layout_get_element(&editor->layout, "sprite_type_static");
-	editor->sprite_type_loop = ui_layout_get_element(&editor->layout, "sprite_type_loop");
-	editor->sprite_type_action = ui_layout_get_element(&editor->layout, "sprite_type_action");
-	editor->sprite_texture_button = ui_layout_get_element(&editor->layout, "sprite_texture_button");
-	editor->sprite_texture_image = ui_layout_get_element(&editor->layout, "sprite_texture_image");
-	editor->sprite_x_input = ui_layout_get_element(&editor->layout, "sprite_x_input");
-	editor->sprite_y_input = ui_layout_get_element(&editor->layout, "sprite_y_input");
-	editor->wall_render = ui_layout_get_element(&editor->layout, "wall_render");
+	editor->sprite_edit_menu
+			= ui_layout_get_element(&editor->layout, "sprite_edit_menu");
+	editor->sprite_add_button
+			= ui_layout_get_element(&editor->layout, "sprite_add_button");
+	editor->sprite_remove_button
+			= ui_layout_get_element(&editor->layout, "sprite_remove_button");
+	editor->sprite_scale_input
+			= ui_layout_get_element(&editor->layout, "sprite_scale_input");
+	editor->sprite_type_dropdown
+			= ui_layout_get_element(&editor->layout, "sprite_type_dropdown");
+	editor->sprite_type_static
+			= ui_layout_get_element(&editor->layout, "sprite_type_static");
+	editor->sprite_type_loop
+			= ui_layout_get_element(&editor->layout, "sprite_type_loop");
+	editor->sprite_type_action
+			= ui_layout_get_element(&editor->layout, "sprite_type_action");
+	editor->sprite_texture_button
+			= ui_layout_get_element(&editor->layout, "sprite_texture_button");
+	editor->sprite_texture_image
+			= ui_layout_get_element(&editor->layout, "sprite_texture_image");
+	editor->sprite_x_input
+			= ui_layout_get_element(&editor->layout, "sprite_x_input");
+	editor->sprite_y_input
+			= ui_layout_get_element(&editor->layout, "sprite_y_input");
+	wall_render_init(editor);
+}
+
+void	texture_elem_init(t_editor *editor)
+{
+	t_texture_elem	*texture_elem;
+	int				i;
+
+	i = -1;
+	while (++i < MAP_TEXTURE_AMOUNT)
+	{
+		texture_elem = ft_memalloc(sizeof(t_texture_elem));
+		set_elem_parent_and_recipe(&texture_elem->menu, UI_TYPE_MENU,
+			editor->texture_menu, "texture_button_menu");
+		ui_element_pos_set2(&texture_elem->menu, align_fill(
+				vec2(editor->texture_menu->pos.w, editor->texture_menu->pos.h),
+				texture_elem->menu.pos, 5, i));
+		set_elem_parent_and_recipe(&texture_elem->image, UI_TYPE_MENU,
+			&texture_elem->menu, "texture_image");
+		ui_element_image_set(&texture_elem->image, UI_STATE_DEFAULT,
+			editor->wall_textures[i]);
+		texture_elem->button = ft_memalloc(sizeof(t_ui_element));
+		set_elem_parent_and_recipe(texture_elem->button, UI_TYPE_BUTTON,
+			&texture_elem->menu, "texture_button");
+		texture_elem->id = i;
+		add_to_list(&editor->texture_elems,
+			texture_elem, sizeof(t_texture_elem));
+		add_to_list(&editor->texture_buttons,
+			texture_elem->button, sizeof(t_ui_element));
+	}
+}
+
+void	new_texture_something(
+		t_editor *editor, t_texture_something *something,
+		t_ui_element *button, t_ui_element *image)
+{
+	something->button = button;
+	something->image = image;
+	add_to_list(&editor->texture_somethings,
+		something, sizeof(t_texture_something));
+	add_to_list(&editor->texture_opening_buttons, button, UI_TYPE_ELEMENT);
 }
 
 void	texture_menu_init(t_editor *editor)
 {
-	editor->texture_menu = ui_layout_get_element(&editor->layout, "texture_menu");
-	editor->texture_menu_close_button = ui_layout_get_element(&editor->layout, "texture_menu_close_button");
-	editor->texture_menu_label = ui_layout_get_element(&editor->layout, "texture_menu_label");
-
-	// Create buttons from all 'wall_textures' and place them on the 'texture_menu';
-	t_ui_recipe	*texture_menu_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button_menu");
-	t_ui_recipe	*texture_button_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_button");
-	t_ui_recipe	*texture_image_recipe = ui_list_get_recipe_by_id(editor->layout.recipes, "texture_image");
-	for (int i = 0; i < MAP_TEXTURE_AMOUNT; i++)
-	{
-		t_texture_elem	*texture_elem;
-		texture_elem = ft_memalloc(sizeof(t_texture_elem));
-
-		texture_elem->menu = ft_memalloc(sizeof(t_ui_element));
-		ui_menu_new(editor->win_main, texture_elem->menu);
-		ui_element_set_parent(texture_elem->menu, editor->texture_menu, UI_TYPE_ELEMENT);
-		ui_element_edit(texture_elem->menu, texture_menu_button_recipe);
-
-		ui_element_pos_set2(texture_elem->menu,
-			align_fill(vec2(editor->texture_menu->pos.w,
-					editor->texture_menu->pos.h),
-				texture_menu_button_recipe->pos, 5, i));
-
-		texture_elem->image = ft_memalloc(sizeof(t_ui_element));
-		ui_menu_new(editor->win_main, texture_elem->image);
-		ui_element_set_parent(texture_elem->image, texture_elem->menu, UI_TYPE_ELEMENT);
-		ui_element_edit(texture_elem->image, texture_image_recipe);
-		ui_element_image_set(texture_elem->image, UI_STATE_DEFAULT, editor->wall_textures[i]);
-
-		texture_elem->button = ft_memalloc(sizeof(t_ui_element));
-		ui_button_new(editor->win_main, texture_elem->button);
-		ui_element_set_parent(texture_elem->button, texture_elem->menu, UI_TYPE_ELEMENT);
-		ui_element_edit(texture_elem->button, texture_button_recipe);
-
-		texture_elem->id = i;
-
-		add_to_list(&editor->texture_elems, texture_elem, sizeof(t_texture_elem));
-		add_to_list(&editor->texture_buttons, texture_elem->button, sizeof(t_ui_element));
-
-		ft_printf("[%s] Texture elem #%d made.\n", __FUNCTION__, i);
-	}
-
-	// Sprite texture
-	editor->sprite_texture_something = ft_memalloc(sizeof(t_texture_something));
-	editor->sprite_texture_something->button = editor->sprite_texture_button;
-	editor->sprite_texture_something->image = editor->sprite_texture_image;
-	add_to_list(&editor->texture_somethings, editor->sprite_texture_something, sizeof(t_texture_something));
-	// Wall texture
-	editor->wall_texture_something = ft_memalloc(sizeof(t_texture_something));
-	editor->wall_texture_something->button = editor->wall_texture_button;
-	editor->wall_texture_something->image = editor->wall_texture_image;
-	add_to_list(&editor->texture_somethings, editor->wall_texture_something, sizeof(t_texture_something));
-	// Portal texture
-	editor->portal_texture_something = ft_memalloc(sizeof(t_texture_something));
-	editor->portal_texture_something->button = editor->portal_texture_button;
-	editor->portal_texture_something->image = editor->portal_texture_image;
-	add_to_list(&editor->texture_somethings, editor->portal_texture_something, sizeof(t_texture_something));
-	// floor texture
-	editor->floor_texture_something = ft_memalloc(sizeof(t_texture_something));
-	editor->floor_texture_something->button = editor->floor_texture_button;
-	editor->floor_texture_something->image = editor->floor_texture_image;
-	add_to_list(&editor->texture_somethings, editor->floor_texture_something, sizeof(t_texture_something));
-	// ceiling texture
-	editor->ceiling_texture_something = ft_memalloc(sizeof(t_texture_something));
-	editor->ceiling_texture_something->button = editor->ceiling_texture_button;
-	editor->ceiling_texture_something->image = editor->ceiling_texture_image;
-	add_to_list(&editor->texture_somethings, editor->ceiling_texture_something, sizeof(t_texture_something));
-
-	add_to_list(&editor->texture_opening_buttons, editor->sprite_texture_button, UI_TYPE_ELEMENT);
-	add_to_list(&editor->texture_opening_buttons, editor->wall_texture_button, UI_TYPE_ELEMENT);
-	add_to_list(&editor->texture_opening_buttons, editor->portal_texture_button, UI_TYPE_ELEMENT);
-	add_to_list(&editor->texture_opening_buttons, editor->floor_texture_button, UI_TYPE_ELEMENT);
-	add_to_list(&editor->texture_opening_buttons, editor->ceiling_texture_button, UI_TYPE_ELEMENT);
+	editor->texture_menu
+			= ui_layout_get_element(&editor->layout, "texture_menu");
+	editor->texture_menu_close_button = ui_layout_get_element(
+			&editor->layout, "texture_menu_close_button");
+	editor->texture_menu_label
+			= ui_layout_get_element(&editor->layout, "texture_menu_label");
+	texture_elem_init(editor);
+	new_texture_something(editor, &editor->sprite_texture_something,
+		editor->sprite_texture_button, editor->sprite_texture_image);
+	new_texture_something(editor, &editor->wall_texture_something,
+		editor->wall_texture_button, editor->wall_texture_image);
+	new_texture_something(editor, &editor->portal_texture_something,
+		editor->portal_texture_button, editor->portal_texture_image);
+	new_texture_something(editor, &editor->floor_texture_something,
+		editor->floor_texture_button, editor->floor_texture_image);
+	new_texture_something(editor, &editor->ceiling_texture_something,
+		editor->ceiling_texture_button, editor->ceiling_texture_image);
 }
 
 void	entity_menu_init(t_editor *editor)

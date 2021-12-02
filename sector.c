@@ -105,8 +105,8 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 	char	temp_str[20];
 
 	activate_correct_sector_skybox_button(editor, sector);
-	editor->floor_texture_something->id = sector->floor_texture;
-	editor->ceiling_texture_something->id = sector->ceiling_texture;
+	editor->floor_texture_something.id = sector->floor_texture;
+	editor->ceiling_texture_something.id = sector->ceiling_texture;
 	ui_input_set_text(editor->floor_height_input,
 		ft_b_itoa(sector->floor_height, temp_str));
 	ui_input_set_text(editor->ceiling_height_input,
@@ -136,8 +136,8 @@ void	get_sector_ui(t_editor *editor, t_sector *sector)
 	t_ui_element	*skybox_active;
 	char			temp_str[20];
 
-	sector->floor_texture = editor->floor_texture_something->id;
-	sector->ceiling_texture = editor->ceiling_texture_something->id;
+	sector->floor_texture = editor->floor_texture_something.id;
+	sector->ceiling_texture = editor->ceiling_texture_something.id;
 
 	if (ui_dropdown_exit(editor->sector_skybox_dropdown))
 	{

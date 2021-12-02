@@ -330,8 +330,8 @@ void	set_wall_ui(t_editor *editor, t_wall *wall)
 	char	temp_str[20];
 
 	activate_correct_wall_skybox_button(editor, wall);
-	editor->wall_texture_something->id = wall->wall_texture;
-	editor->portal_texture_something->id = wall->portal_texture;
+	editor->wall_texture_something.id = wall->wall_texture;
+	editor->portal_texture_something.id = wall->portal_texture;
 	ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT,
 		editor->wall_textures[wall->wall_texture]);
 	ui_element_image_set(editor->portal_texture_image, UI_STATE_AMOUNT,
@@ -371,8 +371,8 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 	}
 
 	wall->solid = editor->solid_checkbox->is_toggle;
-	wall->wall_texture = editor->wall_texture_something->id;
-	wall->portal_texture = editor->portal_texture_something->id;
+	wall->wall_texture = editor->wall_texture_something.id;
+	wall->portal_texture = editor->portal_texture_something.id;
 
 	if (!editor->portal_checkbox->is_toggle)
 		wall->neighbor = NULL;

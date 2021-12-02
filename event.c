@@ -183,39 +183,31 @@ void	remove_event_elem_from_list(t_event_elem *elem, t_list **list)
 	}
 }
 
-t_ui_element	*event_elem_parent_and_recipe(
-		t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id)
-{
-	g_acceptable[ui_type].maker(parent->win, elem);
-	ui_element_set_parent(elem, parent, UI_TYPE_ELEMENT);
-	ui_element_edit(elem, ui_layout_get_recipe(parent->win->layout, recipe_id));
-}
-
 t_event_elem	*event_element_new(t_ui_element *parent)
 {
 	t_event_elem	*event_elem;
 
 	event_elem = ft_memalloc(sizeof(t_event_elem));
-	event_elem_parent_and_recipe(&event_elem->menu,
+	set_elem_parent_and_recipe(&event_elem->menu,
 		UI_TYPE_MENU, parent, "event_menu_prefab");
-	event_elem_parent_and_recipe(&event_elem->id,
+	set_elem_parent_and_recipe(&event_elem->id,
 			UI_TYPE_LABEL, &event_elem->menu, "event_id_prefab");
-	event_elem_parent_and_recipe(&event_elem->type,
+	set_elem_parent_and_recipe(&event_elem->type,
 			UI_TYPE_LABEL, &event_elem->menu, "event_type_prefab");
-	event_elem_parent_and_recipe(&event_elem->action,
+	set_elem_parent_and_recipe(&event_elem->action,
 			UI_TYPE_LABEL, &event_elem->menu, "event_action_prefab");
-	event_elem_parent_and_recipe(&event_elem->target_id,
+	set_elem_parent_and_recipe(&event_elem->target_id,
 			UI_TYPE_LABEL, &event_elem->menu, "event_target_id_prefab");
-	event_elem_parent_and_recipe(&event_elem->sector,
+	set_elem_parent_and_recipe(&event_elem->sector,
 			UI_TYPE_LABEL, &event_elem->menu, "event_sector_prefab");
-	event_elem_parent_and_recipe(&event_elem->min,
+	set_elem_parent_and_recipe(&event_elem->min,
 			UI_TYPE_LABEL, &event_elem->menu, "event_min_prefab");
-	event_elem_parent_and_recipe(&event_elem->max,
+	set_elem_parent_and_recipe(&event_elem->max,
 			UI_TYPE_LABEL, &event_elem->menu, "event_max_prefab");
-	event_elem_parent_and_recipe(&event_elem->speed,
+	set_elem_parent_and_recipe(&event_elem->speed,
 			UI_TYPE_LABEL, &event_elem->menu, "event_speed_prefab");
 	event_elem->button = ft_memalloc(sizeof(t_ui_element));
-	event_elem_parent_and_recipe(event_elem->button,
+	set_elem_parent_and_recipe(event_elem->button,
 			UI_TYPE_BUTTON, &event_elem->menu, "event_button_prefab");
 	return (event_elem);
 }
