@@ -461,6 +461,22 @@ struct s_event
 	t_event_elem	*elem;
 };
 
+// Init
+
+void				editor_init(t_editor *editor);
+void				load_map_textures(t_editor *editor);
+void				edit_window_init(t_editor *editor);
+void				save_window_init(t_editor *editor);
+void				event_menu_init(t_editor *editor);
+void				info_menu_init(t_editor *editor);
+void				entity_menu_init(t_editor *editor);
+void				texture_menu_init(t_editor *editor);
+void				sprite_edit_init(t_editor *editor);
+void				wall_edit_init(t_editor *editor);
+void				sector_edit_init(t_editor *editor);
+void				selection_menu_init(t_editor *editor);
+void				draw_init(t_editor *editor);
+
 // Event
 void				user_events(t_editor *editor, SDL_Event e);
 

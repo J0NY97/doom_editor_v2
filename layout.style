@@ -43,7 +43,7 @@ toolbox_menu_prefab
 close_button_prefab
 {
 	xywh : 229, 1, 20, 20;
-	title : :;
+	title : ;
 	bg_image_default : exit_button.png;
 	bg_image_hover : exit_button_hover.png;
 };
@@ -66,8 +66,14 @@ cancel_button_prefab
 	bg_color_click : 0xffe15669;
 };
 
+drop_menu_prefab
+{
+	bg_color : 0xff000000;
+};
+
 drop_button_prefab
 {
+	x : 1;
 	w : 75;
 	h : 20;
 	bg_color_default : 0xffffffff;
@@ -99,7 +105,7 @@ select_button_prefab
 	y : 10;
 	w : 25;
 	h : 25;
-	title : :;
+	title : ;
 };
 
 draw_button : select_button_prefab
@@ -124,6 +130,10 @@ type_dropdown
 	text_align : left center;
 	z : 10000000;
 };
+type_drop_menu : drop_menu_prefab
+{
+	w : 50;
+};
 
 point_button : select_button_prefab
 {
@@ -145,7 +155,7 @@ wall_button : select_button_prefab
 
 select_drop_button_prefab : drop_button_prefab
 {
-	w : 50;
+	w : 48;
 };
 
 sector_button : select_drop_button_prefab
@@ -261,30 +271,31 @@ sector_skybox_dropdown
 {
 	xywh : 150, 30, 75, 20;
 	title : Skybox;
+	z : 100;
 };
-sector_skybox_menu
+sector_skybox_menu : drop_menu_prefab
 {
 	w : 65;
 };
 sector_skybox_none : drop_button_prefab
 {
 	title : No Skybox;
-	w : 65;
+	w : 63;
 };
 sector_skybox_one : drop_button_prefab
 {
 	title : -1 Skybox;
-	w : 65;
+	w : 63;
 };
 sector_skybox_two : drop_button_prefab
 {
 	title : -2 Skybox;
-	w : 65;
+	w : 63;
 };
 sector_skybox_three : drop_button_prefab
 {
 	title : -3 Skybox;
-	w : 65;
+	w : 63;
 };
 
 floor_height_label
@@ -456,7 +467,7 @@ wall_edit_label : label_menu_label_prefab
 close_wall_edit_button
 {
 	xywh : 229, 1, 20, 20;
-	title : :;
+	title : ;
 	bg_image_default : exit_button.png;
 	bg_image_hover : exit_button_hover.png;
 };
@@ -570,29 +581,30 @@ wall_skybox_dropdown
 {
 	xywh : 120, 30, 100, 20;
 	title : Skybox;
+	z : 100;
 };
-wall_skybox_menu
+wall_skybox_menu : drop_menu_prefab
 {
 	w : 90;
 };
 wall_skybox_none : drop_button_prefab
 {
-	w : 90;
+	w : 88;
 	title : No Skybox;
 };
 wall_skybox_one : drop_button_prefab
 {
-	w : 90;
+	w : 88;
 	title : -1 Skybox;
 };
 wall_skybox_two : drop_button_prefab
 {
-	w : 90;
+	w : 88;
 	title : -2 Skybox;
 };
 wall_skybox_three : drop_button_prefab
 {
-	w : 90;
+	w : 88;
 	title : -3 Skybox;
 };
 
@@ -655,15 +667,16 @@ sprite_scale_input
 
 sprite_drop_button_prefab : drop_button_prefab
 {
-	w : 100;
+	w : 98;
 };
 sprite_type_dropdown
 {
 	xywh : 10, 125, 110, 20;
 	text_pos : 2, 2, 108, 18;
 	title : Type;
+	z : 100;
 };
-sprite_type_drop_menu
+sprite_type_drop_menu : drop_menu_prefab
 {
 	w : 100;
 	h : 100;
@@ -728,7 +741,7 @@ mouse_hover_label
 mouse_hover_info
 {
 	xywh : 0, 20, 20, 20;
-	title : [mouse hvoer info];
+	title : [mouse hover info];
 };
 
 misc_info_label
@@ -813,7 +826,7 @@ entity_drop_button_prefab : drop_button_prefab
 {
 	w : 90;
 };
-entity_drop_menu
+entity_drop_menu : drop_menu_prefab
 {
 	w : 90;
 };
@@ -950,7 +963,7 @@ event_button_prefab
 	flag : render_on_parent;
 	text_color : 0xffffffff;
 	text_pos : 2, 2, 200, 60;
-	title :;
+	title : ;
 };
 event_id_prefab
 {
@@ -1018,7 +1031,7 @@ event_drop_button_prefab : drop_button_prefab
 	w : 65;
 };
 
-event_drop_menu_prefab
+event_drop_menu_prefab : drop_menu_prefab
 {
 	w : 65;
 };
@@ -1183,6 +1196,7 @@ name_label
 name_input
 {
 	xywh : 50, 0, 100, 20;
+	placeholder : Map Name;
 	title : map_name;
 	text_align : left center;
 };

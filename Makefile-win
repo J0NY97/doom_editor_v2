@@ -2,6 +2,7 @@ NAME = doom_editor
 SRCS = \
 	./main.c \
 	./events.c \
+	./init.c \
 	./draw.c \
 	./point.c \
 	./wall.c \
