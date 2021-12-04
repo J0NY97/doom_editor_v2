@@ -380,6 +380,33 @@ char	*set_event(t_editor *editor)
 	return (final);
 }
 
+void	first_half(t_editor *editor, int fd, char *delim)
+{
+	char	*temp;
+
+	temp = set_map_info(editor);
+	ft_dprintf(fd, "%s%s", temp, delim);
+	ft_strdel(&temp);
+	temp = set_spawn(editor);
+	ft_dprintf(fd, "%s%s", temp, delim);
+	ft_strdel(&temp);
+	temp = set_points(editor);
+	ft_dprintf(fd, "%s%s", temp, delim);
+	ft_strdel(&temp);
+	temp = set_walls(editor);
+	ft_dprintf(fd, "%s%s", temp, delim);
+	ft_strdel(&temp);
+	temp = set_sprites(editor);
+	ft_dprintf(fd, "%s%s", temp, delim);
+	ft_strdel(&temp);
+	temp = set_sectors(editor);
+	ft_dprintf(fd, "%s%s", temp, delim);
+	ft_strdel(&temp);
+	temp = set_fandc(editor);
+	ft_dprintf(fd, "%s%s", temp, delim);
+	ft_strdel(&temp);
+}
+
 void	set_map(t_editor *editor, char *name)
 {
 	int		fd;
@@ -395,73 +422,13 @@ void	set_map(t_editor *editor, char *name)
 	}
 	final = NULL;
 	ft_strcpy(delim, "-\n");
-
-	temp = set_map_info(editor);
-	ft_dprintf(fd, "%s%s", temp, delim);
-	ft_strdel(&temp);
-
-	temp = set_spawn(editor);
-	ft_dprintf(fd, "%s%s", temp, delim);
-	ft_strdel(&temp);
-
-	temp = set_points(editor);
-	ft_dprintf(fd, "%s%s", temp, delim);
-	ft_strdel(&temp);
-
-	temp = set_walls(editor);
-	ft_dprintf(fd, "%s%s", temp, delim);
-	ft_strdel(&temp);
-
-	temp = set_sprites(editor);
-	ft_dprintf(fd, "%s%s", temp, delim);
-	ft_strdel(&temp);
-
-	temp = set_sectors(editor);
-	ft_dprintf(fd, "%s%s", temp, delim);
-	ft_strdel(&temp);
-
-	temp = set_fandc(editor);
-	ft_dprintf(fd, "%s%s", temp, delim);
-	ft_strdel(&temp);
-
+	first_half(editor, fd, delim);
 	temp = set_entity(editor);
 	ft_dprintf(fd, "%s%s", temp, delim);
 	ft_strdel(&temp);
-
 	temp = set_event(editor);
 	ft_dprintf(fd, "%s%s", temp, delim);
 	ft_strdel(&temp);
-	/*
-	char *delim = ft_sprintf("-\n");
-	char *info = set_map_info(editor);
-	char *spawn = set_spawn(editor);
-	char *points = set_points(editor);
-	char *walls = set_walls(editor);
-	char *sprites = set_sprites(editor);
-	char *sectors = set_sectors(editor);
-	char *fandc = set_fandc(editor);
-	char *entity = set_entity(editor);
-	char *event = set_event(editor);
-	ft_dprintf(fd, "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
-		info, delim,
-		spawn, delim,
-		points, delim,
-		walls, delim,
-		sprites, delim,
-		sectors, delim,
-		fandc, delim,
-		entity, delim,
-		event, delim);
-	ft_strdel(&delim);
-	ft_strdel(&info);
-	ft_strdel(&points);
-	ft_strdel(&walls);
-	ft_strdel(&sprites);
-	ft_strdel(&sectors);
-	ft_strdel(&fandc);
-	ft_strdel(&entity);
-	ft_strdel(&event);
-	*/
 	close(fd);
 	ft_printf("[%s] Map saved succesfully : [%s]\n", __FUNCTION__, name);
 }
