@@ -102,6 +102,12 @@ void	fps_func(t_fps *fps)
 	}
 }
 
+void	setup_ui_values(t_editor *editor)
+{
+	ui_input_set_text(editor->name_input, editor->map_name);
+	realign_event_buttons(editor);
+}
+
 int	main(int ac, char **av)
 {
 	t_editor	editor;
@@ -115,8 +121,7 @@ int	main(int ac, char **av)
 		get_map(&editor, editor.map_full_path);
 	else
 		ft_printf("[%s] No map given.\n", __FUNCTION__);
-	ui_input_set_text(editor.name_input, editor.map_name);
-	realign_event_buttons(&editor);
+	setup_ui_values(&editor);
 	memset(&fps, 0, sizeof(t_fps));
 	while (!editor.win_main->wants_to_close)
 	{

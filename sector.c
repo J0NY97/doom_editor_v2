@@ -106,8 +106,10 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 	char	temp_str[20];
 
 	activate_correct_sector_skybox_button(editor, sector);
-	sector->floor_texture = ft_clamp(sector->floor_texture, 0, MAP_TEXTURE_AMOUNT);
-	sector->ceiling_texture = ft_clamp(sector->ceiling_texture, 0, MAP_TEXTURE_AMOUNT);
+	sector->floor_texture
+		= ft_clamp(sector->floor_texture, 0, MAP_TEXTURE_AMOUNT);
+	sector->ceiling_texture
+		= ft_clamp(sector->ceiling_texture, 0, MAP_TEXTURE_AMOUNT);
 	editor->floor_texture_something.id = sector->floor_texture;
 	editor->ceiling_texture_something.id = sector->ceiling_texture;
 	ui_input_set_text(editor->floor_height_input,
@@ -128,6 +130,70 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 		editor->wall_textures[sector->floor_texture]);
 }
 
+void	get_height_inputs(t_editor *editor, t_sector *sector)
+{
+	char	temp_str[20];
+
+	if (ui_input_exit(editor->floor_height_input))
+	{
+		sector->floor_height = ft_min(ft_atoi(ui_input_get_text(
+						editor->floor_height_input)), sector->ceiling_height);
+		ft_b_itoa(sector->floor_height, temp_str);
+		ui_input_set_text(editor->floor_height_input, temp_str);
+	}
+	if (ui_input_exit(editor->ceiling_height_input))
+	{
+		sector->ceiling_height = ft_max(ft_atoi(ui_input_get_text(
+						editor->ceiling_height_input)), sector->floor_height);
+		ft_b_itoa(sector->ceiling_height, temp_str);
+		ui_input_set_text(editor->ceiling_height_input, temp_str);
+	}
+}
+
+/*
+ * Not grenade launcher,
+ * 	but gravity and lighting;
+*/
+void	get_gl_inputs(t_editor *editor, t_sector *sector)
+{
+	char	temp_str[20];
+
+	if (ui_input_exit(editor->gravity_input))
+	{
+		sector->gravity = ft_clamp(ft_atoi(ui_input_get_text(
+						editor->gravity_input)), 0, 100);
+		ft_b_itoa(sector->gravity, temp_str);
+		ui_input_set_text(editor->gravity_input, temp_str);
+	}
+	if (ui_input_exit(editor->lighting_input))
+	{
+		sector->lighting = ft_clamp(ft_atoi(ui_input_get_text(
+						editor->lighting_input)), 0, 100);
+		ft_b_itoa(sector->lighting, temp_str);
+		ui_input_set_text(editor->lighting_input, temp_str);
+	}
+}
+
+void	get_texture_scale_inputs(t_editor *editor, t_sector *sector)
+{
+	char	temp_str[20];
+
+	if (ui_input_exit(editor->floor_texture_scale_input))
+	{
+		sector->floor_scale = ft_fclamp(ft_atof(ui_input_get_text(
+						editor->floor_texture_scale_input)), 0.1f, 100.0f);
+		ft_b_ftoa(sector->floor_scale, 2, temp_str);
+		ui_input_set_text(editor->floor_texture_scale_input, temp_str);
+	}
+	if (ui_input_exit(editor->ceiling_texture_scale_input))
+	{
+		sector->ceiling_scale = ft_fclamp(ft_atof(ui_input_get_text(
+						editor->ceiling_texture_scale_input)), 0.1f, 100.0f);
+		ft_b_ftoa(sector->ceiling_scale, 2, temp_str);
+		ui_input_set_text(editor->ceiling_texture_scale_input, temp_str);
+	}
+}
+
 /*
  * From ui update the t_sector values;
  * when you edit sector;
@@ -138,7 +204,6 @@ void	set_sector_ui(t_editor *editor, t_sector *sector)
 void	get_sector_ui(t_editor *editor, t_sector *sector)
 {
 	t_ui_element	*skybox_active;
-	char			temp_str[20];
 
 	sector->floor_texture = editor->floor_texture_something.id;
 	sector->ceiling_texture = editor->ceiling_texture_something.id;
@@ -154,48 +219,9 @@ void	get_sector_ui(t_editor *editor, t_sector *sector)
 		else
 			sector->skybox = 0;
 	}
-	if (ui_input_exit(editor->floor_height_input))
-	{
-		sector->floor_height = ft_min(ft_atoi(ui_input_get_text(
-						editor->floor_height_input)), sector->ceiling_height);
-		ft_b_itoa(sector->floor_height, temp_str);
-		ui_input_set_text(editor->floor_height_input, temp_str);
-	}
-	if (ui_input_exit(editor->ceiling_height_input))
-	{
-		sector->ceiling_height = ft_max(ft_atoi(ui_input_get_text(
-						editor->ceiling_height_input)), sector->floor_height);
-		ft_b_itoa(sector->ceiling_height, temp_str);
-		ui_input_set_text(editor->ceiling_height_input, temp_str);
-	}
-	if (ui_input_exit(editor->gravity_input))
-	{
-		sector->gravity = ft_clamp(ft_atoi(ui_input_get_text(
-						editor->gravity_input)), 0, 100);
-		ft_b_itoa(sector->gravity, temp_str);
-		ui_input_set_text(editor->gravity_input, temp_str);
-	}
-	if (ui_input_exit(editor->lighting_input))
-	{
-		sector->lighting = ft_clamp(ft_atoi(ui_input_get_text(
-						editor->lighting_input)), 0, 100);
-		ft_b_itoa(sector->lighting, temp_str);
-		ui_input_set_text(editor->lighting_input, temp_str);
-	}
-	if (ui_input_exit(editor->floor_texture_scale_input))
-	{
-		sector->floor_scale = ft_fclamp(ft_atof(ui_input_get_text(
-						editor->floor_texture_scale_input)), 0.1f, 100.0f);
-		ft_b_ftoa(sector->floor_scale, 2, temp_str);
-		ui_input_set_text(editor->floor_texture_scale_input, temp_str);
-	}
-	if (ui_input_exit(editor->ceiling_texture_scale_input))
-	{
-		sector->ceiling_scale = ft_fclamp(ft_atof(ui_input_get_text(
-						editor->ceiling_texture_scale_input)), 0.1f, 100.0f);
-		ft_b_ftoa(sector->ceiling_scale, 2, temp_str);
-		ui_input_set_text(editor->ceiling_texture_scale_input, temp_str);
-	}
+	get_height_inputs(editor, sector);
+	get_gl_inputs(editor, sector);
+	get_texture_scale_inputs(editor, sector);
 }
 
 t_sector	*get_sector_with_id(t_list *sectors, int id)
