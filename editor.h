@@ -537,6 +537,7 @@ int					check_point_in_sector(t_sector *sector, t_vec2i p);
 t_wall				*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2);
 void				entity_inside_which_sector(t_list *sectors, t_entity *entity);
 void				sector_check_errors(t_editor *editor, t_sector *sector);
+int					get_sector_id(t_sector *sector);
 
 // Kind of wall, and kind of not wall
 bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
@@ -571,6 +572,7 @@ void				update_id_dropdown(t_editor *editor, int action);
 void				set_event_ui(t_editor *editor, t_event *event);
 int					get_event_type(char *type_name);
 int					get_event_action(char *type_name);
+void				realign_event_buttons(t_editor *editor);
 
 // Sprite
 t_sprite			*sprite_new(void);

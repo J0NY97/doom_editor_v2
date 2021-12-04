@@ -426,3 +426,10 @@ void	sector_check_errors(t_editor *editor, t_sector *sector)
 		editor->errors += 1;
 	}
 }
+
+int	get_sector_id(t_sector *sector)
+{
+	if (!sector)
+		return (-1);
+	return (sector->id);
+}
