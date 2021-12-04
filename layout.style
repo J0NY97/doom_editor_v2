@@ -1268,7 +1268,7 @@ sector_hover_info_label
 ///////////////////
 win_edit
 {
-	xywh : 100, 100, 200, 100;
+	xywh : 101, 100, 200, 100;
 	bg_color : 0xffb0b0b0;
 	flag : xhides hide;
 };

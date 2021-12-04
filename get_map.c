@@ -341,7 +341,7 @@ void	get_map(t_editor *editor, char *map)
 	file_content = ft_get_file_content(map);
 	lines = ft_strsplit(file_content, '\n');
 	i = -1;
-	while (lines[++i])
+	while (lines && lines[++i])
 	{
 		if (ft_strnequ(lines[i], "type:map", 8))
 			helper_pelper(editor, lines, &i, &get_map_info);
@@ -361,7 +361,6 @@ void	get_map(t_editor *editor, char *map)
 			get_entity(editor, lines, &i);
 		else if (ft_strnequ(lines[i], "type:event", 10))
 			get_events(editor, lines, &i);
-		ft_printf("just printing for the fun of it.\n");
 	}
 	ft_arraydel(lines);
 	ft_strdel(&file_content);

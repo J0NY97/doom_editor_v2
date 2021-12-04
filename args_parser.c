@@ -22,7 +22,7 @@ int	args_parser(t_editor *editor, int ac, char **av)
 			ft_strremove(temp[arr_len - 1], ".dnde");
 			ft_strremove(temp[arr_len - 1], ".dnds");
 			ft_strremove(temp[arr_len - 1], ".dnd");
-			editor->map_name = temp[arr_len];
+			editor->map_name = ft_strdup(temp[arr_len - 1]);
 			editor->map_full_path = ft_strdup(av[1]);
 			ft_arraydel(temp);
 			return (1);
