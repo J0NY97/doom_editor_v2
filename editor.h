@@ -546,7 +546,6 @@ t_entity			*entity_new(void);
 t_entity			*add_entity(t_editor *editor);
 int					remove_entity(t_editor *editor, t_entity *entity);
 void				entity_render(t_editor *editor, t_entity *entity);
-void				entity_yaw_render(t_editor *editor, t_entity *entity);
 void				set_entity_ui(t_editor *editor, t_entity *entity);
 void				get_entity_ui(t_editor *editor, t_entity *entity);
 t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
@@ -604,6 +603,8 @@ void				draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos,
 void				draw_text_on_texture(SDL_Texture *texture, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 void				send_info_message(t_editor *editor, char *text);
 t_ui_element		*set_elem_parent_and_recipe(t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id);
+void				draw_arrow(SDL_Surface *surface, t_vec2i start, int len, float yaw);
+t_vec2i				get_middle(t_vec2i p1, t_vec2i p2);
 
 // Bxpm
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);

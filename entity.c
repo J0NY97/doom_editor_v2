@@ -57,27 +57,6 @@ void	entity_render(t_editor *editor, t_entity *entity)
 	SDL_SetRenderTarget(editor->win_main->renderer, NULL);
 }
 
-/*
- * NOTE : I know this is hard to read, it looked better before norme!
-*/
-void	entity_yaw_render(t_editor *editor, t_entity *entity)
-{
-	float	angle;
-	t_vec2i	p1;
-	t_vec2i	p2;
-
-	angle = entity->yaw * (M_PI / 180);
-	p1 = conversion(editor, entity->pos);
-	p2 = vec2i(cos(angle) * 20.0f + p1.x, sin(angle) * 20.0f + p1.y);
-	ui_surface_line_draw(editor->drawing_surface, p1, p2, 0xffaaab5d);
-	angle = (entity->yaw - 45) * (M_PI / 180);
-	p1 = vec2i(cos(angle) * -10.0f + p2.x, sin(angle) * -10.0f + p2.y);
-	ui_surface_line_draw(editor->drawing_surface, p2, p1, 0xffaaab5d);
-	angle = (entity->yaw + 45) * (M_PI / 180);
-	p1 = vec2i(cos(angle) * -10.0f + p2.x, sin(angle) * -10.0f + p2.y);
-	ui_surface_line_draw(editor->drawing_surface, p2, p1, 0xffaaab5d);
-}
-
 void	set_entity_ui(t_editor *editor, t_entity *entity)
 {
 	char	temp_str[20];

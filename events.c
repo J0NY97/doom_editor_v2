@@ -16,6 +16,13 @@ void	calculate_hover(t_editor *editor)
 		* (editor->gap_size * editor->zoom);
 	editor->move_amount.x = editor->mouse_pos.x - editor->last_mouse_pos.x;
 	editor->move_amount.y = editor->mouse_pos.y - editor->last_mouse_pos.y;
+	if (editor->win_main->scroll)
+	{
+		editor->zoom
+			= ft_fclamp(editor->zoom + editor->win_main->scroll / 10.0f,
+				0.1f, 10.0f);
+		editor->update_grid = 1;
+	}
 }
 
 void	update_info_label(t_editor *editor)
@@ -994,6 +1001,8 @@ void	save_window_events(t_editor *editor)
 {
 	if (editor->save_button->state == UI_STATE_CLICK)
 		ui_window_flag_set(editor->win_save, UI_WINDOW_SHOW | UI_WINDOW_RAISE);
+	if (!editor->win_save->show)
+		return ;
 	if (editor->endless_checkbox->was_click)
 		editor->map_type = MAP_TYPE_ENDLESS;
 	else if (editor->story_checkbox->was_click)
@@ -1002,8 +1011,6 @@ void	save_window_events(t_editor *editor)
 		editor->map_type == MAP_TYPE_ENDLESS);
 	ui_checkbox_toggle_accordingly(editor->story_checkbox,
 		editor->map_type == MAP_TYPE_STORY);
-	if (!editor->win_save->show)
-		return ;
 	if (ui_button(editor->confirm_save_button))
 		save_button_events(editor);
 }

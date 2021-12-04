@@ -54,6 +54,7 @@ int	hover_over_open_menus(t_editor *editor)
 		|| ui_element_is_hover(editor->sprite_edit_menu)
 		|| ui_element_is_hover(editor->texture_menu)
 		|| ui_element_is_hover(editor->event_edit_menu)
+		|| ui_element_is_hover(editor->spawn_edit_menu)
 		|| ui_element_was_hover(editor->selection_dropdown_menu)
 		|| ui_element_is_hover(editor->menu_toolbox_top))
 		return (1);
@@ -97,4 +98,27 @@ t_ui_element	*set_elem_parent_and_recipe(
 	g_acceptable[ui_type].maker(parent->win, elem);
 	ui_element_set_parent(elem, parent, UI_TYPE_ELEMENT);
 	ui_element_edit(elem, ui_layout_get_recipe(parent->win->layout, recipe_id));
+}
+
+void	draw_arrow(SDL_Surface *surface, t_vec2i start, int len, float yaw)
+{
+	float	angle;
+	t_vec2i	p1;
+	t_vec2i	p2;
+
+	angle = yaw * (M_PI / 180);
+	p1 = start;
+	p2 = vec2i(cos(angle) * (len * 2) + p1.x, sin(angle) * (len * 2) + p1.y);
+	ui_surface_line_draw(surface, p1, p2, 0xffaaab5d);
+	angle = (yaw - 45) * (M_PI / 180);
+	p1 = vec2i(cos(angle) * -len + p2.x, sin(angle) * -len + p2.y);
+	ui_surface_line_draw(surface, p2, p1, 0xffaaab5d);
+	angle = (yaw + 45) * (M_PI / 180);
+	p1 = vec2i(cos(angle) * -len + p2.x, sin(angle) * -len + p2.y);
+	ui_surface_line_draw(surface, p2, p1, 0xffaaab5d);
+}
+
+t_vec2i	get_middle(t_vec2i p1, t_vec2i p2)
+{
+	return (vec2i((p1.x + p2.x) / 2, (p1.y + p2.y) / 2));
 }

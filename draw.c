@@ -25,6 +25,7 @@ void	draw_grid(t_editor *editor)
 {
 	if (editor->update_grid)
 	{
+		SDL_FillRect(editor->grid_surface, NULL, 0);
 		draw_grid_lines(editor->grid_surface, editor->gap_size, editor->zoom);
 		editor->update_grid = 0;
 		ft_printf("[%s] We are updating grid surface.\n", __FUNCTION__);
@@ -110,7 +111,8 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 	while (entities)
 	{
 		entity = entities->content;
-		entity_yaw_render(editor, entities->content);
+		draw_arrow(editor->drawing_surface,
+			conversion(editor, entity->pos), 10, entity->yaw);
 		entity_inside_which_sector(editor->sectors, entity);
 		entity_check_errors(editor, entity);
 		entities = entities->next;
@@ -123,6 +125,8 @@ void	draw_spawn(t_editor *editor)
 
 	ui_surface_circle_draw_filled(editor->drawing_surface,
 		conversion(editor, editor->spawn.pos), 10, 0xff00ff00);
+	draw_arrow(editor->drawing_surface,
+		conversion(editor, editor->spawn.pos), 10, editor->spawn.yaw);
 	curr = editor->sectors;
 	editor->spawn.inside_sector = NULL;
 	while (curr)
@@ -169,6 +173,22 @@ void	update_error_label(t_editor *editor)
 		editor->error_label->show = 0;
 }
 
+void	draw_drawing_wall_len(t_editor *editor)
+{
+	char	temp_str[20];
+	int		len ;
+	t_vec2i	middle;
+
+	if (editor->first_point_set)
+	{
+		len = distance(editor->first_point.v, editor->mouse_pos.v, 2);
+		middle = conversion(editor,
+				get_middle(editor->first_point, editor->mouse_pos));
+		draw_text(editor->drawing_surface, ft_b_itoa(len, temp_str),
+			editor->font, middle, 0xffdeface);
+	}
+}
+
 void	user_render(t_editor *editor)
 {
 	editor->errors = 0;
@@ -178,6 +198,7 @@ void	user_render(t_editor *editor)
 	draw_selected(editor);
 	draw_entities_yaw(editor, editor->entities);
 	draw_spawn(editor);
+	draw_drawing_wall_len(editor);
 	SDL_UpdateTexture(editor->drawing_texture, NULL,
 		editor->drawing_surface->pixels, editor->drawing_surface->pitch);
 	SDL_SetRenderTarget(editor->win_main->renderer, editor->win_main->texture);

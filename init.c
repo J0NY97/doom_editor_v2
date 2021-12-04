@@ -400,7 +400,7 @@ void	editor_init(t_editor *editor)
 	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
 	editor->font = TTF_OpenFont(UI_PATH"fonts/DroidSans.ttf", 20);
 	editor->map_type = MAP_TYPE_ENDLESS;
-	editor->map_name = ft_strdup("map_name.dnd");
+	editor->map_name = ft_strdup("map_name");
 	editor->win_main = ui_layout_get_window(&editor->layout, "win_main");
 	selection_menu_init(editor);
 	sector_edit_init(editor);

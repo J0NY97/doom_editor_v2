@@ -115,7 +115,6 @@ int	main(int ac, char **av)
 		get_map(&editor, editor.map_full_path);
 	else
 		ft_printf("[%s] No map given.\n", __FUNCTION__);
-	ft_printf("map: %s\n", editor.map_name);
 	ui_input_set_text(editor.name_input, editor.map_name);
 	memset(&fps, 0, sizeof(t_fps));
 	while (!editor.win_main->wants_to_close)
