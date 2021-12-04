@@ -335,3 +335,25 @@ int	get_next_event_id(t_list *list)
 		;
 	return (i);
 }
+
+int	get_event_type(char *type_name)
+{
+	int	ddd;
+
+	ddd = -1;
+	while (++ddd < EVENT_TYPE_AMOUNT)
+		if (ft_strequ(type_name, g_event_type[ddd]))
+			return (ddd);
+	return (0);
+}
+
+int	get_event_action(char *type_name)
+{
+	int	ddd;
+
+	ddd = -1;
+	while (++ddd < EVENT_ACTION_AMOUNT)
+		if (ft_strequ(type_name, g_event_action[ddd].name))
+			return (g_event_action[ddd].id);
+	return (0);
+}

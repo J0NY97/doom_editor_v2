@@ -9,13 +9,14 @@ char	*set_map_info(t_editor *editor)
 		map_type = ft_strdup("story");
 	else
 		map_type = ft_strdup("endless");
-	final = ft_sprintf("type:map\ttype\tscale\tvert\twall\tsect\n%d\t%s\t%.2f\t%d\t%d\t%d\n",
-			0,
-			map_type,
-			editor->map_scale,
-			ft_lstlen(editor->points),
-			ft_lstlen(editor->walls),
-			ft_lstlen(editor->sectors));
+	final = ft_sprintf("type:map\ttype\tscale\tvert\twall\tsect\n"
+		"%d\t%s\t%.2f\t%d\t%d\t%d\n",
+		0,
+		map_type,
+		editor->map_scale,
+		ft_lstlen(editor->points),
+		ft_lstlen(editor->walls),
+		ft_lstlen(editor->sectors));
 	ft_strdel(&map_type);
 	return (final);
 }
@@ -28,13 +29,14 @@ char	*set_spawn(t_editor *editor)
 	inside_sector_id = -1;
 	if (editor->spawn.inside_sector)
 		inside_sector_id = editor->spawn.inside_sector->id;
-	final = ft_sprintf("type:spawn\tx\ty\tz\tyaw\tsector\n%d\t%d\t%d\t%d\t%d\t%d\n",
-			0,
-			editor->spawn.pos.x,
-			editor->spawn.pos.y,
-			editor->spawn.z,
-			editor->spawn.yaw,
-			inside_sector_id);
+	final = ft_sprintf("type:spawn\tx\ty\tz\tyaw\tsector\n"
+		"%d\t%d\t%d\t%d\t%d\t%d\n",
+		0,
+		editor->spawn.pos.x,
+		editor->spawn.pos.y,
+		editor->spawn.z,
+		editor->spawn.yaw,
+		inside_sector_id);
 	return (final);
 }
 
@@ -53,11 +55,29 @@ char	*set_points(t_editor *editor)
 	{
 		point = curr->content;
 		point->id = ++id;
-		temp = ft_sprintf("%d\t%d\t%d\n", point->id, point->pos.x, point->pos.y);
+		temp = ft_sprintf("%d\t%d\t%d\n",
+			point->id, point->pos.x, point->pos.y);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
 	}
+	return (final);
+}
+
+char	*create_wall_str(t_wall *wall)
+{
+	char	*final;
+	int		texture_id;
+
+	texture_id = wall->wall_texture;
+	if (wall->parent_sector->skybox != 0)
+		texture_id = wall->parent_sector->skybox;
+	if (wall->skybox != 0)
+		texture_id = wall->skybox;
+	final = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.2f\t%d\n",
+		wall->id, wall->p1->id, wall->p2->id,
+		texture_id, wall->portal_texture,
+		wall->texture_scale, wall->solid);
 	return (final);
 }
 
@@ -68,7 +88,6 @@ char	*set_walls(t_editor *editor)
 	t_list	*curr;
 	t_wall	*wall;
 	int		id;
-	int		texture_id;
 
 	id = -1;
 	final = ft_sprintf("type:wall\tp1\tp2\twtx\tptx\tscale\tsolid\n");
@@ -77,15 +96,7 @@ char	*set_walls(t_editor *editor)
 	{
 		wall = curr->content;
 		wall->id = ++id;
-		texture_id = wall->wall_texture;
-		if (wall->parent_sector->skybox != 0)
-			texture_id = wall->parent_sector->skybox;
-		if (wall->skybox != 0)
-			texture_id = wall->skybox;
-		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.2f\t%d\n",
-				wall->id, wall->p1->id, wall->p2->id,
-				texture_id, wall->portal_texture,
-				wall->texture_scale, wall->solid);
+		temp = create_wall_str(wall);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
@@ -107,8 +118,9 @@ char	*get_wall_sprites(t_wall *wall, int *id)
 		sprite = curr->content;
 		*id += 1;
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\t%s\n",
-				*id, wall->id, sprite->pos.x, sprite->pos.y,
-				sprite->texture_id, (int)(sprite->scale * 100), g_sprite_type[sprite->type]);
+			*id, wall->id, sprite->pos.x, sprite->pos.y,
+			sprite->texture_id, (int)(sprite->scale * 100),
+			g_sprite_type[sprite->type]);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		curr = curr->next;
@@ -182,7 +194,7 @@ char	*set_sectors(t_editor *editor)
 	id = -1;
 	final = ft_sprintf("type:sector\twalls\tneighbors\tg\tl\n");
 	curr = editor->sectors;
-	while (curr) // we have to remake the ids here so that the neighbor ids will match up;
+	while (curr)
 	{
 		((t_sector *)curr->content)->id = ++id;
 		curr = curr->next;
@@ -192,7 +204,8 @@ char	*set_sectors(t_editor *editor)
 	{
 		sector = curr->content;
 		walls = get_sector_wall_ids(sector);
-		temp = ft_sprintf("%d\t%s\t%d\t%d\n", sector->id, walls, sector->gravity, sector->lighting);
+		temp = ft_sprintf("%d\t%s\t%d\t%d\n",
+				sector->id, walls, sector->gravity, sector->lighting);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
 		ft_strdel(&walls);
@@ -333,14 +346,6 @@ char	*set_event(t_editor *editor)
 	return (final);
 }
 
-// Should go through all the points, walls, and sectors and reorder their t.ex ids;
-// Remove all lonely points, walls, and sectors, so that we dont have useless stuff that could break the game;
-// Remove all events that have sector/sprites that dont exist anymore; or other things in the future;
-void	editor_cleanup(t_editor *editor)
-{
-	(void)editor;
-}
-
 void	set_map(t_editor *editor, char *name)
 {
 	int	fd;
@@ -351,25 +356,15 @@ void	set_map(t_editor *editor, char *name)
 		ft_printf("[%s] Couldn\'t open map file : %s\n", __FUNCTION__, name);
 		return ;
 	}
-	editor_cleanup(editor);
 	char *delim = ft_sprintf("-\n");
-//	ft_printf("Setting Info.\n");
 	char *info = set_map_info(editor);
-//	ft_printf("Setting Spawn.\n");
 	char *spawn = set_spawn(editor);
-//	ft_printf("Setting Points.\n");
 	char *points = set_points(editor);
-//	ft_printf("Setting Walls.\n");
 	char *walls = set_walls(editor);
-//	ft_printf("Setting Sprites.\n");
 	char *sprites = set_sprites(editor);
-//	ft_printf("Setting Sectors.\n");
 	char *sectors = set_sectors(editor);
-//	ft_printf("Setting FandC.\n");
 	char *fandc = set_fandc(editor);
-//	ft_printf("Setting Entitties.\n");
 	char *entity = set_entity(editor);
-//	ft_printf("Setting Events.\n");
 	char *event = set_event(editor);
 	ft_dprintf(fd, "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
 		info, delim,

@@ -5,18 +5,17 @@
 */
 void	get_map_info(t_editor *editor, char **args)
 {
-	ft_printf("Getting Map Info. ");
+	ft_printf("[%s]\n", __FUNCTION__);
 	editor->map_type = MAP_TYPE_ENDLESS;
 	if (ft_strnequ(args[1], "story", 5))
 		editor->map_type = MAP_TYPE_STORY;
-	ft_printf("Success.\n");
 }
 
 void	get_spawn(t_editor *editor, char **lines, int *i)
 {
 	char	**args;
 
-	ft_printf("Getting Spawn. ");
+	ft_printf("[%s]\n", __FUNCTION__);
 	args = ft_strsplit(lines[*i + 1], '\t');
 	editor->spawn.pos.x = ft_atoi(args[1]);
 	editor->spawn.pos.y = ft_atoi(args[2]);
@@ -24,7 +23,6 @@ void	get_spawn(t_editor *editor, char **lines, int *i)
 	editor->spawn.yaw = ft_atoi(args[4]);
 	*i += 2;
 	ft_arraydel(args);
-	ft_printf("Success.\n");
 }
 
 void	get_points(t_editor *editor, char **lines, int *i)
@@ -32,7 +30,7 @@ void	get_points(t_editor *editor, char **lines, int *i)
 	char	**args;
 	t_point	*point;
 
-	ft_printf("Getting Points. ");
+	ft_printf("[%s]\n", __FUNCTION__);
 	while (lines[*i])
 	{
 		*i += 1;
@@ -45,7 +43,6 @@ void	get_points(t_editor *editor, char **lines, int *i)
 		point->pos.y = ft_atoi(args[2]);
 		ft_arraydel(args);
 	}
-	ft_printf("Success.\n");
 }
 
 void	get_walls(t_editor *editor, char **lines, int *i)
@@ -53,7 +50,7 @@ void	get_walls(t_editor *editor, char **lines, int *i)
 	char	**args;
 	t_wall	*wall;
 
-	ft_printf("Getting Walls. ");
+	ft_printf("[%s]\n", __FUNCTION__);
 	while (lines[*i])
 	{
 		*i += 1;
@@ -75,55 +72,47 @@ void	get_walls(t_editor *editor, char **lines, int *i)
 		wall->solid = ft_atoi(args[6]);
 		ft_arraydel(args);
 	}
-	ft_printf("Success.\n");
 }
 
-void	get_sprites(t_editor *editor, char **lines, int *i)
+/*
+ * If no wall with correct id found, we will ignore this sprite;
+*/
+void	get_sprites(t_editor *editor, char **lines)
 {
-	char		**args;
 	t_sprite	*sprite;
 	int			wall_id;
 	t_wall		*parent_wall;
 	int			ggg;
 
-	ft_printf("Getting Sprites. ");
-	while (lines[*i])
+	ft_printf("[%s]\n", __FUNCTION__);
+	ggg = -1;
+	wall_id = ft_atoi(lines[1]);
+	parent_wall = get_wall_with_id(editor->walls, wall_id);
+	if (parent_wall)
 	{
-		*i += 1;
-		ggg = -1;
-		if (lines[*i][0] == '-')
-			break ;
-		args = ft_strsplit(lines[*i], '\t');
-		wall_id = ft_atoi(args[1]);
-		parent_wall = get_wall_with_id(editor->walls, wall_id);
-		if (parent_wall)
-		{
-			sprite = add_sprite(editor);
-			sprite->id = ft_atoi(args[0]);
-			sprite->parent = parent_wall;
-			sprite->pos.x = ft_atoi(args[2]);
-			sprite->pos.x = ft_atoi(args[3]);
-			sprite->texture_id = ft_atoi(args[4]);
-			if (ft_atoi(args[5]) != 0)
-				sprite->scale = 100 / ft_atoi(args[5]);
-			while (++ggg < SPRITE_TYPE_AMOUNT)
-				if (ft_strequ(g_sprite_type[ggg], args[6]))
-					sprite->type = ggg;
-			add_to_list(&parent_wall->sprites, sprite, sizeof(t_sprite));
-			++parent_wall->sprite_amount;
-		}
-		else
-			ft_printf("[%s] No wall with id %d found, ignoring.\n", __FUNCTION__, wall_id);
-		ft_arraydel(args);
+		sprite = add_sprite(editor);
+		sprite->id = ft_atoi(lines[0]);
+		sprite->parent = parent_wall;
+		sprite->pos.x = ft_atoi(lines[2]);
+		sprite->pos.x = ft_atoi(lines[3]);
+		sprite->texture_id = ft_atoi(lines[4]);
+		if (ft_atoi(lines[5]) != 0)
+			sprite->scale = 100 / ft_atoi(lines[5]);
+		while (++ggg < SPRITE_TYPE_AMOUNT)
+			if (ft_strequ(g_sprite_type[ggg], lines[6]))
+				sprite->type = ggg;
+		add_to_list(&parent_wall->sprites, sprite, sizeof(t_sprite));
+		++parent_wall->sprite_amount;
 	}
-	ft_printf("Success.\n");
 }
 
 /*
- * search from 'list' walls with 'id' in 'id_str' (delim with ' '(space)) and add to 'sector'->walls;
+ * search from 'list' walls with 'id' in 'id_str' (delim with ' '(space))
+ * 	and add to 'sector'->walls;
  * and also settings neighbor ids at the same time, becuase why not;
 */
-void	get_sector_walls(t_list *list, char *id_str, char *neighbor_str, t_sector *sector) 
+void	get_sector_walls(
+		t_list *list, char *id_str, char *neighbor_str, t_sector *sector)
 {
 	char	**wall_ids;	
 	char	**neigh_ids;
@@ -146,13 +135,14 @@ void	get_sector_walls(t_list *list, char *id_str, char *neighbor_str, t_sector *
 			add_to_list(&sector->walls, wall, sizeof(t_wall));
 		}
 		else
-			ft_printf("[%s] Couldnt find wall with id : %d.\n", __FUNCTION__, id);
+			ft_printf("[%s] No wall with id : %d.\n", __FUNCTION__, id);
 	}
 	ft_arraydel(wall_ids);
 }
 
 /*
- * From the sector wall goes throguh all and gets the actual sector from the neighbor id in the walls;
+ * From the sector wall goes through all
+ * 		and gets the actual sector from the neighbor id in the walls;
 */
 void	get_all_actual_sectors(t_editor *editor)
 {
@@ -165,8 +155,9 @@ void	get_all_actual_sectors(t_editor *editor)
 		curr_wall = ((t_sector *)curr_sec->content)->walls;
 		while (curr_wall)
 		{
-			((t_wall *)curr_wall->content)->neighbor =
-					get_sector_by_id_from_list(editor->sectors, ((t_wall *)curr_wall->content)->neighbor_id);
+			((t_wall *)curr_wall->content)->neighbor
+				= get_sector_by_id_from_list(editor->sectors,
+					((t_wall *)curr_wall->content)->neighbor_id);
 			curr_wall = curr_wall->next;
 		}
 		curr_sec = curr_sec->next;
@@ -178,7 +169,7 @@ void	get_sectors(t_editor *editor, char **lines, int *i)
 	char		**args;
 	t_sector	*sector;
 
-	ft_printf("Getting Sectors. ");
+	ft_printf("[%s]\n", __FUNCTION__);
 	while (lines[*i])
 	{
 		*i += 1;
@@ -193,54 +184,52 @@ void	get_sectors(t_editor *editor, char **lines, int *i)
 		ft_arraydel(args);
 	}
 	get_all_actual_sectors(editor);
-	ft_printf("Success.\n");
 }
 
-void	get_fc(t_editor *editor, char **lines, int *i)
+void	set_slopes(t_list *walls, char **slopes)
 {
-	char		**args;
+	t_wall	*wall;
+
+	if (ft_atoi(slopes[0]) != 0)
+	{
+		wall = get_wall_with_id(walls, ft_atoi(slopes[0]));
+		if (wall)
+			wall->floor_angle = ft_atoi(slopes[1]);
+	}
+	if (ft_atoi(slopes[2]) != 0)
+	{
+		wall = get_wall_with_id(walls, ft_atoi(slopes[2]));
+		if (wall)
+			wall->ceiling_angle = ft_atoi(slopes[3]);
+	}
+}
+
+/*
+ * NOTE:
+ *		Returns if we cant find sector with correct id;
+*/
+void	get_fc(t_editor *editor, char **args)
+{
 	char		**slopes;
 	t_sector	*sector;
 	t_wall		*wall;
 	int			id;
 
-	ft_printf("Getting F&C. ");
-	while (lines[*i])
-	{
-		*i += 1;
-		if (lines[*i][0] == '-')
-			break ;
-		args = ft_strsplit(lines[*i], '\t');
-		id = ft_atoi(args[0]);
-		sector = get_sector_by_id_from_list(editor->sectors, id);
-		sector->floor_height = ft_atoi(args[1]);
-		sector->ceiling_height = ft_atoi(args[2]);
-		sector->floor_texture = ft_atoi(args[3]);
-		sector->ceiling_texture = ft_atoi(args[4]);
-		if (sector->floor_texture < 0) // Skybox
-		{
-			sector->skybox = sector->floor_texture;
-			sector->floor_texture = 0;
-			sector->ceiling_texture = 0;
-		}
-		sector->floor_scale = ft_atof(args[5]);
-		sector->ceiling_scale = ft_atof(args[6]);
-		slopes = ft_strsplit(args[7], ' ');
-		if (ft_atoi(slopes[0]) != 0)
-		{
-			wall = get_wall_with_id(sector->walls, ft_atoi(slopes[0]));
-			if (wall)
-				wall->floor_angle = ft_atoi(slopes[1]);
-		}
-		if (ft_atoi(slopes[2]) != 0)
-		{
-			wall = get_wall_with_id(sector->walls, ft_atoi(slopes[2]));
-			if (wall)
-				wall->ceiling_angle = ft_atoi(slopes[3]);
-		}
-		ft_arraydel(args);
-	}
-	ft_printf("Success.\n");
+	ft_printf("[%s]\n", __FUNCTION__);
+	id = ft_atoi(args[0]);
+	sector = get_sector_by_id_from_list(editor->sectors, id);
+	if (!sector)
+		return ;
+	sector->floor_height = ft_atoi(args[1]);
+	sector->ceiling_height = ft_atoi(args[2]);
+	sector->floor_texture = ft_atoi(args[3]);
+	sector->ceiling_texture = ft_atoi(args[4]);
+	if (sector->floor_texture < 0)
+		sector->skybox = sector->floor_texture;
+	sector->floor_scale = ft_atof(args[5]);
+	sector->ceiling_scale = ft_atof(args[6]);
+	slopes = ft_strsplit(args[7], ' ');
+	set_slopes(sector->walls, slopes);
 }
 
 void	get_entity(t_editor *editor, char **lines, int *i)
@@ -248,7 +237,7 @@ void	get_entity(t_editor *editor, char **lines, int *i)
 	char		**args;
 	t_entity	*entity;
 
-	ft_printf("Getting Entitties. ");
+	ft_printf("[%s]\n", __FUNCTION__);
 	while (lines[*i])
 	{
 		*i += 1;
@@ -263,63 +252,39 @@ void	get_entity(t_editor *editor, char **lines, int *i)
 		entity->yaw = ft_atoi(args[5]);
 		ft_arraydel(args);
 	}
-	ft_printf("Success.\n");
 }
 
-void	get_events(t_editor *editor, char **lines, int *i)
+void	get_events(t_editor *editor, char **args)
 {
-	char		**args;
 	t_event		*event;
 
-	ft_printf("Getting Events. ");
-	while (lines[*i])
+	ft_printf("[%s]\n", __FUNCTION__);
+	event = add_event(editor);
+	event->id = ft_atoi(args[0]);
+	event->type = get_event_type(args[1]);
+	event->action = get_event_action(args[2]);
+	event->pointer_type = TYPE_SPRITE;
+	if (event->action == SECTOR || event->action == TYPE_SECTOR)
 	{
-		*i += 1;
-		if (lines[*i][0] == '-')
-			break ;
-		args = ft_strsplit(lines[*i], '\t');
-		event = add_event(editor);
-		event->id = ft_atoi(args[0]);
-		for (int d = 0; d < EVENT_TYPE_AMOUNT - 1; d++)
-		{
-			if (ft_strequ(args[1], g_event_type[d]))
-			{
-				event->type = d;
-				break ;
-			}
-		}
-		for (int d = 0; d < EVENT_ACTION_AMOUNT; d++)
-		{
-			if (ft_strequ(args[2], g_event_action[d].name))
-			{
-				event->action = d;
-				break ;
-			}
-		}	
-		event->pointer_type = TYPE_SPRITE;
-		if (event->action == SECTOR)
-		{
-			event->pointer_type = TYPE_SECTOR;
-			event->pointer = get_sector_by_id_from_list(editor->sectors, ft_atoi(args[3]));
-		}
-		else
-			event->pointer = get_sprite_by_id_from_list(editor->sprites, ft_atoi(args[3]));
-		event->sector = ft_strdup(args[4]);
-		event->min = ft_atoi(args[5]);
-		event->max = ft_atoi(args[6]);
-		event->speed = ft_atoi(args[7]);
-		ft_arraydel(args);
-
-		update_event_elem(event->elem);
+		event->pointer_type = TYPE_SECTOR;
+		event->pointer
+			= get_sector_by_id_from_list(editor->sectors, ft_atoi(args[3]));
 	}
-	ft_printf("Success.\n");
+	else
+		event->pointer
+			= get_sprite_by_id_from_list(editor->sprites, ft_atoi(args[3]));
+	event->sector = ft_strdup(args[4]);
+	event->min = ft_atoi(args[5]);
+	event->max = ft_atoi(args[6]);
+	event->speed = ft_atoi(args[7]);
+	update_event_elem(event->elem);
 }
 
-void	helper_pelper(t_editor *editor, char **lines, int *i, void	(*f)(t_editor *, char **))
+void	helper_pelper(
+		t_editor *editor, char **lines, int *i, void (*f)(t_editor *, char **))
 {
 	char		**args;
 
-	ft_printf("Getting Events. ");
 	while (lines[*i])
 	{
 		*i += 1;
@@ -329,6 +294,28 @@ void	helper_pelper(t_editor *editor, char **lines, int *i, void	(*f)(t_editor *,
 		f(editor, args);
 		ft_arraydel(args);
 	}
+}
+
+void	decision_maker(t_editor *editor, char *type, char **lines, int *i)
+{
+	if (ft_strnequ(type, "type:map", 8))
+		helper_pelper(editor, lines, i, &get_map_info);
+	else if (ft_strnequ(type, "type:spawn", 10))
+		get_spawn(editor, lines, i);
+	else if (ft_strnequ(type, "type:point", 10))
+		get_points(editor, lines, i);
+	else if (ft_strnequ(type, "type:wall", 9))
+		get_walls(editor, lines, i);
+	else if (ft_strnequ(type, "type:wsprite", 12))
+		helper_pelper(editor, lines, i, &get_sprites);
+	else if (ft_strnequ(type, "type:sector", 11))
+		get_sectors(editor, lines, i);
+	else if (ft_strnequ(type, "type:f&c", 8))
+		helper_pelper(editor, lines, i, &get_fc);
+	else if (ft_strnequ(type, "type:entity", 11))
+		get_entity(editor, lines, i);
+	else if (ft_strnequ(type, "type:event", 10))
+		helper_pelper(editor, lines, i, &get_events);
 }
 
 void	get_map(t_editor *editor, char *map)
@@ -342,26 +329,7 @@ void	get_map(t_editor *editor, char *map)
 	lines = ft_strsplit(file_content, '\n');
 	i = -1;
 	while (lines && lines[++i])
-	{
-		if (ft_strnequ(lines[i], "type:map", 8))
-			helper_pelper(editor, lines, &i, &get_map_info);
-		else if (ft_strnequ(lines[i], "type:spawn", 10))
-			get_spawn(editor, lines, &i);
-		else if (ft_strnequ(lines[i], "type:point", 10))
-			get_points(editor, lines, &i);
-		else if (ft_strnequ(lines[i], "type:wall", 9))
-			get_walls(editor, lines, &i);
-		else if (ft_strnequ(lines[i], "type:wsprite", 12))
-			get_sprites(editor, lines, &i);
-		else if (ft_strnequ(lines[i], "type:sector", 11))
-			get_sectors(editor, lines, &i);
-		else if (ft_strnequ(lines[i], "type:f&c", 8))
-			get_fc(editor, lines, &i);
-		else if (ft_strnequ(lines[i], "type:entity", 11))
-			get_entity(editor, lines, &i);
-		else if (ft_strnequ(lines[i], "type:event", 10))
-			get_events(editor, lines, &i);
-	}
+		decision_maker(editor, lines[i], lines, &i);
 	ft_arraydel(lines);
 	ft_strdel(&file_content);
 	ft_printf("[%s] Success getting map.\n", __FUNCTION__);
