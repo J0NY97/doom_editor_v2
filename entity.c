@@ -21,6 +21,7 @@ t_entity	*add_entity(t_editor *editor)
 	t_entity	*entity;
 
 	entity = entity_new();
+	entity->type = 1;
 	++editor->entity_amount;
 	add_to_list(&editor->entities, entity, sizeof(t_entity));
 	return (entity);
