@@ -92,7 +92,7 @@ void	draw_text(
 		ft_printf("[%s] Error : \"%s\" no font.\n", __FUNCTION__, text);
 }
 
-t_ui_element	*set_elem_parent_and_recipe(
+void	set_elem_parent_and_recipe(
 		t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id)
 {
 	g_acceptable[ui_type].maker(parent->win, elem);

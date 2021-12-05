@@ -12,7 +12,7 @@ void	point_render(t_editor *editor, t_point *point, Uint32 color)
 */
 t_point	*add_point(t_editor *editor)
 {
-	t_point	*point;	
+	t_point	*point;
 
 	point = ft_memalloc(sizeof(t_point));
 	++editor->point_amount;
@@ -110,6 +110,7 @@ t_point	*get_point_from_sector_around_radius(
 	float		y;
 
 	curr = sector->walls;
+	temp = NULL;
 	while (curr)
 	{
 		x = -allowed_radius;

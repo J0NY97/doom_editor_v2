@@ -607,7 +607,7 @@ void				create_buttons_to_list_from_texts_remove_extra(t_ui_element *parent, cha
 void				draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 void				draw_text_on_texture(SDL_Texture *texture, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 void				send_info_message(t_editor *editor, char *text);
-t_ui_element		*set_elem_parent_and_recipe(t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id);
+void				set_elem_parent_and_recipe(t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id);
 void				draw_arrow(SDL_Surface *surface, t_vec2i start, int len, float yaw);
 t_vec2i				get_middle(t_vec2i p1, t_vec2i p2);
 
