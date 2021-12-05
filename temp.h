@@ -1,8 +1,8 @@
 #ifndef TEMP_H
 # define TEMP_H
 
-#define BMP_PATH "C:/Users/Jony/source/repos/map_editor_v2/temp_resources/"
-#define BXPM_PATH "C:/Users/Jony/source/repos/map_editor_v2/temp_resources/"
+#define BMP_PATH "temp_resources/"
+#define BXPM_PATH "temp_resources/"
 
 enum e_player_action
 {
@@ -73,7 +73,7 @@ typedef struct s_id_and_path
 }				t_id_and_path;
 # define MAP_TEXTURE_AMOUNT	21
 static const t_id_and_path	g_map_textures[MAP_TEXTURE_AMOUNT] =
-{	
+{
 	{0, BXPM_PATH"bullet_hole.bxpm"},
 	{1, BXPM_PATH"vent.bxpm"},
 	{2, BXPM_PATH"tile_floor.bxpm"},

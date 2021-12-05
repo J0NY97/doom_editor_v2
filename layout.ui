@@ -1,6 +1,6 @@
-style : C:/Users/Jony/source/repos/doom_nukem/map_editor_v2/layout.style;
-resource_dir : C:/Users/Jony/source/repos/doom_nukem/map_editor_v2/temp_resources/;
-resource_dir : C:/Users/Jony/source/repos/doom_nukem/map_editor_v2/ui_images/;
+style : layout.style;
+resource_dir : temp_resources/;
+resource_dir : ui_images/;
 
 Window win_main
 {

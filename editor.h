@@ -9,12 +9,13 @@
 # include "SDL_ttf.h"
 # include "SDL_image.h"
 # include "math.h"
+# include "bmath.h"
 # include "bxpm.h"
 
 # include "temp.h" // not needed when we are using the real enum.h;
 
-# define MAP_PATH "C:/Users/Jony/source/repos/doom_nukem/map_editor_v2/maps/"
-# define EDITOR_PATH "C:/Users/Jony/source/repos/doom_nukem/map_editor_v2/"
+# define MAP_PATH "maps/"
+# define EDITOR_PATH "./"
 
 typedef struct s_spawn		t_spawn;
 typedef struct s_point		t_point;
@@ -432,7 +433,7 @@ struct s_sector
  * SDL_Texture		*texture;		pointer to one of the editor->entity_textures; (DONT FREE!);
  * int				yaw;			which direction the entity is looking (degrees);
 */
-struct s_entity	
+struct s_entity
 {
 	int				type;
 	t_vec2i			pos;
@@ -451,7 +452,7 @@ struct s_entity
  * void		*pointer;				either t_sector or t_sprite depending on do you have type as shoot/click or sector;
  * t_event_elem	*elem;				t_event_elem, this event is attached to; ( DONT FREE )
 */
-struct s_event	
+struct s_event
 {
 	int				id;
 	int				type;

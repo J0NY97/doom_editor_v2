@@ -163,16 +163,16 @@ void	remove_event_from_list(t_event *event, t_list **list)
 
 void	event_elem_free(t_event_elem *elem)
 {
-	ui_element_free(&elem->menu);
-	ui_element_free(elem->button);
-	ui_element_free(&elem->id);
-	ui_element_free(&elem->type);
-	ui_element_free(&elem->action);
-	ui_element_free(&elem->target_id);
-	ui_element_free(&elem->sector);
-	ui_element_free(&elem->min);
-	ui_element_free(&elem->max);
-	ui_element_free(&elem->speed);
+	ui_element_free(&elem->menu, elem->menu.element_type);
+	ui_element_free(elem->button, elem->button->element_type);
+	ui_element_free(&elem->id, elem->id.element_type);
+	ui_element_free(&elem->type, elem->type.element_type);
+	ui_element_free(&elem->action, elem->action.element_type);
+	ui_element_free(&elem->target_id, elem->target_id.element_type);
+	ui_element_free(&elem->sector, elem->sector.element_type);
+	ui_element_free(&elem->min, elem->min.element_type);
+	ui_element_free(&elem->max, elem->max.element_type);
+	ui_element_free(&elem->speed, elem->speed.element_type);
 	elem->event = NULL;
 	free(elem->button);
 	free(elem);

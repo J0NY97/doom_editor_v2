@@ -35,7 +35,7 @@ void	create_buttons_to_list_from_texts_remove_extra(
 	}
 	while (prev_butt)
 	{
-		ui_element_free(prev_butt->content);
+		ui_element_free(prev_butt->content, prev_butt->content_size);
 		free(prev_butt->content);
 		prev_butt = prev_butt->next;
 	}
