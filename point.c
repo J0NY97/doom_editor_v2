@@ -110,7 +110,6 @@ t_point	*get_point_from_sector_around_radius(
 	float		y;
 
 	curr = sector->walls;
-	temp = NULL;
 	while (curr)
 	{
 		x = -allowed_radius;
@@ -129,7 +128,7 @@ t_point	*get_point_from_sector_around_radius(
 		}
 		curr = curr->next;
 	}
-	return (temp);
+	return (NULL);
 }
 
 void	remove_from_list(t_list **list, void *pointer)

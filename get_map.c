@@ -212,7 +212,6 @@ void	get_fc(t_editor *editor, char **args)
 {
 	char		**slopes;
 	t_sector	*sector;
-	t_wall		*wall;
 	int			id;
 
 	ft_printf("[%s]\n", __FUNCTION__);

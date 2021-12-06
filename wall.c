@@ -6,7 +6,7 @@ t_wall	*wall_new(void)
 
 	wall = ft_memalloc(sizeof(t_wall));
 	wall->solid = 1;
-	wall->texture_scale = 1.0f;
+	wall->texture_scale = 10.0f;
 	return (wall);
 }
 
@@ -390,7 +390,7 @@ void	get_wall_ui3(t_editor *editor, t_wall *wall)
 	if (ui_input_exit(editor->wall_texture_scale_input))
 	{
 		wall->texture_scale = ft_fclamp(ft_atof(ui_input_get_text(
-						editor->wall_texture_scale_input)), -10.0f, 10.0f);
+						editor->wall_texture_scale_input)), 0.1f, 100.0f);
 		ft_b_ftoa(wall->texture_scale, 2, temp_str);
 		ui_input_set_text(editor->wall_texture_scale_input, temp_str);
 	}

@@ -424,7 +424,6 @@ void	reid(t_editor *editor)
 void	set_map(t_editor *editor, char *name)
 {
 	int		fd;
-	char	*final;
 	char	*temp;
 	char	delim[3];
 
@@ -435,7 +434,6 @@ void	set_map(t_editor *editor, char *name)
 		return ;
 	}
 	reid(editor);
-	final = NULL;
 	ft_strcpy(delim, "-\n");
 	first_half(editor, fd, delim);
 	temp = set_entity(editor);
