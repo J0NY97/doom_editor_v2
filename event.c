@@ -172,6 +172,16 @@ void	event_elem_free(t_event_elem *elem)
 	elem->min.free_me = 0;
 	elem->max.free_me = 0;
 	elem->speed.free_me = 0;
+	ui_element_set_id(&elem->menu, "menu");
+	ui_element_set_id(&elem->id, "id");
+	ui_element_set_id(&elem->type, "type");
+	ui_element_set_id(&elem->action, "action");
+	ui_element_set_id(&elem->target_id, "target_id");
+	ui_element_set_id(&elem->sector, "sector");
+	ui_element_set_id(&elem->min, "min");
+	ui_element_set_id(&elem->max, "max");
+	ui_element_set_id(&elem->speed, "speed");
+	ui_element_set_id(elem->button, "button");
 	ui_element_free(&elem->menu, elem->menu.element_type);
 	/*
 	ui_element_free(elem->button, elem->button->element_type);
