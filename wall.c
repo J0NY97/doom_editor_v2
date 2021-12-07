@@ -412,7 +412,6 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 		if (skybox_active == editor->wall_skybox_three)
 			wall->skybox = -3;
 	}
-	wall->solid = editor->solid_checkbox->is_toggle;
 	wall->wall_texture = editor->wall_texture_something.id;
 	wall->portal_texture = editor->portal_texture_something.id;
 	if (!editor->portal_checkbox->is_toggle)
@@ -421,6 +420,9 @@ void	get_wall_ui(t_editor *editor, t_wall *wall)
 		if (!can_you_make_portal_of_this_wall(editor->sectors,
 				wall->parent_sector, wall))
 			ui_checkbox_toggle_off(editor->portal_checkbox);
+	if (!wall->neighbor)
+		ui_checkbox_toggle_on(editor->solid_checkbox);
+	wall->solid = editor->solid_checkbox->is_toggle;
 	get_wall_ui2(editor, wall);
 	get_wall_ui3(editor, wall);
 }
