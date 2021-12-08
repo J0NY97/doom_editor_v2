@@ -144,7 +144,7 @@ void	select_sector(t_editor *editor)
 	}
 }
 
-void	attempt_adding_wall_to_sector(t_editor *editor, t_sector *sector)
+void	attempt_adding_wall_to_sector(t_editor *editor)
 {
 	if (editor->first_point_set && editor->second_point_set
 		&& compare_veci(editor->first_point.v, editor->second_point.v, 2))
@@ -195,7 +195,7 @@ void	sector_draw_events(t_editor *editor)
 				editor->second_point_set = 1;
 				editor->second_point = editor->mouse_pos;
 			}
-			attempt_adding_wall_to_sector(editor, editor->selected_sector);
+			attempt_adding_wall_to_sector(editor);
 		}
 	}
 }

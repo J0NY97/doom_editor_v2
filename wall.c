@@ -24,6 +24,7 @@ void	wall_free(void *w, size_t size)
 		return ;
 	ft_lstdel(&wall->sprites, &sprite_free);
 	free(wall);
+	(void)size;
 }
 
 void	wall_render(t_editor *editor, t_wall *wall, Uint32 color)

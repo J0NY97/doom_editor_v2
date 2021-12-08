@@ -16,6 +16,7 @@ void	sprite_free(void *s, size_t size)
 	if (!sprite)
 		return ;
 	free(sprite);
+	(void)size;
 }
 
 void	sprite_print(t_sprite *sprite)
