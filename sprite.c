@@ -8,11 +8,13 @@ t_sprite	*sprite_new(void)
 	return (sprite);
 }
 
-void	sprite_free(t_sprite *sprite)
+void	sprite_free(void *s, size_t size)
 {
+	t_sprite	*sprite;
+
+	sprite = s;
 	if (!sprite)
 		return ;
-	sprite->parent = NULL;
 	free(sprite);
 }
 
@@ -53,7 +55,7 @@ void	remove_sprite(t_editor *editor, t_sprite *sprite)
 		ft_printf("[%s] Sprite doesnt have parent... Error!\n", __FUNCTION__);
 	else
 		remove_from_list(&sprite->parent->sprites, sprite);
-	sprite_free(sprite);
+	sprite_free(sprite, sizeof(t_sprite));
 	sprite = NULL;
 	--editor->sprite_amount;
 }

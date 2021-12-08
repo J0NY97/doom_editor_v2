@@ -258,9 +258,9 @@ char	*get_wall_slopes(t_list *walls)
 		walls = walls->next;
 	}
 	if (!floor)
-		floor = ft_sprintf("0 0 ");
+		floor = ft_sprintf("-1 0 ");
 	if (!ceil)
-		ceil = ft_sprintf("0 0");
+		ceil = ft_sprintf("-1 0");
 	final = ft_strjoin(floor, ceil);
 	ft_strdel(&floor);
 	ft_strdel(&ceil);

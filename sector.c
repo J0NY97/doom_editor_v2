@@ -17,6 +17,17 @@ t_sector	*sector_new(void)
 	return (sector);
 }
 
+void	sector_free(void *sec, size_t size)
+{
+	t_sector	*sector;
+
+	sector = sec;
+	if (!sector)
+		return ;
+	ft_lstdel(&sector->walls, &wall_free);
+	free(sector);
+}
+
 t_sector	*add_sector(t_editor *editor)
 {
 	t_sector	*sector;

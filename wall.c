@@ -10,6 +10,22 @@ t_wall	*wall_new(void)
 	return (wall);
 }
 
+/*
+ * NOTE:
+ * 	this function's job is not to free the points,
+ * 		they might be used in some other wall;
+*/
+void	wall_free(void *w, size_t size)
+{
+	t_wall	*wall;
+
+	wall = w;
+	if (!wall)
+		return ;
+	ft_lstdel(&wall->sprites, &sprite_free);
+	free(wall);
+}
+
 void	wall_render(t_editor *editor, t_wall *wall, Uint32 color)
 {
 	t_vec2i	p1;
@@ -62,7 +78,7 @@ void	move_wall(t_wall *wall, t_vec2i move_amount)
 */
 t_wall	*add_wall(t_editor *editor)
 {
-	t_wall	*wall;	
+	t_wall	*wall;
 
 	wall = wall_new();
 	wall->wall_texture = 7;
@@ -83,15 +99,6 @@ t_list	*get_next_wall_node(t_list *list, t_wall *wall)
 		list = list->next;
 	}
 	return (NULL);
-}
-
-void	pointer_swap(void *p1, void *p2)
-{
-	void	*temp;
-
-	temp = p1;
-	p1 = p2;
-	p2 = temp;
 }
 
 /*

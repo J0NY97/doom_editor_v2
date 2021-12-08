@@ -108,6 +108,23 @@ void	setup_ui_values(t_editor *editor)
 	realign_event_buttons(editor);
 }
 
+void	editor_free(t_editor *editor)
+{
+	ui_layout_free(&editor->layout);
+//	ft_lstdel(&editor->texture_somethings, &texture_something_free);
+	ft_lstdel(&editor->texture_opening_buttons, &dummy_free_er);
+	//ft_lstdel(&editor->texture_elems, &texture_elem_free);
+	ft_lstdel(&editor->texture_buttons, &dummy_free_er);
+	TTF_CloseFont(editor->font);
+	SDL_DestroyTexture(editor->drawing_texture);
+	SDL_FreeSurface(editor->drawing_surface);
+	SDL_FreeSurface(editor->grid_surface);
+	// surface_array_del(wall_textures);
+	// texture_array_del(entity_textures);
+	// surface_array_del(entity_texture_surfaces);
+	ft_lstdel(&editor->sectors, &sector_free);
+}
+
 int	main(int ac, char **av)
 {
 	t_editor	editor;
@@ -135,4 +152,5 @@ int	main(int ac, char **av)
 		user_render(&editor);
 		ui_layout_render(&editor.layout);
 	}
+	editor_free(&editor);
 }

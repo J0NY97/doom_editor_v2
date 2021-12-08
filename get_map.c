@@ -114,7 +114,7 @@ void	get_sprites(t_editor *editor, char **lines)
 void	get_sector_walls(
 		t_list *list, char *id_str, char *neighbor_str, t_sector *sector)
 {
-	char	**wall_ids;	
+	char	**wall_ids;
 	char	**neigh_ids;
 	int		i;
 	t_wall	*wall;
@@ -190,13 +190,13 @@ void	set_slopes(t_list *walls, char **slopes)
 {
 	t_wall	*wall;
 
-	if (ft_atoi(slopes[0]) != 0)
+	if (ft_atoi(slopes[0]) != -1)
 	{
 		wall = get_wall_with_id(walls, ft_atoi(slopes[0]));
 		if (wall)
 			wall->floor_angle = ft_atoi(slopes[1]);
 	}
-	if (ft_atoi(slopes[2]) != 0)
+	if (ft_atoi(slopes[2]) != -1)
 	{
 		wall = get_wall_with_id(walls, ft_atoi(slopes[2]));
 		if (wall)

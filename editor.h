@@ -500,6 +500,7 @@ void				remove_all_lonely_points(t_editor *editor);
 
 // Wall
 t_wall				*wall_new(void);
+void				wall_free(void *w, size_t size);
 void				remove_sprite_from_wall(t_sprite *sprite, t_wall *wall);
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
@@ -521,6 +522,7 @@ t_sprite			*add_sprite_to_wall(t_editor *editor, t_wall *wall);
 
 // Sector
 t_sector			*sector_new(void);
+void				sector_free(void *sec, size_t size);
 t_sector			*add_sector(t_editor *editor);
 void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
 void				add_wall_to_sector_at_pos(t_editor *editor, t_sector *sector, t_vec2i p1, t_vec2i p2);
@@ -577,7 +579,7 @@ void				realign_event_buttons(t_editor *editor);
 
 // Sprite
 t_sprite			*sprite_new(void);
-void				sprite_free(t_sprite *sprite);
+void				sprite_free(void *sprite, size_t size);
 void				sprite_print(t_sprite *sprite);
 int					get_next_sprite_id(t_list *list);
 t_sprite			*get_sprite_from_list_at_pos(t_list *list, t_vec2i pos);
