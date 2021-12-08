@@ -29,14 +29,14 @@ LIB_FOLDER = ../libs
 INCLUDES = \
 	-I$(LIB_FOLDER)/libft \
 	-I$(LIB_FOLDER)/libpf \
-	-I$(LIB_FOLDER)/libui_v3 \
+	-I$(LIB_FOLDER)/libui \
 	-I$(LIB_FOLDER)/libbxpm \
 	$(SDL_INC) \
 
 LIB_FOLDERS = \
 	-L$(LIB_FOLDER)/libft \
 	-L$(LIB_FOLDER)/libpf \
-	-L$(LIB_FOLDER)/libui_v3 \
+	-L$(LIB_FOLDER)/libui \
 	-L$(LIB_FOLDER)/libbxpm \
 	$(SDL_LIB_DIR) \
 
