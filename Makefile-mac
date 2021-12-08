@@ -27,7 +27,7 @@ SDL_TTF		:= -I $(SDL_DIR)/SDL2_ttf.framework/Headers -framework SDL2_ttf -F $(SD
 INCLUDES = \
 	-I../libs/libft \
 	-I../libs/libpf \
-	-I../libs/libui_v3 \
+	-I../libs/libui \
 	$(SDL_MAIN) $(SDL_IMAGE) $(SDL_TTF) \
 	-I../libs/libbxpm \
 	-I./
@@ -35,7 +35,7 @@ INCLUDES = \
 LIB_FOLDERS = \
 	-L../libs/libft \
 	-L../libs/libpf \
-	-L../libs/libui_v3 \
+	-L../libs/libui \
 	-L../libs/libbxpm \
 
 LIB = -lui -lpf -lft -lbxpm
