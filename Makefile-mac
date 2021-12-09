@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/09 13:40:51 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/09 14:37:19 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,8 @@ JHONNY = $(OBJS:.o=.d)
 
 LIB_DIR =		../libs
 
-INCLUDES =		-I $(LIB_DIR)/libft \
+INCLUDES =		-I ../ \
+				-I $(LIB_DIR)/libft \
 				-I $(LIB_DIR)/libpf \
 				-I $(LIB_DIR)/libbxpm \
 				-I $(LIB_DIR)/libui \

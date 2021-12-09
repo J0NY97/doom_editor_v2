@@ -1,8 +1,8 @@
 #ifndef TEMP_H
 # define TEMP_H
 
-#define BMP_PATH "temp_resources/"
-#define BXPM_PATH "temp_resources/"
+//#define BMP_PATH "temp_resources/"
+//#define BXPM_PATH "temp_resources/"
 
 enum e_player_action
 {
