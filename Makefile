@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/29 13:33:07 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/09 12:20:54 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,11 +14,10 @@ SHELL_NAME	:= $(shell uname -s)
 name = dontcare
 
 all: 
-	@echo "OS: $(SHELL_NAME)"
 ifeq ($(SHELL_NAME), Darwin)
-	@echo "Making mac version."
 	@make -f Makefile-mac
 else
+	@echo "OS: $(SHELL_NAME)"
 	@echo "Making windows version."
 	@mingw32-make -f Makefile-win
 endif

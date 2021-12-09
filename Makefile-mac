@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/09 11:59:24 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/09 12:19:36 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,29 +18,28 @@ MAGENTA	:= "\e[0;35m"
 CYAN	:= "\e[0;36m"
 RESET	:= "\e[0m"
 
-SRCS =  ./main.c\
-		./events.c\
-		./init.c\
-		./draw.c\
-		./point.c\
-		./wall.c\
-		./sector.c\
-		./entity.c\
-		./event.c\
-		./sprite.c\
-		./math.c\
-		./bxpm.c\
-		./set_map.c\
-		./get_map.c\
-		./args_parser.c\
-		./help.c
+SRCS =  main.c\
+		events.c\
+		init.c\
+		draw.c\
+		point.c\
+		wall.c\
+		sector.c\
+		entity.c\
+		event.c\
+		sprite.c\
+		math.c\
+		bxpm.c\
+		set_map.c\
+		get_map.c\
+		args_parser.c\
+		help.c
 
 NAME = doom_editor
-OBJS = $(SRCS:.c=.o)
-JOHNNY = $(SRCS:.c=.d)
-
-ODIR = .
+ODIR = obj
 CDIR = .
+OBJS = $(addprefix $(ODIR)/,$(SRCS:.c=.o))
+JHONNY = $(OBJS:.o=.d)
 
 LIB_DIR =		../libs
 
@@ -53,33 +52,35 @@ INCLUDES =		-I $(LIB_DIR)/libft \
 				-I $(LIB_DIR)/SDL_Frameworks/SDL2_ttf.framework/Headers \
 				-F $(LIB_DIR)/SDL_Frameworks
 
-LIB_FOLDERS =	-L $(LIB_DIR)/libft \
-				-L $(LIB_DIR)/libpf \
-				-L $(LIB_DIR)/libui \
-				-L $(LIB_DIR)/libbxpm \
-				-lui -lpf -lft -lbxpm \
+LIB_FOLDERS =	-L $(LIB_DIR)/libft -lft \
+				-L $(LIB_DIR)/libpf -lpf \
+				-L $(LIB_DIR)/libui -lui \
+				-L $(LIB_DIR)/libbxpm -lbxpm \
 				-framework SDL2 \
 				-framework SDL2_image \
 				-framework SDL2_ttf \
 				-F $(LIB_DIR)/SDL_Frameworks
 
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -MMD
 
-all: $(NAME)
+all: $(ODIR) $(NAME)
 	@printf ${GREEN}"\e[J> $(NAME) ready!\n"${RESET}
 
+$(ODIR):
+	@mkdir -p $@
+	
 -include $(JOHNNY)
 
 $(ODIR)/%.o: $(CDIR)/%.c
 	@printf $(YELLOW)"\e[JCompiling $<\n\e[F"$(RESET)
-	@gcc -c $< -o $@ -MMD $(CFLAGS) $(INCLUDES)
+	@gcc -c $< -o $@ $(CFLAGS) $(INCLUDES)
 
 $(NAME): $(OBJS)
 	@gcc -o $(NAME) $(OBJS) $(INCLUDES) $(LIB_FOLDERS) $(CFLAGS)
 	
 clean: 
 	@printf ${CYAN}"[INFO] Removing objs.\n"${RESET}
-	@rm -rf $(OBJS) $(JOHNNY)
+	@rm -rf $(ODIR)
 
 fclean: clean
 	@printf ${CYAN}"[INFO] Removing $(NAME)\n"${RESET}
