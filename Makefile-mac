@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/09 12:19:36 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/09 14:37:19 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,8 @@ JHONNY = $(OBJS:.o=.d)
 
 LIB_DIR =		../libs
 
-INCLUDES =		-I $(LIB_DIR)/libft \
+INCLUDES =		-I ../ \
+				-I $(LIB_DIR)/libft \
 				-I $(LIB_DIR)/libpf \
 				-I $(LIB_DIR)/libbxpm \
 				-I $(LIB_DIR)/libui \
@@ -64,7 +65,7 @@ LIB_FOLDERS =	-L $(LIB_DIR)/libft -lft \
 CFLAGS = -Wall -Wextra -MMD
 
 all: $(ODIR) $(NAME)
-	@printf ${GREEN}"\e[J> $(NAME) ready!\n"${RESET}
+	@printf $(GREEN)"\e[J[INFO] $(NAME) ready!\n"$(RESET)
 
 $(ODIR):
 	@mkdir -p $@
@@ -79,11 +80,11 @@ $(NAME): $(OBJS)
 	@gcc -o $(NAME) $(OBJS) $(INCLUDES) $(LIB_FOLDERS) $(CFLAGS)
 	
 clean: 
-	@printf ${CYAN}"[INFO] Removing objs.\n"${RESET}
+	@printf $(CYAN)"[INFO] $(NAME) cleaned!\n"$(RESET)
 	@rm -rf $(ODIR)
 
 fclean: clean
-	@printf ${CYAN}"[INFO] Removing $(NAME)\n"${RESET}
+	
 	@rm $(NAME)
 
 re: fclean all

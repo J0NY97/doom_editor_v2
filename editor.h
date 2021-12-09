@@ -11,11 +11,9 @@
 # include "math.h"
 # include "bmath.h"
 # include "bxpm.h"
+# include "path.h"
 
 # include "temp.h" // not needed when we are using the real enum.h;
-
-# define MAP_PATH "maps/"
-# define EDITOR_PATH "./"
 
 typedef struct s_spawn		t_spawn;
 typedef struct s_point		t_point;
