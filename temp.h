@@ -1,6 +1,8 @@
 #ifndef TEMP_H
 # define TEMP_H
 
+# include "path.h"
+
 //#define BMP_PATH "temp_resources/"
 //#define BXPM_PATH "temp_resources/"
 
@@ -96,7 +98,6 @@ static const t_id_and_path	g_map_textures[MAP_TEXTURE_AMOUNT] =
 	{19, BXPM_PATH"wires.bxpm"},
 	{20, BXPM_PATH"clock.bxpm"}
 };
-
 
 typedef struct s_entity_data
 {
