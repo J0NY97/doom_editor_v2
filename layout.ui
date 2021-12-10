@@ -1,6 +1,6 @@
 style : layout.style;
-resource_dir : temp_resources/;
-resource_dir : ui_images/;
+resource_dir : ../game/resources/ICON/;
+resource_dir : ../game/resources/BXPM/;
 
 Window win_main
 {
