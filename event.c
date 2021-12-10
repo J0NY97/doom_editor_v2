@@ -218,6 +218,7 @@ t_event_elem	*event_element_new(t_ui_element *parent)
 	event_elem = ft_memalloc(sizeof(t_event_elem));
 	set_elem_parent_and_recipe(&event_elem->menu,
 		UI_TYPE_MENU, parent, "event_menu_prefab");
+	event_elem->menu.render_me_on_parent = 1;
 	set_elem_parent_and_recipe(&event_elem->id,
 		UI_TYPE_LABEL, &event_elem->menu, "event_id_prefab");
 	set_elem_parent_and_recipe(&event_elem->type,

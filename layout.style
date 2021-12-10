@@ -951,10 +951,9 @@ event_scrollbar
 event_menu_prefab
 {
 	xywh : 0, 0, 220, 60;
-	flag : render_on_parent;
 	text_color : 0xffffffff;
 	text_pos : 2, 2, 200, 60;
-	flag : event_children render_children;
+	flag : render_on_parent event_children render_children;
 };
 event_button_prefab
 {
@@ -962,7 +961,7 @@ event_button_prefab
 	bg_color_default : 0xffff0000;
 	bg_color_hover : 0xffffff00;
 	bg_color_click : 0xffff00ff;
-	flag : render_on_parent;
+	flag : render_on_parent notaflag;
 	text_color : 0xffffffff;
 	text_pos : 2, 2, 200, 60;
 	title : ;
