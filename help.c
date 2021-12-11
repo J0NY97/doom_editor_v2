@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   help.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:01 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:04:02 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/11 09:22:20 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ int	hover_over_open_menus(t_editor *editor)
 		|| ui_element_is_hover(editor->texture_menu)
 		|| ui_element_is_hover(editor->event_edit_menu)
 		|| ui_element_is_hover(editor->spawn_edit_menu)
+		|| ui_element_is_hover(editor->entity_edit_menu)
 		|| ui_element_was_hover(editor->selection_dropdown_menu)
 		|| ui_element_is_hover(editor->menu_toolbox_top))
 		return (1);

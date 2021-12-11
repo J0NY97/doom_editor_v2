@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:58 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:03:59 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/11 09:30:54 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,6 +241,7 @@ void	get_fc(t_editor *editor, char **args)
 	sector->ceiling_scale = ft_atof(args[6]);
 	slopes = ft_strsplit(args[7], ' ');
 	set_slopes(sector->walls, slopes);
+	ft_arraydel(slopes);
 }
 
 void	get_entity(t_editor *editor, char **lines, int *i)

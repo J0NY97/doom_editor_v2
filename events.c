@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   events.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:03:53 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/11 09:21:53 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	calculate_hover(t_editor *editor)
 		* (editor->gap_size * editor->zoom);
 	editor->move_amount.x = editor->mouse_pos.x - editor->last_mouse_pos.x;
 	editor->move_amount.y = editor->mouse_pos.y - editor->last_mouse_pos.y;
-	if (editor->win_main->scroll)
+	if (editor->win_main->scroll && !hover_over_open_menus(editor))
 	{
 		editor->zoom
 			= ft_fclamp(editor->zoom + editor->win_main->scroll / 10.0f,
