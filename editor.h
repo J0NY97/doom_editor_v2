@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   editor.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:03:39 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/11 12:35:36 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,8 @@ typedef struct s_texture_something
 */
 typedef struct s_editor
 {
+	SDL_Event		e;
+
 	t_ui_layout		layout;
 	t_ui_window		*win_main;
 

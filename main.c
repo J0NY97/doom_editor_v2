@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:09 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:04:10 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/11 12:36:02 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ int	main(int ac, char **av)
 {
 	t_editor	editor;
 	t_fps		fps;
-	SDL_Event	e;
 
 	ui_sdl_init();
 	editor_init(&editor);
@@ -156,10 +155,10 @@ int	main(int ac, char **av)
 	{
 		fps_func(&fps);
 		update_title_fps(editor.win_main->win, &fps);
-		while (SDL_PollEvent(&e))
+		while (SDL_PollEvent(&editor.e))
 		{
-			ui_layout_event(&editor.layout, e);
-			user_events(&editor, e);
+			ui_layout_event(&editor.layout, editor.e);
+			user_events(&editor, editor.e);
 		}
 		user_render(&editor);
 		ui_layout_render(&editor.layout);

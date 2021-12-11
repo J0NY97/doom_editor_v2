@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 11:13:16 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/11 12:49:23 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -453,6 +453,63 @@ void	select_wall(t_editor *editor)
 }
 
 /*
+ * Returns the t_list of which t_list->content == 'content';
+*/
+t_list	*get_wall_tlist(t_list *list, t_wall *content)
+{
+	while (list)
+	{
+		if (list->content == content)
+			return (list);
+		list = list->next;
+	}
+	return (NULL);
+}
+
+/*
+ * Returns last t_list in 'list';
+*/
+t_list	*get_last_tlist(t_list *list)
+{
+	while (list->next)
+		list = list->next;
+	return (list);
+}
+
+int	select_wall_with_arrows(t_editor *editor)
+{
+	t_list	*wall_tlist;
+
+	if (editor->e.key.type != SDL_KEYDOWN)
+		return (0);
+	if (editor->e.key.keysym.scancode == SDL_SCANCODE_UP)
+	{
+		wall_tlist = get_wall_tlist(editor->selected_sector->walls, editor->selected_wall);
+		if (wall_tlist)
+		{
+			if (wall_tlist->next)
+				editor->selected_wall = wall_tlist->next->content;
+			else
+				editor->selected_wall = editor->selected_sector->walls->content;
+			return (1);
+		}
+	}
+	else if (editor->e.key.keysym.scancode == SDL_SCANCODE_DOWN)
+	{
+		wall_tlist = get_wall_tlist(editor->selected_sector->walls, editor->selected_wall);
+		if (wall_tlist)
+		{
+			if (wall_tlist->prev && wall_tlist->prev->content)
+				editor->selected_wall = wall_tlist->prev->content;
+			else
+				editor->selected_wall = get_last_tlist(editor->selected_sector->walls)->content;
+			return (1);
+		}
+	}
+	return (0);
+}
+
+/*
  * NOTE: only move wall if we are NOT hovering over the sprite_edit_menu;
 */
 void	wall_select_events(t_editor *editor)
@@ -461,6 +518,9 @@ void	wall_select_events(t_editor *editor)
 		&& !hover_over_open_menus(editor)
 		&& editor->selected_sector)
 		select_wall(editor);
+	else if (select_wall_with_arrows(editor))
+	{
+	}
 	else if (editor->selected_wall
 		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT
 		&& !(editor->wall_render->show == 1

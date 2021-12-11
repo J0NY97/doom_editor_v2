@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:58 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 10:26:51 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/11 11:24:06 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,10 +106,10 @@ void	get_sprites(t_editor *editor, char **lines)
 		sprite->id = ft_atoi(lines[0]);
 		sprite->parent = parent_wall;
 		sprite->pos.x = ft_atoi(lines[2]);
-		sprite->pos.x = ft_atoi(lines[3]);
+		sprite->pos.y = ft_atoi(lines[3]);
 		sprite->texture_id = ft_atoi(lines[4]);
 		if (ft_atoi(lines[5]) != 0)
-			sprite->scale = 100 / ft_atoi(lines[5]);
+			sprite->scale = ft_atoi(lines[5]) / 100;
 		while (++ggg < SPRITE_TYPE_AMOUNT)
 			if (ft_strequ(g_sprite_type[ggg], lines[6]))
 				sprite->type = ggg;
