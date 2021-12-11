@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:09 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 13:31:10 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/11 16:39:44 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,22 +122,45 @@ void	setup_ui_values(t_editor *editor)
 
 void	editor_free(t_editor *editor)
 {
+	ft_printf("[%s]\n", __FUNCTION__);
 	ui_layout_free(&editor->layout);
-//	ft_lstdel(&editor->texture_somethings, &texture_something_free);
+	ft_printf("Layout freed.");
+	ft_lstdel(&editor->texture_somethings, &dummy_free_er);
+	ft_printf("Texture Something freed.");
 	ft_lstdel(&editor->texture_opening_buttons, &dummy_free_er);
-	//ft_lstdel(&editor->texture_elems, &texture_elem_free);
+	ft_printf("Texture Opening freed.");
+	ft_lstdel(&editor->texture_elems, &texture_elem_free);
+	ft_printf("Texture Elems freed.");
 	ft_lstdel(&editor->texture_buttons, &dummy_free_er);
+	ft_printf("Texture Buttons freed.");
 	TTF_CloseFont(editor->font);
+	ft_printf("Font freed.");
 	SDL_DestroyTexture(editor->drawing_texture);
+	ft_printf("Drawing Texture freed.");
 	SDL_FreeSurface(editor->drawing_surface);
+	ft_printf("Drawing Surface freed.");
 	SDL_FreeSurface(editor->grid_surface);
-	// surface_array_del(wall_textures);
-	// texture_array_del(entity_textures);
-	// surface_array_del(entity_texture_surfaces);
+	ft_printf("Grid Surface freed.");
+	surface_array_free(editor->wall_textures, MAP_TEXTURE_AMOUNT);
+	ft_printf("Wall textures freed.");
+	texture_array_free(editor->entity_textures, ENTITY_AMOUNT + 1);
+	ft_printf("Entity textures freed.");
+	surface_array_free(editor->entity_texture_surfaces, ENTITY_AMOUNT + 1);
+	ft_printf("Entity texture surfaces freed.");
 	ft_lstdel(&editor->sectors, &sector_free);
+	ft_lstdel(&editor->walls, &dummy_free_er);
+	ft_lstdel(&editor->points, &point_free);
+	ft_lstdel(&editor->sprites, &dummy_free_er);
+	//ft_lstdel(&editor->entities, &dummy_free_er);
+	//ft_lstdel(&editor->events, &dummy_free_er);
+	ft_printf("Sectors freed.");
+	free(editor->map_name);
+	free(editor->map_full_path);
+	ft_printf("Map name freed.");
+	ui_sdl_free();
 }
 
-int	main(int ac, char **av)
+int	realmain(int ac, char **av)
 {
 	t_editor	editor;
 	t_fps		fps;
@@ -157,11 +180,23 @@ int	main(int ac, char **av)
 		update_title_fps(editor.win_main->win, &fps);
 		while (SDL_PollEvent(&editor.e))
 		{
+			if (editor.e.key.keysym.scancode == SDL_SCANCODE_E)
+				editor.win_main->wants_to_close = 1;
 			ui_layout_event(&editor.layout, editor.e);
 			user_events(&editor, editor.e);
 		}
 		user_render(&editor);
 		ui_layout_render(&editor.layout);
 	}
+		/*
+		*/
 	editor_free(&editor);
+	return (1);
+}
+
+int	main(int ac, char **av)
+{
+	realmain(ac, av);
+	system("leaks doom_editor");
+	return (1);
 }

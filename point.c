@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   point.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:16 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:04:17 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/11 16:38:07 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,17 @@ t_point	*add_point(t_editor *editor)
 	++editor->point_amount;
 	add_to_list(&editor->points, point, sizeof(t_point));
 	return (point);
+}
+
+void	point_free(void *p, size_t size)
+{
+	t_point	*point;
+
+	point = p;;
+	if (!point)
+		return ;
+	free(p);
+	(void)size;
 }
 
 /*

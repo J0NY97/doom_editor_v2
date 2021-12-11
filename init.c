@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:05 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:04:06 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/11 14:35:47 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,8 @@ void	texture_elem_init(t_editor *editor)
 		texture_elem->button = ft_memalloc(sizeof(t_ui_element));
 		set_elem_parent_and_recipe(texture_elem->button, UI_TYPE_BUTTON,
 			&texture_elem->menu, "texture_button");
+		texture_elem->image.free_me = 0;
+		texture_elem->menu.free_me = 0;
 		texture_elem->id = i;
 		add_to_list(&editor->texture_elems,
 			texture_elem, sizeof(t_texture_elem));

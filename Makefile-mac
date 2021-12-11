@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile-mac                                       :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
+#    By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/09 14:37:19 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/11 15:59:50 by jsalmi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,8 @@ SRCS =  main.c\
 		set_map.c\
 		get_map.c\
 		args_parser.c\
-		help.c
+		help.c\
+		free_help.c\
 
 NAME = doom_editor
 ODIR = obj
@@ -69,7 +70,7 @@ all: $(ODIR) $(NAME)
 
 $(ODIR):
 	@mkdir -p $@
-	
+
 -include $(JOHNNY)
 
 $(ODIR)/%.o: $(CDIR)/%.c
@@ -78,13 +79,13 @@ $(ODIR)/%.o: $(CDIR)/%.c
 
 $(NAME): $(OBJS)
 	@gcc -o $(NAME) $(OBJS) $(INCLUDES) $(LIB_FOLDERS) $(CFLAGS)
-	
-clean: 
+
+clean:
 	@printf $(CYAN)"[INFO] $(NAME) cleaned!\n"$(RESET)
 	@rm -rf $(ODIR)
 
 fclean: clean
-	
+
 	@rm $(NAME)
 
 re: fclean all

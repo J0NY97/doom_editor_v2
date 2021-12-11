@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 12:35:36 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/11 16:37:38 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -509,6 +509,7 @@ t_point				*get_point_from_sector_around_radius(t_sector *sector, t_vec2i pos, f
 t_point				*add_point(t_editor *editor);
 int					remove_point(t_editor *editor, t_point *point);
 void				remove_all_lonely_points(t_editor *editor);
+void				point_free(void *p, size_t size);
 
 // Wall
 t_wall				*wall_new(void);
@@ -624,6 +625,11 @@ void				send_info_message(t_editor *editor, char *text);
 void				set_elem_parent_and_recipe(t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id);
 void				draw_arrow(SDL_Surface *surface, t_vec2i start, int len, float yaw);
 t_vec2i				get_middle(t_vec2i p1, t_vec2i p2);
+
+// Free help
+void				surface_array_free(SDL_Surface **surfaces, int amount);
+void				texture_array_free(SDL_Texture **textures, int amount);
+void				texture_elem_free(void *tex_elem, size_t size);
 
 // Bxpm
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);
