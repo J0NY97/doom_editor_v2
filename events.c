@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 12:49:23 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/11 13:11:43 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,7 +455,7 @@ void	select_wall(t_editor *editor)
 /*
  * Returns the t_list of which t_list->content == 'content';
 */
-t_list	*get_wall_tlist(t_list *list, t_wall *content)
+t_list	*get_tlist_with_content(t_list *list, void *content)
 {
 	while (list)
 	{
@@ -480,33 +480,28 @@ int	select_wall_with_arrows(t_editor *editor)
 {
 	t_list	*wall_tlist;
 
-	if (editor->e.key.type != SDL_KEYDOWN)
+	if (editor->e.key.type != SDL_KEYDOWN
+		|| (editor->e.key.keysym.scancode != SDL_SCANCODE_UP
+			&& editor->e.key.keysym.scancode != SDL_SCANCODE_DOWN))
+		return (0);
+	wall_tlist = get_tlist_with_content(editor->selected_sector->walls, editor->selected_wall);
+	if (!wall_tlist)
 		return (0);
 	if (editor->e.key.keysym.scancode == SDL_SCANCODE_UP)
 	{
-		wall_tlist = get_wall_tlist(editor->selected_sector->walls, editor->selected_wall);
-		if (wall_tlist)
-		{
-			if (wall_tlist->next)
-				editor->selected_wall = wall_tlist->next->content;
-			else
-				editor->selected_wall = editor->selected_sector->walls->content;
-			return (1);
-		}
+		if (wall_tlist->next)
+			editor->selected_wall = wall_tlist->next->content;
+		else
+			editor->selected_wall = editor->selected_sector->walls->content;
 	}
 	else if (editor->e.key.keysym.scancode == SDL_SCANCODE_DOWN)
 	{
-		wall_tlist = get_wall_tlist(editor->selected_sector->walls, editor->selected_wall);
-		if (wall_tlist)
-		{
-			if (wall_tlist->prev && wall_tlist->prev->content)
-				editor->selected_wall = wall_tlist->prev->content;
-			else
-				editor->selected_wall = get_last_tlist(editor->selected_sector->walls)->content;
-			return (1);
-		}
+		if (wall_tlist->prev && wall_tlist->prev->content)
+			editor->selected_wall = wall_tlist->prev->content;
+		else
+			editor->selected_wall = get_last_tlist(editor->selected_sector->walls)->content;
 	}
-	return (0);
+	return (1);
 }
 
 /*
