@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 09:21:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/11 11:13:16 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,7 +345,8 @@ void	visualize_wall(
 
 	SDL_SetRenderTarget(editor->win_main->renderer,
 		editor->wall_render->texture);
-	SDL_RenderClear(editor->win_main->renderer);
+	ui_texture_fill(editor->win_main->renderer,
+		editor->wall_render->texture, 0xff000000);
 	size = 64;
 	aspect = get_ratio_f(vec2(wall->width * size, wall->height * size),
 			vec2(editor->wall_render->pos.w, editor->wall_render->pos.h));
