@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:58 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 09:30:54 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/11 10:26:51 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,7 @@ void	get_sector_walls(
 			ft_printf("[%s] No wall with id : %d.\n", __FUNCTION__, id);
 	}
 	ft_arraydel(wall_ids);
+	ft_arraydel(neigh_ids);
 }
 
 /*
