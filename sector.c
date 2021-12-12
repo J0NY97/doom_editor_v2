@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:22 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 11:55:52 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/12 16:04:22 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,6 +331,19 @@ t_wall	*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2)
 	return (NULL);
 }
 
+void	remove_neighbor_from_walls(t_list *list, t_sector *sector)
+{
+	t_wall	*wall;
+
+	while (list)
+	{
+		wall = list->content;
+		if (wall->neighbor == sector)
+			wall->neighbor = NULL;
+		list = list->next;
+	}
+}
+
 /*
  * Removes all traces of this sector;
 */
@@ -338,6 +351,7 @@ int	remove_sector(t_editor *editor, t_sector *sector)
 {
 	if (!sector)
 		return (0);
+	remove_neighbor_from_walls(editor->walls, sector);
 	remove_from_list(&editor->sectors, sector);
 	ft_lstdel(&sector->walls, &dummy_free_er);
 	free(sector);

@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 11:14:43 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/12 17:14:53 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,24 +76,6 @@ void	grid_events(t_editor *editor, SDL_Event e)
 }
 
 /*
- * 1. Remove all neighbors from walls that sector doesnt exist anymore;
-*/
-void	wall_cleanup(t_editor *editor)
-{
-	t_wall	*wall;
-	t_list	*curr;
-
-	curr = editor->walls;
-	while (curr)
-	{
-		wall = curr->content;
-		if (!get_sector_with_id(editor->sectors, wall->neighbor_id))
-			wall->neighbor = NULL;
-		curr = curr->next;
-	}
-}
-
-/*
  * 1. Remove all the points not a part of a sector;
  * 2. Remove all walls with either points NULL;
  * 2.5. Remove all neighbors not connected;
@@ -107,7 +89,6 @@ void	sector_cleanup(t_editor *editor)
 	ft_printf("[%s] Done cleaning walls!\n", __FUNCTION__);
 	remove_all_lonely_points(editor);
 	ft_printf("[%s] Done cleaning points!\n", __FUNCTION__);
-	wall_cleanup(editor);
 	ft_printf("[%s] Cleanup crew done!\n", __FUNCTION__);
 }
 
@@ -1064,6 +1045,7 @@ void	save_button_events(t_editor *editor)
 		set_map(editor, actual_full_path);
 		ft_strdel(&actual_full_path);
 		ui_window_flag_set(editor->win_save, UI_WINDOW_HIDE);
+		ui_window_flag_set(editor->win_main, UI_WINDOW_RAISE);
 		send_info_message(editor, "Map Saved Successfully!");
 	}
 }
@@ -1084,6 +1066,8 @@ void	save_window_events(t_editor *editor)
 		editor->map_type == MAP_TYPE_STORY);
 	if (ui_button(editor->confirm_save_button))
 		save_button_events(editor);
+	if (editor->win_save->wants_to_close)
+		ui_window_flag_set(editor->win_main, UI_WINDOW_RAISE);
 }
 
 void	edit_window_events(t_editor *editor)
