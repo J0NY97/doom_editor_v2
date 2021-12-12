@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:49 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 10:15:15 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/12 10:23:14 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,11 +282,22 @@ void	update_event2(t_editor *editor, t_event *event)
 		}
 	}
 	active_text = ui_input_get_text(editor->event_sector_input);
+	ft_printf("event_sector_input : <%s>\n", active_text);
 	if (active_text)
 	{
+		ft_printf("counts as being a text\n");
 		if (event->sector)
 			ft_strdel(&event->sector);
-		event->sector = ft_strdup(active_text);
+		if (ft_strequ(active_text, ""))
+		{
+			ft_printf("empty, but exists\n");
+			event->sector = ft_strdup("-");
+		}
+		else
+		{
+			ft_printf("full, and exists\n");
+			event->sector = ft_strdup(active_text);
+		}
 	}
 }
 
