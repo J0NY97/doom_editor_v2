@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wall.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:04:39 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/12 11:35:45 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ t_wall	*wall_new(void)
 
 	wall = ft_memalloc(sizeof(t_wall));
 	wall->solid = 1;
-	wall->texture_scale = 10.0f;
+	wall->wall_texture = 7;
+	wall->texture_scale = 30.0f;
 	return (wall);
 }
 

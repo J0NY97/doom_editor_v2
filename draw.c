@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:28 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:03:29 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/12 13:17:32 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 	t_sector	*sector;
 	char		temp[20];
 	t_sector	*hovered_this_frame;
+	Uint32		color;
 
 	hovered_this_frame = NULL;
 	while (sectors)
@@ -60,8 +61,11 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		sector->center = get_sector_center(sector);
 		sector->screen_center = conversion(editor, sector->center);
 		ft_b_itoa(sector->id, temp);
+		color = 0xffffffff;
+		if (sector == editor->selected_sector)
+			color = 0xff00ff00;
 		draw_text(editor->drawing_surface,
-			temp, editor->font, sector->screen_center, 0xffffffff);
+			temp, editor->font, sector->screen_center, color);
 		sector_check_errors(editor, sector);
 		if (vec2_in_vec4(editor->mouse_pos,
 				vec4i(sector->center.x - 1, sector->center.y - 1, 3, 3)))

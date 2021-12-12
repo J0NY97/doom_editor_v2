@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 10:11:36 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/12 11:14:43 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -515,6 +515,9 @@ void	wall_select_events(t_editor *editor)
 		select_wall(editor);
 	else if (select_wall_with_arrows(editor))
 	{
+		editor->active_texture_button = NULL;
+		editor->selected_sprite = NULL;
+		set_wall_ui(editor, editor->selected_wall);
 	}
 	else if (editor->selected_wall
 		&& editor->win_main->mouse_down == SDL_BUTTON_RIGHT

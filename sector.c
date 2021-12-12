@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sector.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:22 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:04:23 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/12 11:55:52 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ t_sector	*sector_new(void)
 	sector->color = random_blue_color();
 	sector->floor_height = 0;
 	sector->ceiling_height = 20;
-	sector->floor_texture = 0;
-	sector->ceiling_texture = 0;
+	sector->floor_texture = 16;
+	sector->ceiling_texture = 2;
 	sector->gravity = 20;
 	sector->lighting = 0;
-	sector->floor_scale = 10.0;
-	sector->ceiling_scale = 10.0;
+	sector->floor_scale = 50.0;
+	sector->ceiling_scale = 25.0;
 	return (sector);
 }
 
@@ -192,7 +192,7 @@ void	get_gl_inputs(t_editor *editor, t_sector *sector)
 	if (ui_input_exit(editor->lighting_input))
 	{
 		sector->lighting = ft_clamp(ft_atoi(ui_input_get_text(
-						editor->lighting_input)), 0, 100);
+						editor->lighting_input)), -250, 255);
 		ft_b_itoa(sector->lighting, temp_str);
 		ui_input_set_text(editor->lighting_input, temp_str);
 	}
