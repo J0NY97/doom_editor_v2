@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:09 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 16:39:44 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/12 10:02:13 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,12 +148,18 @@ void	editor_free(t_editor *editor)
 	surface_array_free(editor->entity_texture_surfaces, ENTITY_AMOUNT + 1);
 	ft_printf("Entity texture surfaces freed.");
 	ft_lstdel(&editor->sectors, &sector_free);
+	ft_printf("Sectors freed.");
 	ft_lstdel(&editor->walls, &dummy_free_er);
 	ft_lstdel(&editor->points, &point_free);
 	ft_lstdel(&editor->sprites, &dummy_free_er);
-	//ft_lstdel(&editor->entities, &dummy_free_er);
-	//ft_lstdel(&editor->events, &dummy_free_er);
-	ft_printf("Sectors freed.");
+	ft_lstdel(&editor->entities, &entity_free);
+	ft_printf("Entity freed.");
+	ft_lstdel(&editor->events, &event_free);
+	ft_printf("Event freed.");
+	ft_lstdel(&editor->event_elements, &event_elem_free);
+	ft_printf("Event elem freed.");
+	ft_lstdel(&editor->event_element_buttons, &dummy_free_er);
+	ft_printf("Event elem buttons freed.");
 	free(editor->map_name);
 	free(editor->map_full_path);
 	ft_printf("Map name freed.");

@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:44 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 09:28:48 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/12 09:40:24 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,15 @@ t_entity	*entity_new(void)
 	return (entity);
 }
 
-void	entity_free(t_entity *entity)
+void	entity_free(void *ent, size_t size)
 {
+	t_entity	*entity;
+
+	entity = ent;
 	if (!entity)
 		return ;
 	free(entity);
-	entity = NULL;
+	(void)size;
 }
 
 t_entity	*add_entity(t_editor *editor)
@@ -44,7 +47,7 @@ int	remove_entity(t_editor *editor, t_entity *entity)
 	if (!entity)
 		return (0);
 	remove_from_list(&editor->entities, entity);
-	entity_free(entity);
+	entity_free(entity, sizeof(t_entity));
 	--editor->entity_amount;
 	ft_printf("[%s] Entity Removed.\n", __FUNCTION__);
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 16:37:38 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/12 09:59:39 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -560,6 +560,7 @@ bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_
 
 // Entity
 t_entity			*entity_new(void);
+void				entity_free(void *ent, size_t size);
 t_entity			*add_entity(t_editor *editor);
 int					remove_entity(t_editor *editor, t_entity *entity);
 void				entity_render(t_editor *editor, t_entity *entity);
@@ -573,13 +574,13 @@ void				print_entities(t_list *entities);
 
 // Event
 t_event_elem		*event_element_new(t_ui_element *parent);
-void				event_elem_free(t_event_elem *elem);
+void				event_elem_free(void *elem, size_t size);
 t_event				*add_event(t_editor *editor);
 void				remove_event(t_editor *editor, t_event *event);
 void				remove_event_elem_from_list(t_event_elem *elem, t_list **list);
 void				event_elem_update(t_editor *editor, t_event_elem *event_elem);
 t_event				*event_new(void);
-void				event_free(t_event *event);
+void				event_free(void *ev, size_t size);
 void				remove_event_from_list(t_event *event, t_list **list);
 int					get_next_event_id(t_list *list);
 void				update_event(t_editor *editor, t_event *event);

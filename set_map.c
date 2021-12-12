@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   set_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:26 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:04:27 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/12 09:44:25 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,10 +353,14 @@ char	*create_event_string(t_event *event)
 	int		target_id;
 
 	final = NULL;
-	if (event->pointer_type == TYPE_SECTOR)
-		target_id = ((t_sector *)event->pointer)->id;
-	else
-		target_id = ((t_sprite *)event->pointer)->id;
+	target_id = -1;
+	if (event->pointer)
+	{
+		if (event->pointer_type == TYPE_SECTOR)
+			target_id = ((t_sector *)event->pointer)->id;
+		else
+			target_id = ((t_sprite *)event->pointer)->id;
+	}
 	if (event->sector)
 		sector_text = ft_strdup(event->sector);
 	else
@@ -378,7 +382,7 @@ char	*set_event(t_editor *editor)
 	int		id;
 
 	id = -1;
-	final = ft_sprintf("type:event\tTYPE\tACTION\tID\tSECTOR\tMIN\tMAX\tSPEED\n");
+	final = ft_sprintf("type:event\tTYPE\tACTION\tID\tSEC\tMIN\tMAX\tSPEED\n");
 	curr = editor->events;
 	while (curr)
 	{

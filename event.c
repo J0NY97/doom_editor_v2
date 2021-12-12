@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   event.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:49 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:03:50 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/12 10:15:15 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,17 @@ t_event	*event_new(void)
 	return (event);
 }
 
-void	event_free(t_event *event)
+void	event_free(void *ev, size_t size)
 {
+	t_event	*event;
+
+	event = ev;
+	if (!event)
+		return ;
 	event->pointer = NULL;
 	ft_strdel(&event->sector);
 	free(event);
+	(void)size;
 }
 
 t_event	*add_event(t_editor *editor)
@@ -92,8 +98,9 @@ void	remove_event(t_editor *editor, t_event *event)
 		&editor->event_element_buttons);
 	remove_event_elem_from_list(event->elem, &editor->event_elements);
 	remove_event_from_list(event, &editor->events);
-	event_elem_free(event->elem);
-	event_free(event);
+	ui_element_free(&event->elem->menu, event->elem->menu.element_type);
+	event_elem_free(event->elem, sizeof(t_event_elem));
+	event_free(event, sizeof(t_event));
 	--editor->event_amount;
 	realign_event_buttons(editor);
 	ft_printf("Removing event. (total : %d)\n", editor->event_amount);
@@ -173,41 +180,23 @@ void	remove_event_from_list(t_event *event, t_list **list)
 	}
 }
 
-void	event_elem_free(t_event_elem *elem)
+/*
+ * NOTE:
+ * 1.	When freeing an element, it will also free all its children,
+ * 	and since all the event_elem elements are a child of 't_event_elem->menu'
+ * 	all of them will be freed when that one is freed.
+ * 2.	We dont free it here because this function is also used in the final
+ * 	freeing, so you have to free the menu before freeing the 't_event_elem'.
+*/
+void	event_elem_free(void *e_e, size_t size)
 {
-	elem->menu.free_me = 0;
-	elem->id.free_me = 0;
-	elem->type.free_me = 0;
-	elem->action.free_me = 0;
-	elem->target_id.free_me = 0;
-	elem->sector.free_me = 0;
-	elem->min.free_me = 0;
-	elem->max.free_me = 0;
-	elem->speed.free_me = 0;
-	ui_element_set_id(&elem->menu, "menu");
-	ui_element_set_id(&elem->id, "id");
-	ui_element_set_id(&elem->type, "type");
-	ui_element_set_id(&elem->action, "action");
-	ui_element_set_id(&elem->target_id, "target_id");
-	ui_element_set_id(&elem->sector, "sector");
-	ui_element_set_id(&elem->min, "min");
-	ui_element_set_id(&elem->max, "max");
-	ui_element_set_id(&elem->speed, "speed");
-	ui_element_set_id(elem->button, "button");
-	ui_element_free(&elem->menu, elem->menu.element_type);
-	/*
-	ui_element_free(elem->button, elem->button->element_type);
-	ui_element_free(&elem->id, elem->id.element_type);
-	ui_element_free(&elem->type, elem->type.element_type);
-	ui_element_free(&elem->action, elem->action.element_type);
-	ui_element_free(&elem->target_id, elem->target_id.element_type);
-	ui_element_free(&elem->sector, elem->sector.element_type);
-	ui_element_free(&elem->min, elem->min.element_type);
-	ui_element_free(&elem->max, elem->max.element_type);
-	ui_element_free(&elem->speed, elem->speed.element_type);
-	*/
-	elem->event = NULL;
+	t_event_elem	*elem;
+
+	elem = e_e;
+	if (!elem)
+		return ;
 	free(elem);
+	(void)size;
 }
 
 void	remove_event_elem_from_list(t_event_elem *elem, t_list **list)
@@ -223,6 +212,10 @@ void	remove_event_elem_from_list(t_event_elem *elem, t_list **list)
 	}
 }
 
+/*
+ * NOTE:
+ * 1.	Button is malloced, thats why we dont set it to 'free_me = 0';
+*/
 t_event_elem	*event_element_new(t_ui_element *parent)
 {
 	t_event_elem	*event_elem;
@@ -230,7 +223,6 @@ t_event_elem	*event_element_new(t_ui_element *parent)
 	event_elem = ft_memalloc(sizeof(t_event_elem));
 	set_elem_parent_and_recipe(&event_elem->menu,
 		UI_TYPE_MENU, parent, "event_menu_prefab");
-	event_elem->menu.render_me_on_parent = 1;
 	set_elem_parent_and_recipe(&event_elem->id,
 		UI_TYPE_LABEL, &event_elem->menu, "event_id_prefab");
 	set_elem_parent_and_recipe(&event_elem->type,
@@ -250,6 +242,15 @@ t_event_elem	*event_element_new(t_ui_element *parent)
 	event_elem->button = ft_memalloc(sizeof(t_ui_element));
 	set_elem_parent_and_recipe(event_elem->button,
 		UI_TYPE_BUTTON, &event_elem->menu, "event_button_prefab");
+	event_elem->menu.free_me = 0;
+	event_elem->id.free_me = 0;
+	event_elem->type.free_me = 0;
+	event_elem->action.free_me = 0;
+	event_elem->target_id.free_me = 0;
+	event_elem->sector.free_me = 0;
+	event_elem->min.free_me = 0;
+	event_elem->max.free_me = 0;
+	event_elem->speed.free_me = 0;
 	return (event_elem);
 }
 
@@ -289,6 +290,9 @@ void	update_event2(t_editor *editor, t_event *event)
 	}
 }
 
+/*
+ * char	*active_text; is pointer to an existing one, DONT FREE!
+*/
 void	update_event3(t_editor *editor, t_event *event)
 {
 	char	*active_text;
@@ -343,7 +347,7 @@ void	update_event_elem(t_event_elem *elem)
 			ui_label_set_text(&elem->target_id,
 				ft_b_itoa(((t_sprite *)elem->event->pointer)->id, temp));
 	}
-	ui_label_set_text(&elem->sector, ft_sprintf("%s", elem->event->sector));
+	ui_label_set_text(&elem->sector, elem->event->sector);
 	ui_label_set_text(&elem->min, ft_b_itoa(elem->event->min, temp));
 	ui_label_set_text(&elem->max, ft_b_itoa(elem->event->max, temp));
 	ui_label_set_text(&elem->speed, ft_b_itoa(elem->event->speed, temp));
