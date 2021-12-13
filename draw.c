@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:28 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 13:17:32 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 09:42:43 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,17 +106,17 @@ void	draw_selected(t_editor *editor)
 	t_vec2i	p2;
 
 	if (editor->selected_sector)
-		sector_render(editor, editor->selected_sector, 0xff00ff00);
+		sector_render(editor, editor->selected_sector, 0xFF00FF00);
 	if (editor->selected_point)
-		point_render(editor, editor->selected_point, 0xffffff00);
+		point_render(editor, editor->selected_point, 0xFFFFD700);
 	else if (editor->selected_wall)
-		wall_render(editor, editor->selected_wall, 0xffffff00);
+		wall_render(editor, editor->selected_wall, 0xFFFFD700);
 	if (editor->selected_entity)
 	{
 		conv = conversion(editor, editor->selected_entity->pos);
 		p1 = vec2i(conv.x - 10, conv.y - 10);
 		p2 = vec2i(conv.x + 10, conv.y + 10);
-		ui_surface_rect_draw(editor->drawing_surface, p1, p2, 0xffffff00);
+		ui_surface_rect_draw(editor->drawing_surface, p1, p2, 0xFFFFD700);
 	}
 }
 
