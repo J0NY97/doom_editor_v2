@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 11:12:26 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 13:21:43 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 # include "bmath.h"
 # include "bxpm.h"
 # include "path.h"
-
-# include "temp.h" // not needed when we are using the real enum.h;
+# include "resources.h"
+# include "enum.h"
 
 typedef struct s_spawn		t_spawn;
 typedef struct s_point		t_point;
@@ -547,7 +547,7 @@ void				set_sector_ui(t_editor *editor, t_sector *sector);
 void				get_sector_ui(t_editor *editor, t_sector *sector);
 t_sector			*get_sector_with_id(t_list *sectors, int id);
 t_vec2i				get_sector_center(t_sector *sector);
-t_sector			*get_sector_from_list_around_radius(t_list *list, t_vec2i pos, int allowed_radius);
+t_sector			*get_sector_around_radius(t_editor *editor, t_vec2i pos, int allowed_radius);
 int					remove_sector(t_editor *editor, t_sector *sector);
 int					get_next_sector_id(t_list *list);
 t_sector			*get_sector_by_id_from_list(t_list *list, int id);

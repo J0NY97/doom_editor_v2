@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 11:27:55 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 13:25:21 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,8 +125,7 @@ void	select_sector(t_editor *editor)
 {
 	t_sector	*sector;
 
-	sector = get_sector_from_list_around_radius(
-			editor->sectors, editor->mouse_pos, 1);
+	sector = get_sector_around_radius(editor, editor->win_main->mouse_pos, 10);
 	if (sector)
 	{
 		editor->selected_sector = sector;

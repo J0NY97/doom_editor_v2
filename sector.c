@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:22 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 09:19:52 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 13:25:58 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,17 +283,21 @@ t_vec2i	get_sector_center(t_sector *sector)
 	return (vec2i(x / i, y / i));
 }
 
-t_sector	*get_sector_from_list_around_radius(
-		t_list *list, t_vec2i pos, int allowed_radius)
+t_sector	*get_sector_around_radius(
+		t_editor *editor, t_vec2i pos, int allowed_radius)
 {
+	t_list		*list;
 	t_sector	*sec;
+	t_vec2i		screen_pos;
 
+	list = editor->sectors;
 	while (list)
 	{
 		sec = list->content;
+		screen_pos = conversion(editor, sec->center);
 		if (vec2_in_vec4(pos,
-				vec4i(sec->center.x - allowed_radius,
-					sec->center.y - allowed_radius,
+				vec4i(screen_pos.x - allowed_radius,
+					screen_pos.y - allowed_radius,
 					allowed_radius * 2, allowed_radius * 2)))
 			return (sec);
 		list = list->next;
