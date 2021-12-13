@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 17:14:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 09:22:52 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -418,19 +418,22 @@ void	sprite_events(t_editor *editor)
 /*
  * NOTE: we dont want to make selected_wall NULL if we dont select a wall;
 */
-void	select_wall(t_editor *editor)
+int	select_wall(t_editor *editor)
 {
 	t_wall	*wall;
 
+	if (editor->win_main->mouse_down_last_frame != SDL_BUTTON_LEFT
+		|| hover_over_open_menus(editor)
+		|| !editor->selected_sector)
+		return (0);
 	wall = get_wall_from_list_around_radius(
 			editor->selected_sector->walls, editor->mouse_pos, 1.0f);
 	if (wall)
 	{
 		editor->selected_wall = wall;
-		editor->active_texture_button = NULL;
-		editor->selected_sprite = NULL;
-		set_wall_ui(editor, wall);
+		return (1);
 	}
+	return (0);
 }
 
 /*
@@ -487,14 +490,13 @@ int	select_wall_with_arrows(t_editor *editor)
 
 /*
  * NOTE: only move wall if we are NOT hovering over the sprite_edit_menu;
+ *
+ * 'select_wall' using mouse, 'select_wall_with_arrows' ...
+ * 	i think you can figure it out.
 */
 void	wall_select_events(t_editor *editor)
 {
-	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
-		&& !hover_over_open_menus(editor)
-		&& editor->selected_sector)
-		select_wall(editor);
-	else if (select_wall_with_arrows(editor))
+	if (select_wall(editor) || select_wall_with_arrows(editor))
 	{
 		editor->active_texture_button = NULL;
 		editor->selected_sprite = NULL;

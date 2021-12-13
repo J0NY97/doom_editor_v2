@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:22 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 16:04:22 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 09:19:52 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,6 +331,11 @@ t_wall	*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2)
 	return (NULL);
 }
 
+/*
+ * If we find from 'list->content->neighbor' (content should be t_wall)...
+ * ... the 'sector', we will set 't_wall->neighbor' to NULL. aka remove its
+ * neighbor. And also set the wall to solid.
+*/
 void	remove_neighbor_from_walls(t_list *list, t_sector *sector)
 {
 	t_wall	*wall;
@@ -339,7 +344,10 @@ void	remove_neighbor_from_walls(t_list *list, t_sector *sector)
 	{
 		wall = list->content;
 		if (wall->neighbor == sector)
+		{
 			wall->neighbor = NULL;
+			wall->solid = 1;
+		}
 		list = list->next;
 	}
 }

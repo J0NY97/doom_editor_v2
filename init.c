@@ -6,26 +6,16 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:05 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/11 14:35:47 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 09:34:04 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "editor.h"
 
-void	selection_menu_init(t_editor *editor)
+void	type_dropdown_init(t_editor *editor)
 {
-	editor->menu_toolbox_top
-		= ui_layout_get_element(&editor->layout, "menu_toolbox_top");
-	editor->menu_selection
-		= ui_layout_get_element(&editor->layout, "menu_select_buttons");
 	editor->selection_dropdown_menu
 		= ui_layout_get_element(&editor->layout, "type_drop_menu");
-	editor->draw_button
-		= ui_layout_get_element(&editor->layout, "draw_button");
-	editor->select_button
-		= ui_layout_get_element(&editor->layout, "select_button");
-	editor->remove_button
-		= ui_layout_get_element(&editor->layout, "remove_button");
 	editor->sector_button
 		= ui_layout_get_element(&editor->layout, "sector_button");
 	editor->entity_button
@@ -34,10 +24,27 @@ void	selection_menu_init(t_editor *editor)
 		= ui_layout_get_element(&editor->layout, "spawn_button");
 	editor->event_button
 		= ui_layout_get_element(&editor->layout, "event_button");
+	ui_dropdown_activate(ui_layout_get_element(
+			&editor->layout, "type_dropdown"), editor->sector_button);
+}
+
+void	selection_menu_init(t_editor *editor)
+{
+	editor->menu_toolbox_top
+		= ui_layout_get_element(&editor->layout, "menu_toolbox_top");
+	editor->menu_selection
+		= ui_layout_get_element(&editor->layout, "menu_select_buttons");
+	editor->draw_button
+		= ui_layout_get_element(&editor->layout, "draw_button");
+	editor->select_button
+		= ui_layout_get_element(&editor->layout, "select_button");
+	((t_ui_radio *)ui_layout_get_element(&editor->layout,
+		"select_button_radio")->element)->active = editor->select_button;
+	editor->remove_button
+		= ui_layout_get_element(&editor->layout, "remove_button");
 	editor->save_button
 		= ui_layout_get_element(&editor->layout, "save_button");
-	editor->edit_button
-		= ui_layout_get_element(&editor->layout, "edit_button");
+	editor->edit_button = ui_layout_get_element(&editor->layout, "edit_button");
 }
 
 void	sector_skybox_init(t_editor *editor)
@@ -60,6 +67,8 @@ void	sector_edit_init2(t_editor *editor)
 		= ui_layout_get_element(&editor->layout, "point_button");
 	editor->wall_button
 		= ui_layout_get_element(&editor->layout, "wall_button");
+	((t_ui_radio *)ui_layout_get_element(&editor->layout,
+		"left_button_radio")->element)->active = editor->wall_button;
 	editor->close_sector_edit_button
 		= ui_layout_get_element(&editor->layout, "close_sector_edit_button");
 	editor->sector_edit_ok_button
@@ -174,32 +183,31 @@ void	sprite_edit_init(t_editor *editor)
 
 void	texture_elem_init(t_editor *editor)
 {
-	t_texture_elem	*texture_elem;
+	t_texture_elem	*tex_elem;
 	int				i;
 
 	i = -1;
 	while (++i < MAP_TEXTURE_AMOUNT)
 	{
-		texture_elem = ft_memalloc(sizeof(t_texture_elem));
-		set_elem_parent_and_recipe(&texture_elem->menu, UI_TYPE_MENU,
+		tex_elem = ft_memalloc(sizeof(t_texture_elem));
+		set_elem_parent_and_recipe(&tex_elem->menu, UI_TYPE_MENU,
 			editor->texture_menu, "texture_button_menu");
-		ui_element_pos_set2(&texture_elem->menu, align_fill(
+		ui_element_pos_set2(&tex_elem->menu, align_fill(
 				vec2(editor->texture_menu->pos.w, editor->texture_menu->pos.h),
-				texture_elem->menu.pos, 5, i));
-		set_elem_parent_and_recipe(&texture_elem->image, UI_TYPE_MENU,
-			&texture_elem->menu, "texture_image");
-		ui_element_image_set(&texture_elem->image, UI_STATE_DEFAULT,
+				tex_elem->menu.pos, 5, i));
+		set_elem_parent_and_recipe(&tex_elem->image, UI_TYPE_MENU,
+			&tex_elem->menu, "texture_image");
+		ui_element_image_set(&tex_elem->image, UI_STATE_DEFAULT,
 			editor->wall_textures[i]);
-		texture_elem->button = ft_memalloc(sizeof(t_ui_element));
-		set_elem_parent_and_recipe(texture_elem->button, UI_TYPE_BUTTON,
-			&texture_elem->menu, "texture_button");
-		texture_elem->image.free_me = 0;
-		texture_elem->menu.free_me = 0;
-		texture_elem->id = i;
-		add_to_list(&editor->texture_elems,
-			texture_elem, sizeof(t_texture_elem));
-		add_to_list(&editor->texture_buttons,
-			texture_elem->button, sizeof(t_ui_element));
+		tex_elem->button = ft_memalloc(sizeof(t_ui_element));
+		set_elem_parent_and_recipe(tex_elem->button, UI_TYPE_BUTTON,
+			&tex_elem->menu, "texture_button");
+		tex_elem->image.free_me = 0;
+		tex_elem->menu.free_me = 0;
+		tex_elem->id = i;
+		add_to_list(&editor->texture_elems, tex_elem, sizeof(t_texture_elem));
+		add_to_list(&editor->texture_buttons, tex_elem->button,
+			sizeof(t_ui_element));
 	}
 }
 
@@ -416,6 +424,7 @@ void	editor_init(t_editor *editor)
 	editor->map_type = MAP_TYPE_ENDLESS;
 	editor->map_name = ft_strdup("");
 	editor->win_main = ui_layout_get_window(&editor->layout, "win_main");
+	type_dropdown_init(editor);
 	selection_menu_init(editor);
 	sector_edit_init(editor);
 	editor->error_label = ui_layout_get_element(&editor->layout, "error_label");
