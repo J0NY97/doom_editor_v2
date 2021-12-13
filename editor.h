@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 13:33:50 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 15:51:34 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -554,7 +554,7 @@ t_sector			*get_sector_by_id_from_list(t_list *list, int id);
 int					check_sector_convexity(t_sector *sector);
 int					check_point_in_sector(t_sector *sector, t_vec2i p);
 t_wall				*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2);
-void				entity_inside_which_sector(t_list *sectors, t_entity *entity);
+t_sector			*point_inside_which_sector(t_list *sectors, t_vec2i point);
 void				sector_check_errors(t_editor *editor, t_sector *sector);
 int					get_sector_id(t_sector *sector);
 

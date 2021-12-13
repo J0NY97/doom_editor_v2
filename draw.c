@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:28 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 09:42:43 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 15:50:57 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,8 @@ void	draw_entities_yaw(t_editor *editor, t_list *entities)
 		entity = entities->content;
 		draw_arrow(editor->drawing_surface,
 			conversion(editor, entity->pos), 10, entity->yaw);
-		entity_inside_which_sector(editor->sectors, entity);
+		entity->inside_sector
+			= point_inside_which_sector(editor->sectors, entity->pos);
 		entity_check_errors(editor, entity);
 		entities = entities->next;
 	}

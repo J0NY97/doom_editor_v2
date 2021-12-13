@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 13:45:12 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 15:49:04 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,49 @@ void	sector_cleanup(t_editor *editor)
 	ft_printf("[%s] Cleanup crew done!\n", __FUNCTION__);
 }
 
+/*
+ * Search wall using 'point' and remove one of them (rng) and make the other use
+ * the other^1 point of the wall being removed. (*1 not this 'point')
+*/
+void	merge_connected_walls(t_editor *editor, t_sector *sector, t_point *point)
+{
+	t_wall	*w1;
+	t_wall	*w2;
+	t_wall	*wall;
+	t_list	*walls;
+
+	w1 = NULL;
+	w2 = NULL;
+	walls = sector->walls;
+	while (walls)
+	{
+		wall = walls->content;
+		if (wall->p1 == point || wall->p2 == point)
+		{
+			if (!w1)
+				w1 = wall;
+			else
+				w2 = wall;
+		}
+		walls = walls->next;
+	}
+	if (!w1 || !w2)
+		return ;
+	if (w1->p1 == point && w2->p1 == point)
+		w2->p1 = w1->p2;
+	else if (w1->p1 == point && w2->p2 == point)
+		w2->p2 = w1->p2;
+	else if (w1->p2 == point && w2->p1 == point)
+		w2->p1 = w1->p1;
+	else if (w1->p2 == point && w2->p2 == point)
+		w2->p2 = w1->p2;
+	else
+		ft_printf("[%s] BIG ERROR : This should never happen.\n", __FUNCTION__);
+	remove_from_list(&sector->walls, w1);
+	remove_wall(editor, w1);
+	remove_point(editor, point);
+}
+
 void	remove_button_events(t_editor *editor)
 {
 	int	was_removed;
@@ -101,13 +144,16 @@ void	remove_button_events(t_editor *editor)
 	{
 		if (editor->selected_sector)
 		{
-			was_removed = remove_sector(editor, editor->selected_sector);
-			editor->selected_sector = NULL;
+			if (editor->selected_point)
+				merge_connected_walls(editor, editor->selected_sector, editor->selected_point);
+			else
+				was_removed = remove_sector(editor, editor->selected_sector);
 		}
 		else if (editor->selected_entity)
 			was_removed = remove_entity(editor, editor->selected_entity);
 		if (was_removed)
 		{
+			editor->selected_sector = NULL;
 			editor->selected_point = NULL;
 			editor->selected_wall = NULL;
 			editor->selected_sprite = NULL;
@@ -683,9 +729,18 @@ void	select_entity(t_editor *editor)
 
 void	entity_draw_events(t_editor *editor)
 {
+	t_entity	*entity;
+	t_sector	*sector;
+
 	if (editor->win_main->mouse_down_last_frame == SDL_BUTTON_LEFT
 		&& !hover_over_open_menus(editor))
-		add_entity(editor)->pos = editor->mouse_pos;
+	{
+		entity = add_entity(editor);
+		entity->pos = editor->mouse_pos;
+		sector = point_inside_which_sector(editor->sectors, entity->pos);
+		if (sector)
+			entity->z = sector->floor_height;
+	}
 }
 
 /*

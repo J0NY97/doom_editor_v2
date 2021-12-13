@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:22 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 13:25:58 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 15:51:25 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -469,21 +469,15 @@ int	check_point_in_sector(t_sector *sector, t_vec2i p)
 	return (1);
 }
 
-void	entity_inside_which_sector(t_list *sectors, t_entity *entity)
+t_sector	*point_inside_which_sector(t_list *sectors, t_vec2i point)
 {
-	t_list	*curr;
-
-	curr = sectors;
-	entity->inside_sector = NULL;
-	while (curr)
+	while (sectors)
 	{
-		if (check_point_in_sector(curr->content, entity->pos) == 1)
-		{
-			entity->inside_sector = curr->content;
-			break ;
-		}
-		curr = curr->next;
+		if (check_point_in_sector(sectors->content, point) == 1)
+			return (sectors->content);
+		sectors = sectors->next;
 	}
+	return (NULL);
 }
 
 void	sector_check_errors(t_editor *editor, t_sector *sector)
