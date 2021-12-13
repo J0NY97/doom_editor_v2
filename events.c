@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 13:34:11 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 13:45:12 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -800,9 +800,11 @@ void	event_id_dropdown_update(t_editor *editor)
 			return ;
 		recipe = ui_list_get_recipe_by_id(
 				editor->layout.recipes, "event_id_button");
+		ft_printf("[%s] Creating new id buttons.\n", __FUNCTION__);
 		create_buttons_to_list_from_texts_remove_extra(
 			ui_dropdown_get_menu_element(editor->event_id_dropdown),
 			texts, recipe);
+		ft_printf("[%s] Done Creating new id buttons.\n", __FUNCTION__);
 		ft_arraydel(texts);
 	}
 }

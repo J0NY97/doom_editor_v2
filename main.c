@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:09 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 10:02:13 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 13:50:39 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	create_buttons_to_list_from_texts_remove_extra(
 {
 	int				i;
 	t_list			*prev_butt;
+	t_list			*next_butt;
 
 	i = -1;
 	prev_butt = parent->children;
@@ -47,9 +48,11 @@ void	create_buttons_to_list_from_texts_remove_extra(
 	}
 	while (prev_butt)
 	{
+		next_butt= prev_butt->next;
 		ui_element_free(prev_butt->content, prev_butt->content_size);
-		free(prev_butt->content);
-		prev_butt = prev_butt->next;
+		if (!prev_butt)
+			break ;
+		prev_butt = next_butt;
 	}
 }
 

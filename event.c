@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:49 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 11:42:02 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 13:43:31 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,11 +129,13 @@ void	activate_id_button(t_editor *editor, int type, char *target_id_text)
 		if (type == TYPE_SECTOR)
 			texts = gen_sector_id_texts(editor->sectors);
 		else
-			return ;
+			texts = gen_sprite_id_texts(editor->sprites);
+		ft_printf("[%s] Creating new id buttons.\n", __FUNCTION__);
 		recipe = ui_layout_get_recipe(&editor->layout, "event_id_button");
 		create_buttons_to_list_from_texts_remove_extra(
 			ui_dropdown_get_menu_element(editor->event_id_dropdown),
 			texts, recipe);
+		ft_printf("[%s] Done creating id buttons.\n", __FUNCTION__);
 		ft_arraydel(texts);
 		id_button = ui_dropdown_get_button_with_text(
 				editor->event_id_dropdown, target_id_text);
