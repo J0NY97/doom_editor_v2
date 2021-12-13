@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 10:20:54 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 11:27:55 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,11 +292,14 @@ void	draw_sprites_on_surface(
 			xywh = vec4i(0, 0, texture->w, texture->h);
 		else
 			xywh = vec4i(0, 0, 64, 64);
-		sprite->pos.w = (size * sprite->scale) * aspect;
-		sprite->pos.h = (float)xywh.h * ((float)sprite->pos.w / (float)xywh.w);
+		sprite->screen_pos.w = (size * sprite->scale) * aspect;
+		sprite->screen_pos.h
+			= (float)xywh.h * ((float)sprite->screen_pos.w / (float)xywh.w);
+		sprite->screen_pos.x = sprite->pos.x * size * aspect;
+		sprite->screen_pos.y = sprite->pos.y * size * aspect;
 		SDL_BlitScaled(texture, &(SDL_Rect){xywh.x, xywh.y, xywh.w, xywh.h},
-			surface, &(SDL_Rect){sprite->pos.x * size * aspect,
-			sprite->pos.y * size * aspect, sprite->pos.w, sprite->pos.h});
+			surface, &(SDL_Rect){sprite->screen_pos.x, sprite->screen_pos.y,
+				sprite->screen_pos.w, sprite->screen_pos.h});
 		sprites = sprites->next;
 	}
 }
@@ -308,10 +311,10 @@ void	draw_selected_sprite(t_editor *editor, SDL_Surface *surface)
 
 	if (editor->selected_sprite)
 	{
-		p1 = vec2i(editor->selected_sprite->pos.x,
-				editor->selected_sprite->pos.y);
-		p2 = vec2i(p1.x + editor->selected_sprite->pos.w,
-				p1.y + editor->selected_sprite->pos.h);
+		p1 = vec2i(editor->selected_sprite->screen_pos.x,
+				editor->selected_sprite->screen_pos.y);
+		p2 = vec2i(p1.x + editor->selected_sprite->screen_pos.w,
+				p1.y + editor->selected_sprite->screen_pos.h);
 		ui_surface_rect_draw(surface, p1, p2, 0xFFFFD700);
 	}
 }
@@ -378,8 +381,8 @@ void	edit_sprite(t_editor *editor)
 	if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT
 		&& ui_element_is_hover(editor->sprite_edit_menu))
 	{
-		editor->selected_sprite->pos.x += mouse_diff.x;
-		editor->selected_sprite->pos.y += mouse_diff.y;
+		editor->selected_sprite->pos.x += mouse_diff.x / 10;
+		editor->selected_sprite->pos.y += mouse_diff.y / 10;
 		ui_input_set_text(editor->sprite_x_input,
 			ft_b_itoa(editor->selected_sprite->pos.x, temp_str));
 		ui_input_set_text(editor->sprite_y_input,
@@ -524,7 +527,8 @@ void	wall_select_events(t_editor *editor)
 void	wall_events(t_editor *editor)
 {
 	if (editor->sector_button->state == UI_STATE_CLICK
-		&& editor->wall_button->state == UI_STATE_CLICK)
+		&& editor->wall_button->state == UI_STATE_CLICK
+		&& editor->select_button->state == UI_STATE_CLICK)
 	{
 		if (editor->selected_wall)
 		{

@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:05 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 09:34:04 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 11:45:22 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,7 +257,7 @@ void	load_entity_textures(t_editor *editor)
 	while (++i < ENTITY_AMOUNT)
 	{
 		ft_printf("Loading Entity Image : %s\n", g_entity_data[i].path);
-		surface = ui_surface_image_new(g_entity_data[i].path);
+		surface = load_bxpm_to_surface(g_entity_data[i].path);
 		editor->entity_texture_surfaces[i + 1] = ui_surface_new(10, 10);
 		pos.x = g_entity_data[i].tc[0];
 		pos.y = g_entity_data[i].tc[1];

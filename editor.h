@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 09:59:39 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 11:12:26 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,16 +357,19 @@ struct s_point
 };
 
 /*
- * t_vec4i		pos;			the position on the wall ingame;
+ * t_vec2i		pos;			the position on the sprite ingame;
  * int			texture_id;		the id of the texture used;
  * int			state;			loop, static, or action; (not sure yet what these are);
  * SDL_Surface	*texture;		the pointer of a texture;
+ * t_vec4i		screen_pos;		the position of the sprite on the visualized
+ * 									wall;
 */
 struct s_sprite
 {
 	t_wall			*parent;
 	int				id;
-	t_vec4i			pos;
+	t_vec2i			pos;
+	t_vec4i			screen_pos;
 	int				texture_id;
 	float			scale;
 	int				type;

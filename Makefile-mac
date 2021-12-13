@@ -6,7 +6,7 @@
 #    By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/11 15:59:50 by jsalmi           ###   ########.fr        #
+#    Updated: 2021/12/13 11:29:37 by jsalmi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,15 +44,17 @@ JHONNY = $(OBJS:.o=.d)
 
 LIB_DIR =		../libs
 
-INCLUDES =		-I ../ \
-				-I $(LIB_DIR)/libft \
-				-I $(LIB_DIR)/libpf \
-				-I $(LIB_DIR)/libbxpm \
-				-I $(LIB_DIR)/libui \
-				-I $(LIB_DIR)/SDL_Frameworks/SDL2.framework/Headers \
-				-I $(LIB_DIR)/SDL_Frameworks/SDL2_image.framework/Headers \
-				-I $(LIB_DIR)/SDL_Frameworks/SDL2_ttf.framework/Headers \
-				-F $(LIB_DIR)/SDL_Frameworks
+INCLUDES =	\
+			-I ../ \
+			-I ../game/inc \
+			-I $(LIB_DIR)/libft \
+			-I $(LIB_DIR)/libpf \
+			-I $(LIB_DIR)/libbxpm \
+			-I $(LIB_DIR)/libui \
+			-I $(LIB_DIR)/SDL_Frameworks/SDL2.framework/Headers \
+			-I $(LIB_DIR)/SDL_Frameworks/SDL2_image.framework/Headers \
+			-I $(LIB_DIR)/SDL_Frameworks/SDL2_ttf.framework/Headers \
+			-F $(LIB_DIR)/SDL_Frameworks
 
 LIB_FOLDERS =	-L $(LIB_DIR)/libft -lft \
 				-L $(LIB_DIR)/libpf -lpf \

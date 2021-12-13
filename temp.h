@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   temp.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:34 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:04:35 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/13 11:44:11 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,13 @@
 # define TEMP_H
 
 # include "path.h"
+# include "resources.h"
+# include "enum.h"
 
 //#define BMP_PATH "temp_resources/"
 //#define BXPM_PATH "temp_resources/"
 
+/*
 enum e_player_action
 {
 	NONE,
@@ -176,5 +179,6 @@ static const t_entity_data	g_entity_data[ENTITY_AMOUNT] =
 		.tc = {178, 242, 28, 18}
 	}
 };
+*/
 
 #endif

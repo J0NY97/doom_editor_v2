@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:26 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 09:44:25 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 11:42:19 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,7 @@ char	*set_sectors(t_editor *editor)
 	while (curr)
 	{
 		sector = curr->content;
-		sector->id = ++id;
+//		sector->id = ++id;
 		temp = create_sector_string(sector);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
@@ -367,7 +367,7 @@ char	*create_event_string(t_event *event)
 		sector_text = ft_strdup("-");
 	final = ft_sprintf("%d\t%s\t%s\t%d\t%s\t%d\t%d\t%d\n",
 			event->id, g_event_type[event->type],
-			g_event_action[event->action].name, target_id,
+			g_event_action[event->action], target_id,
 			sector_text, event->min, event->max, event->speed);
 	ft_strdel(&sector_text);
 	return (final);
@@ -449,7 +449,7 @@ void	set_map(t_editor *editor, char *name)
 		ft_printf("[%s] Couldn\'t open map file : %s\n", __FUNCTION__, name);
 		return ;
 	}
-	reid(editor);
+	//reid(editor);
 	ft_strcpy(delim, "-\n");
 	first_half(editor, fd, delim);
 	temp = set_entity(editor);

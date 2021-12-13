@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:49 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 10:46:05 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 11:42:02 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void	set_event_ui(t_editor *editor, t_event *event)
 			(char *)g_event_type[event->type]));
 	ui_dropdown_activate(editor->event_action_dropdown,
 		ui_dropdown_get_button_with_text(editor->event_action_dropdown,
-			(char *)g_event_action[event->action].name));
+			(char *)g_event_action[event->action]));
 	if (event->pointer)
 	{
 		if (event->pointer_type == TYPE_SECTOR)
@@ -324,8 +324,8 @@ void	update_event(t_editor *editor, t_event *event)
 	active_text = ui_dropdown_active_text(editor->event_action_dropdown);
 	i = -1;
 	while (++i < EVENT_ACTION_AMOUNT)
-		if (ft_strequ(active_text, g_event_action[i].name))
-			event->action = g_event_action[i].id;
+		if (ft_strequ(active_text, g_event_action[i]))
+			event->action = i;
 	update_event2(editor, event);
 	update_event3(editor, event);
 }
@@ -340,7 +340,8 @@ void	update_event_elem(t_event_elem *elem)
 	ft_printf("[%s] Updating event_elem. ", __FUNCTION__);
 	ui_label_set_text(&elem->id, ft_b_itoa(elem->event->id, temp));
 	ui_label_set_text(&elem->type, (char *)g_event_type[elem->event->type]);
-	ui_label_set_text(&elem->action, g_event_action[elem->event->action].name);
+	ui_label_set_text(&elem->action,
+		(char *)g_event_action[elem->event->action]);
 	if (elem->event->pointer)
 	{
 		if (elem->event->pointer_type == TYPE_SECTOR)
@@ -393,7 +394,7 @@ int	get_event_action(char *type_name)
 
 	ddd = -1;
 	while (++ddd < EVENT_ACTION_AMOUNT)
-		if (ft_strequ(type_name, g_event_action[ddd].name))
-			return (g_event_action[ddd].id);
+		if (ft_strequ(type_name, g_event_action[ddd]))
+			return (ddd);
 	return (0);
 }
