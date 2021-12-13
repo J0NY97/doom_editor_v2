@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/12 11:35:45 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 13:35:27 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,16 +147,12 @@ void	sort_walls(t_list *list)
 	}
 }
 
-float	distance_from_vector_to_wall(t_vec2i p0, t_wall *wall)
+float	distance_from_vector_to_line(t_vec2i p0, t_vec2i p1, t_vec2i p2)
 {
-	t_vec2i		p1;
-	t_vec2i		p2;
 	float		dist;
 	float		up;
 	float		down;
 
-	p1 = wall->p1->pos;
-	p2 = wall->p2->pos;
 	up = (p2.x - p1.x) * (p1.y - p0.y)
 		- (p1.x - p0.x) * (p2.y - p1.y);
 	down = sqrt(ft_pow(p2.x - p1.x, 2) + ft_pow(p2.y - p1.y, 2));
@@ -195,18 +191,21 @@ t_wall	*get_wall_with_id(t_list *list, int id)
 }
 
 t_wall	*get_wall_from_list_around_radius(
-		t_list *list, t_vec2i pos, float allowed_radius)
+		t_editor *editor, t_list *list, t_vec2i pos, int allowed_radius)
 {
 	t_wall		*wall;
+	t_vec2i		p1;
+	t_vec2i		p2;
 	float		dist;
 
 	while (list)
 	{
 		wall = list->content;
-		dist = fabs(distance_from_vector_to_wall(pos, wall));
+		p1 = conversion(editor, wall->p1->pos);
+		p2 = conversion(editor, wall->p2->pos);
+		dist = fabs(distance_from_vector_to_line(pos, p1, p2));
 		if (dist <= allowed_radius)
-			if (vector_in_rect_of_radius(pos, wall->p1->pos, wall->p2->pos,
-					allowed_radius))
+			if (vector_in_rect_of_radius(pos, p1, p2, allowed_radius))
 				return (list->content);
 		list = list->next;
 	}

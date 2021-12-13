@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 13:21:43 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 13:33:50 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -521,7 +521,7 @@ void				remove_sprite_from_wall(t_sprite *sprite, t_wall *wall);
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
 t_wall				*get_wall_with_id(t_list *list, int id);
-t_wall				*get_wall_from_list_around_radius(t_list *list, t_vec2i pos, float allowed_radius);
+t_wall				*get_wall_from_list_around_radius(t_editor *editor, t_list *list, t_vec2i pos, int allowed_radius);
 t_vec2i				get_wall_middle(t_wall *wall);
 t_wall				*add_wall(t_editor *editor);
 int					remove_wall(t_editor *editor, t_wall *wall);

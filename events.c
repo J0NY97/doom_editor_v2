@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 13:25:21 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/13 13:34:11 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -428,8 +428,8 @@ int	select_wall(t_editor *editor)
 		|| hover_over_open_menus(editor)
 		|| !editor->selected_sector)
 		return (0);
-	wall = get_wall_from_list_around_radius(
-			editor->selected_sector->walls, editor->mouse_pos, 1.0f);
+	wall = get_wall_from_list_around_radius(editor,
+			editor->selected_sector->walls, editor->win_main->mouse_pos, 10);
 	if (wall)
 	{
 		editor->selected_wall = wall;
