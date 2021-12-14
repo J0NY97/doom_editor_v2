@@ -1,22 +1,24 @@
 NAME = doom_editor
 SRCS = \
-	./main.c \
-	./events.c \
-	./init.c \
+	./args_parser.c \
+	./bxpm.c \
 	./draw.c \
 	./draw2.c \
 	./draw3.c \
+	./entity.c \
+	./entity2.c \
+	./entity_help.c \
+	./main.c \
+	./events.c \
+	./init.c \
 	./point.c \
 	./wall.c \
 	./sector.c \
-	./entity.c \
 	./event.c \
 	./sprite.c \
 	./math.c \
-	./bxpm.c \
 	./set_map.c \
 	./get_map.c \
-	./args_parser.c \
 	./help.c \
 	./free_help.c \
 
