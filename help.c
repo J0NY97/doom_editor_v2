@@ -50,8 +50,10 @@ t_vec2i	conversion(t_editor *editor, t_vec2i v)
 {
 	t_vec2i	result;
 
-	result.x = (v.x - (int)editor->offset.x) * (editor->gap_size * editor->zoom);
-	result.y = (v.y - (int)editor->offset.y) * (editor->gap_size * editor->zoom);
+	result.x = (v.x - (int)editor->offset.x)
+		* (editor->gap_size * editor->zoom);
+	result.y = (v.y - (int)editor->offset.y)
+		* (editor->gap_size * editor->zoom);
 	return (result);
 }
 
@@ -81,18 +83,22 @@ float	get_aspect(float w, float h)
 
 /*
  * Font should already be opened before this function call;
+ * NOTE:
+ * 	This function will draw the text in the middle of 'pos', no matter what
+ * 		length the text is. (meaning the 'pos' will be in the middle of the
+ * 		drawn text, not in the top left)
 */
-void	draw_text(
-		SDL_Surface *surface, char *text,
-		TTF_Font *font, t_vec2i pos, Uint32 color)
+void	draw_text(SDL_Surface *surface, char *text, t_vec2i pos, Uint32 color)
 {
-	SDL_Surface	*text_surface;
-	t_rgba		rgba;
+	t_rgba			rgba;
+	SDL_Surface		*text_surface;
+	static TTF_Font	*font = NULL;
 
+	if (!font)
+		font = TTF_OpenFont(UI_PATH"fonts/DroidSans.ttf", 20);
 	if (font)
 	{
 		rgba = hex_to_rgba(color);
-		TTF_SetFontHinting(font, TTF_HINTING_MONO);
 		text_surface = TTF_RenderText_Blended(font, text,
 				(SDL_Color){rgba.r, rgba.g, rgba.b, rgba.a});
 		SDL_BlitSurface(text_surface, NULL, surface,
@@ -102,7 +108,7 @@ void	draw_text(
 		SDL_FreeSurface(text_surface);
 	}
 	else
-		ft_printf("[%s] Error : \"%s\" no font.\n", __FUNCTION__, text);
+		ft_printf("[%s] Error : somehow \"%s\" no font.\n", __FUNCTION__, text);
 }
 
 void	set_elem_parent_and_recipe(

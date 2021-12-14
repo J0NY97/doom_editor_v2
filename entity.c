@@ -200,7 +200,7 @@ void	entity_check_errors(t_editor *editor, t_entity *entity)
 	if (!entity->inside_sector)
 	{
 		draw_text(editor->drawing_surface, "Not Inside Sector!",
-			editor->font, conversion(editor, entity->pos), 0xffff0000);
+			conversion(editor, entity->pos), 0xffff0000);
 		editor->errors += 1;
 	}
 	else if (entity->inside_sector
@@ -208,7 +208,7 @@ void	entity_check_errors(t_editor *editor, t_entity *entity)
 			|| entity->z > entity->inside_sector->ceiling_height))
 	{
 		draw_text(editor->drawing_surface, "Z not between Floor & Ceiling!",
-			editor->font, conversion(editor, entity->pos), 0xffff0000);
+			conversion(editor, entity->pos), 0xffff0000);
 		editor->errors += 1;
 	}
 }

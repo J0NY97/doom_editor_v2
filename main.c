@@ -127,52 +127,33 @@ void	editor_free(t_editor *editor)
 {
 	ft_printf("[%s]\n", __FUNCTION__);
 	ui_layout_free(&editor->layout);
-	ft_printf("Layout freed.");
 	ft_lstdel(&editor->texture_somethings, &dummy_free_er);
-	ft_printf("Texture Something freed.");
 	ft_lstdel(&editor->texture_opening_buttons, &dummy_free_er);
-	ft_printf("Texture Opening freed.");
 	ft_lstdel(&editor->texture_elems, &texture_elem_free);
-	ft_printf("Texture Elems freed.");
 	ft_lstdel(&editor->texture_buttons, &dummy_free_er);
-	ft_printf("Texture Buttons freed.");
 	TTF_CloseFont(editor->font);
-	ft_printf("Font freed.");
 	SDL_DestroyTexture(editor->drawing_texture);
-	ft_printf("Drawing Texture freed.");
 	SDL_FreeSurface(editor->drawing_surface);
-	ft_printf("Drawing Surface freed.");
 	SDL_FreeSurface(editor->grid_surface);
-	ft_printf("Grid Surface freed.");
 	surface_array_free(editor->wall_textures, MAP_TEXTURE_AMOUNT);
-	ft_printf("Wall textures freed.");
 	texture_array_free(editor->entity_textures, ENTITY_AMOUNT + 1);
-	ft_printf("Entity textures freed.");
 	surface_array_free(editor->entity_texture_surfaces, ENTITY_AMOUNT + 1);
-	ft_printf("Entity texture surfaces freed.");
 	ft_lstdel(&editor->sectors, &sector_free);
-	ft_printf("Sectors freed.");
 	ft_lstdel(&editor->walls, &dummy_free_er);
 	ft_lstdel(&editor->points, &point_free);
 	ft_lstdel(&editor->sprites, &dummy_free_er);
 	ft_lstdel(&editor->entities, &entity_free);
-	ft_printf("Entity freed.");
 	ft_lstdel(&editor->events, &event_free);
-	ft_printf("Event freed.");
 	ft_lstdel(&editor->event_elements, &event_elem_free);
-	ft_printf("Event elem freed.");
 	ft_lstdel(&editor->event_element_buttons, &dummy_free_er);
-	ft_printf("Event elem buttons freed.");
 	free(editor->map_name);
 	free(editor->map_full_path);
-	ft_printf("Map name freed.");
 	ui_sdl_free();
 }
 
 int	realmain(int ac, char **av)
 {
 	t_editor	editor;
-	t_fps		fps;
 
 	ui_sdl_init();
 	editor_init(&editor);
@@ -182,11 +163,10 @@ int	realmain(int ac, char **av)
 	else
 		ft_printf("[%s] No map given.\n", __FUNCTION__);
 	setup_ui_values(&editor);
-	memset(&fps, 0, sizeof(t_fps));
 	while (!editor.win_main->wants_to_close)
 	{
-		fps_func(&fps);
-		update_title_fps(editor.win_main->win, &fps);
+		fps_func(&editor.fps);
+		update_title_fps(editor.win_main->win, &editor.fps);
 		while (SDL_PollEvent(&editor.e))
 		{
 			if (editor.e.key.keysym.scancode == SDL_SCANCODE_E)
@@ -197,8 +177,6 @@ int	realmain(int ac, char **av)
 		user_render(&editor);
 		ui_layout_render(&editor.layout);
 	}
-		/*
-		*/
 	editor_free(&editor);
 	return (1);
 }

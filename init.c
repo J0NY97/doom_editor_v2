@@ -416,6 +416,7 @@ void	spawn_init(t_editor *editor)
 void	editor_init(t_editor *editor)
 {
 	memset(editor, 0, sizeof(t_editor));
+	memset(&editor->fps, 0, sizeof(t_fps));
 	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
 	editor->font = TTF_OpenFont(UI_PATH"fonts/DroidSans.ttf", 20);
 	editor->map_type = MAP_TYPE_ENDLESS;

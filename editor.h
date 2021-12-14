@@ -128,6 +128,7 @@ typedef struct s_texture_something
 typedef struct s_editor
 {
 	SDL_Event		e;
+	t_fps			fps;
 
 	t_ui_layout		layout;
 	t_ui_window		*win_main;
@@ -623,7 +624,7 @@ int					hover_over_open_menus(t_editor *editor);
 float				get_aspect(float w, float h);
 char				**gen_sector_id_texts(t_list *sectors);
 void				create_buttons_to_list_from_texts_remove_extra(t_ui_element *parent, char **texts, t_ui_recipe *recipe);
-void				draw_text(SDL_Surface *surface, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
+void				draw_text(SDL_Surface *surface, char *text, t_vec2i pos, Uint32 color);
 void				draw_text_on_texture(SDL_Texture *texture, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 void				send_info_message(t_editor *editor, char *text);
 void				set_elem_parent_and_recipe(t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id);

@@ -357,7 +357,7 @@ void	draw_sprites_on_surface(
 		sprite->screen_pos.y = sprite->pos.y * size * aspect;
 		SDL_BlitScaled(texture, &(SDL_Rect){xywh.x, xywh.y, xywh.w, xywh.h},
 			surface, &(SDL_Rect){sprite->screen_pos.x, sprite->screen_pos.y,
-				sprite->screen_pos.w, sprite->screen_pos.h});
+			sprite->screen_pos.w, sprite->screen_pos.h});
 		sprites = sprites->next;
 	}
 }
@@ -529,7 +529,8 @@ int	select_wall_with_arrows(t_editor *editor)
 		|| (editor->e.key.keysym.scancode != SDL_SCANCODE_UP
 			&& editor->e.key.keysym.scancode != SDL_SCANCODE_DOWN))
 		return (0);
-	wall_tlist = get_tlist_with_content(editor->selected_sector->walls, editor->selected_wall);
+	wall_tlist = get_tlist_with_content(editor->selected_sector->walls,
+			editor->selected_wall);
 	if (!wall_tlist)
 		return (0);
 	if (editor->e.key.keysym.scancode == SDL_SCANCODE_UP)
@@ -538,14 +539,13 @@ int	select_wall_with_arrows(t_editor *editor)
 			editor->selected_wall = wall_tlist->next->content;
 		else
 			editor->selected_wall = editor->selected_sector->walls->content;
+		return (1);
 	}
-	else if (editor->e.key.keysym.scancode == SDL_SCANCODE_DOWN)
-	{
-		if (wall_tlist->prev && wall_tlist->prev->content)
-			editor->selected_wall = wall_tlist->prev->content;
-		else
-			editor->selected_wall = get_last_tlist(editor->selected_sector->walls)->content;
-	}
+	if (wall_tlist->prev)
+		editor->selected_wall = wall_tlist->prev->content;
+	else
+		editor->selected_wall
+			= get_last_tlist(editor->selected_sector->walls)->content;
 	return (1);
 }
 
@@ -588,20 +588,18 @@ void	wall_events(t_editor *editor)
 		&& editor->wall_button->state == UI_STATE_CLICK
 		&& editor->select_button->state == UI_STATE_CLICK)
 	{
+		wall_select_events(editor);
 		if (editor->selected_wall)
 		{
 			editor->menu_wall_edit->show = 1;
 			editor->sprite_edit_menu->show = 1;
 			sprite_events(editor);
 			visualize_wall(editor, editor->selected_wall);
+			return ;
 		}
-		else
-		{
-			editor->selected_sprite = NULL;
-			editor->menu_wall_edit->show = 0;
-			editor->sprite_edit_menu->show = 0;
-		}
-		wall_select_events(editor);
+		editor->selected_sprite = NULL;
+		editor->menu_wall_edit->show = 0;
+		editor->sprite_edit_menu->show = 0;
 	}
 	else
 	{

@@ -45,35 +45,36 @@ JHONNY = $(OBJS:.o=.d)
 LIB_DIR =		../libs
 
 INCLUDES =	\
-			-I ../ \
-			-I ../game/inc \
-			-I $(LIB_DIR)/libft \
-			-I $(LIB_DIR)/libpf \
-			-I $(LIB_DIR)/libbxpm \
-			-I $(LIB_DIR)/libui \
-			-I $(LIB_DIR)/SDL_Frameworks/SDL2.framework/Headers \
-			-I $(LIB_DIR)/SDL_Frameworks/SDL2_image.framework/Headers \
-			-I $(LIB_DIR)/SDL_Frameworks/SDL2_ttf.framework/Headers \
-			-F $(LIB_DIR)/SDL_Frameworks
+		-I ../ \
+		-I ../game/inc \
+		-I $(LIB_DIR)/libft \
+		-I $(LIB_DIR)/libpf \
+		-I $(LIB_DIR)/libbxpm \
+		-I $(LIB_DIR)/libui \
+		-I $(LIB_DIR)/SDL_Frameworks/SDL2.framework/Headers \
+		-I $(LIB_DIR)/SDL_Frameworks/SDL2_image.framework/Headers \
+		-I $(LIB_DIR)/SDL_Frameworks/SDL2_ttf.framework/Headers \
+		-F $(LIB_DIR)/SDL_Frameworks
 
-LIB_FOLDERS =	-L $(LIB_DIR)/libft -lft \
-				-L $(LIB_DIR)/libpf -lpf \
-				-L $(LIB_DIR)/libui -lui \
-				-L $(LIB_DIR)/libbxpm -lbxpm \
-				-framework SDL2 \
-				-framework SDL2_image \
-				-framework SDL2_ttf \
-				-F $(LIB_DIR)/SDL_Frameworks
+LIB_FOLDERS =	\
+		-L $(LIB_DIR)/libft -lft \
+		-L $(LIB_DIR)/libpf -lpf \
+		-L $(LIB_DIR)/libui -lui \
+		-L $(LIB_DIR)/libbxpm -lbxpm \
+		-framework SDL2 \
+		-framework SDL2_image \
+		-framework SDL2_ttf \
+		-F $(LIB_DIR)/SDL_Frameworks
 
 CFLAGS = -Wall -Wextra -MMD
 
 all: $(ODIR) $(NAME)
 	@printf $(GREEN)"\e[J[INFO] $(NAME) ready!\n"$(RESET)
 
+-include $(JHONNY)
+
 $(ODIR):
 	@mkdir -p $@
-
--include $(JOHNNY)
 
 $(ODIR)/%.o: $(CDIR)/%.c
 	@printf $(YELLOW)"\e[JCompiling $<\n\e[F"$(RESET)
@@ -87,7 +88,6 @@ clean:
 	@rm -rf $(ODIR)
 
 fclean: clean
-
 	@rm $(NAME)
 
 re: fclean all

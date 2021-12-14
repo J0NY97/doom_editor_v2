@@ -485,14 +485,14 @@ void	sector_check_errors(t_editor *editor, t_sector *sector)
 	if (!check_sector_convexity(sector))
 	{
 		draw_text(editor->drawing_surface, "Not Convex!",
-			editor->font, sector->screen_center, 0xffff0000);
+			sector->screen_center, 0xffff0000);
 		editor->errors += 1;
 	}
 	if (sector->ceiling_height - sector->floor_height < 0)
 	{
 		draw_text(editor->drawing_surface,
 			"Floor & Ceiling Height Doesn\'t Make Sense!",
-			editor->font, sector->screen_center, 0xffffff00);
+			sector->screen_center, 0xffffff00);
 		editor->errors += 1;
 	}
 }

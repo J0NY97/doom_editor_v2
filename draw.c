@@ -64,7 +64,7 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		if (sector == editor->selected_sector)
 			color = 0xff00ff00;
 		draw_text(editor->drawing_surface, ft_b_itoa(sector->id, temp),
-			editor->font, sector->screen_center, color);
+			sector->screen_center, color);
 		sector_check_errors(editor, sector);
 		if (vec2_in_vec4(editor->win_main->mouse_pos,
 				vec4i(sector->screen_center.x - 10,
@@ -158,7 +158,7 @@ void	draw_spawn(t_editor *editor)
 	if (!editor->spawn.inside_sector)
 	{
 		draw_text(editor->drawing_surface, "Not Inside Sector!",
-			editor->font, conversion(editor, editor->spawn.pos), 0xffff0000);
+			conversion(editor, editor->spawn.pos), 0xffff0000);
 		editor->errors += 1;
 	}
 	if (editor->spawn.inside_sector)
@@ -202,7 +202,7 @@ void	draw_drawing_wall_len(t_editor *editor)
 		middle = conversion(editor,
 				get_middle(editor->first_point, editor->mouse_pos));
 		draw_text(editor->drawing_surface, ft_b_itoa(len, temp_str),
-			editor->font, middle, 0xffdeface);
+			middle, 0xffdeface);
 	}
 }
 
