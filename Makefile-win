@@ -15,6 +15,18 @@ SRCS = \
 	./event2.c \
 	./main.c \
 	./events.c \
+	./entity_events.c \
+	./event_events.c \
+	./grid_events.c \
+	./info_menu_events.c \
+	./misc_window_events.c \
+	./point_events.c \
+	./sector_events.c \
+	./spawn_events.c \
+	./sprite_events.c \
+	./texture_menu_events.c \
+	./wall_events.c \
+	./wall_visualizer.c \
 	./init.c \
 	./point.c \
 	./wall.c \

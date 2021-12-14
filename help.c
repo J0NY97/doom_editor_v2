@@ -142,3 +142,27 @@ t_vec2i	get_middle(t_vec2i p1, t_vec2i p2)
 {
 	return (vec2i((p1.x + p2.x) / 2, (p1.y + p2.y) / 2));
 }
+
+/*
+ * Returns last t_list in 'list';
+*/
+t_list	*get_last_tlist(t_list *list)
+{
+	while (list->next)
+		list = list->next;
+	return (list);
+}
+
+/*
+ * Returns the t_list of which t_list->content == 'content';
+*/
+t_list	*get_tlist_with_content(t_list *list, void *content)
+{
+	while (list)
+	{
+		if (list->content == content)
+			return (list);
+		list = list->next;
+	}
+	return (NULL);
+}

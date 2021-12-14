@@ -512,3 +512,27 @@ t_sprite	*add_sprite_to_wall(t_editor *editor, t_wall *wall)
 	++wall->sprite_amount;
 	return (sprite);
 }
+
+/*
+ * From 'list' of walls, search for 2 't_wall' with either of its points being
+ *	being the point 'p', and save them in 'w1' and 'w2';
+*/
+void	get_walls_connected_to_point(
+	t_list *walls, t_point *p, t_wall **w1, t_wall **w2)
+{
+	t_wall	*wall;
+
+	while (walls)
+	{
+		wall = walls->content;
+		if (wall->p1 == p || wall->p2 == p)
+		{
+			if (!*w1)
+				*w1 = wall;
+			else
+				*w2 = wall;
+		}
+		walls = walls->next;
+	}
+}
+

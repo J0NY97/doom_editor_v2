@@ -485,6 +485,19 @@ void				draw_init(t_editor *editor);
 
 // Event
 void				user_events(t_editor *editor, SDL_Event e);
+void				sprite_events(t_editor *editor);
+void				sector_events(t_editor *editor);
+void				save_window_events(t_editor *editor);
+void				edit_window_events(t_editor *editor);
+void				grid_events(t_editor *editor, SDL_Event e);
+void				wall_events(t_editor *editor);
+void				point_events(t_editor *editor);
+void				texture_menu_events(t_editor *editor);
+void				entity_events(t_editor *editor);
+void				spawn_events(t_editor *editor);
+void				info_menu_events(t_editor *editor, SDL_Event e);
+void				event_events(t_editor *editor);
+void				visualize_wall(t_editor *editor, t_wall *wall);
 
 // Draw
 void				user_render(t_editor *editor);
@@ -524,6 +537,7 @@ void				split_wall(t_editor *editor, t_sector *sector, t_wall *wall);
 void				move_wall(t_wall *wall, t_vec2i move_amount);
 bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
 t_sprite			*add_sprite_to_wall(t_editor *editor, t_wall *wall);
+void				get_walls_connected_to_point(t_list *walls, t_point *p, t_wall **w1, t_wall **w2);
 
 // Sector
 t_sector			*sector_new(void);
@@ -616,6 +630,8 @@ void				draw_text(SDL_Surface *surface, char *text, t_vec2i pos, Uint32 color);
 void				send_info_message(t_editor *editor, char *text);
 void				set_elem_parent_and_recipe(t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id);
 void				draw_arrow(SDL_Surface *surface, t_vec2i start, int len, float yaw);
+t_list				*get_last_tlist(t_list *list);
+t_list				*get_tlist_with_content(t_list *list, void *content);
 t_vec2i				get_middle(t_vec2i p1, t_vec2i p2);
 
 // Free help
