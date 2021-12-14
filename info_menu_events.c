@@ -59,7 +59,7 @@ int	update_point_info(t_editor *editor, t_point *point)
 	return (0);
 }
 
-int	update_sprite_info(t_editor *editor, t_sprite *sprite)
+int	update_sprite_wall_info(t_editor *editor, t_sprite *sprite, t_wall *wall)
 {
 	char		*final;
 
@@ -74,13 +74,6 @@ int	update_sprite_info(t_editor *editor, t_sprite *sprite)
 	}
 	else
 		ui_label_set_text(editor->sprite_info_label, "NONE");
-	return (0);
-}
-
-int	update_wall_info(t_editor *editor, t_wall *wall)
-{
-	char	*final;
-
 	if (wall)
 	{
 		final = ft_sprintf("iD : %d\np1 : %d, %d\np2 : %d, %d\ndist : %.2f\n",
@@ -113,6 +106,8 @@ void	info_menu_events(t_editor *editor, SDL_Event e)
 	update_amount_info(editor);
 	update_sector_info(editor, editor->selected_sector);
 	if (!update_point_info(editor, editor->selected_point))
-		update_wall_info(editor, editor->selected_wall);
-	update_sprite_info(editor, editor->selected_sprite);
+		update_sprite_wall_info(editor, editor->selected_sprite,
+			editor->selected_wall);
+	else
+		update_sprite_wall_info(editor, editor->selected_sprite, NULL);
 }
