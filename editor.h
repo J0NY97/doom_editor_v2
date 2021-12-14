@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   editor.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/10 19:03:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 15:51:34 by jsalmi           ###   ########.fr       */
+/*   Created: 2021/12/14 09:46:12 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/12/14 09:46:12 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ struct s_spawn
 typedef struct s_event_elem
 {
 	t_ui_element	menu;
-	t_ui_element	*button;
+	t_ui_element	button;
 	t_ui_element	id;
 	t_ui_element	type;
 	t_ui_element	action;
@@ -91,7 +91,7 @@ typedef struct s_event_elem
 typedef struct s_texture_elem
 {
 	int				id;
-	t_ui_element	*button;
+	t_ui_element	button;
 	t_ui_element	menu;
 	t_ui_element	image;
 }					t_texture_elem;

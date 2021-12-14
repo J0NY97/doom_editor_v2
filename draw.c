@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/10 19:03:28 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 15:50:57 by jsalmi           ###   ########.fr       */
+/*   Created: 2021/12/14 09:46:02 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/12/14 09:46:02 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,15 +60,15 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		sector_render(editor, sector, sector->color);
 		sector->center = get_sector_center(sector);
 		sector->screen_center = conversion(editor, sector->center);
-		ft_b_itoa(sector->id, temp);
 		color = 0xffffffff;
 		if (sector == editor->selected_sector)
 			color = 0xff00ff00;
-		draw_text(editor->drawing_surface,
-			temp, editor->font, sector->screen_center, color);
+		draw_text(editor->drawing_surface, ft_b_itoa(sector->id, temp),
+			editor->font, sector->screen_center, color);
 		sector_check_errors(editor, sector);
-		if (vec2_in_vec4(editor->mouse_pos,
-				vec4i(sector->center.x - 1, sector->center.y - 1, 3, 3)))
+		if (vec2_in_vec4(editor->win_main->mouse_pos,
+				vec4i(sector->screen_center.x - 10,
+					sector->screen_center.y - 10, 20, 20)))
 			hovered_this_frame = sector;
 		sectors = sectors->next;
 	}

@@ -199,14 +199,11 @@ void	texture_elem_init(t_editor *editor)
 			&tex_elem->menu, "texture_image");
 		ui_element_image_set(&tex_elem->image, UI_STATE_DEFAULT,
 			editor->wall_textures[i]);
-		tex_elem->button = ft_memalloc(sizeof(t_ui_element));
-		set_elem_parent_and_recipe(tex_elem->button, UI_TYPE_BUTTON,
+		set_elem_parent_and_recipe(&tex_elem->button, UI_TYPE_BUTTON,
 			&tex_elem->menu, "texture_button");
-		tex_elem->image.free_me = 0;
-		tex_elem->menu.free_me = 0;
 		tex_elem->id = i;
 		add_to_list(&editor->texture_elems, tex_elem, sizeof(t_texture_elem));
-		add_to_list(&editor->texture_buttons, tex_elem->button,
+		add_to_list(&editor->texture_buttons, &tex_elem->button,
 			sizeof(t_ui_element));
 	}
 }

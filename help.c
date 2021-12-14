@@ -111,6 +111,7 @@ void	set_elem_parent_and_recipe(
 	g_acceptable[ui_type].maker(parent->win, elem);
 	ui_element_set_parent(elem, parent, UI_TYPE_ELEMENT);
 	ui_element_edit(elem, ui_layout_get_recipe(parent->win->layout, recipe_id));
+	elem->free_me = 0;
 }
 
 void	draw_arrow(SDL_Surface *surface, t_vec2i start, int len, float yaw)

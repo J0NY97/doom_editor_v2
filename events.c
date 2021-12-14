@@ -647,7 +647,7 @@ t_texture_elem	*get_active_texture_elem(t_editor *editor)
 		while (curr)
 		{
 			new_texture_elem = curr->content;
-			if (new_texture_elem->button == editor->active_texture_button)
+			if (&new_texture_elem->button == editor->active_texture_button)
 			{
 				editor->active_texture_button_id = new_texture_elem->id;
 				return (new_texture_elem);
@@ -822,7 +822,7 @@ void	event_adding_events(t_editor *editor)
 		{
 			editor->selected_event = add_event(editor);
 			editor->selected_event_elem = editor->selected_event->elem;
-			editor->active_event_elem = editor->selected_event->elem->button;
+			editor->active_event_elem = &editor->selected_event->elem->button;
 		}
 		update_event(editor, editor->selected_event_elem->event);
 		update_event_elem(editor->selected_event_elem);
@@ -874,7 +874,7 @@ void	event_select(t_editor *editor)
 		curr = editor->event_elements;
 		while (curr)
 		{
-			if (((t_event_elem *)curr->content)->button
+			if (&((t_event_elem *)curr->content)->button
 				== editor->active_event_elem)
 			{
 				editor->selected_event_elem = curr->content;

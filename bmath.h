@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   bmath.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/10 19:03:18 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 19:03:20 by nneronin         ###   ########.fr       */
+/*   Created: 2021/12/14 09:45:07 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/12/14 09:45:07 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MATH_H
-# define MATH_H
+#ifndef BMATH_H
+# define BMATH_H
 
 int				powi(int n, int pow);
 float			distance(int *v1, int *v2, size_t size);
