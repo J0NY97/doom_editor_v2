@@ -107,18 +107,13 @@ void	move_sector(t_sector *sector, t_vec2i move_amount)
 void	activate_correct_sector_skybox_button(
 		t_editor *editor, t_sector *sector)
 {
-	if (sector->skybox == -1)
-		ui_dropdown_activate(editor->sector_skybox_dropdown,
-			editor->sector_skybox_one);
-	else if (sector->skybox == -2)
-		ui_dropdown_activate(editor->sector_skybox_dropdown,
-			editor->sector_skybox_two);
-	else if (sector->skybox == -3)
-		ui_dropdown_activate(editor->sector_skybox_dropdown,
-			editor->sector_skybox_three);
-	else
-		ui_dropdown_activate(editor->sector_skybox_dropdown,
-			editor->sector_skybox_none);
+	int	iii;
+
+	iii = -1;
+	while (++iii < SKYBOX_AMOUNT)
+		if (sector->skybox == -iii)
+			ui_dropdown_activate(editor->sector_skybox_dropdown,
+				editor->sector_skyboxes[iii]);
 }
 
 /*
@@ -228,20 +223,17 @@ void	get_texture_scale_inputs(t_editor *editor, t_sector *sector)
 void	get_sector_ui(t_editor *editor, t_sector *sector)
 {
 	t_ui_element	*skybox_active;
+	int				iii;
 
 	sector->floor_texture = editor->floor_texture_something.id;
 	sector->ceiling_texture = editor->ceiling_texture_something.id;
 	if (ui_dropdown_exit(editor->sector_skybox_dropdown))
 	{
+		iii = -1;
 		skybox_active = ui_dropdown_active(editor->sector_skybox_dropdown);
-		if (skybox_active == editor->sector_skybox_one)
-			sector->skybox = -1;
-		else if (skybox_active == editor->sector_skybox_two)
-			sector->skybox = -2;
-		else if (skybox_active == editor->sector_skybox_three)
-			sector->skybox = -3;
-		else
-			sector->skybox = 0;
+		while (++iii < SKYBOX_AMOUNT)
+			if (skybox_active == editor->sector_skyboxes[iii])
+				sector->skybox = -iii;
 	}
 	get_height_inputs(editor, sector);
 	get_gl_inputs(editor, sector);

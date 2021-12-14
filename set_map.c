@@ -234,15 +234,12 @@ char	*set_sectors(t_editor *editor)
 	char		*temp;
 	t_list		*curr;
 	t_sector	*sector;
-//	int			id;
 
-//	id = -1;
 	final = ft_sprintf("type:sector\twalls\tneighbors\tg\tl\n");
 	curr = editor->sectors;
 	while (curr)
 	{
 		sector = curr->content;
-//		sector->id = ++id;
 		temp = create_sector_string(sector);
 		ft_stradd(&final, temp);
 		ft_strdel(&temp);
@@ -423,20 +420,6 @@ void	first_half(t_editor *editor, int fd, char *delim)
 	ft_strdel(&temp);
 }
 
-void	reid(t_editor *editor)
-{
-	t_list	*curr;
-	int		id;
-
-	id = -1;
-	curr = editor->sectors;
-	while (curr)
-	{
-		((t_sector *)curr->content)->id = ++id;
-		curr = curr->next;
-	}
-}
-
 void	set_map(t_editor *editor, char *name)
 {
 	int		fd;
@@ -449,7 +432,6 @@ void	set_map(t_editor *editor, char *name)
 		ft_printf("[%s] Couldn\'t open map file : %s\n", __FUNCTION__, name);
 		return ;
 	}
-	//reid(editor);
 	ft_strcpy(delim, "-\n");
 	first_half(editor, fd, delim);
 	temp = set_entity(editor);

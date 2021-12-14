@@ -151,6 +151,14 @@ void	editor_free(t_editor *editor)
 	ui_sdl_free();
 }
 
+void	map_init(t_editor *editor, int ac, char **av)
+{
+	if (args_parser(editor, ac, av))
+		get_map(editor, editor->map_full_path);
+	else
+		ft_printf("[%s] No map given.\n", __FUNCTION__);
+}
+
 int	realmain(int ac, char **av)
 {
 	t_editor	editor;
@@ -158,10 +166,7 @@ int	realmain(int ac, char **av)
 	ui_sdl_init();
 	editor_init(&editor);
 	draw_init(&editor);
-	if (args_parser(&editor, ac, av))
-		get_map(&editor, editor.map_full_path);
-	else
-		ft_printf("[%s] No map given.\n", __FUNCTION__);
+	map_init(&editor, ac, av);
 	setup_ui_values(&editor);
 	while (!editor.win_main->wants_to_close)
 	{
@@ -169,8 +174,6 @@ int	realmain(int ac, char **av)
 		update_title_fps(editor.win_main->win, &editor.fps);
 		while (SDL_PollEvent(&editor.e))
 		{
-			if (editor.e.key.keysym.scancode == SDL_SCANCODE_E)
-				editor.win_main->wants_to_close = 1;
 			ui_layout_event(&editor.layout, editor.e);
 			user_events(&editor, editor.e);
 		}

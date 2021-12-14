@@ -36,7 +36,7 @@ void	point_free(void *p, size_t size)
 {
 	t_point	*point;
 
-	point = p;;
+	point = p;
 	if (!point)
 		return ;
 	free(p);

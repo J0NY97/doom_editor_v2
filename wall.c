@@ -331,30 +331,19 @@ void	remove_all_lonely_walls(t_editor *editor)
 	}
 }
 
-void	activate_correct_wall_skybox_button(t_editor *editor, t_wall *wall)
-{
-	if (wall->skybox == -1)
-		ui_dropdown_activate(editor->wall_skybox_dropdown,
-			editor->wall_skybox_one);
-	else if (wall->skybox == -2)
-		ui_dropdown_activate(editor->wall_skybox_dropdown,
-			editor->wall_skybox_two);
-	else if (wall->skybox == -3)
-		ui_dropdown_activate(editor->wall_skybox_dropdown,
-			editor->wall_skybox_three);
-	else
-		ui_dropdown_activate(editor->wall_skybox_dropdown,
-			editor->wall_skybox_none);
-}
-
 /*
  * When you select new wall update ui;
 */
 void	set_wall_ui(t_editor *editor, t_wall *wall)
 {
 	char	temp_str[20];
+	int		iii;
 
-	activate_correct_wall_skybox_button(editor, wall);
+	iii = SKYBOX_AMOUNT;
+	while (--iii >= 0)
+		if (wall->skybox == -iii)
+			ui_dropdown_activate(editor->wall_skybox_dropdown,
+				editor->wall_skyboxes[iii]);
 	editor->wall_texture_something.id = wall->wall_texture;
 	editor->portal_texture_something.id = wall->portal_texture;
 	ui_element_image_set(editor->wall_texture_image, UI_STATE_AMOUNT,
@@ -419,18 +408,15 @@ void	get_wall_ui3(t_editor *editor, t_wall *wall)
 void	get_wall_ui(t_editor *editor, t_wall *wall)
 {
 	t_ui_element	*skybox_active;
+	int				iii;
 
 	if (ui_dropdown_exit(editor->wall_skybox_dropdown))
 	{
 		skybox_active = ui_dropdown_active(editor->wall_skybox_dropdown);
-		if (skybox_active == editor->wall_skybox_none)
-			wall->skybox = 0;
-		if (skybox_active == editor->wall_skybox_one)
-			wall->skybox = -1;
-		if (skybox_active == editor->wall_skybox_two)
-			wall->skybox = -2;
-		if (skybox_active == editor->wall_skybox_three)
-			wall->skybox = -3;
+		iii = -1;
+		while (++iii < SKYBOX_AMOUNT)
+			if (skybox_active == editor->wall_skyboxes[iii])
+				wall->skybox = -iii;
 	}
 	wall->wall_texture = editor->wall_texture_something.id;
 	wall->portal_texture = editor->portal_texture_something.id;

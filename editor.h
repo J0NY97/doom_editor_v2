@@ -26,6 +26,7 @@
 # include "path.h"
 # include "resources.h"
 # include "enum.h"
+# define SKYBOX_AMOUNT 4
 
 typedef struct s_spawn		t_spawn;
 typedef struct s_point		t_point;
@@ -156,10 +157,7 @@ typedef struct s_editor
 	t_ui_element	*close_sector_edit_button;
 	t_ui_element	*sector_edit_ok_button;
 	t_ui_element	*sector_skybox_dropdown;
-	t_ui_element	*sector_skybox_none;
-	t_ui_element	*sector_skybox_one;
-	t_ui_element	*sector_skybox_two;
-	t_ui_element	*sector_skybox_three;
+	t_ui_element	*sector_skyboxes[SKYBOX_AMOUNT];
 	t_ui_element	*floor_texture_button;
 	t_ui_element	*floor_texture_image;
 	t_ui_element	*ceiling_texture_button;
@@ -177,10 +175,7 @@ typedef struct s_editor
 	t_ui_element	*close_wall_edit_button;
 	t_ui_element	*split_wall_button;
 	t_ui_element	*wall_skybox_dropdown;
-	t_ui_element	*wall_skybox_none;
-	t_ui_element	*wall_skybox_one;
-	t_ui_element	*wall_skybox_two;
-	t_ui_element	*wall_skybox_three;
+	t_ui_element	*wall_skyboxes[SKYBOX_AMOUNT];
 	t_ui_element	*portal_checkbox;
 	t_ui_element	*solid_checkbox;
 	t_ui_element	*wall_texture_button;

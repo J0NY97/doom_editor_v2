@@ -51,13 +51,13 @@ void	sector_skybox_init(t_editor *editor)
 {
 	editor->sector_skybox_dropdown
 		= ui_layout_get_element(&editor->layout, "sector_skybox_dropdown");
-	editor->sector_skybox_none
+	editor->sector_skyboxes[0]
 		= ui_layout_get_element(&editor->layout, "sector_skybox_none");
-	editor->sector_skybox_one
+	editor->sector_skyboxes[1]
 		= ui_layout_get_element(&editor->layout, "sector_skybox_one");
-	editor->sector_skybox_two
+	editor->sector_skyboxes[2]
 		= ui_layout_get_element(&editor->layout, "sector_skybox_two");
-	editor->sector_skybox_three
+	editor->sector_skyboxes[3]
 		= ui_layout_get_element(&editor->layout, "sector_skybox_three");
 }
 
@@ -107,13 +107,13 @@ void	wall_skybox_init(t_editor *editor)
 {
 	editor->wall_skybox_dropdown
 		= ui_layout_get_element(&editor->layout, "wall_skybox_dropdown");
-	editor->wall_skybox_none
+	editor->wall_skyboxes[0]
 		= ui_layout_get_element(&editor->layout, "wall_skybox_none");
-	editor->wall_skybox_one
+	editor->wall_skyboxes[1]
 		= ui_layout_get_element(&editor->layout, "wall_skybox_one");
-	editor->wall_skybox_two
+	editor->wall_skyboxes[2]
 		= ui_layout_get_element(&editor->layout, "wall_skybox_two");
-	editor->wall_skybox_three
+	editor->wall_skyboxes[3]
 		= ui_layout_get_element(&editor->layout, "wall_skybox_three");
 }
 
