@@ -673,7 +673,7 @@ void	texture_menu_select_events(t_editor *editor)
 {
 	t_list				*curr;
 	t_texture_elem		*selected_texture_elem;
-	t_texture_something	*t_something;
+	t_texture_comb		*t_something;
 
 	selected_texture_elem = get_active_texture_elem(editor);
 	if (selected_texture_elem

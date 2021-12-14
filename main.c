@@ -131,7 +131,6 @@ void	editor_free(t_editor *editor)
 	ft_lstdel(&editor->texture_opening_buttons, &dummy_free_er);
 	ft_lstdel(&editor->texture_elems, &texture_elem_free);
 	ft_lstdel(&editor->texture_buttons, &dummy_free_er);
-	TTF_CloseFont(editor->font);
 	SDL_DestroyTexture(editor->drawing_texture);
 	SDL_FreeSurface(editor->drawing_surface);
 	SDL_FreeSurface(editor->grid_surface);

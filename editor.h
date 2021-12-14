@@ -101,12 +101,12 @@ typedef struct s_texture_elem
  * t_ui_element	*button;	when clicked, opens the texture_menu;
  * t_ui_element	*image;		menu on which image of selected texture will be blat;
 */
-typedef struct s_texture_something
+typedef struct s_texture_comb
 {
 	t_ui_element	*button;
 	t_ui_element	*image;
 	int				id;
-}					t_texture_something;
+}					t_texture_comb;
 
 /*
  * SDL_Texture		*drawing_texture;		the texture surface will be texturified on and the rendered on screen;
@@ -120,7 +120,7 @@ typedef struct s_texture_something
  * t_list			*texture_buttons;		from texture_elem the button, so that we can use radio_event on it; t_ui_element;
  * t_ui_element		*active_texture_button;	the currently active texture button;
  *
- * t_list			*texture_somethings;		list of t_texture_somethings;
+ * t_list			*texture_somethings;		list of t_texture_combs;
  * t_list			*texture_opening_buttons;	list of t_ui_element buttons, when clicked opens the texture_menu;
  * t_ui_element	*active_texture_opening_button; which buttons is currently active; of the texture_opening_buttons;
  *
@@ -151,8 +151,8 @@ typedef struct s_editor
 
 	t_ui_element	*error_label;
 
-	t_texture_something	floor_texture_something;
-	t_texture_something	ceiling_texture_something;
+	t_texture_comb	floor_texture_something;
+	t_texture_comb	ceiling_texture_something;
 	t_ui_element	*sector_edit_menu;
 	t_ui_element	*close_sector_edit_button;
 	t_ui_element	*sector_edit_ok_button;
@@ -169,8 +169,8 @@ typedef struct s_editor
 	t_ui_element	*floor_texture_scale_input;
 	t_ui_element	*ceiling_texture_scale_input;
 
-	t_texture_something	wall_texture_something;
-	t_texture_something	portal_texture_something;
+	t_texture_comb	wall_texture_something;
+	t_texture_comb	portal_texture_something;
 	t_ui_element	*menu_wall_edit;
 	t_ui_element	*close_wall_edit_button;
 	t_ui_element	*split_wall_button;
@@ -198,8 +198,7 @@ typedef struct s_editor
 	t_ui_element	*active_texture_button;
 	int				active_texture_button_id;
 
-	// Sprites
-	t_texture_something	sprite_texture_something;
+	t_texture_comb	sprite_texture_something;
 	t_ui_element	*sprite_edit_menu;
 	t_ui_element	*sprite_add_button;
 	t_ui_element	*sprite_confirm_button;
@@ -216,7 +215,6 @@ typedef struct s_editor
 	t_ui_element	*sprite_texture_button;
 	t_ui_element	*sprite_texture_image;
 
-	// Entity
 	t_ui_element	*entity_edit_menu;
 	t_ui_element	*close_entity_edit_button;
 	t_ui_element	*entity_image;
@@ -225,7 +223,6 @@ typedef struct s_editor
 	t_ui_element	*entity_yaw_slider;
 	t_ui_element	*entity_z_input;
 
-	// Event
 	t_ui_element	*event_scrollbar;
 	t_ui_element	*event_edit_menu;
 	t_ui_element	*add_event_button;
@@ -238,8 +235,7 @@ typedef struct s_editor
 	t_ui_element	*event_min_input;
 	t_ui_element	*event_max_input;
 	t_ui_element	*event_speed_input;
-	t_ui_element	*event_menu; // the menu where we are showing all the events;
-	// types
+	t_ui_element	*event_menu;
 	t_ui_element	*event_type_floor;
 	t_ui_element	*event_type_ceiling;
 	t_ui_element	*event_type_light;
@@ -247,13 +243,11 @@ typedef struct s_editor
 	t_ui_element	*event_type_hazard;
 	t_ui_element	*event_type_audio;
 	t_ui_element	*event_type_spawn;
-	// actions
 	t_ui_element	*event_action_click_button;
 	t_ui_element	*event_action_shoot_button;
 	t_ui_element	*event_action_sector_button;
 	t_ui_element	*event_action_null_button;
 
-	// Spawn Elems
 	t_ui_element	*spawn_edit_menu;
 	t_ui_element	*spawn_yaw_input;
 
@@ -277,11 +271,8 @@ typedef struct s_editor
 	t_ui_element	*confirm_save_button;
 	t_ui_element	*name_input;
 
-	// Win Edit
 	t_ui_window		*win_edit;
 	t_ui_element	*map_scale_input;
-
-	TTF_Font		*font;
 
 	SDL_Texture		*drawing_texture;
 	SDL_Surface		*drawing_surface;
@@ -294,7 +285,7 @@ typedef struct s_editor
 	t_vec2			offset;
 	SDL_Surface		*grid_surface;
 	bool			update_grid;
-	int				errors; // (reset at start of user_render) this is keeping count on how many errors we have in map (both entity and sector), if we waant at some point the errors to be per sector and entity try to make this as 'changeable' as possible; (make this Uint and | (or) the SECTOR_ERROR | ENTITY_ERROR | SPAWN_ERROR...;
+	int				errors;
 
 	SDL_Surface		*wall_textures[MAP_TEXTURE_AMOUNT];
 	SDL_Texture		*entity_textures[ENTITY_AMOUNT + 1];
@@ -326,12 +317,10 @@ typedef struct s_editor
 	t_list			*events;
 	t_list			*sprites;
 
-	// Event
 	t_list			*event_elements;
 	t_list			*event_element_buttons;
 	t_ui_element	*active_event_elem;
 	t_event_elem	*selected_event_elem;
-	// id
 	t_list			*event_id_buttons;
 	int				event_id_buttons_made;
 	int				event_id_buttons_in_use;
@@ -431,7 +420,7 @@ struct s_sector
 	int				floor_texture;
 	int				ceiling_texture;
 	int				gravity;
-	int 			lighting;
+	int				lighting;
 	float			floor_scale;
 	float			ceiling_scale;
 
@@ -620,7 +609,6 @@ float				get_aspect(float w, float h);
 char				**gen_sector_id_texts(t_list *sectors);
 void				create_buttons_to_list_from_texts_remove_extra(t_ui_element *parent, char **texts, t_ui_recipe *recipe);
 void				draw_text(SDL_Surface *surface, char *text, t_vec2i pos, Uint32 color);
-void				draw_text_on_texture(SDL_Texture *texture, char *text, TTF_Font *font, t_vec2i pos, Uint32 color);
 void				send_info_message(t_editor *editor, char *text);
 void				set_elem_parent_and_recipe(t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id);
 void				draw_arrow(SDL_Surface *surface, t_vec2i start, int len, float yaw);

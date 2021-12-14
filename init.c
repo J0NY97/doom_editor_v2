@@ -209,13 +209,13 @@ void	texture_elem_init(t_editor *editor)
 }
 
 void	new_texture_something(
-		t_editor *editor, t_texture_something *something,
+		t_editor *editor, t_texture_comb *something,
 		t_ui_element *button, t_ui_element *image)
 {
 	something->button = button;
 	something->image = image;
 	add_to_list(&editor->texture_somethings,
-		something, sizeof(t_texture_something));
+		something, sizeof(t_texture_comb));
 	add_to_list(&editor->texture_opening_buttons, button, UI_TYPE_ELEMENT);
 }
 
@@ -418,7 +418,6 @@ void	editor_init(t_editor *editor)
 	memset(editor, 0, sizeof(t_editor));
 	memset(&editor->fps, 0, sizeof(t_fps));
 	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
-	editor->font = TTF_OpenFont(UI_PATH"fonts/DroidSans.ttf", 20);
 	editor->map_type = MAP_TYPE_ENDLESS;
 	editor->map_name = ft_strdup("");
 	editor->win_main = ui_layout_get_window(&editor->layout, "win_main");
