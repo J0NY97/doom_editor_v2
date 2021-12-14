@@ -234,9 +234,9 @@ char	*set_sectors(t_editor *editor)
 	char		*temp;
 	t_list		*curr;
 	t_sector	*sector;
-	int			id;
+//	int			id;
 
-	id = -1;
+//	id = -1;
 	final = ft_sprintf("type:sector\twalls\tneighbors\tg\tl\n");
 	curr = editor->sectors;
 	while (curr)

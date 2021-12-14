@@ -36,7 +36,7 @@ void	create_buttons_to_list_from_texts_remove_extra(
 
 	i = -1;
 	prev_butt = parent->children;
-	while (texts[++i])
+	while (texts && texts[++i])
 	{
 		if (prev_butt && prev_butt->content)
 		{
@@ -48,7 +48,7 @@ void	create_buttons_to_list_from_texts_remove_extra(
 	}
 	while (prev_butt)
 	{
-		next_butt= prev_butt->next;
+		next_butt = prev_butt->next;
 		ui_element_free(prev_butt->content, prev_butt->content_size);
 		if (!prev_butt)
 			break ;

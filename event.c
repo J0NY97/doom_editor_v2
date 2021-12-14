@@ -225,23 +225,29 @@ t_event_elem	*event_element_new(t_ui_element *parent)
 void	update_event2(t_editor *editor, t_event *event)
 {
 	char	*active_text;
+	int		id;
 
 	active_text = ui_dropdown_active_text(editor->event_id_dropdown);
 	if (active_text)
 	{
+		id = ft_atoi(active_text);
 		if (event->action == SECTOR)
 		{
 			event->pointer_type = TYPE_SECTOR;
-			event->pointer = get_sector_by_id_from_list(editor->sectors,
-					ft_atoi(active_text));
+			event->pointer = get_sector_by_id_from_list(editor->sectors, id);
 		}
 		else
 		{
 			event->pointer_type = TYPE_SPRITE;
-			event->pointer = get_sprite_by_id_from_list(editor->sprites,
-					ft_atoi(active_text));
+			event->pointer = get_sprite_by_id_from_list(editor->sprites, id);
 		}
 	}
+}
+
+void	update_event4(t_editor *editor, t_event *event)
+{
+	char	*active_text;
+
 	active_text = ui_input_get_text(editor->event_sector_input);
 	if (active_text)
 	{
@@ -289,6 +295,7 @@ void	update_event(t_editor *editor, t_event *event)
 			event->action = i;
 	update_event2(editor, event);
 	update_event3(editor, event);
+	update_event4(editor, event);
 }
 
 /*

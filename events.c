@@ -69,6 +69,7 @@ void	grid_events(t_editor *editor, SDL_Event e)
 		editor->selected_sector = NULL;
 		editor->selected_entity = NULL;
 		editor->selected_event = NULL;
+		editor->active_event_elem = NULL;
 		editor->selected_sprite = NULL;
 		editor->selected_wall = NULL;
 		editor->selected_point = NULL;
@@ -93,46 +94,57 @@ void	sector_cleanup(t_editor *editor)
 }
 
 /*
- * Search wall using 'point' and remove one of them (rng) and make the other use
- * the other^1 point of the wall being removed. (*1 not this 'point')
+ * From 'list' of walls, search for 2 't_wall' with either of its points being
+ *	being the point 'p', and save them in 'w1' and 'w2';
 */
-void	merge_connected_walls(t_editor *editor, t_sector *sector, t_point *point)
+void	get_walls_connected_to_point(
+	t_list *walls, t_point *p, t_wall **w1, t_wall **w2)
 {
-	t_wall	*w1;
-	t_wall	*w2;
 	t_wall	*wall;
-	t_list	*walls;
 
-	w1 = NULL;
-	w2 = NULL;
-	walls = sector->walls;
 	while (walls)
 	{
 		wall = walls->content;
-		if (wall->p1 == point || wall->p2 == point)
+		if (wall->p1 == p || wall->p2 == p)
 		{
-			if (!w1)
-				w1 = wall;
+			if (!*w1)
+				*w1 = wall;
 			else
-				w2 = wall;
+				*w2 = wall;
 		}
 		walls = walls->next;
 	}
+}
+
+/*
+ * Search wall using 'point' and remove one of them (rng) and make the other use
+ * the other^1 point of the wall being removed. (*1 not this 'point')
+*/
+void	merge_connected_walls(
+	t_editor *editor, t_sector *sector, t_point *point)
+{
+	t_wall	*w1;
+	t_wall	*w2;
+
+	w1 = NULL;
+	w2 = NULL;
+	get_walls_connected_to_point(sector->walls, point, &w1, &w2);
 	if (!w1 || !w2)
+	{
+		ft_printf("[%s] BIG ERROR : Theres a point with no walls connected to"
+			" it.\n", __FUNCTION__);
 		return ;
-	if (w1->p1 == point && w2->p1 == point)
-		w2->p1 = w1->p2;
-	else if (w1->p1 == point && w2->p2 == point)
+	}
+	if (w1->p1 == point && w2->p2 == point)
 		w2->p2 = w1->p2;
 	else if (w1->p2 == point && w2->p1 == point)
 		w2->p1 = w1->p1;
-	else if (w1->p2 == point && w2->p2 == point)
-		w2->p2 = w1->p2;
 	else
 		ft_printf("[%s] BIG ERROR : This should never happen.\n", __FUNCTION__);
 	remove_from_list(&sector->walls, w1);
 	remove_wall(editor, w1);
 	remove_point(editor, point);
+	return ;
 }
 
 void	remove_button_events(t_editor *editor)
@@ -142,13 +154,14 @@ void	remove_button_events(t_editor *editor)
 	was_removed = 0;
 	if (editor->remove_button->state == UI_STATE_CLICK)
 	{
-		if (editor->selected_sector)
+		if (editor->selected_point && editor->selected_sector)
 		{
-			if (editor->selected_point)
-				merge_connected_walls(editor, editor->selected_sector, editor->selected_point);
-			else
-				was_removed = remove_sector(editor, editor->selected_sector);
+			merge_connected_walls(editor, editor->selected_sector,
+				editor->selected_point);
+			editor->selected_point = NULL;
 		}
+		else if (editor->selected_sector)
+			was_removed = remove_sector(editor, editor->selected_sector);
 		else if (editor->selected_entity)
 			was_removed = remove_entity(editor, editor->selected_entity);
 		if (was_removed)
@@ -851,11 +864,10 @@ void	event_id_dropdown_update(t_editor *editor)
 			texts = gen_sector_id_texts(editor->sectors);
 		else
 			texts = gen_sprite_id_texts(editor->sprites);
-		if (!texts)
-			return ;
 		recipe = ui_list_get_recipe_by_id(
 				editor->layout.recipes, "event_id_button");
 		ft_printf("[%s] Creating new id buttons.\n", __FUNCTION__);
+		ft_putarr(texts);
 		create_buttons_to_list_from_texts_remove_extra(
 			ui_dropdown_get_menu_element(editor->event_id_dropdown),
 			texts, recipe);
