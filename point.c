@@ -86,35 +86,6 @@ t_point	*get_point_from_list_at_pos(t_list *list, t_vec2i v)
 	return (NULL);
 }
 
-t_point	*get_point_from_list_around_radius(
-		t_list *points, t_vec2i pos, float allowed_radius)
-{
-	t_point		*temp;
-	float		x;
-	float		y;
-
-	temp = get_point_from_list_at_pos(points, pos);
-	if (temp)
-		return (temp);
-	x = -allowed_radius;
-	while (x <= allowed_radius)
-	{
-		y = -allowed_radius;
-		while (y <= allowed_radius)
-		{
-			temp = get_point_from_list_at_pos(points,
-					vec2i(pos.x + x, pos.y + y));
-			if (temp != NULL)
-				break ;
-			y += 0.5f;
-		}
-		if (temp != NULL)
-			break ;
-		x += 0.5f;
-	}
-	return (temp);
-}
-
 t_point	*get_point_from_wall_at_pos(t_wall *wall, t_vec2i pos)
 {
 	if (compare_veci(wall->p1->pos.v, pos.v, 2))

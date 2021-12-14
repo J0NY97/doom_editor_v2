@@ -509,7 +509,6 @@ void				draw_entities_yaw(t_editor *editor, t_list *entities);
 // Point
 void				point_render(t_editor *editor, t_point *point, Uint32 color);
 t_point				*get_point_with_id(t_list *list, int id);
-t_point				*get_point_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
 t_point				*get_point_from_sector_around_radius(t_sector *sector, t_vec2i pos, float allowed_radius);
 t_point				*add_point(t_editor *editor);
 int					remove_point(t_editor *editor, t_point *point);
@@ -519,7 +518,6 @@ void				point_free(void *p, size_t size);
 // Wall
 t_wall				*wall_new(void);
 void				wall_free(void *w, size_t size);
-void				remove_sprite_from_wall(t_sprite *sprite, t_wall *wall);
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
 t_wall				*get_wall_with_id(t_list *list, int id);
@@ -575,19 +573,15 @@ void				get_entity_ui(t_editor *editor, t_entity *entity);
 t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
 int					get_entity_type(char *text);
 void				entity_check_errors(t_editor *editor, t_entity *entity);
-void				print_entity(t_entity *entity);
-void				print_entities(t_list *entities);
 
 // Event
 t_event_elem		*event_element_new(t_ui_element *parent);
 void				event_elem_free(void *elem, size_t size);
 t_event				*add_event(t_editor *editor);
 void				remove_event(t_editor *editor, t_event *event);
-void				remove_event_elem_from_list(t_event_elem *elem, t_list **list);
 void				event_elem_update(t_editor *editor, t_event_elem *event_elem);
 t_event				*event_new(void);
 void				event_free(void *ev, size_t size);
-void				remove_event_from_list(t_event *event, t_list **list);
 int					get_next_event_id(t_list *list);
 void				update_event(t_editor *editor, t_event *event);
 void				update_event_elem(t_event_elem *elem);
@@ -600,7 +594,6 @@ void				realign_event_buttons(t_editor *editor);
 // Sprite
 t_sprite			*sprite_new(void);
 void				sprite_free(void *sprite, size_t size);
-void				sprite_print(t_sprite *sprite);
 int					get_next_sprite_id(t_list *list);
 t_sprite			*get_sprite_from_list_at_pos(t_list *list, t_vec2i pos);
 t_sprite			*get_sprite_by_id_from_list(t_list *list, int id);

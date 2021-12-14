@@ -31,16 +31,6 @@ void	sprite_free(void *s, size_t size)
 	(void)size;
 }
 
-void	sprite_print(t_sprite *sprite)
-{
-	ft_printf("[%s]\n", __FUNCTION__);
-	ft_printf("\tpos : ");
-	print_veci(sprite->pos.v, 2);
-	ft_printf("\ttexture_id : %d\n", sprite->texture_id);
-	ft_printf("\tscale : %.2f\n", sprite->scale);
-	ft_printf("\ttype : %d\n", sprite->type);
-}
-
 t_sprite	*add_sprite(t_editor *editor)
 {
 	t_sprite	*sprite;
