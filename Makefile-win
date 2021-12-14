@@ -35,6 +35,8 @@ SRCS = \
 	./math.c \
 	./set_map.c \
 	./get_map.c \
+	./get_map2.c \
+	./get_map3.c \
 	./help.c \
 	./free_help.c \
 

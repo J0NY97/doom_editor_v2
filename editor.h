@@ -613,9 +613,18 @@ void				get_sprite_ui(t_editor *editor, t_sprite *sprite);
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);
 
-// Get && Set
+// Set
 void				set_map(t_editor *editor, char *name);
+
+// Get
 void				get_map(t_editor *editor, char *map);
+void				get_points(t_editor *editor, char **lines, int *i);
+void				get_walls(t_editor *editor, char **lines, int *i);
+void				get_sprites(t_editor *editor, char **lines);
+void				get_entity(t_editor *editor, char **lines, int *i);
+void				get_events(t_editor *editor, char **args);
+void				get_sectors(t_editor *editor, char **lines, int *i);
+void				get_fc(t_editor *editor, char **args);
 
 // Help
 t_vec2				align_fill(t_vec2 inside, t_vec4 size, int gap, int i);
