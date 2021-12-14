@@ -19,12 +19,12 @@ void	calculate_hover(t_editor *editor)
 {
 	editor->last_mouse_pos = editor->mouse_pos;
 	editor->mouse_pos.x = (editor->win_main->mouse_pos.x
-			/ (editor->gap_size * editor->zoom)) + editor->offset.x;
+			/ (editor->gap_size * editor->zoom)) + (int)editor->offset.x;
 	editor->mouse_pos.y = (editor->win_main->mouse_pos.y
-			/ (editor->gap_size * editor->zoom)) + editor->offset.y;
-	editor->mouse_pos_screen.x = (editor->mouse_pos.x - editor->offset.x)
+			/ (editor->gap_size * editor->zoom)) + (int)editor->offset.y;
+	editor->mouse_pos_screen.x = (editor->mouse_pos.x - (int)editor->offset.x)
 		* (editor->gap_size * editor->zoom);
-	editor->mouse_pos_screen.y = (editor->mouse_pos.y - editor->offset.y)
+	editor->mouse_pos_screen.y = (editor->mouse_pos.y - (int)editor->offset.y)
 		* (editor->gap_size * editor->zoom);
 	editor->move_amount.x = editor->mouse_pos.x - editor->last_mouse_pos.x;
 	editor->move_amount.y = editor->mouse_pos.y - editor->last_mouse_pos.y;
@@ -56,13 +56,13 @@ void	update_info_label(t_editor *editor)
 void	grid_events(t_editor *editor, SDL_Event e)
 {
 	if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
-		editor->offset = vec2i(0, 0);
+		editor->offset = vec2(0, 0);
 	if (editor->win_main->mouse_down == SDL_BUTTON_MIDDLE)
 	{
 		editor->offset.x -= (editor->win_main->mouse_pos.x
-				- editor->win_main->mouse_pos_prev.x);
+				- editor->win_main->mouse_pos_prev.x) / editor->gap_size;
 		editor->offset.y -= (editor->win_main->mouse_pos.y
-				- editor->win_main->mouse_pos_prev.y);
+				- editor->win_main->mouse_pos_prev.y) / editor->gap_size;
 	}
 	if (editor->draw_button->was_click)
 	{

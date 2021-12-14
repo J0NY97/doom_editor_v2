@@ -449,7 +449,7 @@ void	draw_init(t_editor *editor)
 			editor->drawing_surface);
 	editor->gap_size = 10.0f;
 	editor->zoom = 1.0f;
-	editor->offset = vec2i(0, 0);
+	editor->offset = vec2(0, 0);
 	editor->grid_surface = ui_surface_new(
 			editor->drawing_surface->w, editor->drawing_surface->h);
 	editor->update_grid = 1;

@@ -295,7 +295,7 @@ typedef struct s_editor
 	t_vec2i			last_mouse_pos;
 	t_vec2i			mouse_pos_screen;
 	t_vec2i			move_amount;
-	t_vec2i			offset;
+	t_vec2			offset;
 	SDL_Surface		*grid_surface;
 	bool			update_grid;
 	int				errors; // (reset at start of user_render) this is keeping count on how many errors we have in map (both entity and sector), if we waant at some point the errors to be per sector and entity try to make this as 'changeable' as possible; (make this Uint and | (or) the SECTOR_ERROR | ENTITY_ERROR | SPAWN_ERROR...;

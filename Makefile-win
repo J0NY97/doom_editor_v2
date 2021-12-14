@@ -16,6 +16,7 @@ SRCS = \
 	./get_map.c \
 	./args_parser.c \
 	./help.c \
+	./free_help.c \
 
 OBJS = $(SRCS:.c=.o)
 
@@ -28,6 +29,7 @@ LIB_FOLDER = ../libs
 
 INCLUDES = \
 	-I ../ \
+	-I ../game/inc \
 	-I$(LIB_FOLDER)/libft \
 	-I$(LIB_FOLDER)/libpf \
 	-I$(LIB_FOLDER)/libui \

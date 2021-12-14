@@ -50,8 +50,8 @@ t_vec2i	conversion(t_editor *editor, t_vec2i v)
 {
 	t_vec2i	result;
 
-	result.x = (v.x - editor->offset.x) * (editor->gap_size * editor->zoom);
-	result.y = (v.y - editor->offset.y) * (editor->gap_size * editor->zoom);
+	result.x = (v.x - (int)editor->offset.x) * (editor->gap_size * editor->zoom);
+	result.y = (v.y - (int)editor->offset.y) * (editor->gap_size * editor->zoom);
 	return (result);
 }
 
