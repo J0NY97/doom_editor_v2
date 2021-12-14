@@ -8,13 +8,17 @@ SRCS = \
 	./entity.c \
 	./entity2.c \
 	./entity_help.c \
+	./event_elem.c \
+	./event_help.c \
+	./event_update.c \
+	./event.c \
+	./event2.c \
 	./main.c \
 	./events.c \
 	./init.c \
 	./point.c \
 	./wall.c \
 	./sector.c \
-	./event.c \
 	./sprite.c \
 	./math.c \
 	./set_map.c \
