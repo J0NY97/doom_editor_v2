@@ -4,6 +4,8 @@ SRCS = \
 	./events.c \
 	./init.c \
 	./draw.c \
+	./draw2.c \
+	./draw3.c \
 	./point.c \
 	./wall.c \
 	./sector.c \

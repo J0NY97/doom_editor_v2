@@ -12,69 +12,6 @@
 
 #include "editor.h"
 
-void	draw_grid_lines(SDL_Surface *surface, float gap_size, float zoom)
-{
-	int			w_amount;
-	int			h_amount;
-	int			i;
-
-	w_amount = surface->w / (gap_size * zoom);
-	h_amount = surface->h / (gap_size * zoom);
-	i = 0;
-	while (i < w_amount || i < h_amount)
-	{
-		if (i < w_amount)
-			ui_surface_line_draw(surface, vec2i(i * (gap_size * zoom), 0),
-				vec2i(i * (gap_size * zoom), surface->h), 0xff353535);
-		if (i < h_amount)
-			ui_surface_line_draw(surface, vec2i(0, i * (gap_size * zoom)),
-				vec2i(surface->w, i * (gap_size * zoom)), 0xff353535);
-		i++;
-	}
-}
-
-void	draw_grid(t_editor *editor)
-{
-	if (editor->update_grid)
-	{
-		SDL_FillRect(editor->grid_surface, NULL, 0);
-		draw_grid_lines(editor->grid_surface, editor->gap_size, editor->zoom);
-		editor->update_grid = 0;
-		ft_printf("[%s] We are updating grid surface.\n", __FUNCTION__);
-	}
-	SDL_BlitSurface(editor->grid_surface, NULL, editor->drawing_surface, NULL);
-}
-
-void	draw_sectors(t_editor *editor, t_list *sectors)
-{
-	t_sector	*sector;
-	char		temp[20];
-	t_sector	*hovered_this_frame;
-	Uint32		color;
-
-	hovered_this_frame = NULL;
-	while (sectors)
-	{
-		sector = sectors->content;
-		sort_walls(sector->walls);
-		sector_render(editor, sector, sector->color);
-		sector->center = get_sector_center(sector);
-		sector->screen_center = conversion(editor, sector->center);
-		color = 0xffffffff;
-		if (sector == editor->selected_sector)
-			color = 0xff00ff00;
-		draw_text(editor->drawing_surface, ft_b_itoa(sector->id, temp),
-			sector->screen_center, color);
-		sector_check_errors(editor, sector);
-		if (vec2_in_vec4(editor->win_main->mouse_pos,
-				vec4i(sector->screen_center.x - 10,
-					sector->screen_center.y - 10, 20, 20)))
-			hovered_this_frame = sector;
-		sectors = sectors->next;
-	}
-	editor->hovered_sector = hovered_this_frame;
-}
-
 /*
  * From in game position calculate the screen position;
 */
@@ -120,22 +57,6 @@ void	draw_selected(t_editor *editor)
 	}
 }
 
-void	draw_entities_yaw(t_editor *editor, t_list *entities)
-{
-	t_entity	*entity;
-
-	while (entities)
-	{
-		entity = entities->content;
-		draw_arrow(editor->drawing_surface,
-			conversion(editor, entity->pos), 10, entity->yaw);
-		entity->inside_sector
-			= point_inside_which_sector(editor->sectors, entity->pos);
-		entity_check_errors(editor, entity);
-		entities = entities->next;
-	}
-}
-
 void	draw_spawn(t_editor *editor)
 {
 	t_list	*curr;
@@ -165,15 +86,6 @@ void	draw_spawn(t_editor *editor)
 		editor->spawn.z = editor->spawn.inside_sector->floor_height;
 }
 
-void	draw_entities(t_editor *editor, t_list *entities)
-{
-	while (entities)
-	{
-		entity_render(editor, entities->content);
-		entities = entities->next;
-	}
-}
-
 void	update_error_label(t_editor *editor)
 {
 	char	*temp;
@@ -188,22 +100,6 @@ void	update_error_label(t_editor *editor)
 	}
 	else
 		editor->error_label->show = 0;
-}
-
-void	draw_drawing_wall_len(t_editor *editor)
-{
-	char	temp_str[20];
-	int		len ;
-	t_vec2i	middle;
-
-	if (editor->first_point_set)
-	{
-		len = distance(editor->first_point.v, editor->mouse_pos.v, 2);
-		middle = conversion(editor,
-				get_middle(editor->first_point, editor->mouse_pos));
-		draw_text(editor->drawing_surface, ft_b_itoa(len, temp_str),
-			middle, 0xffdeface);
-	}
 }
 
 void	user_render(t_editor *editor)

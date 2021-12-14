@@ -488,6 +488,10 @@ void				user_events(t_editor *editor, SDL_Event e);
 
 // Draw
 void				user_render(t_editor *editor);
+void				draw_grid(t_editor *editor);
+void				draw_sectors(t_editor *editor, t_list *sectors);
+void				draw_entities(t_editor *editor, t_list *entities);
+void				draw_entities_yaw(t_editor *editor, t_list *entities);
 
 // Point
 void				point_render(t_editor *editor, t_point *point, Uint32 color);
