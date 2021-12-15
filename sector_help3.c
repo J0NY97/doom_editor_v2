@@ -12,6 +12,14 @@
 
 #include "editor.h"
 
+void	remove_wall_from_sector(t_sector *sector, t_wall *wall)
+{
+	if (!sector || !wall)
+		return ;
+	remove_from_list(&sector->walls, wall);
+	--sector->wall_amount;
+}
+
 t_sector	*point_inside_which_sector(t_list *sectors, t_vec2i point)
 {
 	while (sectors)

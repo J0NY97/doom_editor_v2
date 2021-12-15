@@ -54,7 +54,6 @@ void	merge_connected_walls(
 		w2->p1 = w1->p1;
 	else
 		ft_printf("[%s] BIG ERROR : This should never happen.\n", __FUNCTION__);
-	remove_from_list(&sector->walls, w1);
 	remove_wall(editor, w1);
 	remove_point(editor, point);
 	return ;

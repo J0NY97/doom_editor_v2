@@ -575,6 +575,7 @@ void				remove_neighbor_from_walls(t_list *list, t_sector *sector);
 
 // Kind of wall, and kind of not wall
 bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
+void				remove_wall_from_sector(t_sector *sector, t_wall *wall);
 
 // Entity
 t_entity			*entity_new(void);

@@ -58,6 +58,7 @@ int	remove_wall(t_editor *editor, t_wall *wall)
 	if (!wall)
 		return (0);
 	remove_from_list(&editor->walls, wall);
+	remove_wall_from_sector(wall->parent_sector, wall);
 	remove_all_wall_sprites(editor, wall);
 	free(wall);
 	wall = NULL;

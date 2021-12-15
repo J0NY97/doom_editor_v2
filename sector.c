@@ -57,10 +57,18 @@ t_sector	*add_sector(t_editor *editor)
 */
 int	remove_sector(t_editor *editor, t_sector *sector)
 {
+	t_list	*curr;
+
 	if (!sector)
 		return (0);
 	remove_neighbor_from_walls(editor->walls, sector);
 	remove_from_list(&editor->sectors, sector);
+	curr = sector->walls;
+	while (curr)
+	{
+		remove_wall(editor, curr->content);
+		curr = curr->next;
+	}
 	ft_lstdel(&sector->walls, &dummy_free_er);
 	free(sector);
 	sector = NULL;
