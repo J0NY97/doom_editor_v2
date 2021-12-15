@@ -42,7 +42,7 @@ SRCS = \
 
 OBJS = $(SRCS:.c=.o)
 
-SDL_DIR		:= ../libs/SDL
+SDL_DIR		:= ../libs/SDL_WIN
 SDL_INC		:= -I$(SDL_DIR)/include
 SDL_LIB_DIR	:= -L$(SDL_DIR)/lib
 SDL_LIB		:= -lSDL2 -lSDL2_ttf -lSDL2_image
