@@ -39,13 +39,15 @@ SRCS = \
 	./set_map2.c \
 	./spawn_events.c \
 	./sprite_events.c \
+	./sprite_help.c \
+	./sprite_ui.c \
+	./sprite.c \
 	./texture_menu_events.c \
 	./wall_events.c \
 	./wall_visualizer.c \
 	./init.c \
 	./point.c \
 	./wall.c \
-	./sprite.c \
 	./math.c \
 	./get_map.c \
 	./get_map2.c \

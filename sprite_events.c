@@ -80,4 +80,3 @@ void	sprite_events(t_editor *editor)
 	select_sprite(editor);
 	edit_sprite(editor);
 }
-
