@@ -89,6 +89,7 @@ char	*get_wall_sprites(t_wall *wall, int *id)
 	{
 		sprite = curr->content;
 		*id += 1;
+		sprite->id = *id;
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\t%s\n",
 				*id, wall->id, sprite->pos.x, sprite->pos.y,
 				sprite->texture_id, (int)(sprite->scale * 100),
