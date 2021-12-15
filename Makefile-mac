@@ -42,6 +42,12 @@ SRCS = \
 	./help2.c \
 	./help3.c \
 	./info_menu_events.c \
+	./init.c \
+	./init2.c \
+	./init3.c \
+	./init4.c \
+	./init5.c \
+	./init6.c \
 	./misc_window_events.c \
 	./point_events.c \
 	./point_help.c \
@@ -73,7 +79,6 @@ SRCS = \
 	./wall_ui.c \
 	./wall_visualizer.c \
 	./wall.c \
-	./init.c \
 	./point.c \
 	./math.c \
 	./get_map.c \
@@ -81,6 +86,7 @@ SRCS = \
 	./get_map3.c \
 	./id_button_dropdown.c \
 	./free_help.c \
+
 
 NAME = doom_editor
 ODIR = obj

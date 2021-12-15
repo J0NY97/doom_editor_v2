@@ -470,6 +470,8 @@ struct s_event
 
 // Init
 void				editor_init(t_editor *editor);
+void				info_init(t_editor *editor);
+void				type_dropdown_init(t_editor *editor);
 void				load_map_textures(t_editor *editor);
 void				edit_window_init(t_editor *editor);
 void				save_window_init(t_editor *editor);
