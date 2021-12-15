@@ -31,4 +31,3 @@ void	fps_func(t_fps *fps)
 		fps->count = 0;
 	}
 }
-
