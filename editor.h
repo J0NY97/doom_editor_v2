@@ -543,6 +543,10 @@ void				move_wall(t_wall *wall, t_vec2i move_amount);
 bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
 t_sprite			*add_sprite_to_wall(t_editor *editor, t_wall *wall);
 void				get_walls_connected_to_point(t_list *walls, t_point *p, t_wall **w1, t_wall **w2);
+t_list				*get_next_wall_node(t_list *list, t_wall *wall);
+int					wall_in_any_sector(t_list *sectors, t_wall *wall);
+int					wall_in_sector(t_sector *sector, t_wall *wall);
+void				remove_all_wall_sprites(t_editor *editor, t_wall *wall);
 
 // Sector
 t_sector			*sector_new(void);
@@ -649,6 +653,8 @@ void				draw_arrow(SDL_Surface *surface, t_vec2i start, int len, float yaw);
 t_list				*get_last_tlist(t_list *list);
 t_list				*get_tlist_with_content(t_list *list, void *content);
 t_vec2i				get_middle(t_vec2i p1, t_vec2i p2);
+float				distance_from_vector_to_line(t_vec2i p0, t_vec2i p1, t_vec2i p2);
+int					vector_in_rect_of_radius(t_vec2i p, t_vec2i v1, t_vec2i v2, float radius);
 
 // Free help
 void				surface_array_free(SDL_Surface **surfaces, int amount);

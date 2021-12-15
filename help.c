@@ -179,3 +179,35 @@ void	remove_from_list(t_list **list, void *pointer)
 		curr = curr->next;
 	}
 }
+
+float	distance_from_vector_to_line(t_vec2i p0, t_vec2i p1, t_vec2i p2)
+{
+	float		dist;
+	float		up;
+	float		down;
+
+	up = (p2.x - p1.x) * (p1.y - p0.y)
+		- (p1.x - p0.x) * (p2.y - p1.y);
+	down = sqrt(ft_pow(p2.x - p1.x, 2) + ft_pow(p2.y - p1.y, 2));
+	dist = up / down;
+	return (dist);
+}
+
+int	vector_in_rect_of_radius(t_vec2i p, t_vec2i v1, t_vec2i v2, float radius)
+{
+	float	min;
+	float	max;
+
+	min = fmin(v1.x, v2.x);
+	max = fmax(v1.x, v2.x);
+	if (p.x >= min - radius
+		&& p.x <= max + radius)
+	{
+		min = fmin(v1.y, v2.y);
+		max = fmax(v1.y, v2.y);
+		if (p.y >= min - radius
+			&& p.y <= max + radius)
+			return (1);
+	}
+	return (0);
+}

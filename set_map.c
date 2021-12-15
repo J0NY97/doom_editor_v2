@@ -21,14 +21,15 @@ char	*set_map_info(t_editor *editor)
 		map_type = ft_strdup("story");
 	else
 		map_type = ft_strdup("endless");
-	final = ft_sprintf("type:map\ttype\tscale\tvert\twall\tsect\n"
-			"%d\t%s\t%.2f\t%d\t%d\t%d\n",
+	final = ft_sprintf("type:map\ttype\tscale\tvert\twall\tsect\tevents\n"
+			"%d\t%s\t%.2f\t%d\t%d\t%d\t%d\n",
 			0,
 			map_type,
 			editor->map_scale,
 			ft_lstlen(editor->points),
 			ft_lstlen(editor->walls),
-			ft_lstlen(editor->sectors));
+			ft_lstlen(editor->sectors),
+			ft_lstlen(editor->events));
 	ft_strdel(&map_type);
 	return (final);
 }

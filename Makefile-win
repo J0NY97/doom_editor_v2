@@ -44,10 +44,15 @@ SRCS = \
 	./sprite.c \
 	./texture_menu_events.c \
 	./wall_events.c \
+	./wall_help.c \
+	./wall_help2.c \
+	./wall_help3.c \
+	./wall_help4.c \
+	./wall_ui.c \
 	./wall_visualizer.c \
+	./wall.c \
 	./init.c \
 	./point.c \
-	./wall.c \
 	./math.c \
 	./get_map.c \
 	./get_map2.c \
