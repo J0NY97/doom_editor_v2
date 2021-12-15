@@ -18,25 +18,46 @@ MAGENTA	:= "\e[0;35m"
 CYAN	:= "\e[0;36m"
 RESET	:= "\e[0m"
 
-SRCS =  main.c\
-		events.c\
-		init.c\
-		draw.c\
-		draw2.c\
-		draw3.c\
-		point.c\
-		wall.c\
-		sector.c\
-		entity.c\
-		event.c\
-		sprite.c\
-		math.c\
-		bxpm.c\
-		set_map.c\
-		get_map.c\
-		args_parser.c\
-		help.c\
-		free_help.c\
+SRCS = \
+	./args_parser.c \
+	./bxpm.c \
+	./draw.c \
+	./draw2.c \
+	./draw3.c \
+	./entity.c \
+	./entity2.c \
+	./entity_help.c \
+	./event_elem.c \
+	./event_help.c \
+	./event_update.c \
+	./event.c \
+	./event2.c \
+	./main.c \
+	./events.c \
+	./entity_events.c \
+	./event_events.c \
+	./grid_events.c \
+	./info_menu_events.c \
+	./misc_window_events.c \
+	./point_events.c \
+	./sector_events.c \
+	./spawn_events.c \
+	./sprite_events.c \
+	./texture_menu_events.c \
+	./wall_events.c \
+	./wall_visualizer.c \
+	./init.c \
+	./point.c \
+	./wall.c \
+	./sector.c \
+	./sprite.c \
+	./math.c \
+	./set_map.c \
+	./get_map.c \
+	./get_map2.c \
+	./get_map3.c \
+	./help.c \
+	./free_help.c \
 
 NAME = doom_editor
 ODIR = obj
