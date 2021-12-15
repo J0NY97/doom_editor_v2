@@ -616,6 +616,12 @@ int					args_parser(t_editor *editor, int ac, char **av);
 
 // Set
 void				set_map(t_editor *editor, char *name);
+char				*set_points(t_editor *editor);
+char				*set_walls(t_editor *editor);
+char				*set_sprites(t_editor *editor);
+char				*set_sectors(t_editor *editor);
+char				*set_fandc(t_editor *editor);
+char				*set_event(t_editor *editor);
 
 // Get
 void				get_map(t_editor *editor, char *map);
