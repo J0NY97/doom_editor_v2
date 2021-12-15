@@ -565,6 +565,7 @@ t_wall				*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2);
 t_sector			*point_inside_which_sector(t_list *sectors, t_vec2i point);
 void				sector_check_errors(t_editor *editor, t_sector *sector);
 int					get_sector_id(t_sector *sector);
+void				remove_neighbor_from_walls(t_list *list, t_sector *sector);
 
 // Kind of wall, and kind of not wall
 bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
