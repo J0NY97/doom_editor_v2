@@ -38,29 +38,48 @@ SRCS = \
 	./entity_events.c \
 	./event_events.c \
 	./grid_events.c \
+	./help.c \
+	./help2.c \
+	./help3.c \
 	./info_menu_events.c \
 	./misc_window_events.c \
 	./point_events.c \
 	./point_help.c \
 	./point_help2.c \
 	./sector_events.c \
+	./sector_help.c \
+	./sector_help2.c \
+	./sector_help3.c \
+	./sector_ui.c \
+	./sector_ui2.c \
+	./sector.c \
+	./sector2.c \
+	./set_map_event.c \
+	./set_map_fc.c \
+	./set_map_sector.c \
+	./set_map.c \
+	./set_map2.c \
 	./spawn_events.c \
 	./sprite_events.c \
+	./sprite_help.c \
+	./sprite_ui.c \
+	./sprite.c \
 	./texture_menu_events.c \
 	./wall_events.c \
+	./wall_help.c \
+	./wall_help2.c \
+	./wall_help3.c \
+	./wall_help4.c \
+	./wall_ui.c \
 	./wall_visualizer.c \
+	./wall.c \
 	./init.c \
 	./point.c \
-	./wall.c \
-	./sector.c \
-	./sprite.c \
 	./math.c \
-	./set_map.c \
 	./get_map.c \
 	./get_map2.c \
 	./get_map3.c \
 	./id_button_dropdown.c \
-	./help.c \
 	./free_help.c \
 
 NAME = doom_editor
