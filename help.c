@@ -166,3 +166,16 @@ t_list	*get_tlist_with_content(t_list *list, void *content)
 	}
 	return (NULL);
 }
+
+void	remove_from_list(t_list **list, void *pointer)
+{
+	t_list	*curr;
+
+	curr = *list;
+	while (curr)
+	{
+		if (curr->content == pointer)
+			ft_lstdelone_nonfree(list, curr);
+		curr = curr->next;
+	}
+}

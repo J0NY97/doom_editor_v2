@@ -483,6 +483,10 @@ void				sector_edit_init(t_editor *editor);
 void				selection_menu_init(t_editor *editor);
 void				draw_init(t_editor *editor);
 
+// Fps
+void				update_title_fps(SDL_Window *win, t_fps *fps);
+void				fps_func(t_fps *fps);
+
 // Event
 void				user_events(t_editor *editor, SDL_Event e);
 void				sprite_events(t_editor *editor);

@@ -34,12 +34,15 @@ SRCS = \
 	./event2.c \
 	./main.c \
 	./events.c \
+	./fps.c \
 	./entity_events.c \
 	./event_events.c \
 	./grid_events.c \
 	./info_menu_events.c \
 	./misc_window_events.c \
 	./point_events.c \
+	./point_help.c \
+	./point_help2.c \
 	./sector_events.c \
 	./spawn_events.c \
 	./sprite_events.c \
