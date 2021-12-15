@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile-mac                                       :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+         #
+#    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/13 11:29:37 by jsalmi           ###   ########.fr        #
+#    Updated: 2021/12/15 10:17:38 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,10 +75,10 @@ INCLUDES =	\
 		-I $(LIB_DIR)/libpf \
 		-I $(LIB_DIR)/libbxpm \
 		-I $(LIB_DIR)/libui \
-		-I $(LIB_DIR)/SDL_Frameworks/SDL2.framework/Headers \
-		-I $(LIB_DIR)/SDL_Frameworks/SDL2_image.framework/Headers \
-		-I $(LIB_DIR)/SDL_Frameworks/SDL2_ttf.framework/Headers \
-		-F $(LIB_DIR)/SDL_Frameworks
+		-I $(LIB_DIR)/SDL_MAC/SDL2.framework/Headers \
+		-I $(LIB_DIR)/SDL_MAC/SDL2_image.framework/Headers \
+		-I $(LIB_DIR)/SDL_MAC/SDL2_ttf.framework/Headers \
+		-F $(LIB_DIR)/SDL_MAC
 
 LIB_FOLDERS =	\
 		-L $(LIB_DIR)/libft -lft \
@@ -88,7 +88,7 @@ LIB_FOLDERS =	\
 		-framework SDL2 \
 		-framework SDL2_image \
 		-framework SDL2_ttf \
-		-F $(LIB_DIR)/SDL_Frameworks
+		-F $(LIB_DIR)/SDL_MAC
 
 CFLAGS = -Wall -Wextra -MMD
 
