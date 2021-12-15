@@ -71,7 +71,6 @@ void	event_id_dropdown_update(t_editor *editor)
 		recipe = ui_list_get_recipe_by_id(
 				editor->layout.recipes, "event_id_button");
 		ft_printf("[%s] Creating new id buttons.\n", __FUNCTION__);
-		ft_putarr(texts);
 		create_buttons_to_list_from_texts_remove_extra(
 			ui_dropdown_get_menu_element(editor->event_id_dropdown),
 			texts, recipe);
