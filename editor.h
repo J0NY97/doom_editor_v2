@@ -498,6 +498,9 @@ void				spawn_events(t_editor *editor);
 void				info_menu_events(t_editor *editor, SDL_Event e);
 void				event_events(t_editor *editor);
 void				visualize_wall(t_editor *editor, t_wall *wall);
+void				calculate_hover(t_editor *editor);
+void				update_info_label(t_editor *editor);
+void				draw_drawing_wall_len(t_editor *editor);
 
 // Draw
 void				user_render(t_editor *editor);

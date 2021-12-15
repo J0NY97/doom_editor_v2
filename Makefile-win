@@ -37,6 +37,7 @@ SRCS = \
 	./get_map.c \
 	./get_map2.c \
 	./get_map3.c \
+	./id_button_dropdown.c \
 	./help.c \
 	./free_help.c \
 
