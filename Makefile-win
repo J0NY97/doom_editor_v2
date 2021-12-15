@@ -19,6 +19,9 @@ SRCS = \
 	./entity_events.c \
 	./event_events.c \
 	./grid_events.c \
+	./help.c \
+	./help2.c \
+	./help3.c \
 	./info_menu_events.c \
 	./misc_window_events.c \
 	./point_events.c \
@@ -58,7 +61,6 @@ SRCS = \
 	./get_map2.c \
 	./get_map3.c \
 	./id_button_dropdown.c \
-	./help.c \
 	./free_help.c \
 
 OBJS = $(SRCS:.c=.o)
