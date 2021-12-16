@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/15 10:17:38 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/16 11:24:40 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -118,7 +118,7 @@ LIB_FOLDERS =	\
 		-framework SDL2_ttf \
 		-F $(LIB_DIR)/SDL_MAC
 
-CFLAGS = -Wall -Wextra -MMD
+CFLAGS = -Wall -Wextra -MMD #-g -fsanitize=address
 
 all: $(ODIR) $(NAME)
 	@printf $(GREEN)"\e[J[INFO] $(NAME) ready!\n"$(RESET)
@@ -130,7 +130,7 @@ $(ODIR):
 
 $(ODIR)/%.o: $(CDIR)/%.c
 	@printf $(YELLOW)"\e[JCompiling $<\n\e[F"$(RESET)
-	@gcc -c $< -o $@ $(CFLAGS) $(INCLUDES)
+	@gcc -c -O3 $< -o $@ $(CFLAGS) $(INCLUDES)
 
 $(NAME): $(OBJS)
 	@gcc -o $(NAME) $(OBJS) $(INCLUDES) $(LIB_FOLDERS) $(CFLAGS)
