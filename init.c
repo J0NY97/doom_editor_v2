@@ -37,6 +37,9 @@ void	editor_init(t_editor *editor)
 	memset(editor, 0, sizeof(t_editor));
 	memset(&editor->fps, 0, sizeof(t_fps));
 	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
+	if (!editor->layout.style_file_content
+		|| !editor->layout.layout_file_content)
+		exit(0);
 	editor->map_type = MAP_TYPE_ENDLESS;
 	editor->map_name = ft_strdup("");
 	editor->win_main = ui_layout_get_window(&editor->layout, "win_main");

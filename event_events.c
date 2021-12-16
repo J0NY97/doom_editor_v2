@@ -62,6 +62,7 @@ void	event_id_dropdown_update(t_editor *editor)
 	if (editor->event_id_dropdown->show
 		&& ui_dropdown_open(editor->event_id_dropdown))
 	{
+		ui_dropdown_get_scrollbar(editor->event_id_dropdown)->value = 0;
 		texts = NULL;
 		if (ui_dropdown_active(editor->event_action_dropdown)
 			== editor->event_action_sector_button)

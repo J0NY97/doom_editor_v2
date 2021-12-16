@@ -12,6 +12,27 @@
 
 #include "editor.h"
 
+void	zoom_events(t_editor *editor)
+{
+	t_vec2	last;
+	t_vec2	next;
+
+	if (editor->win_main->scroll && !hover_over_open_menus(editor))
+	{
+		last = vec2(editor->drawing_surface->w / (editor->gap_size
+					* editor->zoom), editor->drawing_surface->h
+				/ (editor->gap_size * editor->zoom));
+		editor->zoom = ft_fclamp(editor->zoom + editor->win_main->scroll
+				/ 10.0f, 0.1f, 10.0f);
+		next = vec2(editor->drawing_surface->w / (editor->gap_size
+					* editor->zoom), editor->drawing_surface->h
+				/ (editor->gap_size * editor->zoom));
+		editor->offset.x += (last.x - next.x) / 2;
+		editor->offset.y += (last.y - next.y) / 2;
+		editor->update_grid = 1;
+	}
+}
+
 /*
  * This calculates the actual position in game for the mouse;
 */
@@ -28,13 +49,7 @@ void	calculate_hover(t_editor *editor)
 		* (editor->gap_size * editor->zoom);
 	editor->move_amount.x = editor->mouse_pos.x - editor->last_mouse_pos.x;
 	editor->move_amount.y = editor->mouse_pos.y - editor->last_mouse_pos.y;
-	if (editor->win_main->scroll && !hover_over_open_menus(editor))
-	{
-		editor->zoom
-			= ft_fclamp(editor->zoom + editor->win_main->scroll / 10.0f,
-				0.1f, 10.0f);
-		editor->update_grid = 1;
-	}
+	zoom_events(editor);
 }
 
 void	update_info_label(t_editor *editor)
@@ -60,9 +75,11 @@ void	grid_events(t_editor *editor, SDL_Event e)
 	if (editor->win_main->mouse_down == SDL_BUTTON_MIDDLE)
 	{
 		editor->offset.x -= (editor->win_main->mouse_pos.x
-				- editor->win_main->mouse_pos_prev.x) / editor->gap_size;
+				- editor->win_main->mouse_pos_prev.x)
+			/ (editor->gap_size * editor->zoom);
 		editor->offset.y -= (editor->win_main->mouse_pos.y
-				- editor->win_main->mouse_pos_prev.y) / editor->gap_size;
+				- editor->win_main->mouse_pos_prev.y)
+			/ (editor->gap_size * editor->zoom);
 	}
 	if (editor->draw_button->was_click)
 	{
