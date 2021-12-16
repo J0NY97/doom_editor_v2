@@ -58,6 +58,7 @@ t_sector	*add_sector(t_editor *editor)
 int	remove_sector(t_editor *editor, t_sector *sector)
 {
 	t_list	*curr;
+	t_list	*next;
 
 	if (!sector)
 		return (0);
@@ -66,10 +67,11 @@ int	remove_sector(t_editor *editor, t_sector *sector)
 	curr = sector->walls;
 	while (curr)
 	{
+		next = curr->next;
 		remove_wall(editor, curr->content);
-		curr = curr->next;
+		curr = next;
 	}
-	ft_lstdel(&sector->walls, &dummy_free_er);
+	//ft_lstdel(&sector->walls, &dummy_free_er);
 	free(sector);
 	sector = NULL;
 	ft_printf("[%s] Sector removed from editor->sectors\n", __FUNCTION__);
