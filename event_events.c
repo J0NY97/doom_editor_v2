@@ -56,13 +56,16 @@ void	event_adding_events(t_editor *editor)
 */
 void	event_id_dropdown_update(t_editor *editor)
 {
-	char		**texts;
-	t_ui_recipe	*recipe;
+	char			**texts;
+	t_ui_recipe		*recipe;
+	t_ui_scrollbar	*scroll;
 
 	if (editor->event_id_dropdown->show
 		&& ui_dropdown_open(editor->event_id_dropdown))
 	{
-		ui_dropdown_get_scrollbar(editor->event_id_dropdown)->value = 0;
+		scroll = ui_dropdown_get_scrollbar(editor->event_id_dropdown);
+		scroll->value = 0;
+		scroll->update = 1;
 		texts = NULL;
 		if (ui_dropdown_active(editor->event_action_dropdown)
 			== editor->event_action_sector_button)

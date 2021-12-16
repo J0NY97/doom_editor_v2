@@ -79,6 +79,8 @@ int	realmain(int ac, char **av)
 		{
 			ui_layout_event(&editor.layout, editor.e);
 			user_events(&editor, editor.e);
+			if (editor.e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+				editor.win_main->wants_to_close = 1;
 		}
 		user_render(&editor);
 		ui_layout_render(&editor.layout);
