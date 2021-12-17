@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   set_map2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 11:41:51 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/15 11:41:51 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 16:22:10 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ char	*get_wall_sprites(t_wall *wall, int *id)
 		*id += 1;
 		sprite->id = *id;
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\t%s\n",
-				*id, wall->id, sprite->pos.x, sprite->pos.y,
+				*id, wall->id, (int)sprite->pos.x, (int)sprite->pos.y,
 				sprite->texture_id, (int)(sprite->scale * 100),
 				g_sprite_type[sprite->type]);
 		ft_stradd(&final, temp);

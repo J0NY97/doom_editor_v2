@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   entity_help.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 14:26:45 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/14 14:26:45 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 15:58:55 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ int	get_entity_type(char *text)
 	return (0);
 }
 
-t_entity	*get_entity_from_list_at_pos(t_list *list, t_vec2i v)
+t_entity	*get_entity_from_list_at_pos(
+	t_editor *editor, t_list *list, t_vec2i v)
 {
 	t_list		*curr;
 	t_entity	*p;
@@ -37,7 +38,7 @@ t_entity	*get_entity_from_list_at_pos(t_list *list, t_vec2i v)
 	while (curr)
 	{
 		p = curr->content;
-		if (compare_veci(p->pos.v, v.v, 2))
+		if (compare_veci(conversion(editor, p->pos).v, v.v, 2))
 			return (curr->content);
 		curr = curr->next;
 	}
@@ -45,13 +46,13 @@ t_entity	*get_entity_from_list_at_pos(t_list *list, t_vec2i v)
 }
 
 t_entity	*get_entity_from_list_around_radius(
-		t_list *points, t_vec2i pos, float allowed_radius)
+		t_editor *editor, t_list *points, t_vec2i pos, int allowed_radius)
 {
 	t_entity	*temp;
-	float		x;
-	float		y;
+	int			x;
+	int			y;
 
-	temp = get_entity_from_list_at_pos(points, pos);
+	temp = get_entity_from_list_at_pos(editor, points, pos);
 	if (temp)
 		return (temp);
 	x = -allowed_radius;
@@ -60,15 +61,15 @@ t_entity	*get_entity_from_list_around_radius(
 		y = -allowed_radius;
 		while (y <= allowed_radius)
 		{
-			temp = get_entity_from_list_at_pos(points,
+			temp = get_entity_from_list_at_pos(editor, points,
 					vec2i(pos.x + x, pos.y + y));
 			if (temp != NULL)
 				break ;
-			y += 0.5f;
+			y += 1;
 		}
 		if (temp != NULL)
 			break ;
-		x += 0.5f;
+		x += 1;
 	}
 	return (temp);
 }

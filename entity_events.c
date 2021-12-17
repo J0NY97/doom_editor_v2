@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   entity_events.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 14:45:14 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/14 14:45:14 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 15:53:10 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	select_entity(t_editor *editor)
 {
 	t_entity	*entity;
 
-	entity = get_entity_from_list_around_radius(
-			editor->entities, editor->mouse_pos, 1.0f);
+	entity = get_entity_from_list_around_radius(editor, editor->entities,
+			editor->win_main->mouse_pos, 10);
 	if (entity)
 	{
 		editor->selected_entity = entity;

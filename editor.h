@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 09:46:12 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/17 13:19:19 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 15:56:44 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -585,7 +585,7 @@ int					remove_entity(t_editor *editor, t_entity *entity);
 void				entity_render(t_editor *editor, t_entity *entity);
 void				set_entity_ui(t_editor *editor, t_entity *entity);
 void				get_entity_ui(t_editor *editor, t_entity *entity);
-t_entity			*get_entity_from_list_around_radius(t_list *points, t_vec2i pos, float allowed_radius);
+t_entity			*get_entity_from_list_around_radius(t_editor *editor, t_list *points, t_vec2i pos, int allowed_radius);
 int					get_entity_type(char *text);
 void				entity_check_errors(t_editor *editor, t_entity *entity);
 
