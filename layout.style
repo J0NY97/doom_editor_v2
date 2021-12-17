@@ -615,12 +615,12 @@ wall_skybox_three : drop_button_prefab
 ///////////////////
 sprite_edit_menu : toolbox_menu_prefab
 {
-	xywh : 0, 281, 750, 250;
+	xywh : 0, 281, 360, 250;
 };
 
 sprite_label_menu : label_menu_prefab
 {
-	w : 750;
+	w : 360;
 };
 sprite_edit_label : label_menu_label_prefab
 {
@@ -723,7 +723,7 @@ sprite_y_input
 
 wall_render
 {
-	xywh : 140, 35, 300, 205;
+	xywh : 140, 35, 200, 205;
 };
 
 ///////////////////
