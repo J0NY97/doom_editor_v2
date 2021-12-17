@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wall_visualizer.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 14:41:19 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/14 14:41:19 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 16:30:03 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ void	draw_sprites_on_surface(
 		sprite->screen_pos.w = (size * sprite->scale) * aspect;
 		sprite->screen_pos.h
 			= (float)xywh.h * ((float)sprite->screen_pos.w / (float)xywh.w);
-		sprite->screen_pos.x = sprite->pos.x * size * aspect;
-		sprite->screen_pos.y = sprite->pos.y * size * aspect;
+		sprite->screen_pos.x = (int)sprite->pos.x * size * aspect;
+		sprite->screen_pos.y = (int)sprite->pos.y * size * aspect;
 		SDL_BlitScaled(texture, &(SDL_Rect){xywh.x, xywh.y, xywh.w, xywh.h},
 			surface, &(SDL_Rect){sprite->screen_pos.x, sprite->screen_pos.y,
 			sprite->screen_pos.w, sprite->screen_pos.h});
