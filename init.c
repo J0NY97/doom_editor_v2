@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:05 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 11:45:22 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 13:14:46 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	editor_init(t_editor *editor)
 	editor->map_type = MAP_TYPE_ENDLESS;
 	editor->map_name = ft_strdup("");
 	editor->win_main = ui_layout_get_window(&editor->layout, "win_main");
+	ui_window_set_icon(editor->win_main, EDITOR_PATH"DNDe.bmp");
 	type_dropdown_init(editor);
 	selection_menu_init(editor);
 	sector_edit_init(editor);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sprite_events.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 14:53:31 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/14 14:53:31 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 13:21:37 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,16 +34,20 @@ void	select_sprite(t_editor *editor)
 
 void	edit_sprite(t_editor *editor)
 {
-	t_vec2i	mouse_diff;
+	t_vec2	mouse_diff;
 	char	temp_str[20];
 
 	if (!editor->selected_sprite)
 		return ;
-	veci_sub(mouse_diff.v,
-		editor->win_main->mouse_pos.v, editor->win_main->mouse_pos_prev.v, 2);
 	if (editor->win_main->mouse_down == SDL_BUTTON_RIGHT
 		&& ui_element_is_hover(editor->sprite_edit_menu))
 	{
+		mouse_diff.x = editor->win_main->mouse_pos.x - editor->win_main->mouse_pos_prev.x;
+		mouse_diff.y = editor->win_main->mouse_pos.y - editor->win_main->mouse_pos_prev.y;
+		/*
+		veci_sub(mouse_diff.v, editor->win_main->mouse_pos.v,
+			editor->win_main->mouse_pos_prev.v, 2);
+			*/
 		editor->selected_sprite->pos.x += mouse_diff.x / 10;
 		editor->selected_sprite->pos.y += mouse_diff.y / 10;
 		ui_input_set_text(editor->sprite_x_input,

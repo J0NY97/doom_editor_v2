@@ -759,7 +759,7 @@ misc_info
 
 selected_sector_label
 {
-	xywh : 120, 10, 50, 20;
+	xywh : 110, 10, 50, 20;
 	title : Sector:;
 };
 selected_sector_info
@@ -771,19 +771,19 @@ selected_sector_info
 
 selected_sub_label
 {
-	xywh : 120, 80, 50, 20;
+	xywh : 110, 80, 50, 20;
 	title : Wall/Point:;
 };
 selected_sub_info
 {
 	xywh : 0, 20, 70, 20;
-	text_pos : 0, 20, 70, 500;
+	text_pos : 0, 20, 80, 500;
 	title : [sub info];
 };
 
 selected_sprite_label
 {
-	xywh : 120, 150, 50, 20;
+	xywh : 110, 150, 50, 20;
 	title : Sprite:;
 };
 selected_sprite_info

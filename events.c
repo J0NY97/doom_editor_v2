@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 15:49:04 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 10:04:31 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ void	remove_button_events(t_editor *editor)
 	int	was_removed;
 
 	was_removed = 0;
-	if (editor->remove_button->state == UI_STATE_CLICK)
+	if (editor->remove_button->state == UI_STATE_CLICK
+		|| editor->e.key.keysym.scancode == SDL_SCANCODE_DELETE)
 	{
 		if (editor->selected_point && editor->selected_sector)
 		{

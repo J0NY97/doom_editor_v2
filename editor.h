@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   editor.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 09:46:12 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/14 09:46:12 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 13:19:19 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,7 +353,7 @@ struct s_sprite
 {
 	t_wall			*parent;
 	int				id;
-	t_vec2i			pos;
+	t_vec2			pos;
 	t_vec4i			screen_pos;
 	int				texture_id;
 	float			scale;

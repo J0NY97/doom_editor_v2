@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:29 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 10:44:49 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 13:19:55 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ t_sprite	*add_sprite(t_editor *editor)
 	t_sprite	*sprite;
 
 	sprite = sprite_new();
-	sprite->pos = vec2i(0, 0);
+	sprite->pos = vec2(0, 0);
 	sprite->texture_id = 0;
 	sprite->id = get_next_sprite_id(editor->sprites);
 	sprite->scale = 1.0f;

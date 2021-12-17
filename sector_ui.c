@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sector_ui.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 11:30:45 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/15 11:30:45 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/17 10:41:44 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	get_gl_inputs(t_editor *editor, t_sector *sector)
 	if (ui_input_exit(editor->lighting_input))
 	{
 		sector->lighting = ft_clamp(ft_atoi(ui_input_get_text(
-						editor->lighting_input)), -250, 255);
+						editor->lighting_input)), -100, 100);
 		ft_b_itoa(sector->lighting, temp_str);
 		ui_input_set_text(editor->lighting_input, temp_str);
 	}
