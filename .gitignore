@@ -4,3 +4,4 @@
 *.d
 *.dnd
 doom_editor
+.DS_Store
