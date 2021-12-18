@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sector_help2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 11:33:00 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/15 11:33:00 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/18 13:15:30 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,31 +67,24 @@ int	get_point_side(t_vec2i p1, t_vec2i p2, t_vec2i pc)
 */
 int	check_sector_convexity(t_sector *sector)
 {
-	int		i;
 	int		res;
 	int		newres;
 	t_wall	*w1;
 	t_wall	*w2;
 	t_list	*curr;
 
-	i = 0;
 	curr = sector->walls;
+	res = 0;
 	while (curr)
 	{
 		w1 = curr->content;
 		w2 = get_connected_wall(sector->walls, w1);
 		if (!w2)
 			return (-1);
-		if (i == 0)
-			res = get_point_side(w1->p2->pos, w2->p2->pos, w1->p1->pos);
-		else
-		{
-			newres = get_point_side(w1->p2->pos, w2->p2->pos, w1->p1->pos);
-			if ((newres > 0 && res < 0) || (newres < 0 && res > 0))
-				return (0);
-			res = newres;
-		}
-		i++;
+		newres = get_point_side(w1->p2->pos, w2->p2->pos, w1->p1->pos);
+		if ((newres > 0 && res < 0) || (newres < 0 && res > 0))
+			return (0);
+		res = newres;
 		curr = curr->next;
 	}
 	return (1);
@@ -99,6 +92,7 @@ int	check_sector_convexity(t_sector *sector)
 
 /*
  * The wall should be sorted, winding doesnt matter;
+ * We return 0 if the 'p' is ON the line;
 */
 int	check_point_in_sector(t_sector *sector, t_vec2i p)
 {

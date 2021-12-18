@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:09 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/17 15:39:00 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/18 13:23:06 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	map_init(t_editor *editor, int ac, char **av)
 		ft_printf("[%s] No map given.\n", __FUNCTION__);
 }
 
-int	realmain(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_editor	editor;
 
@@ -89,9 +89,11 @@ int	realmain(int ac, char **av)
 	return (1);
 }
 
+/*
 int	main(int ac, char **av)
 {
 	realmain(ac, av);
 	system("leaks doom_editor");
 	return (1);
 }
+*/
