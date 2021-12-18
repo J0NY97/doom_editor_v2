@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile-mac                                       :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
+#    By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/16 11:24:40 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/18 12:54:27 by jsalmi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ SRCS = \
 	./fps.c \
 	./entity_events.c \
 	./event_events.c \
+	./event_events2.c \
 	./grid_events.c \
 	./help.c \
 	./help2.c \
@@ -118,7 +119,7 @@ LIB_FOLDERS =	\
 		-framework SDL2_ttf \
 		-F $(LIB_DIR)/SDL_MAC
 
-CFLAGS = -Wall -Wextra -MMD #-g -fsanitize=address
+CFLAGS = -Wall -Wextra -MMD -g -fsanitize=address
 
 all: $(ODIR) $(NAME)
 	@printf $(GREEN)"\e[J[INFO] $(NAME) ready!\n"$(RESET)

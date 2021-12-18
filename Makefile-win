@@ -18,6 +18,7 @@ SRCS = \
 	./fps.c \
 	./entity_events.c \
 	./event_events.c \
+	./event_events2.c \
 	./grid_events.c \
 	./help.c \
 	./help2.c \

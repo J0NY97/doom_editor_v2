@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:52 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/17 10:04:31 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/18 12:48:07 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ void	remove_button_events(t_editor *editor)
 		if (was_removed)
 		{
 			editor->selected_sector = NULL;
-			editor->selected_point = NULL;
 			editor->selected_wall = NULL;
 			editor->selected_sprite = NULL;
 			editor->selected_entity = NULL;

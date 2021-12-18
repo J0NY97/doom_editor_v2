@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:22 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 15:51:25 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/18 12:47:06 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ int	remove_sector(t_editor *editor, t_sector *sector)
 		remove_wall(editor, curr->content);
 		curr = next;
 	}
-	//ft_lstdel(&sector->walls, &dummy_free_er);
 	free(sector);
 	sector = NULL;
 	ft_printf("[%s] Sector removed from editor->sectors\n", __FUNCTION__);

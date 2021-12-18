@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 09:46:12 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/17 15:56:44 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/18 12:54:57 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -502,6 +502,8 @@ void				texture_menu_events(t_editor *editor);
 void				entity_events(t_editor *editor);
 void				spawn_events(t_editor *editor);
 void				info_menu_events(t_editor *editor, SDL_Event e);
+void				event_removing_events(t_editor *editor);
+void				event_adding_events(t_editor *editor);
 void				event_events(t_editor *editor);
 void				visualize_wall(t_editor *editor, t_wall *wall);
 void				calculate_hover(t_editor *editor);

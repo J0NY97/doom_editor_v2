@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draw_wall.c                                        :+:      :+:    :+:   */
+/*   draw2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 14:09:17 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/14 14:09:17 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/18 12:52:31 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,10 @@ void	draw_entities(t_editor *editor, t_list *entities)
 void	draw_sectors(t_editor *editor, t_list *sectors)
 {
 	t_sector	*sector;
-	char		temp[19];
-	t_sector	*hovered_this_frame;
+	char		temp[20];
 	Uint32		color;
 
-	hovered_this_frame = NULL;
+	editor->hovered_sector = NULL;
 	while (sectors)
 	{
 		sector = sectors->content;
@@ -76,9 +75,8 @@ void	draw_sectors(t_editor *editor, t_list *sectors)
 		sector_check_errors(editor, sector);
 		if (vec2_in_vec4(editor->win_main->mouse_pos,
 				vec4i(sector->screen_center.x - 10,
-					sector->screen_center.y - 9, 20, 20)))
-			hovered_this_frame = sector;
+					sector->screen_center.y - 10, 20, 20)))
+			editor->hovered_sector = sector;
 		sectors = sectors->next;
 	}
-	editor->hovered_sector = hovered_this_frame;
 }
