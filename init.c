@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:05 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/17 13:14:46 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/18 10:07:39 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	editor_init(t_editor *editor)
 {
 	memset(editor, 0, sizeof(t_editor));
 	memset(&editor->fps, 0, sizeof(t_fps));
-	ui_layout_load(&editor->layout, EDITOR_PATH"layout.ui");
+	ui_layout_load(&editor->layout, EDITOR_PATH, "layout.ui");
 	if (!editor->layout.style_file_content
 		|| !editor->layout.layout_file_content)
 		exit(0);
