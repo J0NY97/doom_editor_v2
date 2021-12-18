@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 09:46:12 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/18 12:54:57 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/18 14:23:42 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ typedef struct s_texture_elem
 
 /*
  * t_ui_element	*button;	when clicked, opens the texture_menu;
- * t_ui_element	*image;		menu on which image of selected texture will be blat;
+ * t_ui_element	*image;		menu on which image will be blat;
 */
 typedef struct s_texture_comb
 {
@@ -109,20 +109,28 @@ typedef struct s_texture_comb
 }					t_texture_comb;
 
 /*
- * SDL_Texture		*drawing_texture;		the texture surface will be texturified on and the rendered on screen;
- * SDL_Surface		*drawing_surface;		the surface on where the grid and all the sectors are drawn on;
- * t_vec2i			mouse_pos;				(on grid) taking into consideration the grid gap_size, every point is default 10 pix x*y;
- * t_vec2i			mouse_pos_screen;		from mouse_pos converted back to screen pos; (not same as the win->mouse_pos);
- * t_vec2i			offset;					when moving the grid this will change, im not sure how i did it last time;
- * TTF_Font			*font;					default font for everything so taht we dont waste fps by closing and opening it;
+ * SDL_Texture		*drawing_texture;		the texture surface will be
+ 												texturified on and then rendered
+ * SDL_Surface		*drawing_surface;		the surface on where the grid and
+ 												all the sectors are drawn on;
+ * t_vec2i			mouse_pos;				(on grid) taking into consideration
+ 												the grid gap_size and zoom;
+ * t_vec2i			mouse_pos_screen;		'mouse_pos' converted back to screen
+ 												pos(not same as win->mouse_pos);
+ * t_vec2i			offset;					moving the grid changes this;
  *
- * t_list			*texture_elems;			list of texture_elems; t_texture_elem;
- * t_list			*texture_buttons;		from texture_elem the button, so that we can use radio_event on it; t_ui_element;
+ * t_list			*texture_elems;			t_texture_elem;
+ * t_list			*texture_buttons;		from texture_elem the button, so
+ * 												that we can use radio_event on
+ * 												it; t_ui_element;
  * t_ui_element		*active_texture_button;	the currently active texture button;
  *
  * t_list			*texture_somethings;		list of t_texture_combs;
- * t_list			*texture_opening_buttons;	list of t_ui_element buttons, when clicked opens the texture_menu;
- * t_ui_element	*active_texture_opening_button; which buttons is currently active; of the texture_opening_buttons;
+ * t_list			*texture_opening_buttons;	t_ui_element->t_ui_button,
+ * 												when clicked opens texture_menu;
+ * t_ui_element	*active_texture_opening_button; which buttons is currently
+ * 													active of the
+ * 													texture_opening_buttons;
  *
  * int				map_type;				one of enum e_map_types;
 */
@@ -344,7 +352,7 @@ struct s_point
 /*
  * t_vec2i		pos;			the position on the sprite ingame;
  * int			texture_id;		the id of the texture used;
- * int			state;			loop, static, or action; (not sure yet what these are);
+ * int			state;			loop, static, or action;
  * SDL_Surface	*texture;		the pointer of a texture;
  * t_vec4i		screen_pos;		the position of the sprite on the visualized
  * 									wall;
@@ -362,9 +370,9 @@ struct s_sprite
 	SDL_Surface		*texture;
 };
 /*
- * t_vec2i		middle;		a small line coming out from the middle of the wall that will be used to select a wall if there are 2 on top of eachother; the line should also be drawn inwards of the sector;
- * int			neighbor_id;	this is only used when getting the map, because we need to have gotten all the sectors before actually setting the actual sector of each wall;
- * SDL_Surface	*texture;		the pointer of the texture youre using for this wall; (either portal- or wall texture);
+ * int			neighbor_id;	!ONLY used when getting the map!
+ * SDL_Surface	*texture;		pointer of texture youre using for this wall;
+ * 									(DONT FREE!)
 */
 struct s_wall
 {
@@ -398,7 +406,7 @@ struct s_wall
 
 /*
  * t_vec2i	center;				the center of sector in grid coordinates;
- * t_vec2i	screen_center;		the center of sector in screen coordinates converted from grid coordinates;
+ * t_vec2i	screen_center;		'center' converted to screen coordinates;
  * float	floor_scale;		texture scale for floor;
  * float	ceiling_scale;		texture scale for ceiling;
  * int		floor_texture;		texture id for floor;
@@ -430,8 +438,9 @@ struct s_sector
 /*
  * int				type;			one from enum e_entity;
  * int				z;				z value of position (dont worry about it);
- * SDL_Texture		*texture;		pointer to one of the editor->entity_textures; (DONT FREE!);
- * int				yaw;			which direction the entity is looking (degrees);
+ * SDL_Texture		*texture;		pointer to one of the
+ * 										editor->entity_textures; (DONT FREE!);
+ * int				yaw;			direction the entity is looking (degrees);
 */
 struct s_entity
 {
@@ -448,9 +457,10 @@ struct s_entity
  * int		action;					e_event_action;
  * char		*sector;				no idea;
  * int		min, max, speed;		other info for some of the event types;
- * int		pointer_type;			either TYPE_SECTOR or TYPE_SPRITE;
- * void		*pointer;				either t_sector or t_sprite depending on do you have type as shoot/click or sector;
- * t_event_elem	*elem;				t_event_elem, this event is attached to; ( DONT FREE )
+ * int		pointer_type;			TYPE_SECTOR/TYPE_SPRITE;
+ * void		*pointer;				t_sector/t_sprite depending on 'action';
+ * t_event_elem	*elem;				t_event_elem, 't_event' is attached to;
+ * 										(DONT FREE! they have their own freer)
 */
 struct s_event
 {
@@ -518,9 +528,11 @@ void				draw_entities(t_editor *editor, t_list *entities);
 void				draw_entities_yaw(t_editor *editor, t_list *entities);
 
 // Point
-void				point_render(t_editor *editor, t_point *point, Uint32 color);
+void				point_render(t_editor *editor, t_point *point,
+						Uint32 color);
 t_point				*get_point_with_id(t_list *list, int id);
-t_point				*get_point_from_sector_around_radius(t_sector *sector, t_vec2i pos, float allowed_radius);
+t_point				*get_point_from_sector_around_radius(t_sector *sector,
+						t_vec2i pos, float allowed_radius);
 t_point				*add_point(t_editor *editor);
 int					remove_point(t_editor *editor, t_point *point);
 void				remove_all_lonely_points(t_editor *editor);
@@ -532,7 +544,8 @@ void				wall_free(void *w, size_t size);
 void				wall_render(t_editor *editor, t_wall *wall, Uint32 color);
 void				draw_walls(t_editor *editor, t_list *walls, Uint32 color);
 t_wall				*get_wall_with_id(t_list *list, int id);
-t_wall				*get_wall_from_list_around_radius(t_editor *editor, t_list *list, t_vec2i pos, int allowed_radius);
+t_wall				*get_wall_from_list_around_radius(t_editor *editor,
+						t_list *list, t_vec2i pos, int allowed_radius);
 t_vec2i				get_wall_middle(t_wall *wall);
 t_wall				*add_wall(t_editor *editor);
 int					remove_wall(t_editor *editor, t_wall *wall);
@@ -542,11 +555,14 @@ t_wall				*get_connected_wall(t_list *list, t_wall *wall);
 void				sort_walls(t_list *list);
 void				set_wall_ui(t_editor *editor, t_wall *wall);
 void				get_wall_ui(t_editor *editor, t_wall *wall);
-void				split_wall(t_editor *editor, t_sector *sector, t_wall *wall);
+void				split_wall(t_editor *editor, t_sector *sector,
+						t_wall *wall);
 void				move_wall(t_wall *wall, t_vec2i move_amount);
-bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
+bool				can_you_make_portal_of_this_wall(t_list *sector_list,
+						t_sector *part_of_sector, t_wall *wall);
 t_sprite			*add_sprite_to_wall(t_editor *editor, t_wall *wall);
-void				get_walls_connected_to_point(t_list *walls, t_point *p, t_wall **w1, t_wall **w2);
+void				get_walls_connected_to_point(t_list *walls, t_point *p,
+						t_wall **w1, t_wall **w2);
 t_list				*get_next_wall_node(t_list *list, t_wall *wall);
 int					wall_in_any_sector(t_list *sectors, t_wall *wall);
 int					wall_in_sector(t_sector *sector, t_wall *wall);
@@ -556,27 +572,32 @@ void				remove_all_wall_sprites(t_editor *editor, t_wall *wall);
 t_sector			*sector_new(void);
 void				sector_free(void *sec, size_t size);
 t_sector			*add_sector(t_editor *editor);
-void				sector_render(t_editor *editor, t_sector *sector, Uint32 color);
-void				add_wall_to_sector_at_pos(t_editor *editor, t_sector *sector, t_vec2i p1, t_vec2i p2);
+void				sector_render(t_editor *editor, t_sector *sector,
+						Uint32 color);
+void				add_wall_to_sector_at_pos(t_editor *editor,
+						t_sector *sector, t_vec2i p1, t_vec2i p2);
 void				move_sector(t_sector *sector, t_vec2i move_amount);
 void				set_sector_ui(t_editor *editor, t_sector *sector);
 void				get_sector_ui(t_editor *editor, t_sector *sector);
 t_sector			*get_sector_with_id(t_list *sectors, int id);
 t_vec2i				get_sector_center(t_sector *sector);
-t_sector			*get_sector_around_radius(t_editor *editor, t_vec2i pos, int allowed_radius);
+t_sector			*get_sector_around_radius(t_editor *editor, t_vec2i pos,
+						int allowed_radius);
 int					remove_sector(t_editor *editor, t_sector *sector);
 int					get_next_sector_id(t_list *list);
 t_sector			*get_sector_by_id_from_list(t_list *list, int id);
 int					check_sector_convexity(t_sector *sector);
 int					check_point_in_sector(t_sector *sector, t_vec2i p);
-t_wall				*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1, t_vec2i p2);
+t_wall				*get_sector_wall_at_pos(t_sector *sector, t_vec2i p1,
+						t_vec2i p2);
 t_sector			*point_inside_which_sector(t_list *sectors, t_vec2i point);
 void				sector_check_errors(t_editor *editor, t_sector *sector);
 int					get_sector_id(t_sector *sector);
 void				remove_neighbor_from_walls(t_list *list, t_sector *sector);
 
 // Kind of wall, and kind of not wall
-bool				can_you_make_portal_of_this_wall(t_list *sector_list, t_sector *part_of_sector, t_wall *wall);
+bool				can_you_make_portal_of_this_wall(t_list *sector_list,
+						t_sector *part_of_sector, t_wall *wall);
 void				remove_wall_from_sector(t_sector *sector, t_wall *wall);
 
 // Entity
@@ -587,7 +608,8 @@ int					remove_entity(t_editor *editor, t_entity *entity);
 void				entity_render(t_editor *editor, t_entity *entity);
 void				set_entity_ui(t_editor *editor, t_entity *entity);
 void				get_entity_ui(t_editor *editor, t_entity *entity);
-t_entity			*get_entity_from_list_around_radius(t_editor *editor, t_list *points, t_vec2i pos, int allowed_radius);
+t_entity			*get_entity_from_list_around_radius(t_editor *editor,
+						t_list *points, t_vec2i pos, int allowed_radius);
 int					get_entity_type(char *text);
 void				entity_check_errors(t_editor *editor, t_entity *entity);
 
@@ -596,7 +618,8 @@ t_event_elem		*event_element_new(t_ui_element *parent);
 void				event_elem_free(void *elem, size_t size);
 t_event				*add_event(t_editor *editor);
 void				remove_event(t_editor *editor, t_event *event);
-void				event_elem_update(t_editor *editor, t_event_elem *event_elem);
+void				event_elem_update(t_editor *editor,
+						t_event_elem *event_elem);
 t_event				*event_new(void);
 void				event_free(void *ev, size_t size);
 int					get_next_event_id(t_list *list);
@@ -650,16 +673,23 @@ void				remove_from_list(t_list **list, void *pointer);
 int					hover_over_open_menus(t_editor *editor);
 float				get_aspect(float w, float h);
 char				**gen_sector_id_texts(t_list *sectors);
-void				create_buttons_to_list_from_texts_remove_extra(t_ui_element *parent, char **texts, t_ui_recipe *recipe);
-void				draw_text(SDL_Surface *surface, char *text, t_vec2i pos, Uint32 color);
+void				create_buttons_to_list_from_texts_remove_extra(
+						t_ui_element *parent, char **texts,
+						t_ui_recipe *recipe);
+void				draw_text(SDL_Surface *surface, char *text, t_vec2i pos,
+						Uint32 color);
 void				send_info_message(t_editor *editor, char *text);
-void				set_elem_parent_and_recipe(t_ui_element *elem, int ui_type, t_ui_element *parent, char *recipe_id);
-void				draw_arrow(SDL_Surface *surface, t_vec2i start, int len, float yaw);
+void				set_elem_parent_and_recipe(t_ui_element *elem, int ui_type,
+						t_ui_element *parent, char *recipe_id);
+void				draw_arrow(SDL_Surface *surface, t_vec2i start, int len,
+						float yaw);
 t_list				*get_last_tlist(t_list *list);
 t_list				*get_tlist_with_content(t_list *list, void *content);
 t_vec2i				get_middle(t_vec2i p1, t_vec2i p2);
-float				distance_from_vector_to_line(t_vec2i p0, t_vec2i p1, t_vec2i p2);
-int					vector_in_rect_of_radius(t_vec2i p, t_vec2i v1, t_vec2i v2, float radius);
+float				distance_from_vector_to_line(t_vec2i p0, t_vec2i p1,
+						t_vec2i p2);
+int					vector_in_rect_of_radius(t_vec2i p, t_vec2i v1, t_vec2i v2,
+						float radius);
 
 // Free help
 void				surface_array_free(SDL_Surface **surfaces, int amount);
