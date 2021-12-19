@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:38 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 13:35:27 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/19 12:31:06 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_wall	*wall_new(void)
 	wall = ft_memalloc(sizeof(t_wall));
 	wall->solid = 1;
 	wall->wall_texture = 7;
-	wall->texture_scale = 30.0f;
+	wall->texture_scale = 20.0f;
 	return (wall);
 }
 
