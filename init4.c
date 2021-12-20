@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 14:31:39 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/15 14:31:39 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/12/20 14:41:34 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,9 @@ void	load_entity_textures(t_editor *editor)
 
 	i = -1;
 	editor->entity_texture_surfaces[0]
-		= ui_surface_image_new("ui_images/damage.png");
+		= ui_surface_image_new(ICON_PATH"damage.png");
 	editor->entity_textures[0] = ui_texture_create_from_path(
-			editor->win_main->renderer, "ui_images/damage.png");
+			editor->win_main->renderer, ICON_PATH"damage.png");
 	while (++i < ENTITY_AMOUNT)
 	{
 		ft_printf("Loading Entity Image : %s\n", g_entity_data[i].path);
