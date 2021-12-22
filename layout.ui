@@ -1,4 +1,5 @@
 style : layout.style;
+resource_dir : ../game/resources/TTF/;
 resource_dir : ../game/resources/ICON/;
 resource_dir : ../game/resources/BXPM/;
 
