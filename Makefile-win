@@ -103,6 +103,8 @@ FLAGS = -Wall -Wextra -Wno-unused-variable
 
 all: $(ODIR) $(NAME)
 
+-include $(JOHNNY)
+
 $(ODIR):
 	@mkdir -p $@
 
