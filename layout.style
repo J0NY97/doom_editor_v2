@@ -407,14 +407,14 @@ ceiling_texture_image
 
 texture_menu : toolbox_menu_prefab
 {
-	xywh : 251, 22, 250, 500;
+	xywh : 251, 22, 300, 440;
 	flag : event_children render_children;
 	show : 0;
 };
 
 texture_menu_label_menu : label_menu_prefab
 {
-	
+	w : 300;
 };
 
 texture_menu_label : label_menu_label_prefab
@@ -424,7 +424,7 @@ texture_menu_label : label_menu_label_prefab
 
 texture_menu_close_button : close_button_prefab
 {
-
+	x : 279;
 };
 
 texture_button_menu
