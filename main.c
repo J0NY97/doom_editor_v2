@@ -29,7 +29,7 @@ void	setup_ui_values(t_editor *editor)
 
 void	editor_free(t_editor *editor)
 {
-	ft_printf("[%s]\n", __FUNCTION__);
+	ft_printf("[%s] Freeing\n", __FUNCTION__);
 	ui_layout_free(&editor->layout);
 	ft_lstdel(&editor->texture_somethings, &dummy_free_er);
 	ft_lstdel(&editor->texture_opening_buttons, &dummy_free_er);
