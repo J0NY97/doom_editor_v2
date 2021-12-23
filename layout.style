@@ -1025,6 +1025,7 @@ event_dropdown_prefab
 	bg_image_click : dropdown_75x20.png;
 	text_align : left center;
 	text_pos : 10, 2, 75, 20;
+	z : 100;
 };
 
 event_drop_button_prefab : drop_button_prefab
