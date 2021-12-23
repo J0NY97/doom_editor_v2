@@ -101,9 +101,7 @@ LIB = $(SDL_LIB) -lui -lpf -lft -lbxpm
 
 FLAGS = -Wall -Wextra -Wno-unused-variable
 
-all: $(NAME)
-
--include $(JOHNNY)
+all: $(ODIR) $(NAME)
 
 $(ODIR):
 	@mkdir -p $@
@@ -114,14 +112,14 @@ $(ODIR)/%.o: $(CDIR)/%.c
 	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
 
 $(NAME): $(OBJS)
-	@gcc -O3 -o $(NAME) $(OBJS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
+	@gcc -o $(NAME) $(OBJS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 clean:
-	@rm -f $(OBJS)
+	@rm -rf $(ODIR)
 	@echo "$(NAME) was cleaned."
 
-fclean:
+fclean: clean
 	@rm -f $(NAME)
 	@echo "$(NAME) was fcleaned."
 
