@@ -15,6 +15,7 @@
 # include "fcntl.h"
 # include "sys/stat.h"
 # include "libui.h"
+# include "liblg.h"
 # include "libft.h"
 # include "libpf.h"
 # include "SDL.h"

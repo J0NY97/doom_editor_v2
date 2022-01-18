@@ -29,7 +29,7 @@ void	setup_ui_values(t_editor *editor)
 
 void	editor_free(t_editor *editor)
 {
-	ft_printf("[%s] Freeing\n", __FUNCTION__);
+	LG_DEBUG("[%s] Freeing\n", __FUNCTION__);
 	ui_layout_free(&editor->layout);
 	ft_lstdel(&editor->texture_somethings, &dummy_free_er);
 	ft_lstdel(&editor->texture_opening_buttons, &dummy_free_er);
@@ -59,7 +59,7 @@ void	map_init(t_editor *editor, int ac, char **av)
 	if (args_parser(editor, ac, av))
 		get_map(editor, editor->map_full_path);
 	else
-		ft_printf("[%s] No map given.\n", __FUNCTION__);
+		LG_INFO("[%s] No map given.", __FUNCTION__);
 }
 
 int	main(int ac, char **av)

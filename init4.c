@@ -84,7 +84,7 @@ void	load_entity_textures(t_editor *editor)
 			editor->win_main->renderer, ICON_PATH"damage.png");
 	while (++i < ENTITY_AMOUNT)
 	{
-		ft_printf("Loading Entity Image : %s\n", g_entity_data[i].path);
+		LG_DEBUG("Loading Entity Image : %s", g_entity_data[i].path);
 		surface = load_bxpm_to_surface(g_entity_data[i].path);
 		editor->entity_texture_surfaces[i + 1] = ui_surface_new(10, 10);
 		pos.x = g_entity_data[i].tc[0];

@@ -40,7 +40,7 @@ void	draw_grid(t_editor *editor)
 		SDL_FillRect(editor->grid_surface, NULL, 0);
 		draw_grid_lines(editor->grid_surface, editor->gap_size, editor->zoom);
 		editor->update_grid = 0;
-		ft_printf("[%s] We are updating grid surface.\n", __FUNCTION__);
+		LG_DEBUG("[%s] We are updating grid surface.", __FUNCTION__);
 	}
 	SDL_BlitSurface(editor->grid_surface, NULL, editor->drawing_surface, NULL);
 }

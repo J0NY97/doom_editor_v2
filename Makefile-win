@@ -88,6 +88,7 @@ INCLUDES = \
 	-I$(LIB_FOLDER)/libpf \
 	-I$(LIB_FOLDER)/libui \
 	-I$(LIB_FOLDER)/libbxpm \
+	-I$(LIB_FOLDER)/liblg \
 	$(SDL_INC) \
 
 LIB_FOLDERS = \
@@ -95,9 +96,10 @@ LIB_FOLDERS = \
 	-L$(LIB_FOLDER)/libpf \
 	-L$(LIB_FOLDER)/libui \
 	-L$(LIB_FOLDER)/libbxpm \
+	-L$(LIB_FOLDER)/liblg \
 	$(SDL_LIB_DIR) \
 
-LIB = $(SDL_LIB) -lui -lpf -lft -lbxpm
+LIB = $(SDL_LIB) -lui -lpf -lft -lbxpm -llg
 
 FLAGS = -Wall -Wextra -Wno-unused-variable
 
