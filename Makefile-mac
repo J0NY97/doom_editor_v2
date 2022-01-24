@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile-mac                                       :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+         #
+#    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/22 14:43:26 by jsalmi           ###   ########.fr        #
+#    Updated: 2022/01/20 15:00:40 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -102,6 +102,7 @@ INCLUDES =	\
 		-I ../game/inc \
 		-I $(LIB_DIR)/libft \
 		-I $(LIB_DIR)/libpf \
+		-I $(LIB_DIR)/liblg \
 		-I $(LIB_DIR)/libbxpm \
 		-I $(LIB_DIR)/libui \
 		-I $(LIB_DIR)/SDL_MAC/SDL2.framework/Headers \
@@ -112,6 +113,7 @@ INCLUDES =	\
 LIB_FOLDERS =	\
 		-L $(LIB_DIR)/libft -lft \
 		-L $(LIB_DIR)/libpf -lpf \
+		-L $(LIB_DIR)/liblg -llg \
 		-L $(LIB_DIR)/libui -lui \
 		-L $(LIB_DIR)/libbxpm -lbxpm \
 		-framework SDL2 \
@@ -119,7 +121,7 @@ LIB_FOLDERS =	\
 		-framework SDL2_ttf \
 		-F $(LIB_DIR)/SDL_MAC
 
-CFLAGS = -Wall -Wextra -MMD -g -fsanitize=address -fno-omit-frame-pointer
+CFLAGS = -Wall -Wextra -O3 -MMD #-g -fsanitize=address -fno-omit-frame-pointer
 
 all: $(ODIR) $(NAME)
 	@printf $(GREEN)"\e[J[INFO] $(NAME) ready!\n"$(RESET)
@@ -131,7 +133,7 @@ $(ODIR):
 
 $(ODIR)/%.o: $(CDIR)/%.c
 	@printf $(YELLOW)"\e[JCompiling $<\n\e[F"$(RESET)
-	@gcc -c -O3 $< -o $@ $(CFLAGS) $(INCLUDES)
+	@gcc -c $< -o $@ $(CFLAGS) $(INCLUDES)
 
 $(NAME): $(OBJS)
 	@gcc -o $(NAME) $(OBJS) $(INCLUDES) $(LIB_FOLDERS) $(CFLAGS)
