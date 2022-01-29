@@ -17,7 +17,6 @@
 */
 void	get_map_info(t_editor *editor, char **args)
 {
-	ft_printf("[%s]\n", __FUNCTION__);
 	editor->map_type = MAP_TYPE_ENDLESS;
 	if (ft_strnequ(args[1], "story", 5))
 		editor->map_type = MAP_TYPE_STORY;
@@ -27,7 +26,6 @@ void	get_spawn(t_editor *editor, char **lines, int *i)
 {
 	char	**args;
 
-	ft_printf("[%s]\n", __FUNCTION__);
 	args = ft_strsplit(lines[*i + 1], '\t');
 	editor->spawn.pos.x = ft_atoi(args[1]);
 	editor->spawn.pos.y = ft_atoi(args[2]);
@@ -81,13 +79,14 @@ void	get_map(t_editor *editor, char *map)
 	char	**lines;
 	int		i;
 
-	ft_printf("[%s] Getting map <%s>.\n", __FUNCTION__, map);
-	file_content = ft_get_file_content(map);
+	LG_INFO("Getting map <%s>.", map);
+	file_content = get_file_content(map);
+	if (!file_content)
+		return ;
 	lines = ft_strsplit(file_content, '\n');
 	i = -1;
 	while (lines && lines[++i])
 		decision_maker(editor, lines[i], lines, &i);
 	ft_arraydel(lines);
 	ft_strdel(&file_content);
-	ft_printf("[%s] Success getting map.\n", __FUNCTION__);
 }

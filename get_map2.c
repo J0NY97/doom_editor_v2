@@ -17,7 +17,6 @@ void	get_points(t_editor *editor, char **lines, int *i)
 	char	**args;
 	t_point	*point;
 
-	ft_printf("[%s]\n", __FUNCTION__);
 	while (lines[*i])
 	{
 		*i += 1;
@@ -37,7 +36,6 @@ void	get_walls(t_editor *editor, char **lines, int *i)
 	char	**args;
 	t_wall	*wall;
 
-	ft_printf("[%s]\n", __FUNCTION__);
 	while (lines[*i])
 	{
 		*i += 1;
@@ -71,7 +69,6 @@ void	get_sprites(t_editor *editor, char **lines)
 	t_wall		*parent_wall;
 	int			ggg;
 
-	ft_printf("[%s]\n", __FUNCTION__);
 	ggg = -1;
 	wall_id = ft_atoi(lines[1]);
 	parent_wall = get_wall_with_id(editor->walls, wall_id);
@@ -98,7 +95,6 @@ void	get_entity(t_editor *editor, char **lines, int *i)
 	char		**args;
 	t_entity	*entity;
 
-	ft_printf("[%s]\n", __FUNCTION__);
 	while (lines[*i])
 	{
 		*i += 1;
@@ -119,7 +115,6 @@ void	get_events(t_editor *editor, char **args)
 {
 	t_event		*event;
 
-	ft_printf("[%s]\n", __FUNCTION__);
 	event = add_event(editor);
 	event->id = ft_atoi(args[0]);
 	event->type = get_event_type(args[1]);

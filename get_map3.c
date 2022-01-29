@@ -76,7 +76,6 @@ void	get_sectors(t_editor *editor, char **lines, int *i)
 	char		**args;
 	t_sector	*sector;
 
-	ft_printf("[%s]\n", __FUNCTION__);
 	while (lines[*i])
 	{
 		*i += 1;
@@ -121,7 +120,6 @@ void	get_fc(t_editor *editor, char **args)
 	t_sector	*sector;
 	int			id;
 
-	ft_printf("[%s]\n", __FUNCTION__);
 	id = ft_atoi(args[0]);
 	sector = get_sector_by_id_from_list(editor->sectors, id);
 	if (!sector)
