@@ -23,7 +23,7 @@ int	arg_launcher(t_editor *editor, char *arg)
 	return (0);
 }
 
-int	arg_map(t_editor *editor, char *arg)
+int	arg_map(t_editor *editor, char *arg, int *map_given)
 {
 	char	**temp;
 	int		arr_len;
@@ -42,6 +42,7 @@ int	arg_map(t_editor *editor, char *arg)
 		editor->map_name = ft_strdup(temp[arr_len - 1]);
 		editor->map_full_path = ft_strdup(arg);
 		ft_arraydel(temp);
+		*map_given = 1;
 		return (1);
 	}
 	return (0);
@@ -54,18 +55,18 @@ int	arg_map(t_editor *editor, char *arg)
 int	args_parser(t_editor *editor, int ac, char **av)
 {
 	int		index;
+	int		map_given;
 
 	index = 0;
+	map_given = 0;
 	if (ac < 1)
 		return (0);
 	while (av[++index])
 	{
-		if (arg_launcher(editor, av[index]))
-			;
-		else if (arg_map(editor, av[index]))
-			;
+		arg_launcher(editor, av[index]);
+		arg_map(editor, av[index], &map_given);
 	}
-	return (0);
+	return (map_given);
 }
 
 /*
