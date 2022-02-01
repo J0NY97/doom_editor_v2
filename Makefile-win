@@ -111,7 +111,7 @@ LIB_FOLDERS = \
 	-L$(LIB_FOLDER)/liblg \
 	$(SDL_LIB_DIR) \
 
-LIB = $(SDL_LIB) -lui -lpf -lft -lbxpm -llg
+LIB = -lui $(SDL_LIB) -lpf -lft -lbxpm -llg -lm
 
 FLAGS = -Wall -Wextra -Wno-unused-variable
 

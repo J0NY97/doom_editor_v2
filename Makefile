@@ -14,11 +14,12 @@ SHELL_NAME	:= $(shell uname -s)
 name = dontcare
 
 all: 
+	@echo "Making windows version."
 ifeq ($(SHELL_NAME), Darwin)
 	@make -f Makefile-mac
+else ifeq ($(SHELL_NAME), Linux)
+	@make -f Makefile-win
 else
-	@echo "OS: $(SHELL_NAME)"
-	@echo "Making windows version."
 	@mingw32-make -f Makefile-win
 endif
 
