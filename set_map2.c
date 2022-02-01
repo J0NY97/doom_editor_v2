@@ -76,7 +76,7 @@ char	*set_walls(t_editor *editor)
 	return (final);
 }
 
-char	*get_wall_sprites(t_wall *wall, int *id)
+char	*get_wall_sprites(t_wall *wall)
 {
 	char		*final;
 	char		*temp;
@@ -88,10 +88,8 @@ char	*get_wall_sprites(t_wall *wall, int *id)
 	while (curr)
 	{
 		sprite = curr->content;
-		*id += 1;
-		sprite->id = *id;
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%d\t%s\n",
-				*id, wall->id, (int)sprite->pos.x, (int)sprite->pos.y,
+				sprite->id, wall->id, (int)sprite->pos.x, (int)sprite->pos.y,
 				sprite->texture_id, (int)(sprite->scale * 100),
 				g_sprite_type[sprite->type]);
 		ft_stradd(&final, temp);
@@ -106,14 +104,12 @@ char	*set_sprites(t_editor *editor)
 	char	*final;
 	char	*temp;
 	t_list	*curr;
-	int		total_sprites;
 
-	total_sprites = -1;
 	final = ft_sprintf("type:wsprite\twall\tx\ty\ttexture\tscale\ttype\n");
 	curr = editor->walls;
 	while (curr)
 	{
-		temp = get_wall_sprites(curr->content, &total_sprites);
+		temp = get_wall_sprites(curr->content);
 		if (temp)
 		{
 			ft_stradd(&final, temp);
