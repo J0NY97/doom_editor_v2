@@ -140,6 +140,8 @@ typedef struct s_editor
 	SDL_Event		e;
 	t_fps			fps;
 
+	int				launched_from_launcher;
+
 	t_ui_layout		layout;
 	t_ui_window		*win_main;
 
@@ -646,6 +648,7 @@ void				get_sprite_ui(t_editor *editor, t_sprite *sprite);
 
 // Get map from args
 int					args_parser(t_editor *editor, int ac, char **av);
+void				launcher(t_editor *editor);
 
 // Set
 void				set_map(t_editor *editor, char *name);

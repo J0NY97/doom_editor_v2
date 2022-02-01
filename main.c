@@ -86,6 +86,7 @@ int	main(int ac, char **av)
 		ui_layout_render(&editor.layout);
 	}
 	editor_free(&editor);
+	launcher(&editor);
 	return (1);
 }
 
