@@ -97,6 +97,4 @@ int	main(int ac, char **av)
 	system("leaks doom_editor");
 	return (1);
 }
-
-
 */
