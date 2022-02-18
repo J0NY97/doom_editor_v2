@@ -123,8 +123,7 @@ $(ODIR):
 	@mkdir -p $@
 
 $(ODIR)/%.o: $(CDIR)/%.c
-	@gcc -c $< -o $@ -MMD -O3 \
-		$(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
+	@gcc -c $< -o $@ -MMD -O3 $(INCLUDES) $(FLAGS)
 	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
 
 $(NAME): $(OBJS)

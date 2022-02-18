@@ -14,7 +14,7 @@ SHELL_NAME	:= $(shell uname -s)
 name = dontcare
 
 all: 
-	@echo "Making windows version."
+	@echo "Making $(SHELL_NAME) version."
 ifeq ($(SHELL_NAME), Darwin)
 	@make -f Makefile-mac
 else ifeq ($(SHELL_NAME), Linux)
@@ -24,13 +24,14 @@ else
 endif
 
 clean:
+	@echo "Cleaning."
 ifeq ($(SHELL_NAME), Darwin)
 	@make clean -f Makefile-mac
 else
-	@mingw32-make clean -f Makefile-win 
+	@mingw32-make clean -f Makefile-win
 endif
 	
-fclean:
+fclean: clean
 ifeq ($(SHELL_NAME), Darwin)
 	@make fclean -f Makefile-mac
 else

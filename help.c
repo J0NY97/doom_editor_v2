@@ -39,10 +39,13 @@ t_vec2	align_fill(t_vec2 inside, t_vec4 size, int gap, int i)
 Uint32	random_blue_color(void)
 {
 	Uint32	color;
+	t_rgba	t;
 
-	color = rgba_to_hex((t_rgba){
-			.a = 255, .r = rand() % 255,
-			.g = rand() % 255, .b = 245});
+	t.a = 255;
+	t.r = rand() % 255;
+	t.g = rand() % 255;
+	t.b = 245;
+	color = rgba_to_hex(t);
 	return (color);
 }
 
