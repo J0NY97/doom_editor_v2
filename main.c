@@ -85,8 +85,11 @@ int	main(int ac, char **av)
 		user_render(&editor);
 		ui_layout_render(&editor.layout);
 	}
+	printf("Free\n");
 	editor_free(&editor);
+	printf("Launch?\n");
 	launcher(&editor);
+	printf("Bye\n");
 	return (1);
 }
 
