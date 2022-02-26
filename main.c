@@ -6,7 +6,7 @@
 /*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:09 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/18 13:23:06 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/02/26 08:30:36 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,8 @@ int	main(int ac, char **av)
 		user_render(&editor);
 		ui_layout_render(&editor.layout);
 	}
-	printf("Free\n");
 	editor_free(&editor);
-	printf("Launch?\n");
 	launcher(&editor);
-	printf("Bye\n");
 	return (1);
 }
 
