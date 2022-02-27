@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/09 11:00:57 by nneronin          #+#    #+#              #
-#    Updated: 2022/02/27 11:06:06 by nneronin         ###   ########.fr        #
+#    Updated: 2022/02/27 11:40:42 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -95,7 +95,7 @@ CDIR = .
 OBJS = $(addprefix $(ODIR)/,$(SRCS:.c=.o))
 JHONNY = $(OBJS:.o=.d)
 
-LIB_DIR =		../libs
+LIB_DIR =	../libs
 
 INCLUDES =	\
 		-I ../ \
@@ -143,7 +143,7 @@ clean:
 	@rm -rf $(ODIR)
 
 fclean: clean
-	@rm $(NAME)
+	@rm -f $(NAME)
 
 re: fclean all
 
