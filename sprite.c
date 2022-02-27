@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sprite.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:04:29 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/17 13:19:55 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/02/27 11:19:44 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ t_sprite	*add_sprite(t_editor *editor)
 	sprite->scale = 1.0f;
 	add_to_list(&editor->sprites, sprite, sizeof(t_sprite));
 	++editor->sprite_amount;
-	ft_printf("New Sprite Added (%d)\n", editor->sprite_amount);
 	return (sprite);
 }
 

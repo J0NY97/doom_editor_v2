@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/09 12:20:54 by nneronin         ###   ########.fr        #
+#    Updated: 2022/02/27 10:52:49 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,6 @@ SHELL_NAME	:= $(shell uname -s)
 name = dontcare
 
 all: 
-	@echo "Making $(SHELL_NAME) version."
 ifeq ($(SHELL_NAME), Darwin)
 	@make -f Makefile-mac
 else ifeq ($(SHELL_NAME), Linux)
@@ -24,7 +23,6 @@ else
 endif
 
 clean:
-	@echo "Cleaning."
 ifeq ($(SHELL_NAME), Darwin)
 	@make clean -f Makefile-mac
 else
@@ -40,4 +38,4 @@ endif
 
 re: fclean all
 
-.PHONY: clean, all, re, fclean, framework, framework_del, frameworks_re
+.PHONY: clean, all, re, fclean

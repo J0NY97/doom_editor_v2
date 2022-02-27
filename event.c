@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   event.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 19:03:49 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/13 13:43:31 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/02/27 11:20:24 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ t_event	*add_event(t_editor *editor)
 		sizeof(t_ui_element));
 	add_to_list(&editor->events, event, sizeof(t_event));
 	++editor->event_amount;
-	ft_printf("New event added (%d)\n", editor->event_amount);
 	ui_scrollbar_event(editor->event_scrollbar, (SDL_Event){});
 	ui_scrollbar_render(editor->event_scrollbar);
 	ui_scroll_value_set(editor->event_scrollbar,

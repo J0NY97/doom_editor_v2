@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   event_update.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 14:34:02 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/14 14:34:02 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/02/27 11:19:00 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,6 @@ void	update_event_elem(t_event_elem *elem)
 {
 	char	temp[29];
 
-	ft_printf("[%s] Updating event_elem. ", __FUNCTION__);
 	ui_label_set_text(&elem->id, ft_b_itoa(elem->event->id, temp));
 	ui_label_set_text(&elem->type, (char *)g_event_type[elem->event->type]);
 	ui_label_set_text(&elem->action,
@@ -120,5 +119,4 @@ void	update_event_elem(t_event_elem *elem)
 	ui_label_set_text(&elem->min, ft_b_itoa(elem->event->min, temp));
 	ui_label_set_text(&elem->max, ft_b_itoa(elem->event->max, temp));
 	ui_label_set_text(&elem->speed, ft_b_itoa(elem->event->speed, temp));
-	ft_printf("Success.\n");
 }
